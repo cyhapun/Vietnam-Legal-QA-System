@@ -2,10 +2,22 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { User, Scale, BookOpen } from 'lucide-react';
 
+export interface DocumentChunk {
+  content: string;
+  metadata: {
+    source?: string;
+    dieu?: string;
+    khoan?: string;
+    diem?: string;
+    law?: string;
+  };
+}
+
 export interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
+  contextUsed?: DocumentChunk[];
 }
 
 export function ChatMessage({ message }: { message: Message }) {

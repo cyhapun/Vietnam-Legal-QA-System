@@ -135,7 +135,7 @@ export function ChatInterface() {
         content: m.content
       }));
 
-      const response = await fetch('/api/chat', {
+      const response = await fetch('/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: apiMessages, provider, model }),
