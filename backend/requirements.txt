@@ -16,5 +16,3 @@ faiss-cpu
 huggingface_hub
 
 pypdf
-
-torch
