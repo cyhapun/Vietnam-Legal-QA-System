@@ -9,10 +9,10 @@ langchain-community
 langchain-openai
 langchain-google-genai
 langchain-huggingface
+langchain-text-splitters
 
 faiss-cpu
 
-transformers
 huggingface_hub
 
 pypdf
