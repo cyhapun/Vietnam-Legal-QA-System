@@ -2,13 +2,17 @@ import os
 import re
 import torch
 from typing import List, Dict, Any
+from dotenv import load_dotenv
 
 from langchain_core.documents import Document
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_community.vectorstores.utils import DistanceStrategy
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
+
+# Load biến môi trường từ file .env
+load_dotenv()
 
 # Cấu hình đường dẫn lưu FAISS và thư mục chứa dữ liệu PDF
 FAISS_INDEX_PATH = "./vietlaw_faiss_index"
@@ -18,19 +22,15 @@ PDF_DATA_PATH = "./data"
 CHUNK_SIZE = 1200
 CHUNK_OVERLAP = 200
 
-# Tối ưu CPU đa luồng
-num_threads = os.cpu_count() or 4
-torch.set_num_threads(num_threads)
+HF_TOKEN = os.getenv("HUGGINGFACE_API_KEY")
+if not HF_TOKEN:
+    raise ValueError("Không tìm thấy HUGGINGFACE_API_KEY. Vui lòng cấu hình trong file .env")
 
-# Tải mô hình embedding BGE M3 chạy trên CPU
-print(f"Đang tải mô hình BAAI bge m3 với {num_threads} luồng CPU")
-embeddings = HuggingFaceEmbeddings(
-    model_name="cyhapun/vn-legal-embedding-v1",
-    model_kwargs={'device': 'cpu'},
-    encode_kwargs={
-        'normalize_embeddings': True,
-        'batch_size': 32
-    }
+# Khởi tạo mô hình embedding qua Hugging Face Inference API
+print("Đang kết nối mô hình BAAI bge m3 qua Hugging Face API...")
+embeddings = HuggingFaceInferenceAPIEmbeddings(
+    api_key=HF_TOKEN,
+    model_name="cyhapun/vn-legal-embedding-v1"
 )
 vectorstore = None
 
