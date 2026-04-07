@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { User, Scale, BookOpen } from 'lucide-react';
-import { DocumentChunk } from '@/lib/rag';
 
 export interface Message {
   id: string;
