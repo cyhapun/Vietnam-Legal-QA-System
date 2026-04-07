@@ -110,7 +110,7 @@ TÀI LIỆU:
 ])
 
 # API chat
-@app.post("/api/chat")
+@app.post("/chat")
 async def chat_endpoint(request: ChatRequest):
     try:
         # Lấy câu hỏi mới nhất
@@ -169,7 +169,11 @@ async def chat_endpoint(request: ChatRequest):
         }
 
     except Exception as e:
-        error_msg = str(e)
+        # In đầy đủ chi tiết lỗi ra Console để bạn copy xem dòng nào lỗi
+        import traceback
+        traceback.print_exc() 
+        
+        error_msg = f"Lỗi chi tiết: {type(e).__name__} - {str(e)}"
         print(f"Lỗi backend: {error_msg}")
         raise HTTPException(status_code=500, detail=error_msg)
 

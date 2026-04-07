@@ -9,7 +9,8 @@ from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_community.vectorstores.utils import DistanceStrategy
-from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
+# Thay đổi import
+from langchain_huggingface import HuggingFaceEndpointEmbeddings
 
 # Load biến môi trường từ file .env
 load_dotenv()
@@ -28,9 +29,11 @@ if not HF_TOKEN:
 
 # Khởi tạo mô hình embedding qua Hugging Face Inference API
 print("Đang kết nối mô hình BAAI bge m3 qua Hugging Face API...")
-embeddings = HuggingFaceInferenceAPIEmbeddings(
-    api_key=HF_TOKEN,
-    model_name="cyhapun/vn-legal-embedding-v1"
+embeddings = HuggingFaceEndpointEmbeddings(
+    # model="cyhapun/vn-legal-embedding-v1",
+    model="BAAI/bge-m3",
+    task="feature-extraction",
+    huggingfacehub_api_token=HF_TOKEN,
 )
 vectorstore = None
 
