@@ -1,13 +1,13 @@
 {
-  "name": "ai-studio-applet",
+  "name": "vietnamese-law-chatbot",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev frontend",
-    "build": "next build frontend",
-    "start": "next start frontend",
-    "lint": "eslint frontend",
-    "clean": "next clean frontend"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "clean": "next clean"
   },
   "dependencies": {
     "@google/genai": "^1.17.0",
