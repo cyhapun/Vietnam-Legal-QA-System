@@ -6,7 +6,6 @@ export interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
-  contextUsed?: DocumentChunk[];
 }
 
 export function ChatMessage({ message }: { message: Message }) {
