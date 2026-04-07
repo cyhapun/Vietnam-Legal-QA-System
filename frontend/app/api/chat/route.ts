@@ -4,33 +4,55 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    // Lấy Base URL từ Env, mặc định là localhost nếu không có
-    const BACKEND_BASE_URL = process.env.BACKEND_URL || 'http://localhost:8000';
+    // ấy Base URL từ biến môi trường
+    let backendBaseUrl = process.env.BACKEND_URL || 'http://localhost:8000';
 
-    // Gọi đến endpoint cụ thể
-    // Kết quả sẽ là "/_/backend/chat" trên Vercel hoặc "http://localhost:8000/chat" ở local
-    const response = await fetch(`${BACKEND_BASE_URL}/chat`, { 
+    if (backendBaseUrl.startsWith('/')) {
+      const { origin } = new URL(req.url); 
+      backendBaseUrl = `${origin}${backendBaseUrl}`;
+    }
+
+    // Làm sạch URL: đảm bảo không có 2 dấu gạch chéo dư thừa (ví dụ: //chat)
+    const finalUrl = `${backendBaseUrl}/chat`.replace(/([^:]\/)\/+/g, "$1");
+
+    console.log(`[Proxy] Đang gọi backend tại: ${finalUrl}`);
+
+    // 3. Gọi Backend Python
+    const response = await fetch(finalUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        // Bạn có thể thêm các headers bảo mật khác ở đây nếu cần
       },
       body: JSON.stringify(body),
     });
 
+    // 4. Xử lý phản hồi từ Backend
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({})); 
-      throw new Error(errorData.detail || `Backend error: ${response.status}`);
+      const errorData = await response.json().catch(() => ({}));
+      return NextResponse.json(
+        { 
+          error: 'Backend trả về lỗi', 
+          details: errorData.detail || `Status: ${response.status}` 
+        }, 
+        { status: response.status }
+      );
     }
 
     const data = await response.json();
+    
+    // Trả dữ liệu về cho Frontend
     return NextResponse.json(data);
 
   } catch (error: any) {
     console.error('Frontend API Proxy Error:', error);
     
-    return NextResponse.json({ 
-      error: 'Lỗi kết nối Backend',
-      details: error.message 
-    }, { status: 500 });
+    return NextResponse.json(
+      { 
+        error: 'Lỗi kết nối Backend', 
+        details: error.message 
+      }, 
+      { status: 500 }
+    );
   }
 }
