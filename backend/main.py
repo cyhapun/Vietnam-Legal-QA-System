@@ -94,7 +94,8 @@ QUY TẮC NGHIÊM NGẶT:
 2. Nếu tài liệu không chứa câu trả lời, hãy phản hồi: "Rất tiếc, thông tin bạn hỏi không được đề cập trong tài liệu hiện có."
 3. Đối với các câu chào hỏi xã giao, hãy phản hồi lịch sự và ngắn gọn.
 4. Tuyệt đối không đưa ra lời khuyên pháp lý mang tính cá nhân hoặc xúi giục hành động.
-
+5. Có thể đưa ra lời khuyên có căn căn đàng hoàng không được xúi giục kích động.
+     
 CẤU TRÚC PHẢN HỒI:
 - **Giải thích chi tiết**: (Phân tích dựa trên các ý trong tài liệu)
 - **Trích dẫn căn cứ**: (Trích dẫn nguyên văn tên Điều, Khoản hoặc đoạn văn bản có trong tài liệu)

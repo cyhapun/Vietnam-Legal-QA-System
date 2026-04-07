@@ -25,7 +25,7 @@ torch.set_num_threads(num_threads)
 # Tải mô hình embedding BGE M3 chạy trên CPU
 print(f"Đang tải mô hình BAAI bge m3 với {num_threads} luồng CPU")
 embeddings = HuggingFaceEmbeddings(
-    model_name="BAAI/bge-m3",
+    model_name="cyhapun/vn-legal-embedding-v1",
     model_kwargs={'device': 'cpu'},
     encode_kwargs={
         'normalize_embeddings': True,
