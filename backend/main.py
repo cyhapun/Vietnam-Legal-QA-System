@@ -5,10 +5,8 @@ from typing import List, Optional
 from dotenv import load_dotenv
 from pathlib import Path
 
-# Import các thư viện LLM cần thiết
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_openai import ChatOpenAI  # Thêm cái này cho OpenAI và OpenRouter
-
+# Đã thay thế Google và OpenAI bằng Hugging Face
+from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.messages import HumanMessage, AIMessage
@@ -26,14 +24,12 @@ if env_path.exists():
 
 from rag_service import init_vector_db, get_retriever, format_docs_for_frontend
 
-# Khởi tạo vector database khi server start
 try:
     init_vector_db()
     retriever = get_retriever()
 except Exception as e:
     print(f"Lỗi khởi tạo vector database {e}")
 
-# Khởi tạo FastAPI
 app = FastAPI(title="VietLaw RAG Backend")
 
 app.add_middleware(
@@ -44,47 +40,36 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Schema request
+# Schema request (đã xóa provider)
 class Message(BaseModel):
     role: str
     content: str
 
 class ChatRequest(BaseModel):
     messages: List[Message]
-    provider: str = "gemini"
-    model: Optional[str] = None
+    model: str # Bắt buộc phải có model truyền từ frontend
 
-# Khởi tạo LLM linh hoạt theo yêu cầu
-def get_llm(provider: str, model_name: str):
-    temperature = 0.1 # Mức độ sáng tạo
+# Khởi tạo LLM sử dụng Hugging Face Inference
+def get_llm(model_name: str):
+    hf_token = os.getenv("HUGGINGFACE_API_KEY")
+    if not hf_token:
+        raise ValueError("Không tìm thấy HUGGINGFACE_API_KEY. Vui lòng cấu hình trong file .env")
+
+    # Tạo endpoint kết nối tới model trên Hugging Face
+    llm = HuggingFaceEndpoint(
+        repo_id=model_name,
+        task="text-generation",
+        max_new_tokens=1024,
+        temperature=0.1,
+        huggingfacehub_api_token=hf_token,
+        # Thêm các tham số này để tránh lỗi với một số model chat
+        do_sample=True,
+        repetition_penalty=1.1,
+    )
     
-    if provider == "gemini":
-        return ChatGoogleGenerativeAI(
-            model=model_name or "gemini-2.5-flash-lite", 
-            temperature=temperature
-        )
-        
-    elif provider == "openai":
-        return ChatOpenAI(
-            model=model_name or "gpt-4o-mini", 
-            temperature=temperature,
-            api_key=os.getenv("OPENAI_API_KEY")
-        )
-        
-    elif provider == "openrouter":
-        # OpenRouter sử dụng chuẩn API giống OpenAI, chỉ cần đổi base_url
-        return ChatOpenAI(
-            model=model_name or "anthropic/claude-3.5-sonnet",
-            temperature=temperature,
-            api_key=os.getenv("OPENROUTER_API_KEY"),
-            base_url="https://openrouter.ai/api/v1"
-        )
-        
-    else:
-        # Fallback mặc định nếu provider bị sai
-        return ChatGoogleGenerativeAI(model="gemini-2.5-flash-lite", temperature=temperature)
+    # Bọc bằng ChatHuggingFace để tương thích với ChatPromptTemplate (roles: system, human, ai)
+    return ChatHuggingFace(llm=llm)
 
-# Prompt điều khiển AI
 prompt = ChatPromptTemplate.from_messages([
     ("system", """
 You are a professional Virtual Legal Assistant. Your task is to answer user questions strictly based on the provided documents.
@@ -112,14 +97,11 @@ DOCUMENTS:
     ("human", "{question}")
 ])
 
-# API chat
 @app.post("/chat")
 async def chat_endpoint(request: ChatRequest):
     try:
-        # Lấy câu hỏi mới nhất
         last_message = request.messages[-1].content
 
-        # Chuyển lịch sử chat sang định dạng LangChain
         chat_history = []
         for msg in request.messages[:-1]:
             if msg.role == "user":
@@ -127,60 +109,38 @@ async def chat_endpoint(request: ChatRequest):
             else:
                 chat_history.append(AIMessage(content=msg.content))
 
-        # Chuyển invoke -> ainvoke để mượt mà (không chặn server)
         retrieved_docs = await retriever.ainvoke(last_message)
-
         context_text = "\n\n".join(doc.page_content for doc in retrieved_docs)
         frontend_context = format_docs_for_frontend(retrieved_docs)
 
-        # Chuẩn bị dữ liệu đầu vào cho Prompt
         inputs = {
             "context": context_text,
             "chat_history": chat_history,
             "question": last_message
         }
 
-        # ==========================================
-        # ĐOẠN CODE ĐỂ PRINT PROMPT HOÀN THIỆN
-        # ==========================================
-        formatted_prompt = prompt.format_messages(**inputs)
-        
-        print("\n" + "="*30 + " FULL PROMPT SENT TO AI " + "="*30)
-        for message in formatted_prompt:
-            # message.type sẽ là 'system', 'human' hoặc 'ai'
-            print(f"[{message.type.upper()}]:")
-            print(message.content)
-            print("-" * 20)
-        print("="*84 + "\n")
-        # ==========================================
-
-        # Lắp ráp Chain ngay trong endpoint
-        llm = get_llm(request.provider, request.model)
+        # Gọi LLM với model truyền từ frontend
+        llm = get_llm(request.model)
         rag_chain = prompt | llm | StrOutputParser()
 
-        # Gọi LLM
         output_text = await rag_chain.ainvoke({
             "context": context_text,
             "chat_history": chat_history,
             "question": last_message
         })
 
-        # Trả kết quả
         return {
             "text": output_text,
             "contextUsed": frontend_context
         }
 
     except Exception as e:
-        # In đầy đủ chi tiết lỗi ra Console để bạn copy xem dòng nào lỗi
         import traceback
         traceback.print_exc() 
-        
         error_msg = f"Lỗi chi tiết: {type(e).__name__} - {str(e)}"
         print(f"Lỗi backend: {error_msg}")
         raise HTTPException(status_code=500, detail=error_msg)
 
-# Chạy server
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
