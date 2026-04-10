@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Loader2, Scale, PanelLeft } from 'lucide-react'; 
-import { ProviderSelector, Provider } from './ProviderSelector';
+import { ProviderSelector} from './ProviderSelector';
 import { ChatMessage, Message } from './ChatMessage';
 import { Sidebar, ChatSession } from './Sidebar';
 
@@ -13,8 +13,7 @@ export function ChatInterface() {
   
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [provider, setProvider] = useState<Provider>('gemini');
-  const [model, setModel] = useState('gemini-2.5-flash-lite'); 
+  const [model, setModel] = useState('google/gemma-4-31B-it');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   
   const [isMounted, setIsMounted] = useState(false);
@@ -138,7 +137,7 @@ export function ChatInterface() {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: apiMessages, provider, model }),
+        body: JSON.stringify({ messages: apiMessages, model}),
       });
 
       if (!response.ok) throw new Error('Failed to fetch response');
@@ -214,7 +213,7 @@ export function ChatInterface() {
           </div>
 
           <div className="flex-1">
-            <ProviderSelector provider={provider} setProvider={setProvider} model={model} setModel={setModel}/>
+            <ProviderSelector model={model} setModel={setModel}/>
           </div>
         </div>
         
