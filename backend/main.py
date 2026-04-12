@@ -2,6 +2,8 @@ import os
 import traceback
 from pathlib import Path
 from typing import List
+import time
+from datetime import datetime
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -117,15 +119,24 @@ async def chat_endpoint(request: ChatRequest):
         frontend_context = format_docs_for_frontend(retrieved_docs)
 
         # ========================================================
-        # LOGGING BẮT BUỘC: In context ra console trước khi gọi LLM
+        # RENDER PROMPT & GHI LOG
         # ========================================================
+        # Sinh ra prompt hoàn chỉnh y hệt như những gì LLM sẽ đọc
+        final_formatted_prompt = prompt.format(
+            context=context_text,
+            chat_history=chat_history,
+            question=last_message
+        )
+
         print("\n" + "="*60)
         print(" CHUẨN BỊ FEED DATA CHO LLM (CONTEXT)")
         print("="*60)
         print(context_text)
         print("="*60 + "\n")
 
-        # 4. Gọi LLM để sinh câu trả lời
+        # 4. Gọi LLM để sinh câu trả lời và đo thời gian
+        start_time = time.time() # Bắt đầu bấm giờ
+        
         llm = get_llm(request.model)
         rag_chain = prompt | llm | StrOutputParser()
 
@@ -135,17 +146,34 @@ async def chat_endpoint(request: ChatRequest):
             "question": last_message
         })
 
-        # 5. Trả kết quả về cho Frontend
+        execution_time = time.time() - start_time # Kết thúc bấm giờ
+
+        # 5. Ghi dữ liệu ra file log (rag_history.log)
+        log_file_path = current_dir / "rag_history.log"
+        with open(log_file_path, "a", encoding="utf-8") as f:
+            f.write(f"\n{'='*80}\n")
+            f.write(f"THỜI GIAN  : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write(f"LĨNH VỰC   : {request.category}\n")
+            f.write(f"MÔ HÌNH    : {request.model}\n")
+            f.write(f"THỜI GIAN ĐÁP ỨNG: {execution_time:.2f} giây\n")
+            f.write(f"{'-'*80}\n")
+            f.write(f"PROMPT ĐÃ GỘP (FULL PAYLOAD GỬI CHO LLM):\n")
+            f.write(f"{final_formatted_prompt}\n")
+            f.write(f"{'-'*80}\n")
+            f.write(f"AI TRẢ LỜI:\n")
+            f.write(f"{output_text}\n")
+            f.write(f"{'='*80}\n")
+
+        # 6. Trả kết quả về cho Frontend
         return {
             "text": output_text,
             "contextUsed": frontend_context
         }
 
     except Exception as e:
-        # In chi tiết lỗi ra console để dễ debug
         traceback.print_exc() 
         raise HTTPException(status_code=500, detail=str(e))
-
+    
 # --- KHỞI CHẠY SERVER ---
 if __name__ == "__main__":
     import uvicorn
