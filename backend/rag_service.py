@@ -236,11 +236,55 @@ def build_nested_context(retrieved_docs: List[Document]) -> str:
         if refs:
             block += "   >> DẪN CHIẾU BỔ SUNG:\n"
             for ref in refs:
-                target_data = KNOWLEDGE_BASE.get(ref.get("target_id"))
-                if target_data:
+                target_id = ref.get("target_id", "")
+                anchor_text = ref.get("anchor_text", target_id)
+                # Đề phòng json dùng trường description hoặc description_summary
+                summary_text = ref.get("description_summary") or ref.get("description", "")
+                
+                found_content = ""
+                target_law_name = ""
+                
+                # BƯỚC 1: Tìm khớp chính xác (Nếu target_id là một Khoản cụ thể)
+                if target_id in KNOWLEDGE_BASE:
+                    target_data = KNOWLEDGE_BASE[target_id]
                     target_law_name = LAW_METADATA[target_data["law_id"]]["law_name"]
-                    block += f"   + {ref.get('anchor_text')} ({target_law_name}): \"{target_data['content']}\"\n"
-        
+                    found_content = target_data["content"]
+                    
+                # BƯỚC 2: Tìm theo cấp Điều (Lấy tất cả các Khoản trực thuộc Điều đó)
+                else:
+                    matching_clauses = []
+                    target_law_id = None
+                    
+                    # Quét qua RAM Store, tìm ID con (VD: GTDB_2024_D13_K1 bắt đầu bằng GTDB_2024_D13_)
+                    # Phải thêm dấu "_" để tránh tìm nhầm Điều 13 và Điều 130
+                    search_prefix = f"{target_id}_" 
+                    
+                    for k, v in KNOWLEDGE_BASE.items():
+                        if k.startswith(search_prefix):
+                            matching_clauses.append(v["content"])
+                            if not target_law_id:
+                                target_law_id = v["law_id"]
+                    
+                    if matching_clauses:
+                        # Gom tất cả các Khoản lại thành 1 chuỗi
+                        found_content = " ".join(matching_clauses)
+                        target_law_name = LAW_METADATA[target_law_id]["law_name"]
+                
+                # BƯỚC 3: Xử lý hiển thị và giới hạn Token
+                if found_content:
+                    # Nếu nội dung gom lại quá dài (>500 ký tự) và đã có tóm tắt -> Ưu tiên dùng tóm tắt
+                    if len(found_content) > 500 and summary_text:
+                        block += f"   + Cụm từ '{anchor_text}' ({target_law_name}): \"(Tóm tắt) {summary_text}\"\n"
+                    else:
+                        # Nếu nội dung ngắn thì nhét thẳng, dài mà không có tóm tắt thì cắt ngọn bớt
+                        display_content = found_content if len(found_content) <= 600 else found_content[:600] + "..."
+                        block += f"   + Cụm từ '{anchor_text}' ({target_law_name}): \"{display_content}\"\n"
+                
+                # BƯỚC 4: Fallback bần cùng - Không tìm thấy trong DB thì dùng summary luôn
+                else:
+                    if summary_text:
+                        block += f"   + Cụm từ '{anchor_text}': \"(Tóm tắt) {summary_text}\"\n"
+                        
         context_blocks.append(block)
     
     # Tạo phần Header tổng hợp thông tin văn bản
