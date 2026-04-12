@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Loader2, Scale, PanelLeft, LibraryBig } from 'lucide-react'; 
+import { Send, Scale, PanelLeft, LibraryBig, Gavel, Check, ChevronDown } from 'lucide-react'; 
 import { ProviderSelector } from './ProviderSelector';
 import { ChatMessage, Message } from './ChatMessage';
 import { Sidebar, ChatSession } from './Sidebar';
@@ -15,8 +15,10 @@ export function ChatInterface() {
   const [isLoading, setIsLoading] = useState(false);
   const [model, setModel] = useState('google/gemma-4-31B-it');
   
-  // New State for Law Category filtering
+  // State cho danh mục Lĩnh vực (Custom Dropdown)
   const [lawCategory, setLawCategory] = useState('Chung');
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const categoryRef = useRef<HTMLDivElement>(null);
   
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
@@ -61,11 +63,22 @@ export function ChatInterface() {
     }
   }, [sessions, messagesBySession, isMounted]);
 
+  // Xử lý đóng Dropdown Lĩnh vực khi click ra ngoài
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (categoryRef.current && !categoryRef.current.contains(event.target as Node)) {
+        setIsCategoryOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`;
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 160)}px`;
     }
   };
 
@@ -117,7 +130,6 @@ export function ChatInterface() {
     try {
       const apiMessages = [...currentMessages, userMessage].map(m => ({ role: m.role, content: m.content }));
       
-      // Đã thêm trường `category` vào Body request
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -150,74 +162,76 @@ export function ChatInterface() {
   };
 
   if (!isMounted) {
-    return <div className="h-screen bg-[#F9FAFB] flex items-center justify-center">
-      <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
-    </div>;
+    return (
+      <div className="h-screen bg-white flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative">
+            <div className="w-12 h-12 border-4 border-indigo-100 rounded-full"></div>
+            <div className="w-12 h-12 border-4 border-indigo-600 rounded-full border-t-transparent animate-spin absolute top-0 left-0"></div>
+          </div>
+          <span className="text-gray-500 font-medium text-sm animate-pulse">Khởi tạo hệ thống...</span>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="flex h-screen bg-[#F9FAFB] overflow-hidden font-sans relative">
+    <div className="flex h-screen bg-white overflow-hidden font-sans relative selection:bg-indigo-100">
       <div className={`flex-shrink-0 transition-all duration-300 ease-in-out overflow-hidden h-full z-20 ${isSidebarOpen ? 'w-64 opacity-100' : 'w-0 opacity-0'}`}>
         <div className="w-64 h-full">
-          <Sidebar sessions={sessions} currentSessionId={currentSessionId} onNewChat={handleNewChat} onSelectSession={handleSelectSession} onDeleteSession={handleDeleteSession} onCloseSidebar={() => setIsSidebarOpen(false)} />
+          <Sidebar 
+            sessions={sessions} 
+            currentSessionId={currentSessionId} 
+            onNewChat={handleNewChat} 
+            onSelectSession={handleSelectSession} 
+            onDeleteSession={handleDeleteSession} 
+            onCloseSidebar={() => setIsSidebarOpen(false)} 
+          />
         </div>
       </div>
 
       <div className="flex-1 flex flex-col min-w-0 relative h-full">
-        <div className="flex items-center justify-between bg-white shadow-sm z-10 relative border-b border-gray-100 min-h-[64px] px-4">
-          <div className="flex items-center gap-4">
-            <div className={`transition-all duration-300 overflow-hidden flex items-center ${isSidebarOpen ? 'w-0 opacity-0' : 'w-8 opacity-100'}`}>
-               <button onClick={() => setIsSidebarOpen(true)} className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 hover:text-gray-800 transition-colors" title="Mở sidebar">
+        {/* Header tối giản */}
+        <div className="flex items-center justify-between bg-white/80 backdrop-blur-md z-10 absolute top-0 left-0 right-0 px-4 py-3 border-b border-gray-100/50">
+          <div className="flex items-center gap-3">
+            {!isSidebarOpen && (
+               <button onClick={() => setIsSidebarOpen(true)} className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-colors" title="Mở sidebar">
                   <PanelLeft className="w-5 h-5" />
                </button>
-            </div>
-            
-            {/* Category Selector UI */}
-            <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5">
-              <LibraryBig className="w-4 h-4 text-gray-500" />
-              <select 
-                value={lawCategory} 
-                onChange={(e) => setLawCategory(e.target.value)}
-                className="bg-transparent text-sm font-medium text-gray-700 focus:outline-none cursor-pointer"
-              >
-                {categories.map(cat => (
-                  <option key={cat} value={cat}>{cat === "Chung" ? "Tất cả lĩnh vực" : `Luật ${cat}`}</option>
-                ))}
-              </select>
-            </div>
+            )}
+            <span className="text-sm font-bold text-gray-800 tracking-tight md:hidden">VietLaw AI</span>
           </div>
-
-          <div className="flex-1 max-w-[200px] ml-auto">
-            <ProviderSelector model={model} setModel={setModel}/>
+          <div className="text-[11px] font-bold text-indigo-600 uppercase tracking-widest bg-indigo-50 px-2 py-1 rounded md:block hidden">
+            Hệ thống tra cứu pháp luật thông minh
           </div>
         </div>
         
-        <div className="flex-1 overflow-y-auto scroll-smooth">
+        {/* Vùng nội dung chat */}
+        <div className="flex-1 overflow-y-auto pt-16 pb-40 custom-scrollbar">
           {currentMessages.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center text-center px-4 animate-in fade-in duration-500">
-              <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-6 shadow-sm">
-                <Scale className="w-8 h-8 text-blue-600" />
+            <div className="h-full flex flex-col items-center justify-center text-center px-4 animate-in fade-in zoom-in-95 duration-500">
+              <div className="w-20 h-20 bg-gradient-to-tr from-indigo-100 to-blue-50 rounded-3xl flex items-center justify-center mb-6 shadow-sm border border-indigo-50/50">
+                <Gavel className="w-10 h-10 text-indigo-600" />
               </div>
-              <h2 className="text-2xl font-semibold text-gray-800 mb-2">VietLaw AI Assistant</h2>
-              <p className="text-gray-500 max-w-md">
-                Đang tra cứu: <strong className="text-blue-600">{lawCategory === "Chung" ? "Tất cả lĩnh vực" : `Lĩnh vực ${lawCategory}`}</strong>
+              <h2 className="text-3xl font-bold text-gray-800 mb-3 tracking-tight">VietLaw AI</h2>
+              <p className="text-gray-500 max-w-md text-lg">
+                Trợ lý pháp lý thông minh của bạn. <br/>
+                Sẵn sàng giải đáp mọi thắc mắc.
               </p>
             </div>
           ) : (
             <div className="pb-8">
               {currentMessages.map(msg => <ChatMessage key={msg.id} message={msg} />)}
               {isLoading && (
-                <div className="py-6 bg-transparent">
-                  <div className="max-w-4xl mx-auto px-4 flex space-x-4">
-                    <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-sm">
-                      <Loader2 className="w-4 h-4 text-white animate-spin" />
+                <div className="py-6 px-4">
+                  <div className="max-w-4xl mx-auto flex space-x-4 items-center">
+                    <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center shadow-md border border-blue-800">
+                      <Scale className="w-4 h-4 text-white" />
                     </div>
-                    <div className="flex items-center">
-                      <div className="flex space-x-1.5 items-center bg-white px-4 py-2.5 rounded-2xl border border-gray-100 shadow-sm">
-                        <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                        <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                        <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                      </div>
+                    <div className="flex space-x-1.5 items-center px-4 py-3">
+                      <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                      <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                      <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                     </div>
                   </div>
                 </div>
@@ -227,9 +241,59 @@ export function ChatInterface() {
           )}
         </div>
 
-        <div className="bg-gradient-to-t from-[#F9FAFB] via-[#F9FAFB] to-transparent pt-6 pb-4 px-4 border-t border-gray-100">
-          <div className="max-w-4xl mx-auto relative">
-            <div className="relative shadow-sm rounded-2xl bg-white border border-gray-200 focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-50 transition-all">
+        {/* Floating Input Area - Tích hợp Lĩnh vực & Model */}
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white/95 to-transparent pt-10 pb-4 px-4">
+          <div className="max-w-3xl mx-auto relative">
+            <div className="relative shadow-xl shadow-indigo-100/20 rounded-3xl bg-white border border-gray-200 focus-within:border-indigo-400 focus-within:ring-4 focus-within:ring-indigo-50/50 transition-all duration-300">
+              
+              {/* Toolbar: Lĩnh vực & Model (Nằm trên textarea) */}
+              <div className="flex items-center gap-2 px-3 pt-3 pb-1 border-b border-gray-50 md:border-none">
+                
+                {/* Custom Dropdown: Bộ chọn Lĩnh vực */}
+                <div className="relative flex items-center" ref={categoryRef}>
+                  <button 
+                    type="button"
+                    onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+                    className="flex items-center bg-gray-50 hover:bg-gray-100 rounded-xl px-3 py-1.5 transition-colors border border-gray-100 active:bg-gray-200"
+                  >
+                    <LibraryBig className="w-3.5 h-3.5 text-indigo-600 mr-2" />
+                    <span className="text-[12px] font-bold text-gray-700">
+                      {lawCategory === "Chung" ? "Tất cả lĩnh vực" : `Luật ${lawCategory}`}
+                    </span>
+                    <ChevronDown className={`w-3 h-3 text-gray-400 ml-1.5 transition-transform duration-200 ${isCategoryOpen ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {/* Menu Lĩnh Vực thả xuống */}
+                  {isCategoryOpen && (
+                    <div className="absolute bottom-full mb-2 left-0 w-48 bg-white border border-gray-100 shadow-xl shadow-gray-200/50 rounded-xl py-1 z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
+                      <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-gray-400 border-b border-gray-50 mb-1">
+                        Tra cứu theo lĩnh vực
+                      </div>
+                      {categories.map(cat => (
+                        <button
+                          key={cat}
+                          onClick={() => {
+                            setLawCategory(cat);
+                            setIsCategoryOpen(false);
+                          }}
+                          className={`w-full text-left px-3 py-2.5 text-[12px] font-medium flex items-center justify-between transition-colors ${
+                            lawCategory === cat 
+                              ? 'text-indigo-700 bg-indigo-50/50' 
+                              : 'text-gray-600 hover:bg-gray-50'
+                          }`}
+                        >
+                          {cat === "Chung" ? "Tất cả lĩnh vực" : `Luật ${cat}`}
+                          {lawCategory === cat && <Check className="w-3.5 h-3.5 text-indigo-600" />}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Custom Dropdown: Bộ chọn Model */}
+                <ProviderSelector model={model} setModel={setModel}/>
+              </div>
+
               <textarea
                 ref={textareaRef}
                 value={input}
@@ -237,19 +301,24 @@ export function ChatInterface() {
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSubmit(); }
                 }}
-                placeholder="Hỏi về bất kỳ vấn đề pháp lý nào... (Shift + Enter để xuống dòng)"
-                className="w-full resize-none bg-transparent pl-4 pr-14 py-3.5 focus:outline-none text-gray-700 leading-relaxed custom-scrollbar"
+                placeholder="Nhập câu hỏi pháp lý... (Shift + Enter để xuống dòng)"
+                className="w-full resize-none bg-transparent pl-5 pr-14 py-3 focus:outline-none text-gray-700 leading-relaxed rounded-b-3xl text-[15px] custom-scrollbar"
                 rows={1}
-                style={{ minHeight: '52px', maxHeight: '200px' }}
+                style={{ minHeight: '52px', maxHeight: '160px' }}
               />
+              
               <button
                 onClick={(e) => handleSubmit(e as any)}
                 disabled={!input.trim() || isLoading}
-                className="absolute right-2 bottom-2 p-2 text-white bg-blue-600 rounded-xl hover:bg-blue-700 disabled:opacity-40 disabled:hover:bg-blue-600 transition-all shadow-sm"
+                className="absolute right-3 bottom-3 p-2.5 text-white bg-indigo-600 rounded-2xl hover:bg-indigo-700 disabled:opacity-40 transition-all shadow-md active:scale-95 flex items-center justify-center"
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-4 h-4 translate-x-px translate-y-px" />
               </button>
             </div>
+            
+            <p className="text-center mt-3 text-[10px] text-gray-400 font-medium md:text-[11px]">
+              AI có thể cung cấp thông tin không chính xác. Hãy luôn kiểm tra lại dữ liệu quan trọng.
+            </p>
           </div>
         </div>
       </div>

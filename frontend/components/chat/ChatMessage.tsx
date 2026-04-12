@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
-import { User, Scale, BookOpen } from 'lucide-react';
+import { User, Scale, BookOpen, ChevronRight } from 'lucide-react';
 
 export interface DocumentChunk {
   content: string;
@@ -24,59 +24,63 @@ export function ChatMessage({ message }: { message: Message }) {
   const isUser = message.role === 'user';
 
   return (
-    <div className={`py-6 px-4 ${isUser ? 'bg-transparent' : 'bg-transparent'}`}>
-      <div className={`max-w-4xl mx-auto flex space-x-4 ${isUser ? 'flex-row-reverse space-x-reverse' : 'flex-row'}`}>
+    <div className={`py-6 px-4 transition-all hover:bg-gray-50/50 ${isUser ? '' : ''}`}>
+      <div className={`max-w-4xl mx-auto flex gap-5 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
         
         {/* Avatar */}
         <div className="flex-shrink-0 mt-1">
           {isUser ? (
-            <div className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center shadow-sm">
-              <User className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center shadow-inner border border-gray-300">
+              <User className="w-5 h-5 text-gray-600" />
             </div>
           ) : (
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-sm">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center shadow-md border border-blue-800">
               <Scale className="w-4 h-4 text-white" />
             </div>
           )}
         </div>
         
         {/* Message Content */}
-        <div className={`flex-1 min-w-0 ${isUser ? 'flex justify-end' : ''}`}>
-          <div className={`inline-block max-w-[90%] ${
+        <div className={`flex-1 min-w-0 flex flex-col ${isUser ? 'items-end' : 'items-start'}`}>
+          <div className={`inline-block max-w-[85%] ${
             isUser 
-              ? 'bg-gray-100 text-gray-800 px-5 py-3.5 rounded-2xl rounded-tr-sm' 
+              ? 'bg-blue-600 text-white px-5 py-3.5 rounded-2xl rounded-tr-sm shadow-sm' 
               : 'text-gray-800'
           }`}>
-            <div className={`prose prose-slate max-w-none ${isUser ? 'prose-p:leading-relaxed' : 'prose-p:leading-7 prose-headings:text-blue-900 prose-a:text-blue-600'}`}>
+            <div className={`prose max-w-none ${
+              isUser 
+                ? 'prose-p:leading-relaxed prose-p:text-white text-white' 
+                : 'prose-slate prose-p:leading-7 prose-headings:text-indigo-900 prose-a:text-blue-600 prose-strong:text-gray-900'
+            }`}>
               <ReactMarkdown>{message.content}</ReactMarkdown>
             </div>
           </div>
           
-          {/* RAG Context Display */}
+          {/* RAG Context Display (Căn cứ pháp lý) */}
           {!isUser && message.contextUsed && message.contextUsed.length > 0 && (
-            <div className="mt-4 bg-blue-50/50 rounded-xl p-4 border border-blue-100/50 inline-block w-full">
-              <div className="flex items-center text-blue-800 mb-3">
-                <BookOpen className="w-4 h-4 mr-2" />
-                <span className="text-xs font-bold uppercase tracking-wider">Căn cứ pháp lý trích xuất</span>
+            <div className="mt-4 w-full max-w-3xl">
+              <div className="flex items-center text-gray-500 mb-2 gap-1.5">
+                <BookOpen className="w-4 h-4 text-indigo-500" />
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-indigo-500">
+                  Căn cứ pháp lý áp dụng
+                </span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {message.contextUsed.map((ctx: any, idx) => {
-                  // Lấy các trường metadata từ Backend mới
-                  const { source, dieu, khoan } = ctx.metadata || {};
-                  
-                  // Xây dựng chuỗi hiển thị thông minh
+                  const { source, dieu, khoan, diem } = ctx.metadata || {};
                   let displayText = source || 'Tài liệu pháp lý';
                   if (dieu) displayText += ` - Điều ${dieu}`;
                   if (khoan) displayText += ` (Khoản ${khoan})`;
+                  if (diem) displayText += ` Điểm ${diem}`;
 
                   return (
                     <div 
                       key={idx} 
-                      className="group inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium bg-white text-blue-700 border border-blue-200 hover:border-blue-400 hover:shadow-sm cursor-help transition-all"
-                      title={ctx.content} // Hiển thị nội dung luật khi hover
+                      className="group flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[13px] font-medium bg-indigo-50/50 text-indigo-800 border border-indigo-100/50 hover:bg-indigo-100 hover:border-indigo-300 cursor-help transition-colors"
+                      title={ctx.content}
                     >
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mr-2 flex-shrink-0"></span>
-                      <span className="truncate max-w-[250px]">{displayText}</span>
+                      <ChevronRight className="w-3 h-3 text-indigo-400" />
+                      <span className="truncate max-w-[280px]">{displayText}</span>
                     </div>
                   );
                 })}
