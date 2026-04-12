@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Loader2, Scale, PanelLeft } from 'lucide-react'; 
-import { ProviderSelector} from './ProviderSelector';
+import { Send, Loader2, Scale, PanelLeft, LibraryBig } from 'lucide-react'; 
+import { ProviderSelector } from './ProviderSelector';
 import { ChatMessage, Message } from './ChatMessage';
 import { Sidebar, ChatSession } from './Sidebar';
 
@@ -14,12 +14,19 @@ export function ChatInterface() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [model, setModel] = useState('google/gemma-4-31B-it');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   
+  // New State for Law Category filtering
+  const [lawCategory, setLawCategory] = useState('Chung');
+  
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const categories = [
+    "Chung", "Kinh doanh", "Đất đai", "Bảo vệ môi trường", "Tố tụng dân sự", "Nhà ở"
+  ];
 
   const currentMessages = currentSessionId ? messagesBySession[currentSessionId] || [] : [];
 
@@ -40,12 +47,8 @@ export function ChatInterface() {
       const parsedSessions = JSON.parse(savedSessions);
       setSessions(parsedSessions);
       setMessagesBySession(JSON.parse(savedMessages));
-      
-      if (parsedSessions.length > 0) {
-        setCurrentSessionId(parsedSessions[0].id);
-      } else {
-        handleNewChat();
-      }
+      if (parsedSessions.length > 0) setCurrentSessionId(parsedSessions[0].id);
+      else handleNewChat();
     } else {
       handleNewChat();
     }
@@ -68,20 +71,13 @@ export function ChatInterface() {
 
   const handleNewChat = () => {
     const newId = Date.now().toString();
-    const newSession: ChatSession = {
-      id: newId,
-      title: 'Cuộc trò chuyện mới',
-      lastMessage: '',
-      timestamp: Date.now()
-    };
-    
+    const newSession: ChatSession = { id: newId, title: 'Cuộc trò chuyện mới', lastMessage: '', timestamp: Date.now() };
     setSessions(prev => [newSession, ...prev]);
     setCurrentSessionId(newId);
     setMessagesBySession(prev => ({ ...prev, [newId]: [] }));
   };
 
   const handleSelectSession = (id: string) => setCurrentSessionId(id);
-
   const handleDeleteSession = (id: string) => {
     setSessions(prev => prev.filter(s => s.id !== id));
     setMessagesBySession(prev => {
@@ -91,11 +87,8 @@ export function ChatInterface() {
     });
     if (currentSessionId === id) {
       const remaining = sessions.filter(s => s.id !== id);
-      if (remaining.length > 0) {
-        setCurrentSessionId(remaining[0].id);
-      } else {
-        handleNewChat();
-      }
+      if (remaining.length > 0) setCurrentSessionId(remaining[0].id);
+      else handleNewChat();
     }
   };
 
@@ -105,19 +98,12 @@ export function ChatInterface() {
 
     const userText = input.trim();
     setInput('');
-    if (textareaRef.current) {
-      textareaRef.current.style.height = '52px';
-    }
+    if (textareaRef.current) textareaRef.current.style.height = '52px';
 
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      role: 'user',
-      content: userText
-    };
+    const userMessage: Message = { id: Date.now().toString(), role: 'user', content: userText };
 
     setMessagesBySession(prev => ({
-      ...prev,
-      [currentSessionId]: [...(prev[currentSessionId] || []), userMessage]
+      ...prev, [currentSessionId]: [...(prev[currentSessionId] || []), userMessage]
     }));
 
     if (currentMessages.length === 0) {
@@ -129,19 +115,16 @@ export function ChatInterface() {
     setIsLoading(true);
 
     try {
-      const apiMessages = [...currentMessages, userMessage].map(m => ({
-        role: m.role,
-        content: m.content
-      }));
-
+      const apiMessages = [...currentMessages, userMessage].map(m => ({ role: m.role, content: m.content }));
+      
+      // Đã thêm trường `category` vào Body request
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: apiMessages, model}),
+        body: JSON.stringify({ messages: apiMessages, model: model, category: lawCategory }),
       });
 
       if (!response.ok) throw new Error('Failed to fetch response');
-
       const data = await response.json();
 
       const assistantMessage: Message = {
@@ -152,16 +135,12 @@ export function ChatInterface() {
       };
 
       setMessagesBySession(prev => ({
-        ...prev,
-        [currentSessionId]: [...(prev[currentSessionId] || []), assistantMessage]
+        ...prev, [currentSessionId]: [...(prev[currentSessionId] || []), assistantMessage]
       }));
     } catch (error) {
-      console.error('Error:', error);
       setMessagesBySession(prev => ({
-        ...prev,
-        [currentSessionId]: [...(prev[currentSessionId] || []), {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant',
+        ...prev, [currentSessionId]: [...(prev[currentSessionId] || []), {
+          id: (Date.now() + 1).toString(), role: 'assistant',
           content: '⚠️ Xin lỗi, đã có lỗi kết nối đến máy chủ. Vui lòng kiểm tra lại Backend.'
         }]
       }));
@@ -178,41 +157,37 @@ export function ChatInterface() {
 
   return (
     <div className="flex h-screen bg-[#F9FAFB] overflow-hidden font-sans relative">
-      
-      {/* Wrapper bọc Sidebar để tạo hiệu ứng thu/phóng mượt mà */}
-      <div 
-        className={`flex-shrink-0 transition-all duration-300 ease-in-out overflow-hidden h-full z-20 ${
-          isSidebarOpen ? 'w-64 opacity-100' : 'w-0 opacity-0'
-        }`}
-      >
-        {/* Lõi của Sidebar luôn cố định w-64 để tránh bị co rúm chữ khi đang trượt */}
+      <div className={`flex-shrink-0 transition-all duration-300 ease-in-out overflow-hidden h-full z-20 ${isSidebarOpen ? 'w-64 opacity-100' : 'w-0 opacity-0'}`}>
         <div className="w-64 h-full">
-          <Sidebar 
-            sessions={sessions}
-            currentSessionId={currentSessionId}
-            onNewChat={handleNewChat}
-            onSelectSession={handleSelectSession}
-            onDeleteSession={handleDeleteSession}
-            onCloseSidebar={() => setIsSidebarOpen(false)} 
-          />
+          <Sidebar sessions={sessions} currentSessionId={currentSessionId} onNewChat={handleNewChat} onSelectSession={handleSelectSession} onDeleteSession={handleDeleteSession} onCloseSidebar={() => setIsSidebarOpen(false)} />
         </div>
       </div>
 
       <div className="flex-1 flex flex-col min-w-0 relative h-full">
-        {/* Header Content */}
-        <div className="flex items-center bg-white shadow-sm z-10 relative border-b border-gray-100 min-h-[64px]">
-          {/* Nút Mở Menu - Chỉ hiện khi Menu bị đóng, có hiệu ứng fade-in */}
-          <div className={`transition-all duration-300 overflow-hidden flex items-center ${isSidebarOpen ? 'w-0 opacity-0' : 'w-14 opacity-100 pl-4'}`}>
-             <button 
-                onClick={() => setIsSidebarOpen(true)}
-                className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 hover:text-gray-800 transition-colors"
-                title="Mở sidebar"
-             >
-                <PanelLeft className="w-5 h-5" />
-             </button>
+        <div className="flex items-center justify-between bg-white shadow-sm z-10 relative border-b border-gray-100 min-h-[64px] px-4">
+          <div className="flex items-center gap-4">
+            <div className={`transition-all duration-300 overflow-hidden flex items-center ${isSidebarOpen ? 'w-0 opacity-0' : 'w-8 opacity-100'}`}>
+               <button onClick={() => setIsSidebarOpen(true)} className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 hover:text-gray-800 transition-colors" title="Mở sidebar">
+                  <PanelLeft className="w-5 h-5" />
+               </button>
+            </div>
+            
+            {/* Category Selector UI */}
+            <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5">
+              <LibraryBig className="w-4 h-4 text-gray-500" />
+              <select 
+                value={lawCategory} 
+                onChange={(e) => setLawCategory(e.target.value)}
+                className="bg-transparent text-sm font-medium text-gray-700 focus:outline-none cursor-pointer"
+              >
+                {categories.map(cat => (
+                  <option key={cat} value={cat}>{cat === "Chung" ? "Tất cả lĩnh vực" : `Luật ${cat}`}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          <div className="flex-1">
+          <div className="flex-1 max-w-[200px] ml-auto">
             <ProviderSelector model={model} setModel={setModel}/>
           </div>
         </div>
@@ -225,14 +200,12 @@ export function ChatInterface() {
               </div>
               <h2 className="text-2xl font-semibold text-gray-800 mb-2">VietLaw AI Assistant</h2>
               <p className="text-gray-500 max-w-md">
-                Trợ lý pháp lý ảo chuyên môn cao về Pháp luật Việt Nam. Hãy đặt câu hỏi về luật lao động, dân sự, hình sự hoặc bất kỳ vấn đề pháp lý nào.
+                Đang tra cứu: <strong className="text-blue-600">{lawCategory === "Chung" ? "Tất cả lĩnh vực" : `Lĩnh vực ${lawCategory}`}</strong>
               </p>
             </div>
           ) : (
             <div className="pb-8">
-              {currentMessages.map(msg => (
-                <ChatMessage key={msg.id} message={msg} />
-              ))}
+              {currentMessages.map(msg => <ChatMessage key={msg.id} message={msg} />)}
               {isLoading && (
                 <div className="py-6 bg-transparent">
                   <div className="max-w-4xl mx-auto px-4 flex space-x-4">
@@ -244,7 +217,6 @@ export function ChatInterface() {
                         <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                         <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                         <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                        <span className="ml-2 text-sm text-gray-500 font-medium">Đang tra cứu tài liệu...</span>
                       </div>
                     </div>
                   </div>
@@ -263,10 +235,7 @@ export function ChatInterface() {
                 value={input}
                 onChange={handleInput}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSubmit();
-                  }
+                  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSubmit(); }
                 }}
                 placeholder="Hỏi về bất kỳ vấn đề pháp lý nào... (Shift + Enter để xuống dòng)"
                 className="w-full resize-none bg-transparent pl-4 pr-14 py-3.5 focus:outline-none text-gray-700 leading-relaxed custom-scrollbar"
@@ -280,11 +249,6 @@ export function ChatInterface() {
               >
                 <Send className="w-4 h-4" />
               </button>
-            </div>
-            <div className="text-center mt-3">
-              <span className="text-xs text-gray-400 font-medium">
-                AI có thể cung cấp thông tin chưa chính xác. Vui lòng đối chiếu với văn bản pháp luật hiện hành.
-              </span>
             </div>
           </div>
         </div>
