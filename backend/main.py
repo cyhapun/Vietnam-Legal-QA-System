@@ -72,10 +72,11 @@ def get_llm(model_name: str) -> ChatHuggingFace:
         huggingfacehub_api_token=hf_token,
         do_sample=True,
         repetition_penalty=1.1,
+        timeout=300,
     )
     return ChatHuggingFace(llm=llm)
 
-# --- CASTRUC SYSTEM PROMPT ---
+# --- CẤU TRÚC SYSTEM PROMPT ---
 prompt = ChatPromptTemplate.from_messages([
     ("system", """
 YOU ARE A MULTI-DISCIPLINARY LEGAL EXPERT.
@@ -90,41 +91,47 @@ MANDATORY RULES:
 4. LANGUAGE: Always respond in professional and objective Vietnamese.
 
 ====================
-SYSTEM-EXTRACTED LEGAL REFERENCE DATA:
+[1] SYSTEM-EXTRACTED LEGAL REFERENCE DATA:
 {context}
+
+====================
+[2] PREVIOUS CHAT HISTORY (Dùng để hiểu ngữ cảnh, KHÔNG dùng làm căn cứ pháp lý):
+{chat_history_str}
 """),
-    MessagesPlaceholder(variable_name="chat_history"),
-    ("human", "{question}")
+    ("human", """
+> CÂU HỎI MỚI CỦA NGƯỜI DÙNG:
+{question}
+""")
 ])
 
 # --- API ENDPOINTS ---
 @app.post("/chat")
 async def chat_endpoint(request: ChatRequest):
     try:
-        # 1. Tách câu hỏi cuối cùng và lịch sử chat
+        # 1. Tách câu hỏi cuối cùng
         last_message = request.messages[-1].content
-        chat_history = []
+        
+        # 2. Xử lý lịch sử chat thành văn bản rõ ràng (Dùng cho Log và LLM)
+        history_lines = []
         for msg in request.messages[:-1]:
-            if msg.role == "user":
-                chat_history.append(HumanMessage(content=msg.content))
-            else:
-                chat_history.append(AIMessage(content=msg.content))
+            role_name = "🧑 USER" if msg.role == "user" else "🤖 AI"
+            history_lines.append(f"{role_name}: {msg.content}")
+            
+        chat_history_str = "\n\n".join(history_lines) if history_lines else "(Không có lịch sử trò chuyện)"
 
-        # 2. Truy xuất tài liệu pháp lý liên quan
+        # 3. Truy xuất tài liệu pháp lý liên quan
         retriever = get_retriever(category=request.category)
         retrieved_docs = await retriever.ainvoke(last_message)
         
-        # 3. Đóng gói dữ liệu (Context)
+        # 4. Đóng gói dữ liệu (Context)
         context_text = build_nested_context(retrieved_docs)
         frontend_context = format_docs_for_frontend(retrieved_docs)
 
-        # ========================================================
         # RENDER PROMPT & GHI LOG
-        # ========================================================
-        # Sinh ra prompt hoàn chỉnh y hệt như những gì LLM sẽ đọc
+        # Sinh ra prompt hoàn chỉnh 
         final_formatted_prompt = prompt.format(
             context=context_text,
-            chat_history=chat_history,
+            chat_history_str=chat_history_str, # Truyền chuỗi lịch sử vào đây
             question=last_message
         )
 
@@ -134,21 +141,22 @@ async def chat_endpoint(request: ChatRequest):
         print(context_text)
         print("="*60 + "\n")
 
-        # 4. Gọi LLM để sinh câu trả lời và đo thời gian
-        start_time = time.time() # Bắt đầu bấm giờ
+        # 5. Gọi LLM để sinh câu trả lời và đo thời gian
+        start_time = time.time()
         
         llm = get_llm(request.model)
         rag_chain = prompt | llm | StrOutputParser()
 
+        # Gọi ainvoke với các tham số đã cập nhật
         output_text = await rag_chain.ainvoke({
             "context": context_text,
-            "chat_history": chat_history,
+            "chat_history_str": chat_history_str,
             "question": last_message
         })
 
-        execution_time = time.time() - start_time # Kết thúc bấm giờ
+        execution_time = time.time() - start_time
 
-        # 5. Ghi dữ liệu ra file log (rag_history.log)
+        # 6. Ghi dữ liệu ra file log (Phần này giữ nguyên code của bạn)
         log_file_path = current_dir / "rag_history.log"
         with open(log_file_path, "a", encoding="utf-8") as f:
             f.write(f"\n{'='*80}\n")
@@ -164,7 +172,6 @@ async def chat_endpoint(request: ChatRequest):
             f.write(f"{output_text}\n")
             f.write(f"{'='*80}\n")
 
-        # 6. Trả kết quả về cho Frontend
         return {
             "text": output_text,
             "contextUsed": frontend_context

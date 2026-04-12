@@ -191,6 +191,17 @@ def init_vector_db() -> None:
     if len(pending_files) > 1:
         print(f">> Còn {len(pending_files) - 1} file. Bạn có thể restart server để nhúng file tiếp theo.")
 
+def resolve_reference_data(target_id: str) -> List[Dict[str, Any]]:
+    """Hàm phụ trợ để tìm chính xác Khoản hoặc gom tất cả các Khoản của một Điều."""
+    if target_id in KNOWLEDGE_BASE:
+        return [KNOWLEDGE_BASE[target_id]]
+        
+    results = []
+    search_prefix = f"{target_id}_"
+    for k, v in KNOWLEDGE_BASE.items():
+        if k.startswith(search_prefix):
+            results.append(v)
+    return results
 
 def get_retriever(category: str = "Chung") -> Any:
     """Tạo retriever để tìm kiếm các đoạn văn bản pháp luật liên quan."""
@@ -198,7 +209,7 @@ def get_retriever(category: str = "Chung") -> Any:
     if vectorstore is None:
         init_vector_db()
 
-    search_kwargs = {"k": 10, "fetch_k": 20, "lambda_mult": 0.8}
+    search_kwargs = {"k": 6, "fetch_k": 20, "lambda_mult": 0.8}
     
     # Lọc theo chuyên ngành luật nếu có yêu cầu
     if category and category != "Chung":
@@ -210,7 +221,7 @@ def get_retriever(category: str = "Chung") -> Any:
     )
 
 def build_nested_context(retrieved_docs: List[Document]) -> str:
-    """Xây dựng chuỗi ngữ cảnh (context) từ các tài liệu truy xuất được, bao gồm cả dẫn chiếu."""
+    """Xây dựng chuỗi ngữ cảnh đệ quy 2 Cấp (Cấp 1: Full nội dung, Cấp 2: Tóm tắt)."""
     context_blocks = []
     used_law_ids = set()
     
@@ -226,72 +237,75 @@ def build_nested_context(retrieved_docs: List[Document]) -> str:
         pos = clause_data["position"]
         law_name = LAW_METADATA[law_id]["law_name"]
         
-        # Tạo khối thông tin cho từng căn cứ
+        chapter_val = pos.get('chapter', '')
+        chapter_title = pos.get('chapter_title', '') 
+        article_val = pos.get('article', '')
+        article_title = pos.get('article_title', '') 
+        clause_val = pos.get('clause', '')
+        
+        chapter_str = f"Chương {chapter_val} ({chapter_title})" if chapter_title else f"Chương {chapter_val}"
+        article_str = f"Điều {article_val} ({article_title})" if article_title else f"Điều {article_val}"
+        
+        # [0] CĂN CỨ CHÍNH
         block = f"[CĂN CỨ #{i+1}]\n"
-        block += f"- Nguồn: {law_name} | Chương {pos.get('chapter')} | Điều {pos.get('article')} | Khoản {pos.get('clause')}\n"
+        block += f"- Nguồn: {law_name} | {chapter_str} | {article_str} | Khoản {clause_val}\n"
         block += f"- Nội dung: \"{clause_data['content']}\"\n"
         
-        # Xử lý các điều khoản dẫn chiếu bổ sung
-        refs = clause_data.get("cross_references", [])
-        if refs:
+        refs_level_1 = clause_data.get("cross_references", [])
+        if refs_level_1:
             block += "   >> DẪN CHIẾU BỔ SUNG:\n"
-            for ref in refs:
-                target_id = ref.get("target_id", "")
-                anchor_text = ref.get("anchor_text", target_id)
-                # Đề phòng json dùng trường description hoặc description_summary
-                summary_text = ref.get("description_summary") or ref.get("description", "")
+            
+            for ref1 in refs_level_1:
+                target_id_1 = ref1.get("target_id", "")
+                anchor_text_1 = ref1.get("anchor_text", target_id_1)
                 
-                found_content = ""
-                target_law_name = ""
+                # Tìm dữ liệu của Cấp 1
+                resolved_clauses_1 = resolve_reference_data(target_id_1)
                 
-                # BƯỚC 1: Tìm khớp chính xác (Nếu target_id là một Khoản cụ thể)
-                if target_id in KNOWLEDGE_BASE:
-                    target_data = KNOWLEDGE_BASE[target_id]
-                    target_law_name = LAW_METADATA[target_data["law_id"]]["law_name"]
-                    found_content = target_data["content"]
+                if resolved_clauses_1:
+                    # [1] DẪN CHIẾU CẤP 1 (Lấy toàn bộ Content)
+                    content_1 = " ".join([c["content"] for c in resolved_clauses_1])
+                    target_law_id_1 = resolved_clauses_1[0]["law_id"]
+                    target_law_name_1 = LAW_METADATA[target_law_id_1]["law_name"]
+                    used_law_ids.add(target_law_id_1)
                     
-                # BƯỚC 2: Tìm theo cấp Điều (Lấy tất cả các Khoản trực thuộc Điều đó)
-                else:
-                    matching_clauses = []
-                    target_law_id = None
+                    block += f"   + [Cấp 1] Tại cụm từ '{anchor_text_1}' ({target_law_name_1}):\n"
+                    block += f"     Nội dung: \"{content_1}\"\n"
                     
-                    # Quét qua RAM Store, tìm ID con (VD: GTDB_2024_D13_K1 bắt đầu bằng GTDB_2024_D13_)
-                    # Phải thêm dấu "_" để tránh tìm nhầm Điều 13 và Điều 130
-                    search_prefix = f"{target_id}_" 
-                    
-                    for k, v in KNOWLEDGE_BASE.items():
-                        if k.startswith(search_prefix):
-                            matching_clauses.append(v["content"])
-                            if not target_law_id:
-                                target_law_id = v["law_id"]
-                    
-                    if matching_clauses:
-                        # Gom tất cả các Khoản lại thành 1 chuỗi
-                        found_content = " ".join(matching_clauses)
-                        target_law_name = LAW_METADATA[target_law_id]["law_name"]
-                
-                # BƯỚC 3: Xử lý hiển thị và giới hạn Token
-                if found_content:
-                    # Nếu nội dung gom lại quá dài (>500 ký tự) và đã có tóm tắt -> Ưu tiên dùng tóm tắt
-                    if len(found_content) > 500 and summary_text:
-                        block += f"   + Cụm từ '{anchor_text}' ({target_law_name}): \"(Tóm tắt) {summary_text}\"\n"
-                    else:
-                        # Nếu nội dung ngắn thì nhét thẳng, dài mà không có tóm tắt thì cắt ngọn bớt
-                        display_content = found_content if len(found_content) <= 600 else found_content[:600] + "..."
-                        block += f"   + Cụm từ '{anchor_text}' ({target_law_name}): \"{display_content}\"\n"
-                
-                # BƯỚC 4: Fallback bần cùng - Không tìm thấy trong DB thì dùng summary luôn
-                else:
-                    if summary_text:
-                        block += f"   + Cụm từ '{anchor_text}': \"(Tóm tắt) {summary_text}\"\n"
+                    # [2] DẪN CHIẾU CẤP 2 (Chỉ lấy Tóm tắt)
+                    refs_level_2 = []
+                    for c in resolved_clauses_1:
+                        refs_level_2.extend(c.get("cross_references", []))
                         
+                    # Lọc trùng lặp và tránh trỏ ngược về chính nó
+                    seen_targets = set()
+                    unique_refs_level_2 = []
+                    for r2 in refs_level_2:
+                        t2_id = r2.get("target_id")
+                        if t2_id not in seen_targets and t2_id != target_id_1 and t2_id != clause_id:
+                            seen_targets.add(t2_id)
+                            unique_refs_level_2.append(r2)
+                            
+                    if unique_refs_level_2:
+                        for ref2 in unique_refs_level_2:
+                            anchor_text_2 = ref2.get("anchor_text", ref2.get("target_id", ""))
+                            summary_text_2 = ref2.get("description_summary") or ref2.get("description", "Vui lòng xem chi tiết tại văn bản gốc.")
+                            
+                            block += f"       -> [Cấp 2] Có liên quan đến '{anchor_text_2}': (Tóm tắt) {summary_text_2}\n"
+                            
+                else:
+                    # Fallback nếu không quét được trong RAM (Luật đó chưa được Embedding)
+                    summary_text_1 = ref1.get("description_summary") or ref1.get("description", "")
+                    block += f"   + [Cấp 1] Tại cụm từ '{anchor_text_1}': (Tóm tắt) {summary_text_1}\n"
+        
         context_blocks.append(block)
     
     # Tạo phần Header tổng hợp thông tin văn bản
     header = "--- THÔNG TIN CÁC VĂN BẢN ĐƯỢC SỬ DỤNG ---\n"
     for l_id in used_law_ids:
-        meta = LAW_METADATA[l_id]
-        header += f"- {meta['law_name']}: {meta['summary']}\n"
+        meta = LAW_METADATA.get(l_id)
+        if meta:
+            header += f"- {meta['law_name']}: {meta['summary']}\n"
     header += "\n--- CHI TIẾT CĂN CỨ VÀ DẪN CHIẾU ---\n"
     
     return header + "\n\n".join(context_blocks)
