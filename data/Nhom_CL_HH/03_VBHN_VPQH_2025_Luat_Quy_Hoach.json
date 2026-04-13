@@ -1,0 +1,4170 @@
+{
+  "law_info": {
+    "law_id": "LQH_VBHN",
+    "law_name": "Luật Quy Hoạch",
+    "publisher": "VĂN PHÒNG QUỐC HỘI",
+    "status": "Luật Quy hoạch số 21/2017/QH14 ngày 24 tháng 11 năm 2017 của Quốc hội, có hiệu lực kể từ ngày 01 tháng 01 năm 2019, được sửa đổi, bổ sung bởi:",
+    "executive_summary": "Luật Quy hoạch điều chỉnh việc lập, thẩm định, quyết định hoặc phê duyệt, công bố, thực hiện, đánh giá và điều chỉnh quy hoạch trong hệ thống quy hoạch quốc gia. Văn bản xác lập nguyên tắc tích hợp, thứ bậc và liên kết giữa các loại quy hoạch cấp quốc gia, vùng, tỉnh và quy hoạch có tính chất kỹ thuật, chuyên ngành. Luật đồng thời quy định trách nhiệm quản lý nhà nước, quyền và nghĩa vụ của cơ quan, tổ chức, cá nhân trong hoạt động quy hoạch nhằm bảo đảm phát triển bền vững."
+  },
+  "clauses": [
+    {
+      "id": "LQH_VBHN_D1_K1",
+      "position": {
+        "chapter": 1,
+        "article": 1,
+        "article_title": "Phạm vi điều chỉnh",
+        "clause": 1
+      },
+      "content": "Luật này quy định việc lập, thẩm định, quyết định hoặc phê duyệt, công bố, thực hiện, đánh giá, điều chỉnh quy hoạch trong hệ thống quy hoạch quốc gia; trách nhiệm quản lý nhà nước về quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "phạm vi điều chỉnh",
+        "hệ thống quy hoạch quốc gia",
+        "điều chỉnh quy hoạch",
+        "quản lý nhà nước về quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D2_K1",
+      "position": {
+        "chapter": 1,
+        "article": 2,
+        "article_title": "Đối tượng áp dụng",
+        "clause": 1
+      },
+      "content": "Luật này áp dụng đối với cơ quan, tổ chức, cá nhân tham gia lập, thẩm định, quyết định hoặc phê duyệt, công bố, thực hiện, đánh giá, điều chỉnh quy hoạch trong hệ thống quy hoạch quốc gia và cơ quan, tổ chức, cá nhân khác có liên quan.",
+      "cross_references": [],
+      "tags": [
+        "đối tượng áp dụng",
+        "hệ thống quy hoạch quốc gia",
+        "điều chỉnh quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D3_K1",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 1
+      },
+      "content": "Quy hoạch là việc sắp xếp, phân bố không gian các hoạt động kinh tế - xã hội, quốc phòng, an ninh gắn với phát triển kết cấu hạ tầng, sử dụng tài nguyên và bảo vệ môi trường trên lãnh thổ xác định để sử dụng hiệu quả các nguồn lực của đất nước phục vụ mục tiêu phát triển bền vững cho thời kỳ xác định.",
+      "cross_references": [],
+      "tags": [
+        "giải thích từ ngữ",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D3_K2",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 2
+      },
+      "content": "Quy hoạch tổng thể quốc gia là quy hoạch cấp quốc gia, mang tính chiến lược theo hướng phân vùng và liên kết vùng của lãnh thổ bao gồm đất liền, các đảo, quần đảo, vùng biển và vùng trời; hệ thống đô thị và nông thôn; kết cấu hạ tầng; sử dụng tài nguyên và bảo vệ môi trường; phòng, chống thiên tai, ứng phó với biến đổi khí hậu, bảo đảm quốc phòng, an ninh và hội nhập quốc tế.",
+      "cross_references": [],
+      "tags": [
+        "giải thích từ ngữ",
+        "quy hoạch tổng thể quốc gia",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D3_K3",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 3
+      },
+      "content": "Quy hoạch không gian biển quốc gia là quy hoạch cấp quốc gia, cụ thể hóa quy hoạch tổng thể quốc gia về phân vùng chức năng và sắp xếp, phân bố hợp lý không gian các ngành, lĩnh vực trên vùng đất ven biển, các đảo, quần đảo, vùng biển, vùng trời thuộc chủ quyền, quyền chủ quyền, quyền tài phán quốc gia của Việt Nam.",
+      "cross_references": [],
+      "tags": [
+        "giải thích từ ngữ",
+        "quy hoạch tổng thể quốc gia",
+        "quy hoạch không gian biển quốc gia"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D3_K4",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 4
+      },
+      "content": "Quy hoạch sử dụng đất quốc gia là quy hoạch cấp quốc gia, cụ thể hóa quy hoạch tổng thể quốc gia về phân bổ và khoanh vùng đất đai cho các ngành, lĩnh vực và các địa phương trên cơ sở tiềm năng đất đai.",
+      "cross_references": [],
+      "tags": [
+        "giải thích từ ngữ",
+        "quy hoạch tổng thể quốc gia",
+        "quy hoạch sử dụng đất quốc gia"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D3_K5",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 5
+      },
+      "content": "Quy hoạch ngành quốc gia là quy hoạch cấp quốc gia, cụ thể hóa quy hoạch tổng thể quốc gia theo ngành trên cơ sở kết nối các ngành, các vùng có liên quan đến kết cấu hạ tầng, sử dụng tài nguyên, bảo vệ môi trường và bảo tồn đa dạng sinh học.",
+      "cross_references": [],
+      "tags": [
+        "giải thích từ ngữ",
+        "quy hoạch tổng thể quốc gia",
+        "quy hoạch ngành quốc gia"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D3_K6",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 6
+      },
+      "content": "Vùng là một bộ phận của lãnh thổ quốc gia bao gồm một số tỉnh, thành phố trực thuộc trung ương lân cận gắn với một số lưu vực sông hoặc có sự tương đồng về điều kiện tự nhiên, kinh tế - xã hội, lịch sử, dân cư, kết cấu hạ tầng và có mối quan hệ tương tác tạo nên sự liên kết bền vững với nhau.",
+      "cross_references": [],
+      "tags": [
+        "giải thích từ ngữ",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D3_K7",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 7
+      },
+      "content": "Quy hoạch vùng là quy hoạch cụ thể hóa quy hoạch tổng thể quốc gia ở cấp vùng về không gian các hoạt động kinh tế - xã hội, quốc phòng, an ninh, hệ thống đô thị và phân bố dân cư nông thôn, xây dựng vùng liên tỉnh, kết cấu hạ tầng, nguồn nước lưu vực sông, sử dụng tài nguyên và bảo vệ môi trường trên cơ sở kết nối các tỉnh.",
+      "cross_references": [],
+      "tags": [
+        "giải thích từ ngữ",
+        "quy hoạch tổng thể quốc gia",
+        "quy hoạch vùng"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D3_K8",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 8
+      },
+      "content": "Quy hoạch tỉnh là quy hoạch cụ thể hóa quy hoạch tổng thể quốc gia, quy hoạch vùng ở cấp tỉnh về không gian các hoạt động kinh tế - xã hội, quốc phòng, an ninh, hệ thống đô thị và phân bố dân cư nông thôn, kết cấu hạ tầng, phân bổ đất đai, sử dụng tài nguyên và bảo vệ môi trường trên cơ sở kết nối quy hoạch cấp quốc gia, quy hoạch vùng, quy hoạch đô thị, quy hoạch nông thôn.",
+      "cross_references": [],
+      "tags": [
+        "giải thích từ ngữ",
+        "quy hoạch tổng thể quốc gia",
+        "quy hoạch vùng",
+        "quy hoạch tỉnh"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D3_K9",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 9
+      },
+      "content": "Quy hoạch có tính chất kỹ thuật, chuyên ngành là quy hoạch cụ thể hóa quy hoạch cấp quốc gia, quy hoạch vùng, quy hoạch tỉnh. Quy hoạch có tính chất kỹ thuật, chuyên ngành bao gồm các quy hoạch được quy định tại Phụ lục 2 của Luật này.",
+      "cross_references": [],
+      "tags": [
+        "giải thích từ ngữ",
+        "quy hoạch vùng",
+        "quy hoạch tỉnh"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D3_K10",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 10
+      },
+      "content": "Tích hợp quy hoạch là phương pháp tiếp cận tổng hợp và phối hợp đồng bộ giữa các ngành, lĩnh vực có liên quan đến kết cấu hạ tầng, sử dụng tài nguyên và bảo vệ môi trường trong việc lập quy hoạch trên một phạm vi lãnh thổ xác định nhằm đạt được mục tiêu phát triển cân đối, hài hòa, hiệu quả và bền vững.",
+      "cross_references": [],
+      "tags": [
+        "giải thích từ ngữ",
+        "lập quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D3_K11",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 11
+      },
+      "content": "Hoạt động quy hoạch bao gồm việc tổ chức lập, thẩm định, quyết định hoặc phê duyệt, công bố, thực hiện, đánh giá và điều chỉnh quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "giải thích từ ngữ",
+        "hoạt động quy hoạch",
+        "điều chỉnh quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D3_K12",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 12
+      },
+      "content": "Cơ quan lập quy hoạch là cơ quan, tổ chức được Chính phủ, Thủ tướng Chính phủ, Bộ, cơ quan ngang Bộ, Ủy ban nhân dân cấp tỉnh giao trách nhiệm lập quy hoạch thuộc hệ thống quy hoạch quốc gia.",
+      "cross_references": [],
+      "tags": [
+        "giải thích từ ngữ",
+        "hệ thống quy hoạch quốc gia",
+        "lập quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D3_K13",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 13
+      },
+      "content": "Cơ sở dữ liệu về quy hoạch là tập hợp thông tin thể hiện nội dung cơ bản về quy hoạch được xây dựng, cập nhật, duy trì để quản lý, khai thác và sử dụng thông qua các phương tiện điện tử.",
+      "cross_references": [],
+      "tags": [
+        "giải thích từ ngữ",
+        "cơ sở dữ liệu về quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D3_K14",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 14
+      },
+      "content": "Sơ đồ, bản đồ quy hoạch là bản vẽ thể hiện nội dung quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "giải thích từ ngữ",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D4_K1",
+      "position": {
+        "chapter": 1,
+        "article": 4,
+        "article_title": "Nguyên tắc cơ bản trong hoạt động quy hoạch",
+        "clause": 1
+      },
+      "content": "Tuân theo quy định của Luật này, quy định khác của pháp luật có liên quan và điều ước quốc tế mà nước Cộng hòa xã hội chủ nghĩa Việt Nam là thành viên.",
+      "cross_references": [],
+      "tags": [
+        "nguyên tắc cơ bản trong hoạt động quy hoạch",
+        "điều ước quốc tế",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D4_K2",
+      "position": {
+        "chapter": 1,
+        "article": 4,
+        "article_title": "Nguyên tắc cơ bản trong hoạt động quy hoạch",
+        "clause": 2
+      },
+      "content": "Bảo đảm tính thống nhất, đồng bộ giữa quy hoạch với chiến lược và kế hoạch phát triển kinh tế - xã hội; bảo đảm kết hợp quản lý ngành với quản lý lãnh thổ; bảo đảm quốc phòng, an ninh; bảo vệ môi trường.",
+      "cross_references": [],
+      "tags": [
+        "nguyên tắc cơ bản trong hoạt động quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D4_K3",
+      "position": {
+        "chapter": 1,
+        "article": 4,
+        "article_title": "Nguyên tắc cơ bản trong hoạt động quy hoạch",
+        "clause": 3
+      },
+      "content": "Bảo đảm sự tuân thủ, tính liên tục, kế thừa, ổn định, thứ bậc trong hệ thống quy hoạch quốc gia.",
+      "cross_references": [],
+      "tags": [
+        "nguyên tắc cơ bản trong hoạt động quy hoạch",
+        "hệ thống quy hoạch quốc gia",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D4_K4",
+      "position": {
+        "chapter": 1,
+        "article": 4,
+        "article_title": "Nguyên tắc cơ bản trong hoạt động quy hoạch",
+        "clause": 4
+      },
+      "content": "Bảo đảm tính nhân dân, sự tham gia của cơ quan, tổ chức, cộng đồng, cá nhân; bảo đảm hài hòa lợi ích của quốc gia, các vùng, các địa phương và lợi ích của người dân, trong đó lợi ích quốc gia là cao nhất; bảo đảm nguyên tắc bình đẳng giới.",
+      "cross_references": [],
+      "tags": [
+        "nguyên tắc cơ bản trong hoạt động quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D4_K5",
+      "position": {
+        "chapter": 1,
+        "article": 4,
+        "article_title": "Nguyên tắc cơ bản trong hoạt động quy hoạch",
+        "clause": 5
+      },
+      "content": "Bảo đảm tính khoa học, ứng dụng công nghệ hiện đại, kết nối liên thông, dự báo, khả thi, tiết kiệm và sử dụng hiệu quả nguồn lực của đất nước; bảo đảm tính khách quan, công khai, minh bạch, tính bảo tồn.",
+      "cross_references": [],
+      "tags": [
+        "nguyên tắc cơ bản trong hoạt động quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D4_K6",
+      "position": {
+        "chapter": 1,
+        "article": 4,
+        "article_title": "Nguyên tắc cơ bản trong hoạt động quy hoạch",
+        "clause": 6
+      },
+      "content": "Bảo đảm tính độc lập giữa cơ quan lập quy hoạch với Hội đồng thẩm định quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "nguyên tắc cơ bản trong hoạt động quy hoạch",
+        "lập quy hoạch",
+        "thẩm định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D4_K7",
+      "position": {
+        "chapter": 1,
+        "article": 4,
+        "article_title": "Nguyên tắc cơ bản trong hoạt động quy hoạch",
+        "clause": 7
+      },
+      "content": "Bảo đảm nguồn lực để thực hiện quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "nguyên tắc cơ bản trong hoạt động quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D4_K8",
+      "position": {
+        "chapter": 1,
+        "article": 4,
+        "article_title": "Nguyên tắc cơ bản trong hoạt động quy hoạch",
+        "clause": 8
+      },
+      "content": "Bảo đảm thống nhất quản lý nhà nước về quy hoạch, phân cấp, phân quyền hợp lý giữa các cơ quan nhà nước.",
+      "cross_references": [],
+      "tags": [
+        "nguyên tắc cơ bản trong hoạt động quy hoạch",
+        "quản lý nhà nước về quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D5_K1",
+      "position": {
+        "chapter": 1,
+        "article": 5,
+        "article_title": "Hệ thống quy hoạch quốc gia",
+        "clause": 1
+      },
+      "content": "Quy hoạch cấp quốc gia. Quy hoạch cấp quốc gia bao gồm quy hoạch tổng thể quốc gia, quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia, quy hoạch ngành quốc gia.",
+      "cross_references": [],
+      "tags": [
+        "hệ thống quy hoạch quốc gia",
+        "quy hoạch tổng thể quốc gia",
+        "quy hoạch không gian biển quốc gia",
+        "quy hoạch sử dụng đất quốc gia",
+        "quy hoạch ngành quốc gia"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D5_K2",
+      "position": {
+        "chapter": 1,
+        "article": 5,
+        "article_title": "Hệ thống quy hoạch quốc gia",
+        "clause": 2
+      },
+      "content": "Quy hoạch vùng.",
+      "cross_references": [],
+      "tags": [
+        "hệ thống quy hoạch quốc gia",
+        "quy hoạch vùng",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D5_K3",
+      "position": {
+        "chapter": 1,
+        "article": 5,
+        "article_title": "Hệ thống quy hoạch quốc gia",
+        "clause": 3
+      },
+      "content": "Quy hoạch tỉnh.",
+      "cross_references": [],
+      "tags": [
+        "hệ thống quy hoạch quốc gia",
+        "quy hoạch tỉnh",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D5_K4",
+      "position": {
+        "chapter": 1,
+        "article": 5,
+        "article_title": "Hệ thống quy hoạch quốc gia",
+        "clause": 4
+      },
+      "content": "Quy hoạch đơn vị hành chính - kinh tế đặc biệt. Quy hoạch đơn vị hành chính - kinh tế đặc biệt do Quốc hội quy định.",
+      "cross_references": [],
+      "tags": [
+        "hệ thống quy hoạch quốc gia",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D6_K1",
+      "position": {
+        "chapter": 1,
+        "article": 6,
+        "article_title": "Mối quan hệ giữa các loại quy hoạch",
+        "clause": 1
+      },
+      "content": "Quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia phải phù hợp với quy hoạch tổng thể quốc gia. Trường hợp quy hoạch không gian biển quốc gia và quy hoạch sử dụng đất quốc gia có mâu thuẫn với nhau thì phải điều chỉnh và thực hiện theo quy hoạch tổng thể quốc gia.",
+      "cross_references": [],
+      "tags": [
+        "mối quan hệ giữa các loại quy hoạch",
+        "quy hoạch tổng thể quốc gia",
+        "quy hoạch không gian biển quốc gia",
+        "quy hoạch sử dụng đất quốc gia"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D6_K2",
+      "position": {
+        "chapter": 1,
+        "article": 6,
+        "article_title": "Mối quan hệ giữa các loại quy hoạch",
+        "clause": 2
+      },
+      "content": "Quy hoạch ngành quốc gia phải phù hợp với quy hoạch tổng thể quốc gia, quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia. Trường hợp quy hoạch ngành quốc gia có mâu thuẫn với quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia hoặc các quy hoạch ngành quốc gia mâu thuẫn với nhau thì phải điều chỉnh và thực hiện theo quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia và quy hoạch tổng thể quốc gia.",
+      "cross_references": [],
+      "tags": [
+        "mối quan hệ giữa các loại quy hoạch",
+        "quy hoạch tổng thể quốc gia",
+        "quy hoạch không gian biển quốc gia",
+        "quy hoạch sử dụng đất quốc gia",
+        "quy hoạch ngành quốc gia"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D6_K3",
+      "position": {
+        "chapter": 1,
+        "article": 6,
+        "article_title": "Mối quan hệ giữa các loại quy hoạch",
+        "clause": 3
+      },
+      "content": "Quy hoạch vùng phải phù hợp với quy hoạch cấp quốc gia; quy hoạch tỉnh phải phù hợp quy hoạch vùng, quy hoạch cấp quốc gia. Trường hợp quy hoạch vùng, quy hoạch tỉnh có mâu thuẫn với quy hoạch ngành quốc gia thì phải điều chỉnh và thực hiện theo quy hoạch ngành quốc gia và quy hoạch tổng thể quốc gia. Trường hợp quy hoạch vùng có mâu thuẫn với nhau, quy hoạch tỉnh có mâu thuẫn với nhau thì phải điều chỉnh và thực hiện theo quy hoạch cao hơn; trường hợp quy hoạch tỉnh có mâu thuẫn với quy hoạch vùng thì phải điều chỉnh và thực hiện theo quy hoạch vùng và quy hoạch cấp quốc gia.",
+      "cross_references": [],
+      "tags": [
+        "mối quan hệ giữa các loại quy hoạch",
+        "quy hoạch tổng thể quốc gia",
+        "quy hoạch ngành quốc gia",
+        "quy hoạch vùng",
+        "quy hoạch tỉnh"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D6_K4",
+      "position": {
+        "chapter": 1,
+        "article": 6,
+        "article_title": "Mối quan hệ giữa các loại quy hoạch",
+        "clause": 4
+      },
+      "content": "Quy hoạch có tính chất kỹ thuật, chuyên ngành phải phù hợp với quy hoạch cấp quốc gia, quy hoạch vùng, quy hoạch tỉnh có liên quan theo quy định của Chính phủ.",
+      "cross_references": [],
+      "tags": [
+        "mối quan hệ giữa các loại quy hoạch",
+        "quy hoạch vùng",
+        "quy hoạch tỉnh"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D7_K1",
+      "position": {
+        "chapter": 1,
+        "article": 7,
+        "article_title": "Trình tự trong hoạt động quy hoạch",
+        "clause": 1
+      },
+      "content": "Lập quy hoạch: a) Lập, thẩm định và phê duyệt nhiệm vụ lập quy hoạch; b) Tổ chức lập quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "trình tự trong hoạt động quy hoạch",
+        "lập quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D7_K2",
+      "position": {
+        "chapter": 1,
+        "article": 7,
+        "article_title": "Trình tự trong hoạt động quy hoạch",
+        "clause": 2
+      },
+      "content": "Thẩm định quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "trình tự trong hoạt động quy hoạch",
+        "thẩm định quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D7_K3",
+      "position": {
+        "chapter": 1,
+        "article": 7,
+        "article_title": "Trình tự trong hoạt động quy hoạch",
+        "clause": 3
+      },
+      "content": "Quyết định hoặc phê duyệt quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "trình tự trong hoạt động quy hoạch",
+        "phê duyệt quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D7_K4",
+      "position": {
+        "chapter": 1,
+        "article": 7,
+        "article_title": "Trình tự trong hoạt động quy hoạch",
+        "clause": 4
+      },
+      "content": "Công bố quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "trình tự trong hoạt động quy hoạch",
+        "công bố quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D7_K5",
+      "position": {
+        "chapter": 1,
+        "article": 7,
+        "article_title": "Trình tự trong hoạt động quy hoạch",
+        "clause": 5
+      },
+      "content": "Thực hiện quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "trình tự trong hoạt động quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D8_K1",
+      "position": {
+        "chapter": 1,
+        "article": 8,
+        "article_title": "Thời kỳ quy hoạch",
+        "clause": 1
+      },
+      "content": "Thời kỳ quy hoạch là khoảng thời gian được xác định để làm cơ sở dự báo, tính toán các chỉ tiêu kinh tế - xã hội cho việc lập quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "thời kỳ quy hoạch",
+        "lập quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D8_K2",
+      "position": {
+        "chapter": 1,
+        "article": 8,
+        "article_title": "Thời kỳ quy hoạch",
+        "clause": 2
+      },
+      "content": "Thời kỳ quy hoạch của các quy hoạch thuộc hệ thống quy hoạch quốc gia là 10 năm. Tầm nhìn của quy hoạch cấp quốc gia là từ 30 năm đến 50 năm. Tầm nhìn của quy hoạch vùng và quy hoạch tỉnh là từ 20 năm đến 30 năm.",
+      "cross_references": [],
+      "tags": [
+        "thời kỳ quy hoạch",
+        "hệ thống quy hoạch quốc gia",
+        "quy hoạch vùng",
+        "quy hoạch tỉnh"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D9_K1",
+      "position": {
+        "chapter": 1,
+        "article": 9,
+        "article_title": "Chi phí cho hoạt động quy hoạch",
+        "clause": 1
+      },
+      "content": "Chi phí lập, công bố, điều chỉnh quy hoạch cấp quốc gia, quy hoạch vùng, quy hoạch tỉnh sử dụng nguồn vốn đầu tư công theo quy định của pháp luật về đầu tư công và nguồn vốn hợp pháp khác; đối với quy hoạch sử dụng đất quốc gia, quy hoạch sử dụng đất quốc phòng, quy hoạch sử dụng đất an ninh thực hiện theo quy định của pháp luật về đất đai.",
+      "cross_references": [],
+      "tags": [
+        "chi phí cho hoạt động quy hoạch",
+        "quy hoạch sử dụng đất quốc gia",
+        "quy hoạch vùng",
+        "quy hoạch tỉnh",
+        "điều chỉnh quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D9_K2",
+      "position": {
+        "chapter": 1,
+        "article": 9,
+        "article_title": "Chi phí cho hoạt động quy hoạch",
+        "clause": 2
+      },
+      "content": "Chi phí lập, thẩm định, điều chỉnh nhiệm vụ lập quy hoạch cấp quốc gia, quy hoạch vùng, quy hoạch tỉnh; thẩm định, thẩm định điều chỉnh quy hoạch cấp quốc gia, quy hoạch vùng, quy hoạch tỉnh; điều chỉnh theo trình tự, thủ tục rút gọn quy hoạch cấp quốc gia, quy hoạch vùng, quy hoạch tỉnh; đánh giá quy hoạch cấp quốc gia, quy hoạch vùng, quy hoạch tỉnh sử dụng nguồn chi thường xuyên theo quy định của pháp luật về ngân sách nhà nước.",
+      "cross_references": [],
+      "tags": [
+        "chi phí cho hoạt động quy hoạch",
+        "quy hoạch vùng",
+        "quy hoạch tỉnh",
+        "lập quy hoạch",
+        "điều chỉnh quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D9_K3",
+      "position": {
+        "chapter": 1,
+        "article": 9,
+        "article_title": "Chi phí cho hoạt động quy hoạch",
+        "clause": 3
+      },
+      "content": "Chi phí lập, thẩm định, công bố, đánh giá, điều chỉnh quy hoạch có tính chất kỹ thuật, chuyên ngành sử dụng nguồn chi thường xuyên theo quy định của pháp luật về ngân sách nhà nước và nguồn vốn hợp pháp khác.",
+      "cross_references": [],
+      "tags": [
+        "chi phí cho hoạt động quy hoạch",
+        "điều chỉnh quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D9_K4",
+      "position": {
+        "chapter": 1,
+        "article": 9,
+        "article_title": "Chi phí cho hoạt động quy hoạch",
+        "clause": 4
+      },
+      "content": "Chính phủ quy định chi tiết Điều này.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D9",
+          "anchor_text": "Điều này",
+          "description_summary": "Chi phí cho hoạt động quy hoạch"
+        }
+      ],
+      "tags": [
+        "chi phí cho hoạt động quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D10_K1",
+      "position": {
+        "chapter": 1,
+        "article": 10,
+        "article_title": "Chính sách của nhà nước về hoạt động quy hoạch",
+        "clause": 1
+      },
+      "content": "Nhà nước quản lý phát triển kinh tế - xã hội và bảo đảm quốc phòng, an ninh, bảo vệ môi trường theo quy hoạch đã được quyết định hoặc phê duyệt.",
+      "cross_references": [],
+      "tags": [
+        "chính sách của nhà nước về hoạt động quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D10_K2",
+      "position": {
+        "chapter": 1,
+        "article": 10,
+        "article_title": "Chính sách của nhà nước về hoạt động quy hoạch",
+        "clause": 2
+      },
+      "content": "Nhà nước ban hành cơ chế, chính sách khuyến khích và huy động nguồn lực để thúc đẩy phát triển bền vững gắn với bảo vệ môi trường và ứng phó với biến đổi khí hậu theo quy hoạch đã được quyết định hoặc phê duyệt.",
+      "cross_references": [],
+      "tags": [
+        "chính sách của nhà nước về hoạt động quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D10_K3",
+      "position": {
+        "chapter": 1,
+        "article": 10,
+        "article_title": "Chính sách của nhà nước về hoạt động quy hoạch",
+        "clause": 3
+      },
+      "content": "Nhà nước ban hành cơ chế, chính sách khuyến khích tổ chức, cá nhân trong nước và tổ chức, cá nhân nước ngoài hỗ trợ nguồn lực cho hoạt động quy hoạch bảo đảm khách quan, công khai, minh bạch.",
+      "cross_references": [],
+      "tags": [
+        "chính sách của nhà nước về hoạt động quy hoạch",
+        "hoạt động quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D10_K4",
+      "position": {
+        "chapter": 1,
+        "article": 10,
+        "article_title": "Chính sách của nhà nước về hoạt động quy hoạch",
+        "clause": 4
+      },
+      "content": "Nhà nước ban hành cơ chế, chính sách khuyến khích và tạo điều kiện thuận lợi để các tổ chức, cá nhân thuộc mọi thành phần kinh tế tham gia vào hoạt động quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "chính sách của nhà nước về hoạt động quy hoạch",
+        "hoạt động quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D10_K5",
+      "position": {
+        "chapter": 1,
+        "article": 10,
+        "article_title": "Chính sách của nhà nước về hoạt động quy hoạch",
+        "clause": 5
+      },
+      "content": "Nhà nước ban hành cơ chế, chính sách tăng cường hợp tác quốc tế trong hoạt động quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "chính sách của nhà nước về hoạt động quy hoạch",
+        "hoạt động quy hoạch",
+        "hợp tác quốc tế trong hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D11_K1",
+      "position": {
+        "chapter": 1,
+        "article": 11,
+        "article_title": "Hợp tác quốc tế trong hoạt động quy hoạch",
+        "clause": 1
+      },
+      "content": "Hợp tác quốc tế trong hoạt động quy hoạch nhằm bảo đảm hoạt động quy hoạch đáp ứng yêu cầu hội nhập quốc tế, bảo đảm các nguyên tắc cơ bản trong hoạt động quy hoạch quy định tại Điều 4 của Luật này.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D4",
+          "anchor_text": "Điều 4",
+          "description_summary": "Nguyên tắc cơ bản trong hoạt động quy hoạch"
+        }
+      ],
+      "tags": [
+        "hợp tác quốc tế trong hoạt động quy hoạch",
+        "hoạt động quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D11_K2",
+      "position": {
+        "chapter": 1,
+        "article": 11,
+        "article_title": "Hợp tác quốc tế trong hoạt động quy hoạch",
+        "clause": 2
+      },
+      "content": "Các hoạt động hợp tác quốc tế chủ yếu trong hoạt động quy hoạch gồm chia sẻ kinh nghiệm, ứng dụng khoa học và công nghệ mới, đào tạo và thu hút nguồn nhân lực cho hoạt động quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "hợp tác quốc tế trong hoạt động quy hoạch",
+        "hoạt động quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D11_K3",
+      "position": {
+        "chapter": 1,
+        "article": 11,
+        "article_title": "Hợp tác quốc tế trong hoạt động quy hoạch",
+        "clause": 3
+      },
+      "content": "Hợp tác quốc tế trong hoạt động quy hoạch phải phù hợp với đường lối và chính sách đối ngoại của Việt Nam; bảo đảm nguyên tắc hòa bình, hợp tác, hữu nghị cùng phát triển trên cơ sở tôn trọng độc lập, chủ quyền và toàn vẹn lãnh thổ, cùng có lợi, tôn trọng pháp luật Việt Nam và các điều ước quốc tế có liên quan mà nước Cộng hòa xã hội chủ nghĩa Việt Nam là thành viên.",
+      "cross_references": [],
+      "tags": [
+        "hợp tác quốc tế trong hoạt động quy hoạch",
+        "hoạt động quy hoạch",
+        "điều ước quốc tế"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D12_K1",
+      "position": {
+        "chapter": 1,
+        "article": 12,
+        "article_title": "Quyền và trách nhiệm của cơ quan, tổ chức, cộng đồng, cá nhân trong việc tham gia ý kiến, giám sát hoạt động quy hoạch",
+        "clause": 1
+      },
+      "content": "Cơ quan, tổ chức, cộng đồng có quyền tham gia ý kiến, giám sát hoạt động quy hoạch; cá nhân có quyền tham gia ý kiến về hoạt động quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "quyền và trách nhiệm của cơ quan, tổ chức, cộng đồng, cá nhân trong việc tham gia ý kiến, giám sát hoạt động quy hoạch",
+        "hoạt động quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D12_K2",
+      "position": {
+        "chapter": 1,
+        "article": 12,
+        "article_title": "Quyền và trách nhiệm của cơ quan, tổ chức, cộng đồng, cá nhân trong việc tham gia ý kiến, giám sát hoạt động quy hoạch",
+        "clause": 2
+      },
+      "content": "Cơ quan, tổ chức, cá nhân được lấy ý kiến có trách nhiệm trả lời trong thời hạn yêu cầu.",
+      "cross_references": [],
+      "tags": [
+        "quyền và trách nhiệm của cơ quan, tổ chức, cộng đồng, cá nhân trong việc tham gia ý kiến, giám sát hoạt động quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D12_K3",
+      "position": {
+        "chapter": 1,
+        "article": 12,
+        "article_title": "Quyền và trách nhiệm của cơ quan, tổ chức, cộng đồng, cá nhân trong việc tham gia ý kiến, giám sát hoạt động quy hoạch",
+        "clause": 3
+      },
+      "content": "Cơ quan được giao trách nhiệm tổ chức lập, thẩm định, quyết định hoặc phê duyệt, thực hiện và điều chỉnh quy hoạch phải tạo điều kiện cho cơ quan, tổ chức, cộng đồng tham gia ý kiến, giám sát hoạt động quy hoạch; tạo điều kiện cho cá nhân tham gia ý kiến về hoạt động quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "quyền và trách nhiệm của cơ quan, tổ chức, cộng đồng, cá nhân trong việc tham gia ý kiến, giám sát hoạt động quy hoạch",
+        "hoạt động quy hoạch",
+        "điều chỉnh quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D12_K4",
+      "position": {
+        "chapter": 1,
+        "article": 12,
+        "article_title": "Quyền và trách nhiệm của cơ quan, tổ chức, cộng đồng, cá nhân trong việc tham gia ý kiến, giám sát hoạt động quy hoạch",
+        "clause": 4
+      },
+      "content": "Ý kiến tham gia của cơ quan, tổ chức, cộng đồng, cá nhân về hoạt động quy hoạch phải được nghiên cứu, tiếp thu, giải trình và công khai, minh bạch theo quy định của pháp luật.",
+      "cross_references": [],
+      "tags": [
+        "quyền và trách nhiệm của cơ quan, tổ chức, cộng đồng, cá nhân trong việc tham gia ý kiến, giám sát hoạt động quy hoạch",
+        "hoạt động quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D13_K1",
+      "position": {
+        "chapter": 1,
+        "article": 13,
+        "article_title": "Các hành vi bị nghiêm cấm trong hoạt động quy hoạch",
+        "clause": 1
+      },
+      "content": "Lập, thẩm định, quyết định hoặc phê duyệt, điều chỉnh quy hoạch không phù hợp với quy định của Luật này và pháp luật có liên quan.",
+      "cross_references": [],
+      "tags": [
+        "các hành vi bị nghiêm cấm trong hoạt động quy hoạch",
+        "điều chỉnh quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D13_K2",
+      "position": {
+        "chapter": 1,
+        "article": 13,
+        "article_title": "Các hành vi bị nghiêm cấm trong hoạt động quy hoạch",
+        "clause": 2
+      },
+      "content": "Lập, thẩm định, quyết định hoặc phê duyệt, điều chỉnh quy hoạch về đầu tư phát triển hàng hóa, dịch vụ, sản phẩm cụ thể, ấn định khối lượng, số lượng hàng hóa, dịch vụ, sản phẩm được sản xuất, tiêu thụ.",
+      "cross_references": [],
+      "tags": [
+        "các hành vi bị nghiêm cấm trong hoạt động quy hoạch",
+        "điều chỉnh quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D13_K3",
+      "position": {
+        "chapter": 1,
+        "article": 13,
+        "article_title": "Các hành vi bị nghiêm cấm trong hoạt động quy hoạch",
+        "clause": 3
+      },
+      "content": "Lựa chọn tổ chức tư vấn lập quy hoạch, tư vấn phản biện độc lập không đủ điều kiện về năng lực chuyên môn phù hợp với công việc đảm nhận hoặc trái với quy định của pháp luật.",
+      "cross_references": [],
+      "tags": [
+        "các hành vi bị nghiêm cấm trong hoạt động quy hoạch",
+        "lập quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D13_K4",
+      "position": {
+        "chapter": 1,
+        "article": 13,
+        "article_title": "Các hành vi bị nghiêm cấm trong hoạt động quy hoạch",
+        "clause": 4
+      },
+      "content": "Cản trở việc tham gia ý kiến của cơ quan, tổ chức, cộng đồng, cá nhân.",
+      "cross_references": [],
+      "tags": [
+        "các hành vi bị nghiêm cấm trong hoạt động quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D13_K5",
+      "position": {
+        "chapter": 1,
+        "article": 13,
+        "article_title": "Các hành vi bị nghiêm cấm trong hoạt động quy hoạch",
+        "clause": 5
+      },
+      "content": "Không công bố, công bố chậm, công bố không đầy đủ quy hoạch hoặc từ chối cung cấp thông tin về quy hoạch, trừ trường hợp thông tin thuộc bí mật nhà nước; cố ý công bố sai quy hoạch; cố ý cung cấp sai thông tin về quy hoạch; hủy hoại, làm giả hoặc làm sai lệch hồ sơ, giấy tờ, tài liệu.",
+      "cross_references": [],
+      "tags": [
+        "các hành vi bị nghiêm cấm trong hoạt động quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D13_K6",
+      "position": {
+        "chapter": 1,
+        "article": 13,
+        "article_title": "Các hành vi bị nghiêm cấm trong hoạt động quy hoạch",
+        "clause": 6
+      },
+      "content": "Thực hiện không đúng quy hoạch đã được quyết định hoặc phê duyệt.",
+      "cross_references": [],
+      "tags": [
+        "các hành vi bị nghiêm cấm trong hoạt động quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D13_K7",
+      "position": {
+        "chapter": 1,
+        "article": 13,
+        "article_title": "Các hành vi bị nghiêm cấm trong hoạt động quy hoạch",
+        "clause": 7
+      },
+      "content": "Can thiệp bất hợp pháp, cản trở hoạt động quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "các hành vi bị nghiêm cấm trong hoạt động quy hoạch",
+        "hoạt động quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D14_K1",
+      "position": {
+        "chapter": 2,
+        "article": 14,
+        "article_title": "Thẩm quyền tổ chức lập quy hoạch",
+        "clause": 1
+      },
+      "content": "Chính phủ tổ chức lập quy hoạch tổng thể quốc gia, quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia.",
+      "cross_references": [],
+      "tags": [
+        "thẩm quyền tổ chức lập quy hoạch",
+        "quy hoạch tổng thể quốc gia",
+        "quy hoạch không gian biển quốc gia",
+        "quy hoạch sử dụng đất quốc gia",
+        "lập quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D14_K2",
+      "position": {
+        "chapter": 2,
+        "article": 14,
+        "article_title": "Thẩm quyền tổ chức lập quy hoạch",
+        "clause": 2
+      },
+      "content": "Thủ tướng Chính phủ tổ chức lập quy hoạch vùng.",
+      "cross_references": [],
+      "tags": [
+        "thẩm quyền tổ chức lập quy hoạch",
+        "quy hoạch vùng",
+        "lập quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D14_K3",
+      "position": {
+        "chapter": 2,
+        "article": 14,
+        "article_title": "Thẩm quyền tổ chức lập quy hoạch",
+        "clause": 3
+      },
+      "content": "Bộ, cơ quan ngang Bộ tổ chức lập quy hoạch ngành quốc gia.",
+      "cross_references": [],
+      "tags": [
+        "thẩm quyền tổ chức lập quy hoạch",
+        "quy hoạch ngành quốc gia",
+        "lập quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D14_K4",
+      "position": {
+        "chapter": 2,
+        "article": 14,
+        "article_title": "Thẩm quyền tổ chức lập quy hoạch",
+        "clause": 4
+      },
+      "content": "Ủy ban nhân dân cấp tỉnh tổ chức lập quy hoạch tỉnh.",
+      "cross_references": [],
+      "tags": [
+        "thẩm quyền tổ chức lập quy hoạch",
+        "quy hoạch tỉnh",
+        "lập quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D15_K1",
+      "position": {
+        "chapter": 2,
+        "article": 15,
+        "article_title": "Nhiệm vụ lập quy hoạch",
+        "clause": 1
+      },
+      "content": "Nhiệm vụ lập quy hoạch bao gồm những nội dung chủ yếu sau đây: a) Căn cứ lập quy hoạch; b) Yêu cầu về nội dung, phương pháp lập quy hoạch; c) Chi phí lập quy hoạch; d) Thời hạn lập quy hoạch; đ) Trách nhiệm của các cơ quan liên quan trong việc tổ chức lập quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "nhiệm vụ lập quy hoạch",
+        "lập quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D15_K2",
+      "position": {
+        "chapter": 2,
+        "article": 15,
+        "article_title": "Nhiệm vụ lập quy hoạch",
+        "clause": 2
+      },
+      "content": "Thẩm quyền tổ chức thẩm định, phê duyệt và phê duyệt điều chỉnh nhiệm vụ lập quy hoạch được quy định như sau: a) Chính phủ tổ chức thẩm định nhiệm vụ lập quy hoạch, phê duyệt nhiệm vụ lập quy hoạch, phê duyệt điều chỉnh nhiệm vụ lập quy hoạch tổng thể quốc gia, quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia; b) Thủ tướng Chính phủ tổ chức thẩm định nhiệm vụ lập quy hoạch ngành quốc gia, quy hoạch vùng; phê duyệt nhiệm vụ lập quy hoạch, phê duyệt điều chỉnh nhiệm vụ lập quy hoạch ngành quốc gia, quy hoạch vùng, quy hoạch tỉnh; c) Bộ Kế hoạch và Đầu tư tổ chức thẩm định nhiệm vụ lập quy hoạch tỉnh.",
+      "cross_references": [],
+      "tags": [
+        "nhiệm vụ lập quy hoạch",
+        "quy hoạch tổng thể quốc gia",
+        "quy hoạch không gian biển quốc gia",
+        "quy hoạch sử dụng đất quốc gia",
+        "quy hoạch ngành quốc gia",
+        "quy hoạch vùng"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D16_K2",
+      "position": {
+        "chapter": 2,
+        "article": 16,
+        "article_title": "Quy trình lập quy hoạch",
+        "clause": 2
+      },
+      "content": "Quy trình lập quy hoạch ngành quốc gia thực hiện theo các bước sau đây: a) Cơ quan tổ chức lập quy hoạch chủ trì, phối hợp với các Bộ, cơ quan ngang Bộ liên quan xây dựng nhiệm vụ lập quy hoạch trình Thủ tướng Chính phủ phê duyệt; b) Cơ quan lập quy hoạch lựa chọn tổ chức tư vấn lập quy hoạch; xây dựng quy hoạch và gửi lấy ý kiến theo quy định tại Điều 19 của Luật này; c) Cơ quan lập quy hoạch tiếp thu, giải trình ý kiến góp ý và hoàn thiện quy hoạch trình Hội đồng thẩm định quy hoạch; d) Cơ quan lập quy hoạch hoàn thiện quy hoạch theo kết luận của Hội đồng thẩm định quy hoạch báo cáo Bộ trưởng xem xét trình Thủ tướng Chính phủ phê duyệt.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D19",
+          "anchor_text": "Điều 19",
+          "description_summary": "Lấy ý kiến về quy hoạch"
+        }
+      ],
+      "tags": [
+        "quy trình lập quy hoạch",
+        "quy hoạch ngành quốc gia",
+        "lập quy hoạch",
+        "thẩm định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D16_K4",
+      "position": {
+        "chapter": 2,
+        "article": 16,
+        "article_title": "Quy trình lập quy hoạch",
+        "clause": 4
+      },
+      "content": "Quy trình lập quy hoạch tỉnh thực hiện theo các bước sau đây: a) Cơ quan lập quy hoạch chủ trì, phối hợp với các cơ quan, tổ chức liên quan, Ủy ban nhân dân cấp huyện xây dựng nhiệm vụ lập quy hoạch, báo cáo Ủy ban nhân dân cấp tỉnh xem xét trình Thủ tướng Chính phủ phê duyệt; b) Cơ quan lập quy hoạch lựa chọn tổ chức tư vấn lập quy hoạch; chủ trì, phối hợp với các cơ quan, tổ chức liên quan, Ủy ban nhân dân cấp huyện nghiên cứu, xây dựng quy hoạch; phân tích, đánh giá, dự báo về các yếu tố, điều kiện, nguồn lực, bối cảnh phát triển, đánh giá thực trạng phát triển kinh tế - xã hội của địa phương, đề xuất các quan điểm chỉ đạo và mục tiêu, các định hướng ưu tiên phát triển làm cơ sở lập quy hoạch; c) Các cơ quan, tổ chức liên quan, Ủy ban nhân dân cấp huyện đề xuất nội dung đưa vào quy hoạch thuộc lĩnh vực phụ trách và gửi cơ quan lập quy hoạch; d) Cơ quan lập quy hoạch chủ trì, phối hợp với các cơ quan, tổ chức liên quan, Ủy ban nhân dân cấp huyện xem xét, xử lý các vấn đề liên ngành, liên huyện nhằm bảo đảm tính thống nhất, đồng bộ và hiệu quả của quy hoạch; đề xuất điều chỉnh, bổ sung nội dung quy hoạch do các cơ quan, tổ chức, Ủy ban nhân dân cấp huyện xây dựng; đ) Các cơ quan, tổ chức liên quan, Ủy ban nhân dân cấp huyện điều chỉnh, bổ sung và hoàn thiện nội dung quy hoạch được phân công gửi cơ quan lập quy hoạch; e) Cơ quan lập quy hoạch hoàn thiện quy hoạch và gửi lấy ý kiến theo quy định tại Điều 19 của Luật này; g) Cơ quan lập quy hoạch tiếp thu, giải trình ý kiến góp ý và hoàn thiện quy hoạch trình Hội đồng thẩm định quy hoạch; h) Cơ quan lập quy hoạch hoàn thiện quy hoạch theo kết luận của Hội đồng thẩm định quy hoạch trình Ủy ban nhân dân cấp tỉnh; i) Ủy ban nhân dân cấp tỉnh trình Hội đồng nhân dân cấp tỉnh xem xét, thông qua quy hoạch trình Thủ tướng Chính phủ phê duyệt.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D19",
+          "anchor_text": "Điều 19",
+          "description_summary": "Lấy ý kiến về quy hoạch"
+        }
+      ],
+      "tags": [
+        "quy trình lập quy hoạch",
+        "quy hoạch tỉnh",
+        "lập quy hoạch",
+        "thẩm định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D16_K5",
+      "position": {
+        "chapter": 2,
+        "article": 16,
+        "article_title": "Quy trình lập quy hoạch",
+        "clause": 5
+      },
+      "content": "Chính phủ quy định chi tiết Điều này.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D16",
+          "anchor_text": "Điều này",
+          "description_summary": "Quy trình lập quy hoạch"
+        }
+      ],
+      "tags": [
+        "quy trình lập quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D17_K1",
+      "position": {
+        "chapter": 2,
+        "article": 17,
+        "article_title": "Tổ chức tư vấn lập quy hoạch",
+        "clause": 1
+      },
+      "content": "Cơ quan lập quy hoạch, các Bộ, cơ quan ngang Bộ và địa phương được phân công phải lựa chọn tổ chức tư vấn lập quy hoạch theo quy định của pháp luật về đấu thầu.",
+      "cross_references": [],
+      "tags": [
+        "tổ chức tư vấn lập quy hoạch",
+        "lập quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D17_K2",
+      "position": {
+        "chapter": 2,
+        "article": 17,
+        "article_title": "Tổ chức tư vấn lập quy hoạch",
+        "clause": 2
+      },
+      "content": "Tổ chức tư vấn lập quy hoạch phải có tư cách pháp nhân và phải đáp ứng điều kiện về năng lực chuyên môn phù hợp với công việc đảm nhận theo quy định của Chính phủ.",
+      "cross_references": [],
+      "tags": [
+        "tổ chức tư vấn lập quy hoạch",
+        "lập quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D18_K1",
+      "position": {
+        "chapter": 2,
+        "article": 18,
+        "article_title": "Đánh giá môi trường chiến lược trong lập quy hoạch",
+        "clause": 1
+      },
+      "content": "Cơ quan lập quy hoạch có trách nhiệm tổ chức lập báo cáo đánh giá môi trường chiến lược theo quy định của pháp luật về bảo vệ môi trường.",
+      "cross_references": [],
+      "tags": [
+        "đánh giá môi trường chiến lược trong lập quy hoạch",
+        "lập quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D18_K2",
+      "position": {
+        "chapter": 2,
+        "article": 18,
+        "article_title": "Đánh giá môi trường chiến lược trong lập quy hoạch",
+        "clause": 2
+      },
+      "content": "Báo cáo đánh giá môi trường chiến lược phải được lập, thẩm định đồng thời với quá trình lập, thẩm định quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "đánh giá môi trường chiến lược trong lập quy hoạch",
+        "thẩm định quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D18_K3",
+      "position": {
+        "chapter": 2,
+        "article": 18,
+        "article_title": "Đánh giá môi trường chiến lược trong lập quy hoạch",
+        "clause": 3
+      },
+      "content": "Nội dung báo cáo đánh giá môi trường chiến lược của quy hoạch thực hiện theo quy định của pháp luật về bảo vệ môi trường.",
+      "cross_references": [],
+      "tags": [
+        "đánh giá môi trường chiến lược trong lập quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D19_K1",
+      "position": {
+        "chapter": 2,
+        "article": 19,
+        "article_title": "Lấy ý kiến về quy hoạch",
+        "clause": 1
+      },
+      "content": "Cơ quan lập quy hoạch có trách nhiệm lấy ý kiến các Bộ, cơ quan ngang Bộ, Ủy ban nhân dân các cấp của địa phương liên quan và cơ quan, tổ chức, cộng đồng, cá nhân khác có liên quan về quy hoạch, trừ quy hoạch ngành quốc gia thì do cơ quan tổ chức lập quy hoạch lấy ý kiến. Đối với quy hoạch vùng, quy hoạch tỉnh, cơ quan lập quy hoạch phải lấy ý kiến của Ủy ban nhân dân cấp tỉnh các địa phương liền kề.",
+      "cross_references": [],
+      "tags": [
+        "lấy ý kiến về quy hoạch",
+        "quy hoạch ngành quốc gia",
+        "quy hoạch vùng",
+        "quy hoạch tỉnh",
+        "lập quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D19_K2",
+      "position": {
+        "chapter": 2,
+        "article": 19,
+        "article_title": "Lấy ý kiến về quy hoạch",
+        "clause": 2
+      },
+      "content": "Việc lấy ý kiến cơ quan, tổ chức, cá nhân được thực hiện bằng hình thức gửi hồ sơ, tài liệu và đăng tải trên trang thông tin điện tử của cơ quan lập quy hoạch. Cơ quan, tổ chức được lấy ý kiến có trách nhiệm trả lời bằng văn bản.",
+      "cross_references": [],
+      "tags": [
+        "lấy ý kiến về quy hoạch",
+        "lập quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D19_K3",
+      "position": {
+        "chapter": 2,
+        "article": 19,
+        "article_title": "Lấy ý kiến về quy hoạch",
+        "clause": 3
+      },
+      "content": "Việc lấy ý kiến cộng đồng về quy hoạch được thực hiện bằng hình thức đăng tải trên trang thông tin điện tử của cơ quan lập quy hoạch, niêm yết, trưng bày tại nơi công cộng, phát phiếu điều tra phỏng vấn, tổ chức hội nghị, hội thảo và các hình thức khác theo quy định của pháp luật về thực hiện dân chủ ở xã, phường, thị trấn.",
+      "cross_references": [],
+      "tags": [
+        "lấy ý kiến về quy hoạch",
+        "lập quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D19_K4",
+      "position": {
+        "chapter": 2,
+        "article": 19,
+        "article_title": "Lấy ý kiến về quy hoạch",
+        "clause": 4
+      },
+      "content": "Ý kiến đóng góp phải được nghiên cứu, tiếp thu, giải trình và báo cáo cấp có thẩm quyền xem xét trước khi thẩm định, quyết định hoặc phê duyệt quy hoạch. Cơ quan lập quy hoạch có trách nhiệm công bố, công khai ý kiến đóng góp và việc tiếp thu, giải trình ý kiến đóng góp.",
+      "cross_references": [],
+      "tags": [
+        "lấy ý kiến về quy hoạch",
+        "lập quy hoạch",
+        "phê duyệt quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D19_K5",
+      "position": {
+        "chapter": 2,
+        "article": 19,
+        "article_title": "Lấy ý kiến về quy hoạch",
+        "clause": 5
+      },
+      "content": "Chính phủ quy định chi tiết việc lấy ý kiến về từng loại quy hoạch. Mục 2. NỘI DUNG QUY HOẠCH",
+      "cross_references": [],
+      "tags": [
+        "lấy ý kiến về quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D20_K1",
+      "position": {
+        "chapter": 2,
+        "article": 20,
+        "article_title": "Căn cứ lập quy hoạch",
+        "clause": 1
+      },
+      "content": "Chiến lược phát triển kinh tế - xã hội, chiến lược phát triển ngành, lĩnh vực trong cùng giai đoạn phát triển.",
+      "cross_references": [],
+      "tags": [
+        "căn cứ lập quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D20_K2",
+      "position": {
+        "chapter": 2,
+        "article": 20,
+        "article_title": "Căn cứ lập quy hoạch",
+        "clause": 2
+      },
+      "content": "Quy hoạch cao hơn (nếu có).",
+      "cross_references": [],
+      "tags": [
+        "căn cứ lập quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D20_K3",
+      "position": {
+        "chapter": 2,
+        "article": 20,
+        "article_title": "Căn cứ lập quy hoạch",
+        "clause": 3
+      },
+      "content": "Quy hoạch thời kỳ trước.",
+      "cross_references": [],
+      "tags": [
+        "căn cứ lập quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D21_K1",
+      "position": {
+        "chapter": 2,
+        "article": 21,
+        "article_title": "Yêu cầu về nội dung quy hoạch",
+        "clause": 1
+      },
+      "content": "Bảo đảm yêu cầu hoạch định và phát triển trên toàn bộ không gian lãnh thổ quốc gia, hướng đến mục tiêu phát triển bền vững gắn với bảo vệ môi trường, phòng, chống thiên tai và ứng phó với biến đổi khí hậu; phân bổ, khai thác và sử dụng hợp lý, hiệu quả nguồn tài nguyên thiên nhiên và bảo tồn các di tích lịch sử - văn hóa, di sản văn hóa, di sản thiên nhiên cho các thế hệ hiện tại và tương lai.",
+      "cross_references": [],
+      "tags": [
+        "yêu cầu về nội dung quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D21_K2",
+      "position": {
+        "chapter": 2,
+        "article": 21,
+        "article_title": "Yêu cầu về nội dung quy hoạch",
+        "clause": 2
+      },
+      "content": "Việc phân bố phát triển không gian trong quá trình lập quy hoạch phải bảo đảm thống nhất giữa kết cấu hạ tầng, phân bổ đất đai và bảo vệ môi trường, dịch vụ hệ sinh thái.",
+      "cross_references": [],
+      "tags": [
+        "yêu cầu về nội dung quy hoạch",
+        "lập quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D21_K3",
+      "position": {
+        "chapter": 2,
+        "article": 21,
+        "article_title": "Yêu cầu về nội dung quy hoạch",
+        "clause": 3
+      },
+      "content": "Bảo đảm sự liên kết, tính đồng bộ và hệ thống giữa các ngành và các vùng trong cả nước, giữa các địa phương trong vùng và khai thác, sử dụng tối đa kết cấu hạ tầng hiện có; phát huy tối đa tiềm năng, lợi thế của từng vùng, từng địa phương gắn với tiến bộ công bằng xã hội, bảo đảm an sinh xã hội và bảo đảm quốc phòng, an ninh.",
+      "cross_references": [],
+      "tags": [
+        "yêu cầu về nội dung quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D21_K4",
+      "position": {
+        "chapter": 2,
+        "article": 21,
+        "article_title": "Yêu cầu về nội dung quy hoạch",
+        "clause": 4
+      },
+      "content": "Bảo đảm sự cân bằng giữa các yếu tố kinh tế - xã hội, quốc phòng, an ninh, bảo vệ môi trường trong quá trình lập quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "yêu cầu về nội dung quy hoạch",
+        "lập quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D21_K5",
+      "position": {
+        "chapter": 2,
+        "article": 21,
+        "article_title": "Yêu cầu về nội dung quy hoạch",
+        "clause": 5
+      },
+      "content": "Bảo đảm giảm thiểu các tác động tiêu cực do kinh tế - xã hội, môi trường gây ra đối với sinh kế của cộng đồng, người cao tuổi, người khuyết tật, người dân tộc thiểu số, phụ nữ và trẻ em. Quá trình lập quy hoạch phải được kết hợp với các chính sách khác thúc đẩy phát triển các khu vực khó khăn, đặc biệt khó khăn và bảo đảm sinh kế bền vững của người dân trong khu vực khó khăn, đặc biệt khó khăn.",
+      "cross_references": [],
+      "tags": [
+        "yêu cầu về nội dung quy hoạch",
+        "lập quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D21_K6",
+      "position": {
+        "chapter": 2,
+        "article": 21,
+        "article_title": "Yêu cầu về nội dung quy hoạch",
+        "clause": 6
+      },
+      "content": "Bảo đảm kết hợp hài hòa giữa lợi ích của nhà nước và lợi ích của cộng đồng; giữa lợi ích của các vùng, các địa phương.",
+      "cross_references": [],
+      "tags": [
+        "yêu cầu về nội dung quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D21_K7",
+      "position": {
+        "chapter": 2,
+        "article": 21,
+        "article_title": "Yêu cầu về nội dung quy hoạch",
+        "clause": 7
+      },
+      "content": "Bảo đảm quyền tham gia ý kiến của cơ quan, tổ chức, cộng đồng và cá nhân trong quá trình lập quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "yêu cầu về nội dung quy hoạch",
+        "lập quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D21_K8",
+      "position": {
+        "chapter": 2,
+        "article": 21,
+        "article_title": "Yêu cầu về nội dung quy hoạch",
+        "clause": 8
+      },
+      "content": "Bảo đảm tính khoa học, ứng dụng công nghệ hiện đại trong quá trình lập quy hoạch; đáp ứng được các tiêu chuẩn, quy chuẩn, kỹ thuật và phù hợp với yêu cầu phát triển và hội nhập quốc tế của đất nước.",
+      "cross_references": [],
+      "tags": [
+        "yêu cầu về nội dung quy hoạch",
+        "lập quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D21_K9",
+      "position": {
+        "chapter": 2,
+        "article": 21,
+        "article_title": "Yêu cầu về nội dung quy hoạch",
+        "clause": 9
+      },
+      "content": "Nội dung của từng loại quy hoạch phải thống nhất, liên kết với nhau và được thể hiện bằng báo cáo quy hoạch và hệ thống sơ đồ, bản đồ, cơ sở dữ liệu về quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "yêu cầu về nội dung quy hoạch",
+        "cơ sở dữ liệu về quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D22_K1",
+      "position": {
+        "chapter": 2,
+        "article": 22,
+        "article_title": "Nội dung quy hoạch tổng thể quốc gia",
+        "clause": 1
+      },
+      "content": "Nội dung quy hoạch tổng thể quốc gia xác định việc phân bố và tổ chức không gian các hoạt động kinh tế - xã hội, quốc phòng, an ninh và bảo vệ môi trường có tầm quan trọng cấp quốc gia, quốc tế và có tính liên vùng mang tính chiến lược trên lãnh thổ bao gồm đất liền, các đảo, quần đảo, vùng biển, vùng trời.",
+      "cross_references": [],
+      "tags": [
+        "nội dung quy hoạch tổng thể quốc gia",
+        "quy hoạch tổng thể quốc gia",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D22_K2",
+      "position": {
+        "chapter": 2,
+        "article": 22,
+        "article_title": "Nội dung quy hoạch tổng thể quốc gia",
+        "clause": 2
+      },
+      "content": "Quy hoạch tổng thể quốc gia bao gồm những nội dung chủ yếu sau đây: a) Phân tích, đánh giá điều kiện tự nhiên, hiện trạng phát triển quốc gia, xu thế phát triển trong nước và quốc tế, các chủ trương, định hướng phát triển lớn, các quy hoạch, kế hoạch có liên quan và các nguồn lực phát triển; xu thế phát triển của khoa học, công nghệ; khu vực quân sự, an ninh cấp quốc gia; khu bảo tồn; khu vực cần được bảo quản, tu bổ, phục hồi di tích lịch sử - văn hóa, danh lam thắng cảnh và đối tượng đã được kiểm kê di tích; khu vực hạn chế khai thác, sử dụng và khu vực khuyến khích phát triển theo quy định của pháp luật có liên quan; b) Xác định các quan điểm và mục tiêu phát triển; c) Dự báo xu thế phát triển và các kịch bản phát triển; d) Định hướng phát triển không gian kinh tế - xã hội; đ) Định hướng phát triển không gian biển; e) Định hướng sử dụng đất quốc gia; g) Định hướng khai thác và sử dụng vùng trời; h) Định hướng phân vùng và liên kết vùng; i) Định hướng phát triển hệ thống đô thị và nông thôn quốc gia; k) Định hướng phát triển ngành hạ tầng xã hội cấp quốc gia; l) Định hướng phát triển ngành hạ tầng kỹ thuật cấp quốc gia; m) Định hướng sử dụng tài nguyên, bảo vệ môi trường, phòng, chống thiên tai và ứng phó với biến đổi khí hậu; n) Danh mục dự kiến các dự án quan trọng quốc gia; o) Giải pháp, nguồn lực thực hiện quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "nội dung quy hoạch tổng thể quốc gia",
+        "quy hoạch tổng thể quốc gia",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D22_K3",
+      "position": {
+        "chapter": 2,
+        "article": 22,
+        "article_title": "Nội dung quy hoạch tổng thể quốc gia",
+        "clause": 3
+      },
+      "content": "Chính phủ quy định chi tiết nội dung quy hoạch tổng thể quốc gia tại khoản 2 Điều này; quy định việc tích hợp quy hoạch vào quy hoạch tổng thể quốc gia. Việc lập, thẩm định, phê duyệt và điều chỉnh quy hoạch có tính chất kỹ thuật, chuyên ngành để triển khai các nội dung quy định tại khoản 2 Điều này được thực hiện theo quy định của pháp luật có liên quan.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D22_K2",
+          "anchor_text": "khoản 2 Điều này",
+          "description_summary": "Quy hoạch tổng thể quốc gia bao gồm những nội dung chủ yếu sau đây: a) Phân tích, đánh giá điều kiện tự nhiên, hiện trạng phát triển quốc gia, xu thế phát triển trong nước và quốc…"
+        }
+      ],
+      "tags": [
+        "nội dung quy hoạch tổng thể quốc gia",
+        "quy hoạch tổng thể quốc gia",
+        "điều chỉnh quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D23_K1",
+      "position": {
+        "chapter": 2,
+        "article": 23,
+        "article_title": "Nội dung quy hoạch không gian biển quốc gia",
+        "clause": 1
+      },
+      "content": "Nội dung quy hoạch không gian biển quốc gia xác định việc phân vùng chức năng, sắp xếp, phân bố và tổ chức không gian các ngành, lĩnh vực trên vùng đất ven biển, các đảo, quần đảo, vùng biển, vùng trời thuộc chủ quyền, quyền chủ quyền, quyền tài phán quốc gia của Việt Nam.",
+      "cross_references": [],
+      "tags": [
+        "nội dung quy hoạch không gian biển quốc gia",
+        "quy hoạch không gian biển quốc gia",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D23_K2",
+      "position": {
+        "chapter": 2,
+        "article": 23,
+        "article_title": "Nội dung quy hoạch không gian biển quốc gia",
+        "clause": 2
+      },
+      "content": "Quy hoạch không gian biển quốc gia bao gồm những nội dung chủ yếu sau đây: a) Phân tích, đánh giá về các yếu tố, điều kiện tự nhiên, nguồn lực, bối cảnh trực tiếp tác động và thực trạng sử dụng không gian của các hoạt động trên vùng đất ven biển, các đảo, quần đảo, vùng biển, vùng trời thuộc chủ quyền, quyền chủ quyền, quyền tài phán quốc gia của Việt Nam; b) Xác định các vùng cấm khai thác, các vùng khai thác có điều kiện, khu vực khuyến khích phát triển, khu vực cần bảo vệ đặc biệt cho mục đích quốc phòng, an ninh, bảo vệ môi trường và bảo tồn hệ sinh thái trong vùng đất ven biển, các đảo, quần đảo, vùng biển, vùng trời thuộc chủ quyền, quyền chủ quyền, quyền tài phán quốc gia của Việt Nam; c) Dự báo xu thế biến động của tài nguyên và môi trường, các tác động của biến đổi khí hậu đối với tài nguyên và môi trường; nhu cầu khai thác, sử dụng tài nguyên và yêu cầu bảo vệ môi trường trong vùng đất ven biển, các đảo, quần đảo, vùng biển, vùng trời thuộc chủ quyền, quyền chủ quyền, quyền tài phán quốc gia của Việt Nam trong thời kỳ quy hoạch; d) Dự báo bối cảnh và các kịch bản phát triển; đánh giá các cơ hội và thách thức cho các hoạt động sử dụng không gian biển; đ) Xác định các quan điểm và mục tiêu phát triển; e) Định hướng bố trí sử dụng không gian các hoạt động trong vùng đất ven biển, các đảo, quần đảo, vùng biển, vùng trời thuộc chủ quyền, quyền chủ quyền, quyền tài phán quốc gia của Việt Nam; g) Phân vùng sử dụng vùng đất ven biển, các đảo, quần đảo, vùng biển, vùng trời thuộc chủ quyền, quyền chủ quyền, quyền tài phán quốc gia của Việt Nam; h) Giải pháp, nguồn lực thực hiện quy hoạch; i) Danh mục dự kiến các dự án quan trọng quốc gia.",
+      "cross_references": [],
+      "tags": [
+        "nội dung quy hoạch không gian biển quốc gia",
+        "quy hoạch không gian biển quốc gia",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D23_K3",
+      "position": {
+        "chapter": 2,
+        "article": 23,
+        "article_title": "Nội dung quy hoạch không gian biển quốc gia",
+        "clause": 3
+      },
+      "content": "Chính phủ quy định chi tiết nội dung quy hoạch không gian biển quốc gia tại khoản 2 Điều này; quy định việc tích hợp quy hoạch vào quy hoạch không gian biển quốc gia. Việc lập, thẩm định, phê duyệt và điều chỉnh quy hoạch có tính chất kỹ thuật, chuyên ngành để triển khai các nội dung quy định tại khoản 2 Điều này được thực hiện theo quy định của pháp luật có liên quan.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D23_K2",
+          "anchor_text": "khoản 2 Điều này",
+          "description_summary": "Quy hoạch không gian biển quốc gia bao gồm những nội dung chủ yếu sau đây: a) Phân tích, đánh giá về các yếu tố, điều kiện tự nhiên, nguồn lực, bối cảnh trực tiếp tác động và thực…"
+        }
+      ],
+      "tags": [
+        "nội dung quy hoạch không gian biển quốc gia",
+        "quy hoạch không gian biển quốc gia",
+        "điều chỉnh quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D24_K1",
+      "position": {
+        "chapter": 2,
+        "article": 24,
+        "article_title": "Nội dung quy hoạch sử dụng đất quốc gia",
+        "clause": 1
+      },
+      "content": "Nội dung quy hoạch sử dụng đất quốc gia xác định việc phân bổ và tổ chức không gian sử dụng đất cho các mục tiêu phát triển kinh tế - xã hội, quốc phòng, an ninh, bảo vệ môi trường, phòng, chống thiên tai và ứng phó biến đổi khí hậu trên cơ sở tiềm năng đất đai và nhu cầu sử dụng đất của các ngành, lĩnh vực mang tính liên vùng, liên tỉnh.",
+      "cross_references": [],
+      "tags": [
+        "nội dung quy hoạch sử dụng đất quốc gia",
+        "quy hoạch sử dụng đất quốc gia",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D24_K2",
+      "position": {
+        "chapter": 2,
+        "article": 24,
+        "article_title": "Nội dung quy hoạch sử dụng đất quốc gia",
+        "clause": 2
+      },
+      "content": "Quy hoạch sử dụng đất quốc gia bao gồm những nội dung chủ yếu sau đây: a) Phân tích, đánh giá về các yếu tố, điều kiện tự nhiên, nguồn lực, bối cảnh trực tiếp tác động và thực trạng sử dụng đất của các ngành, lĩnh vực; b) Dự báo xu thế biến động của việc sử dụng đất; c) Xác định các quan điểm và mục tiêu sử dụng đất trong thời kỳ mới; d) Định hướng sử dụng đất quốc gia, vùng kinh tế - xã hội, tầm nhìn sử dụng đất đáp ứng nhu cầu sử dụng đất để phát triển kinh tế - xã hội; bảo đảm quốc phòng, an ninh; bảo vệ môi trường, thích ứng với biến đổi khí hậu; đ) Xác định các chỉ tiêu sử dụng đất đối với nhóm đất nông nghiệp, nhóm đất phi nông nghiệp; trong đó xác định diện tích một số loại đất gồm đất trồng lúa, đất rừng đặc dụng, đất rừng phòng hộ, đất rừng sản xuất là rừng tự nhiên, đất quốc phòng, đất an ninh; e) Giải pháp, nguồn lực thực hiện quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "nội dung quy hoạch sử dụng đất quốc gia",
+        "quy hoạch sử dụng đất quốc gia",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D24_K3",
+      "position": {
+        "chapter": 2,
+        "article": 24,
+        "article_title": "Nội dung quy hoạch sử dụng đất quốc gia",
+        "clause": 3
+      },
+      "content": "Chính phủ quy định chi tiết nội dung quy hoạch sử dụng đất quốc gia tại khoản 2 Điều này.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D24_K2",
+          "anchor_text": "khoản 2 Điều này",
+          "description_summary": "Quy hoạch sử dụng đất quốc gia bao gồm những nội dung chủ yếu sau đây: a) Phân tích, đánh giá về các yếu tố, điều kiện tự nhiên, nguồn lực, bối cảnh trực tiếp tác động và thực trạ…"
+        }
+      ],
+      "tags": [
+        "nội dung quy hoạch sử dụng đất quốc gia",
+        "quy hoạch sử dụng đất quốc gia",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D25_K1",
+      "position": {
+        "chapter": 2,
+        "article": 25,
+        "article_title": "Nội dung quy hoạch ngành quốc gia",
+        "clause": 1
+      },
+      "content": "Nội dung quy hoạch ngành quốc gia xác định phương hướng phát triển, phân bố và tổ chức không gian, nguồn lực cho các ngành mang tính liên ngành, liên vùng, liên tỉnh.",
+      "cross_references": [],
+      "tags": [
+        "nội dung quy hoạch ngành quốc gia",
+        "quy hoạch ngành quốc gia",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D25_K2",
+      "position": {
+        "chapter": 2,
+        "article": 25,
+        "article_title": "Nội dung quy hoạch ngành quốc gia",
+        "clause": 2
+      },
+      "content": "Danh mục các quy hoạch ngành quốc gia quy định tại Phụ lục 1 của Luật này. Căn cứ điều kiện kinh tế - xã hội và yêu cầu quản lý nhà nước trong từng thời kỳ, Chính phủ rà soát Danh mục các quy hoạch ngành quốc gia và trình Ủy ban Thường vụ Quốc hội xem xét, quyết định sửa đổi, bổ sung.",
+      "cross_references": [],
+      "tags": [
+        "nội dung quy hoạch ngành quốc gia",
+        "quy hoạch ngành quốc gia",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D25_K3",
+      "position": {
+        "chapter": 2,
+        "article": 25,
+        "article_title": "Nội dung quy hoạch ngành quốc gia",
+        "clause": 3
+      },
+      "content": "Quy hoạch kết cấu hạ tầng quốc gia bao gồm những nội dung chủ yếu sau đây: a) Phân tích, đánh giá về các yếu tố, điều kiện tự nhiên, nguồn lực, bối cảnh và thực trạng phân bố, sử dụng không gian của ngành kết cấu hạ tầng quốc gia; b) Dự báo xu thế phát triển và các kịch bản phát triển ảnh hưởng trực tiếp đến kết cấu hạ tầng quốc gia trong thời kỳ quy hoạch; c) Đánh giá về liên kết ngành, liên kết vùng; xác định yêu cầu của phát triển kinh tế - xã hội đối với ngành; những cơ hội và thách thức phát triển của ngành kết cấu hạ tầng quốc gia; d) Xác định các quan điểm, mục tiêu phát triển của ngành kết cấu hạ tầng quốc gia; đ) Phương án phát triển ngành kết cấu hạ tầng trên phạm vi cả nước và các vùng lãnh thổ; e) Định hướng bố trí sử dụng đất cho phát triển ngành kết cấu hạ tầng quốc gia và các hoạt động bảo vệ môi trường, ứng phó với biến đổi khí hậu và bảo tồn sinh thái, cảnh quan, di tích đã xếp hạng quốc gia; g) Danh mục dự kiến các dự án quan trọng quốc gia, dự án ưu tiên của ngành kết cấu hạ tầng quốc gia; h) Giải pháp, nguồn lực thực hiện quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "nội dung quy hoạch ngành quốc gia",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D25_K4",
+      "position": {
+        "chapter": 2,
+        "article": 25,
+        "article_title": "Nội dung quy hoạch ngành quốc gia",
+        "clause": 4
+      },
+      "content": "Quy hoạch sử dụng tài nguyên quốc gia, trừ quy hoạch sử dụng đất quốc phòng, quy hoạch sử dụng đất an ninh, bao gồm những nội dung sau đây: a) Phân tích, đánh giá điều kiện tự nhiên, điều tra, khảo sát, thăm dò hiện trạng khai thác, sử dụng tài nguyên; b) Đánh giá tác động của việc khai thác, sử dụng tài nguyên; c) Phân tích, đánh giá chủ trương, định hướng phát triển kinh tế - xã hội liên quan đến việc khai thác, sử dụng tài nguyên, bảo vệ môi trường quốc gia và các quy hoạch có liên quan; d) Dự báo tiến bộ khoa học, công nghệ và phát triển kinh tế - xã hội tác động tới việc bảo vệ, khai thác, sử dụng tài nguyên trong thời kỳ quy hoạch; đ) Quan điểm, mục tiêu khai thác, sử dụng tài nguyên phục vụ phát triển kinh tế - xã hội; e) Xác định khu vực cấm, khu vực hạn chế, khu vực khuyến khích khai thác, sử dụng tài nguyên; g) Định hướng bảo vệ môi trường, phòng, chống thiên tai và ứng phó với biến đổi khí hậu; h) Giải pháp, nguồn lực thực hiện quy hoạch. 4a. Quy hoạch sử dụng đất quốc phòng, quy hoạch sử dụng đất an ninh bao gồm những nội dung chủ yếu sau đây: a) Định hướng sử dụng đất quốc phòng, đất an ninh; b) Xác định nhu cầu sử dụng đất quốc phòng, đất an ninh trong kỳ quy hoạch sử dụng đất phù hợp với quy hoạch tổng thể quốc gia; nhiệm vụ quốc phòng, an ninh và kế hoạch phát triển kinh tế - xã hội của quốc gia; c) Phân kỳ quy hoạch sử dụng đất quốc phòng, đất an ninh cho từng kỳ kế hoạch 05 năm; d) Giải pháp, nguồn lực thực hiện quy hoạch sử dụng đất quốc phòng, quy hoạch sử dụng đất an ninh.",
+      "cross_references": [],
+      "tags": [
+        "nội dung quy hoạch ngành quốc gia",
+        "quy hoạch tổng thể quốc gia",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D25_K5",
+      "position": {
+        "chapter": 2,
+        "article": 25,
+        "article_title": "Nội dung quy hoạch ngành quốc gia",
+        "clause": 5
+      },
+      "content": "Quy hoạch bảo vệ môi trường quốc gia bao gồm những nội dung chủ yếu sau đây: a) Đánh giá hiện trạng, diễn biến chất lượng môi trường, cảnh quan thiên nhiên và đa dạng sinh học; tình hình và dự báo phát sinh chất thải; tác động của biến đổi khí hậu; tình hình quản lý và bảo vệ môi trường; b) Quan điểm, mục tiêu, nhiệm vụ, giải pháp bảo vệ môi trường; c) Phân vùng môi trường; bảo tồn thiên nhiên và đa dạng sinh học; quản lý chất thải; quan trắc và cảnh báo môi trường; d) Danh mục dự kiến các dự án quan trọng quốc gia, dự án ưu tiên bảo vệ môi trường; đ) Giải pháp, nguồn lực thực hiện quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "nội dung quy hoạch ngành quốc gia",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D25_K6",
+      "position": {
+        "chapter": 2,
+        "article": 25,
+        "article_title": "Nội dung quy hoạch ngành quốc gia",
+        "clause": 6
+      },
+      "content": "Quy hoạch tổng thể bảo tồn đa dạng sinh học bao gồm những nội dung chủ yếu sau đây: a) Đánh giá hiện trạng, diễn biến đa dạng sinh học, tình hình quản lý bảo tồn đa dạng sinh học; b) Quan điểm, mục tiêu, nhiệm vụ, giải pháp bảo tồn đa dạng sinh học; c) Khu vực đa dạng sinh học cao; cảnh quan sinh thái quan trọng; khu bảo tồn thiên nhiên; hành lang đa dạng sinh học; cơ sở bảo tồn đa dạng sinh học; d) Danh mục dự kiến các dự án quan trọng quốc gia, dự án ưu tiên bảo tồn đa dạng sinh học; đ) Giải pháp, nguồn lực thực hiện quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "nội dung quy hoạch ngành quốc gia",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D25_K7",
+      "position": {
+        "chapter": 2,
+        "article": 25,
+        "article_title": "Nội dung quy hoạch ngành quốc gia",
+        "clause": 7
+      },
+      "content": "Chính phủ quy định chi tiết nội dung quy hoạch ngành quốc gia tại các khoản 3, 4, 4a, 5 và 6 Điều này; quy định việc tích hợp quy hoạch vào quy hoạch ngành quốc gia. Việc lập, thẩm định, phê duyệt và điều chỉnh quy hoạch có tính chất kỹ thuật, chuyên ngành để triển khai các nội dung quy định tại các khoản 3, 4, 4a, 5 và 6 Điều này thực hiện theo quy định của pháp luật có liên quan.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D25",
+          "anchor_text": "Điều này",
+          "description_summary": "Nội dung quy hoạch ngành quốc gia"
+        }
+      ],
+      "tags": [
+        "nội dung quy hoạch ngành quốc gia",
+        "quy hoạch ngành quốc gia",
+        "điều chỉnh quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D26_K1",
+      "position": {
+        "chapter": 2,
+        "article": 26,
+        "article_title": "Nội dung quy hoạch vùng",
+        "clause": 1
+      },
+      "content": "Nội dung quy hoạch vùng xác định phương hướng phát triển, sắp xếp không gian và phân bổ nguồn lực cho các hoạt động kinh tế - xã hội, quốc phòng, an ninh, bảo vệ môi trường có tính liên ngành, liên vùng và liên tỉnh.",
+      "cross_references": [],
+      "tags": [
+        "nội dung quy hoạch vùng",
+        "quy hoạch vùng",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D26_K2",
+      "position": {
+        "chapter": 2,
+        "article": 26,
+        "article_title": "Nội dung quy hoạch vùng",
+        "clause": 2
+      },
+      "content": "Quy hoạch vùng bao gồm những nội dung chủ yếu sau đây: a) Phân tích, đánh giá thực trạng các yếu tố, điều kiện tự nhiên, nguồn lực đặc thù của vùng; b) Quan điểm, mục tiêu phát triển vùng; c) Phương hướng phát triển ngành có lợi thế của vùng; phương án phát triển, sắp xếp, lựa chọn và phân bố nguồn lực phát triển trên lãnh thổ vùng; d) Phương hướng xây dựng, bao gồm xác định hệ thống đô thị, nông thôn; khu kinh tế; khu công nghiệp, khu chế xuất, khu công nghệ cao; khu du lịch; khu nghiên cứu, đào tạo; khu thể dục thể thao; khu bảo tồn, khu vực cần được bảo quản, tu bổ, phục hồi di tích lịch sử - văn hóa, danh lam thắng cảnh và đối tượng đã được kiểm kê di tích; vùng sản xuất tập trung; đ) Phương hướng phát triển kết cấu hạ tầng; e) Phương hướng bảo vệ môi trường, khai thác, bảo vệ tài nguyên nước lưu vực sông, phòng, chống thiên tai và ứng phó với biến đổi khí hậu trên lãnh thổ vùng; lãnh thổ vùng; g) Danh mục dự kiến các dự án ưu tiên của vùng; h) Giải pháp, nguồn lực thực hiện quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "nội dung quy hoạch vùng",
+        "quy hoạch vùng",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D26_K3",
+      "position": {
+        "chapter": 2,
+        "article": 26,
+        "article_title": "Nội dung quy hoạch vùng",
+        "clause": 3
+      },
+      "content": "Chính phủ quy định chi tiết nội dung quy hoạch vùng tại khoản 2 Điều này; quy định việc tích hợp quy hoạch vào quy hoạch vùng. Việc lập, thẩm định, phê duyệt và điều chỉnh quy hoạch có tính chất kỹ thuật, chuyên ngành để triển khai các nội dung quy định tại khoản 2 Điều này được thực hiện theo quy định của pháp luật có liên quan.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D26_K2",
+          "anchor_text": "khoản 2 Điều này",
+          "description_summary": "Quy hoạch vùng bao gồm những nội dung chủ yếu sau đây: a) Phân tích, đánh giá thực trạng các yếu tố, điều kiện tự nhiên, nguồn lực đặc thù của vùng;"
+        }
+      ],
+      "tags": [
+        "nội dung quy hoạch vùng",
+        "quy hoạch vùng",
+        "điều chỉnh quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D27_K1",
+      "position": {
+        "chapter": 2,
+        "article": 27,
+        "article_title": "Nội dung quy hoạch tỉnh",
+        "clause": 1
+      },
+      "content": "Nội dung quy hoạch tỉnh thể hiện các dự án cấp quốc gia đã được xác định ở quy hoạch cấp quốc gia; các dự án cấp vùng, liên tỉnh đã được xác định ở quy hoạch vùng; định hướng phát triển, sắp xếp không gian và phân bổ nguồn lực cho các hoạt động kinh tế - xã hội, quốc phòng, an ninh, bảo vệ môi trường ở cấp tỉnh, liên huyện và định hướng bố trí trên địa bàn cấp huyện.",
+      "cross_references": [],
+      "tags": [
+        "nội dung quy hoạch tỉnh",
+        "quy hoạch vùng",
+        "quy hoạch tỉnh"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D27_K3",
+      "position": {
+        "chapter": 2,
+        "article": 27,
+        "article_title": "Nội dung quy hoạch tỉnh",
+        "clause": 3
+      },
+      "content": "Chính phủ quy định chi tiết nội dung quy hoạch tỉnh tại khoản 2 Điều này; quy định việc tích hợp quy hoạch vào quy hoạch tỉnh. Việc lập, thẩm định, phê duyệt và điều chỉnh quy hoạch có tính chất kỹ thuật, chuyên ngành để triển khai các nội dung quy định tại khoản 2 Điều này được thực hiện theo quy định của pháp luật có liên quan.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D27_K2",
+          "anchor_text": "khoản 2 Điều này",
+          "description_summary": "Nội dung quy hoạch tỉnh thể hiện các dự án cấp quốc gia đã được xác định ở quy hoạch cấp quốc gia;"
+        }
+      ],
+      "tags": [
+        "nội dung quy hoạch tỉnh",
+        "quy hoạch tỉnh",
+        "điều chỉnh quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D29_K1",
+      "position": {
+        "chapter": 3,
+        "article": 29,
+        "article_title": "Thẩm quyền thành lập Hội đồng thẩm định quy hoạch",
+        "clause": 1
+      },
+      "content": "Thủ tướng Chính phủ thành lập Hội đồng thẩm định quy hoạch để thẩm định quy hoạch cấp quốc gia, quy hoạch vùng.",
+      "cross_references": [],
+      "tags": [
+        "thẩm quyền thành lập hội đồng thẩm định quy hoạch",
+        "quy hoạch vùng",
+        "thẩm định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D29_K2",
+      "position": {
+        "chapter": 3,
+        "article": 29,
+        "article_title": "Thẩm quyền thành lập Hội đồng thẩm định quy hoạch",
+        "clause": 2
+      },
+      "content": "Bộ Kế hoạch và Đầu tư thành lập Hội đồng thẩm định quy hoạch để thẩm định quy hoạch tỉnh.",
+      "cross_references": [],
+      "tags": [
+        "thẩm quyền thành lập hội đồng thẩm định quy hoạch",
+        "quy hoạch tỉnh",
+        "thẩm định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D30_K1",
+      "position": {
+        "chapter": 3,
+        "article": 30,
+        "article_title": "Hội đồng thẩm định quy hoạch",
+        "clause": 1
+      },
+      "content": "Thành phần Hội đồng thẩm định quy hoạch cấp quốc gia, quy hoạch vùng bao gồm Chủ tịch Hội đồng và các thành viên của Hội đồng. Chủ tịch Hội đồng thẩm định quy hoạch là Thủ tướng Chính phủ hoặc Phó Thủ tướng Chính phủ. Thành viên của Hội đồng thẩm định bao gồm đại diện Bộ, cơ quan ngang Bộ, địa phương và tổ chức, cá nhân khác. Cơ quan thường trực Hội đồng thẩm định do Chủ tịch Hội đồng thẩm định quyết định.",
+      "cross_references": [],
+      "tags": [
+        "hội đồng thẩm định quy hoạch",
+        "quy hoạch vùng",
+        "thẩm định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D30_K2",
+      "position": {
+        "chapter": 3,
+        "article": 30,
+        "article_title": "Hội đồng thẩm định quy hoạch",
+        "clause": 2
+      },
+      "content": "Thành phần Hội đồng thẩm định quy hoạch tỉnh bao gồm Chủ tịch Hội đồng và các thành viên của Hội đồng. Chủ tịch Hội đồng thẩm định quy hoạch là Bộ trưởng Bộ Kế hoạch và Đầu tư. Thành viên của Hội đồng thẩm định bao gồm đại diện Bộ, cơ quan ngang Bộ, địa phương và tổ chức, cá nhân khác. Cơ quan thường trực Hội đồng thẩm định do Chủ tịch Hội đồng thẩm định quyết định.",
+      "cross_references": [],
+      "tags": [
+        "hội đồng thẩm định quy hoạch",
+        "quy hoạch tỉnh",
+        "thẩm định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D30_K3",
+      "position": {
+        "chapter": 3,
+        "article": 30,
+        "article_title": "Hội đồng thẩm định quy hoạch",
+        "clause": 3
+      },
+      "content": "Hội đồng thẩm định quy hoạch làm việc theo chế độ tập thể và chịu trách nhiệm thẩm định quy hoạch theo nhiệm vụ được giao. Cơ quan thường trực Hội đồng thẩm định tổ chức lấy ý kiến chuyên gia, tổ chức xã hội - nghề nghiệp và tổ chức khác có liên quan trước khi trình Hội đồng thẩm định quy hoạch. Trường hợp cần thiết, Hội đồng thẩm định quy hoạch có thể lựa chọn tư vấn phản biện độc lập. Tư vấn phản biện độc lập phải đáp ứng điều kiện về năng lực chuyên môn phù hợp với công việc đảm nhận theo quy định của pháp luật có liên quan và quy định của Chính phủ.",
+      "cross_references": [],
+      "tags": [
+        "hội đồng thẩm định quy hoạch",
+        "thẩm định quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D30_K4",
+      "position": {
+        "chapter": 3,
+        "article": 30,
+        "article_title": "Hội đồng thẩm định quy hoạch",
+        "clause": 4
+      },
+      "content": "Chính phủ quy định chi tiết Điều này.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D30",
+          "anchor_text": "Điều này",
+          "description_summary": "Hội đồng thẩm định quy hoạch"
+        }
+      ],
+      "tags": [
+        "hội đồng thẩm định quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D31_K1",
+      "position": {
+        "chapter": 3,
+        "article": 31,
+        "article_title": "Hồ sơ trình thẩm định quy hoạch",
+        "clause": 1
+      },
+      "content": "Hồ sơ trình thẩm định quy hoạch gồm các tài liệu chủ yếu sau đây: a) Tờ trình; b) Báo cáo quy hoạch; c) Dự thảo văn bản quyết định hoặc phê duyệt quy hoạch; d) Báo cáo tổng hợp ý kiến góp ý của các cơ quan, tổ chức, cộng đồng, cá nhân về quy hoạch; bản sao ý kiến góp ý của Bộ, cơ quan ngang Bộ và địa phương liên quan; báo cáo giải trình, tiếp thu ý kiến góp ý về quy hoạch; đ) Báo cáo đánh giá môi trường chiến lược; e) Hệ thống sơ đồ, bản đồ, cơ sở dữ liệu về quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "hồ sơ trình thẩm định quy hoạch",
+        "thẩm định quy hoạch",
+        "phê duyệt quy hoạch",
+        "cơ sở dữ liệu về quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D31_K2",
+      "position": {
+        "chapter": 3,
+        "article": 31,
+        "article_title": "Hồ sơ trình thẩm định quy hoạch",
+        "clause": 2
+      },
+      "content": "Hội đồng thẩm định quy hoạch chỉ tổ chức thẩm định khi nhận đủ hồ sơ quy định tại khoản 1 Điều này. Trường hợp cần thiết, Hội đồng thẩm định có quyền yêu cầu cơ quan trình thẩm định quy hoạch cung cấp thêm thông tin, giải trình về các nội dung liên quan.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D31_K1",
+          "anchor_text": "khoản 1 Điều này",
+          "description_summary": "Hồ sơ trình thẩm định quy hoạch gồm các tài liệu chủ yếu sau đây: a) Tờ trình;"
+        }
+      ],
+      "tags": [
+        "hồ sơ trình thẩm định quy hoạch",
+        "thẩm định quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D32_K1",
+      "position": {
+        "chapter": 3,
+        "article": 32,
+        "article_title": "Nội dung thẩm định quy hoạch",
+        "clause": 1
+      },
+      "content": "Sự phù hợp với nhiệm vụ lập quy hoạch đã được phê duyệt;",
+      "cross_references": [],
+      "tags": [
+        "nội dung thẩm định quy hoạch",
+        "lập quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D32_K2",
+      "position": {
+        "chapter": 3,
+        "article": 32,
+        "article_title": "Nội dung thẩm định quy hoạch",
+        "clause": 2
+      },
+      "content": "Việc tuân thủ quy trình lập quy hoạch quy định tại Điều 16 của Luật này;",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D16",
+          "anchor_text": "Điều 16",
+          "description_summary": "Quy trình lập quy hoạch"
+        }
+      ],
+      "tags": [
+        "nội dung thẩm định quy hoạch",
+        "lập quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D32_K3",
+      "position": {
+        "chapter": 3,
+        "article": 32,
+        "article_title": "Nội dung thẩm định quy hoạch",
+        "clause": 3
+      },
+      "content": "Việc tích hợp các nội dung quy hoạch do Bộ, cơ quan ngang Bộ và địa phương liên quan được phân công thực hiện;",
+      "cross_references": [],
+      "tags": [
+        "nội dung thẩm định quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D32_K4",
+      "position": {
+        "chapter": 3,
+        "article": 32,
+        "article_title": "Nội dung thẩm định quy hoạch",
+        "clause": 4
+      },
+      "content": "Sự phù hợp của quy hoạch với quy định tại Mục 2 Chương II của Luật này.",
+      "cross_references": [],
+      "tags": [
+        "nội dung thẩm định quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D33_K1",
+      "position": {
+        "chapter": 3,
+        "article": 33,
+        "article_title": "Báo cáo thẩm định quy hoạch",
+        "clause": 1
+      },
+      "content": "Báo cáo thẩm định quy hoạch tổng thể quốc gia, quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia phải thể hiện rõ ý kiến của Hội đồng thẩm định quy hoạch về nội dung thẩm định quy hoạch quy định tại Điều 32 của Luật này và kết luận về việc quy hoạch đủ điều kiện hoặc chưa đủ điều kiện để Chính phủ trình Quốc hội quyết định.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D32",
+          "anchor_text": "Điều 32",
+          "description_summary": "Nội dung thẩm định quy hoạch"
+        }
+      ],
+      "tags": [
+        "báo cáo thẩm định quy hoạch",
+        "quy hoạch tổng thể quốc gia",
+        "quy hoạch không gian biển quốc gia",
+        "quy hoạch sử dụng đất quốc gia",
+        "thẩm định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D33_K2",
+      "position": {
+        "chapter": 3,
+        "article": 33,
+        "article_title": "Báo cáo thẩm định quy hoạch",
+        "clause": 2
+      },
+      "content": "Báo cáo thẩm định quy hoạch ngành quốc gia, quy hoạch vùng, quy hoạch tỉnh phải thể hiện rõ ý kiến của Hội đồng thẩm định quy hoạch về nội dung thẩm định quy hoạch quy định tại Điều 32 của Luật này và kết luận về việc quy hoạch đủ điều kiện hoặc chưa đủ điều kiện trình Thủ tướng Chính phủ phê duyệt.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D32",
+          "anchor_text": "Điều 32",
+          "description_summary": "Nội dung thẩm định quy hoạch"
+        }
+      ],
+      "tags": [
+        "báo cáo thẩm định quy hoạch",
+        "quy hoạch ngành quốc gia",
+        "quy hoạch vùng",
+        "quy hoạch tỉnh",
+        "thẩm định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D33_K3",
+      "position": {
+        "chapter": 3,
+        "article": 33,
+        "article_title": "Báo cáo thẩm định quy hoạch",
+        "clause": 3
+      },
+      "content": "Báo cáo thẩm định quy hoạch tổng thể quốc gia, quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia, quy hoạch vùng và các tài liệu kèm theo phải được gửi đến cơ quan lập quy hoạch chậm nhất là 15 ngày kể từ ngày kết thúc thẩm định. Cơ quan lập quy hoạch có trách nhiệm nghiên cứu, giải trình, tiếp thu ý kiến thẩm định để chỉnh lý, hoàn thiện hồ sơ trình quyết định hoặc phê duyệt quy hoạch. Báo cáo thẩm định quy hoạch ngành quốc gia, quy hoạch tỉnh và các tài liệu kèm theo phải được gửi đến cơ quan tổ chức lập quy hoạch chậm nhất là 15 ngày kể từ ngày kết thúc thẩm định. Cơ quan tổ chức lập quy hoạch có trách nhiệm chỉ đạo cơ quan lập quy hoạch nghiên cứu, giải trình, tiếp thu ý kiến thẩm định để chỉnh lý, hoàn thiện hồ sơ trình phê duyệt quy hoạch. Trường hợp kết luận quy hoạch chưa đủ điều kiện trình quyết định hoặc phê duyệt thì Hội đồng thẩm định quy hoạch trả lại hồ sơ cho cơ quan trình thẩm định quy hoạch và nêu rõ lý do. Mục 2. QUYẾT ĐỊNH HOẶC PHÊ DUYỆT QUY HOẠCH",
+      "cross_references": [],
+      "tags": [
+        "báo cáo thẩm định quy hoạch",
+        "quy hoạch tổng thể quốc gia",
+        "quy hoạch không gian biển quốc gia",
+        "quy hoạch sử dụng đất quốc gia",
+        "quy hoạch ngành quốc gia",
+        "quy hoạch vùng"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D34_K1",
+      "position": {
+        "chapter": 3,
+        "article": 34,
+        "article_title": "Thẩm quyền quyết định hoặc phê duyệt quy hoạch",
+        "clause": 1
+      },
+      "content": "Quốc hội quyết định quy hoạch tổng thể quốc gia, quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia.",
+      "cross_references": [],
+      "tags": [
+        "thẩm quyền quyết định hoặc phê duyệt quy hoạch",
+        "quy hoạch tổng thể quốc gia",
+        "quy hoạch không gian biển quốc gia",
+        "quy hoạch sử dụng đất quốc gia"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D34_K2",
+      "position": {
+        "chapter": 3,
+        "article": 34,
+        "article_title": "Thẩm quyền quyết định hoặc phê duyệt quy hoạch",
+        "clause": 2
+      },
+      "content": "Thủ tướng Chính phủ phê duyệt quy hoạch ngành quốc gia, quy hoạch vùng, quy hoạch tỉnh. Đối với quy hoạch Thủ đô, Thủ tướng Chính phủ phê duyệt sau khi có ý kiến của Quốc hội.",
+      "cross_references": [],
+      "tags": [
+        "thẩm quyền quyết định hoặc phê duyệt quy hoạch",
+        "quy hoạch ngành quốc gia",
+        "quy hoạch vùng",
+        "quy hoạch tỉnh",
+        "phê duyệt quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D35_K1",
+      "position": {
+        "chapter": 3,
+        "article": 35,
+        "article_title": "Hồ sơ trình quyết định hoặc phê duyệt quy hoạch",
+        "clause": 1
+      },
+      "content": "Tờ trình;",
+      "cross_references": [],
+      "tags": [
+        "hồ sơ trình quyết định hoặc phê duyệt quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D35_K2",
+      "position": {
+        "chapter": 3,
+        "article": 35,
+        "article_title": "Hồ sơ trình quyết định hoặc phê duyệt quy hoạch",
+        "clause": 2
+      },
+      "content": "Báo cáo quy hoạch;",
+      "cross_references": [],
+      "tags": [
+        "hồ sơ trình quyết định hoặc phê duyệt quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D35_K3",
+      "position": {
+        "chapter": 3,
+        "article": 35,
+        "article_title": "Hồ sơ trình quyết định hoặc phê duyệt quy hoạch",
+        "clause": 3
+      },
+      "content": "Dự thảo văn bản quyết định hoặc phê duyệt quy hoạch;",
+      "cross_references": [],
+      "tags": [
+        "hồ sơ trình quyết định hoặc phê duyệt quy hoạch",
+        "phê duyệt quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D35_K4",
+      "position": {
+        "chapter": 3,
+        "article": 35,
+        "article_title": "Hồ sơ trình quyết định hoặc phê duyệt quy hoạch",
+        "clause": 4
+      },
+      "content": "Báo cáo tổng hợp ý kiến góp ý của các cơ quan, tổ chức, cộng đồng, cá nhân về quy hoạch; bản sao ý kiến góp ý của Bộ, cơ quan ngang Bộ và địa phương liên quan; báo cáo giải trình, tiếp thu ý kiến góp ý về quy hoạch;",
+      "cross_references": [],
+      "tags": [
+        "hồ sơ trình quyết định hoặc phê duyệt quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D35_K5",
+      "position": {
+        "chapter": 3,
+        "article": 35,
+        "article_title": "Hồ sơ trình quyết định hoặc phê duyệt quy hoạch",
+        "clause": 5
+      },
+      "content": "Báo cáo đánh giá môi trường chiến lược;",
+      "cross_references": [],
+      "tags": [
+        "hồ sơ trình quyết định hoặc phê duyệt quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D35_K6",
+      "position": {
+        "chapter": 3,
+        "article": 35,
+        "article_title": "Hồ sơ trình quyết định hoặc phê duyệt quy hoạch",
+        "clause": 6
+      },
+      "content": "Báo cáo thẩm định quy hoạch; bản sao ý kiến của chuyên gia, tổ chức xã hội - nghề nghiệp và tổ chức khác có liên quan; báo cáo phản biện của tư vấn phản biện độc lập (nếu có);",
+      "cross_references": [],
+      "tags": [
+        "hồ sơ trình quyết định hoặc phê duyệt quy hoạch",
+        "thẩm định quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D35_K7",
+      "position": {
+        "chapter": 3,
+        "article": 35,
+        "article_title": "Hồ sơ trình quyết định hoặc phê duyệt quy hoạch",
+        "clause": 7
+      },
+      "content": "Báo cáo giải trình, tiếp thu ý kiến thẩm định;",
+      "cross_references": [],
+      "tags": [
+        "hồ sơ trình quyết định hoặc phê duyệt quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D35_K8",
+      "position": {
+        "chapter": 3,
+        "article": 35,
+        "article_title": "Hồ sơ trình quyết định hoặc phê duyệt quy hoạch",
+        "clause": 8
+      },
+      "content": "Hệ thống sơ đồ, bản đồ, cơ sở dữ liệu về quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "hồ sơ trình quyết định hoặc phê duyệt quy hoạch",
+        "cơ sở dữ liệu về quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D36_K1",
+      "position": {
+        "chapter": 3,
+        "article": 36,
+        "article_title": "Trình tự, thủ tục quyết định quy hoạch tổng thể quốc gia, quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia",
+        "clause": 1
+      },
+      "content": "Chậm nhất là 60 ngày trước ngày khai mạc kỳ họp Quốc hội, Chính phủ gửi hồ sơ trình quyết định quy hoạch đến cơ quan của Quốc hội để thẩm tra.",
+      "cross_references": [],
+      "tags": [
+        "trình tự, thủ tục quyết định quy hoạch tổng thể quốc gia, quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D36_K2",
+      "position": {
+        "chapter": 3,
+        "article": 36,
+        "article_title": "Trình tự, thủ tục quyết định quy hoạch tổng thể quốc gia, quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia",
+        "clause": 2
+      },
+      "content": "Cơ quan thẩm tra có quyền yêu cầu Chính phủ và cơ quan, tổ chức, cá nhân có liên quan báo cáo về những vấn đề thuộc nội dung quy hoạch. Cơ quan, tổ chức, cá nhân được yêu cầu có trách nhiệm cung cấp đầy đủ thông tin, tài liệu phục vụ cho việc thẩm tra.",
+      "cross_references": [],
+      "tags": [
+        "trình tự, thủ tục quyết định quy hoạch tổng thể quốc gia, quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D36_K3",
+      "position": {
+        "chapter": 3,
+        "article": 36,
+        "article_title": "Trình tự, thủ tục quyết định quy hoạch tổng thể quốc gia, quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia",
+        "clause": 3
+      },
+      "content": "Nội dung thẩm tra tập trung vào các vấn đề sau đây: a) Sự phù hợp của nội dung quy hoạch với chủ trương, đường lối của Đảng; tính hợp hiến, hợp pháp; tính thống nhất trong hệ thống quy hoạch; tính tương thích với điều ước quốc tế có liên quan mà nước Cộng hòa xã hội chủ nghĩa Việt Nam là thành viên; b) Sự phù hợp của quy hoạch với quy định tại Mục 2 Chương II của Luật này; c) Tính khả thi của quy hoạch và điều kiện bảo đảm về nguồn nhân lực, tài chính để thực hiện quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "trình tự, thủ tục quyết định quy hoạch tổng thể quốc gia, quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia",
+        "điều ước quốc tế",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D36_K4",
+      "position": {
+        "chapter": 3,
+        "article": 36,
+        "article_title": "Trình tự, thủ tục quyết định quy hoạch tổng thể quốc gia, quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia",
+        "clause": 4
+      },
+      "content": "Quốc hội xem xét, thông qua nghị quyết về quy hoạch tổng thể quốc gia, quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia.",
+      "cross_references": [],
+      "tags": [
+        "trình tự, thủ tục quyết định quy hoạch tổng thể quốc gia, quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia",
+        "quy hoạch tổng thể quốc gia",
+        "quy hoạch không gian biển quốc gia",
+        "quy hoạch sử dụng đất quốc gia"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D37_K1",
+      "position": {
+        "chapter": 3,
+        "article": 37,
+        "article_title": "Nội dung quyết định hoặc phê duyệt quy hoạch",
+        "clause": 1
+      },
+      "content": "Nội dung thẩm định quy hoạch tập trung vào các vấn đề sau đây: Hồ sơ trình quyết định hoặc phê duyệt quy hoạch bao gồm các tài liệu chủ yếu sau đây: Nội dung quyết định hoặc phê duyệt quy hoạch bao gồm các nội dung chủ yếu quy định tại khoản 2 Điều 22, khoản 2 Điều 23, khoản 2 Điều 24, các khoản 3, 4, 5 và 6 Điều 25, khoản 2 Điều 26 và khoản 2 Điều 27 của Luật này tương ứng với từng loại quy hoạch. Mục 3. CÔNG BỐ VÀ CUNG CẤP THÔNG TIN QUY HOẠCH",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D25_K3",
+          "anchor_text": "khoản 3 Điều 25",
+          "description_summary": "Quy hoạch kết cấu hạ tầng quốc gia bao gồm những nội dung chủ yếu sau đây: a) Phân tích, đánh giá về các yếu tố, điều kiện tự nhiên, nguồn lực, bối cảnh và thực trạng phân bố, sử…"
+        },
+        {
+          "target_id": "LQH_VBHN_D25_K4",
+          "anchor_text": "khoản 4 Điều 25",
+          "description_summary": "Quy hoạch sử dụng tài nguyên quốc gia, trừ quy hoạch sử dụng đất quốc phòng, quy hoạch sử dụng đất an ninh, bao gồm những nội dung sau đây: a) Phân tích, đánh giá điều kiện tự nhi…"
+        },
+        {
+          "target_id": "LQH_VBHN_D25_K5",
+          "anchor_text": "khoản 5 Điều 25",
+          "description_summary": "Quy hoạch bảo vệ môi trường quốc gia bao gồm những nội dung chủ yếu sau đây: a) Đánh giá hiện trạng, diễn biến chất lượng môi trường, cảnh quan thiên nhiên và đa dạng sinh học;"
+        },
+        {
+          "target_id": "LQH_VBHN_D25_K6",
+          "anchor_text": "khoản 6 Điều 25",
+          "description_summary": "Quy hoạch tổng thể bảo tồn đa dạng sinh học bao gồm những nội dung chủ yếu sau đây: a) Đánh giá hiện trạng, diễn biến đa dạng sinh học, tình hình quản lý bảo tồn đa dạng sinh học;"
+        },
+        {
+          "target_id": "LQH_VBHN_D22_K2",
+          "anchor_text": "khoản 2 Điều 22",
+          "description_summary": "Quy hoạch tổng thể quốc gia bao gồm những nội dung chủ yếu sau đây: a) Phân tích, đánh giá điều kiện tự nhiên, hiện trạng phát triển quốc gia, xu thế phát triển trong nước và quốc…"
+        },
+        {
+          "target_id": "LQH_VBHN_D23_K2",
+          "anchor_text": "khoản 2 Điều 23",
+          "description_summary": "Quy hoạch không gian biển quốc gia bao gồm những nội dung chủ yếu sau đây: a) Phân tích, đánh giá về các yếu tố, điều kiện tự nhiên, nguồn lực, bối cảnh trực tiếp tác động và thực…"
+        },
+        {
+          "target_id": "LQH_VBHN_D24_K2",
+          "anchor_text": "khoản 2 Điều 24",
+          "description_summary": "Quy hoạch sử dụng đất quốc gia bao gồm những nội dung chủ yếu sau đây: a) Phân tích, đánh giá về các yếu tố, điều kiện tự nhiên, nguồn lực, bối cảnh trực tiếp tác động và thực trạ…"
+        },
+        {
+          "target_id": "LQH_VBHN_D26_K2",
+          "anchor_text": "khoản 2 Điều 26",
+          "description_summary": "Quy hoạch vùng bao gồm những nội dung chủ yếu sau đây: a) Phân tích, đánh giá thực trạng các yếu tố, điều kiện tự nhiên, nguồn lực đặc thù của vùng;"
+        },
+        {
+          "target_id": "LQH_VBHN_D27_K2",
+          "anchor_text": "khoản 2 Điều 27",
+          "description_summary": "Nội dung quy hoạch tỉnh thể hiện các dự án cấp quốc gia đã được xác định ở quy hoạch cấp quốc gia;"
+        }
+      ],
+      "tags": [
+        "nội dung quyết định hoặc phê duyệt quy hoạch",
+        "thẩm định quy hoạch",
+        "phê duyệt quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D38_K1",
+      "position": {
+        "chapter": 3,
+        "article": 38,
+        "article_title": "Công bố quy hoạch",
+        "clause": 1
+      },
+      "content": "Chậm nhất là 15 ngày kể từ ngày quy hoạch được cơ quan có thẩm quyền quyết định hoặc phê duyệt, toàn bộ nội dung của quy hoạch phải được công bố công khai, trừ những nội dung liên quan đến bí mật nhà nước theo quy định của pháp luật về bảo vệ bí mật nhà nước.",
+      "cross_references": [],
+      "tags": [
+        "công bố quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D38_K2",
+      "position": {
+        "chapter": 3,
+        "article": 38,
+        "article_title": "Công bố quy hoạch",
+        "clause": 2
+      },
+      "content": "Quy hoạch được công bố theo hình thức quy định tại Điều 40 của Luật này.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D40",
+          "anchor_text": "Điều 40",
+          "description_summary": "Hình thức công bố quy hoạch"
+        }
+      ],
+      "tags": [
+        "công bố quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D39_K1",
+      "position": {
+        "chapter": 3,
+        "article": 39,
+        "article_title": "Trách nhiệm tổ chức công bố quy hoạch",
+        "clause": 1
+      },
+      "content": "Bộ Kế hoạch và Đầu tư tổ chức công bố quy hoạch tổng thể quốc gia, quy hoạch vùng.",
+      "cross_references": [],
+      "tags": [
+        "trách nhiệm tổ chức công bố quy hoạch",
+        "quy hoạch tổng thể quốc gia",
+        "quy hoạch vùng",
+        "công bố quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D39_K2",
+      "position": {
+        "chapter": 3,
+        "article": 39,
+        "article_title": "Trách nhiệm tổ chức công bố quy hoạch",
+        "clause": 2
+      },
+      "content": "Bộ Tài nguyên và Môi trường tổ chức công bố quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia.",
+      "cross_references": [],
+      "tags": [
+        "trách nhiệm tổ chức công bố quy hoạch",
+        "quy hoạch không gian biển quốc gia",
+        "quy hoạch sử dụng đất quốc gia",
+        "công bố quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D39_K3",
+      "position": {
+        "chapter": 3,
+        "article": 39,
+        "article_title": "Trách nhiệm tổ chức công bố quy hoạch",
+        "clause": 3
+      },
+      "content": "Bộ, cơ quan ngang Bộ tổ chức công bố quy hoạch ngành quốc gia thuộc thẩm quyền tổ chức lập.",
+      "cross_references": [],
+      "tags": [
+        "trách nhiệm tổ chức công bố quy hoạch",
+        "quy hoạch ngành quốc gia",
+        "công bố quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D39_K4",
+      "position": {
+        "chapter": 3,
+        "article": 39,
+        "article_title": "Trách nhiệm tổ chức công bố quy hoạch",
+        "clause": 4
+      },
+      "content": "Ủy ban nhân dân cấp tỉnh tổ chức công bố quy hoạch tỉnh.",
+      "cross_references": [],
+      "tags": [
+        "trách nhiệm tổ chức công bố quy hoạch",
+        "quy hoạch tỉnh",
+        "công bố quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D40_K1",
+      "position": {
+        "chapter": 3,
+        "article": 40,
+        "article_title": "Hình thức công bố quy hoạch",
+        "clause": 1
+      },
+      "content": "Quy hoạch phải được đăng tải thường xuyên, liên tục trên trang thông tin điện tử của cơ quan tổ chức lập quy hoạch, cơ quan lập quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "hình thức công bố quy hoạch",
+        "lập quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D40_K2",
+      "position": {
+        "chapter": 3,
+        "article": 40,
+        "article_title": "Hình thức công bố quy hoạch",
+        "clause": 2
+      },
+      "content": "Ngoài việc thực hiện quy định tại khoản 1 Điều này, quy hoạch còn được công bố theo các hình thức sau đây: a) Thông tin trên phương tiện thông tin đại chúng; b) Trưng bày mô hình, hệ thống sơ đồ, bản đồ, hệ thống cơ sở dữ liệu về quy hoạch; c) Tổ chức hội nghị, hội thảo; d) Phát hành ấn phẩm.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D40_K1",
+          "anchor_text": "khoản 1 Điều này",
+          "description_summary": "Quy hoạch phải được đăng tải thường xuyên, liên tục trên trang thông tin điện tử của cơ quan tổ chức lập quy hoạch, cơ quan lập quy hoạch."
+        }
+      ],
+      "tags": [
+        "hình thức công bố quy hoạch",
+        "cơ sở dữ liệu về quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D40_K3",
+      "position": {
+        "chapter": 3,
+        "article": 40,
+        "article_title": "Hình thức công bố quy hoạch",
+        "clause": 3
+      },
+      "content": "Chính phủ quy định chi tiết khoản 2 Điều này.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D40_K2",
+          "anchor_text": "khoản 2 Điều này",
+          "description_summary": "Ngoài việc thực hiện quy định tại khoản 1 Điều này, quy hoạch còn được công bố theo các hình thức sau đây: a) Thông tin trên phương tiện thông tin đại chúng;"
+        }
+      ],
+      "tags": [
+        "hình thức công bố quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D41_K1",
+      "position": {
+        "chapter": 3,
+        "article": 41,
+        "article_title": "Hệ thống thông tin và cơ sở dữ liệu quốc gia về quy hoạch",
+        "clause": 1
+      },
+      "content": "Hệ thống thông tin và cơ sở dữ liệu quốc gia về quy hoạch được xây dựng, vận hành thống nhất trên phạm vi cả nước phục vụ cho hoạt động quy hoạch. Hệ thống thông tin và cơ sở dữ liệu quốc gia về quy hoạch bao gồm hồ sơ quy hoạch, các dữ liệu về tự nhiên, kinh tế - xã hội, môi trường, biến đổi khí hậu, quốc phòng, an ninh gắn với hệ thống cơ sở dữ liệu nền địa lý quốc gia đã được chuẩn hóa và cập nhật thường xuyên.",
+      "cross_references": [],
+      "tags": [
+        "hệ thống thông tin và cơ sở dữ liệu quốc gia về quy hoạch",
+        "hoạt động quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D41_K2",
+      "position": {
+        "chapter": 3,
+        "article": 41,
+        "article_title": "Hệ thống thông tin và cơ sở dữ liệu quốc gia về quy hoạch",
+        "clause": 2
+      },
+      "content": "Trách nhiệm xây dựng hệ thống thông tin và cơ sở dữ liệu quốc gia về quy hoạch được quy định như sau: a) Bộ Kế hoạch và Đầu tư tổ chức xây dựng, quản lý, khai thác hệ thống thông tin và cơ sở dữ liệu quốc gia về quy hoạch; b) Bộ Tài nguyên và Môi trường cung cấp cơ sở dữ liệu nền địa lý quốc gia đã được chuẩn hóa và được cập nhật thường xuyên để tạo dữ liệu khung cho hệ thống thông tin và cơ sở dữ liệu quốc gia về quy hoạch; c) Bộ, cơ quan ngang Bộ cung cấp dữ liệu có liên quan thuộc phạm vi quản lý để cập nhật vào hệ thống thông tin và cơ sở dữ liệu quốc gia về quy hoạch; d) Ủy ban nhân dân cấp tỉnh cung cấp dữ liệu có liên quan thuộc phạm vi quản lý của địa phương để cập nhật vào hệ thống thông tin và cơ sở dữ liệu quốc gia về quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "hệ thống thông tin và cơ sở dữ liệu quốc gia về quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D41_K3",
+      "position": {
+        "chapter": 3,
+        "article": 41,
+        "article_title": "Hệ thống thông tin và cơ sở dữ liệu quốc gia về quy hoạch",
+        "clause": 3
+      },
+      "content": "Chính phủ quy định chi tiết Điều này.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D41",
+          "anchor_text": "Điều này",
+          "description_summary": "Hệ thống thông tin và cơ sở dữ liệu quốc gia về quy hoạch"
+        }
+      ],
+      "tags": [
+        "hệ thống thông tin và cơ sở dữ liệu quốc gia về quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D42_K1",
+      "position": {
+        "chapter": 3,
+        "article": 42,
+        "article_title": "Cung cấp thông tin quy hoạch cho cơ quan, tổ chức, cá nhân",
+        "clause": 1
+      },
+      "content": "Thông tin về quy hoạch đã được quyết định hoặc phê duyệt phải được cung cấp đầy đủ, kịp thời, chính xác cho cơ quan, tổ chức, cá nhân khi có yêu cầu, trừ những nội dung liên quan đến bí mật nhà nước theo quy định của pháp luật về bảo vệ bí mật nhà nước.",
+      "cross_references": [],
+      "tags": [
+        "cung cấp thông tin quy hoạch cho cơ quan, tổ chức, cá nhân",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D42_K2",
+      "position": {
+        "chapter": 3,
+        "article": 42,
+        "article_title": "Cung cấp thông tin quy hoạch cho cơ quan, tổ chức, cá nhân",
+        "clause": 2
+      },
+      "content": "Bộ Kế hoạch và Đầu tư có trách nhiệm cung cấp thông tin về quy hoạch cấp quốc gia, quy hoạch vùng và quy hoạch tỉnh.",
+      "cross_references": [],
+      "tags": [
+        "cung cấp thông tin quy hoạch cho cơ quan, tổ chức, cá nhân",
+        "quy hoạch vùng",
+        "quy hoạch tỉnh"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D42_K3",
+      "position": {
+        "chapter": 3,
+        "article": 42,
+        "article_title": "Cung cấp thông tin quy hoạch cho cơ quan, tổ chức, cá nhân",
+        "clause": 3
+      },
+      "content": "Bộ Tài nguyên và Môi trường có trách nhiệm cung cấp thông tin về quy hoạch sử dụng đất quốc gia, quy hoạch không gian biển quốc gia.",
+      "cross_references": [],
+      "tags": [
+        "cung cấp thông tin quy hoạch cho cơ quan, tổ chức, cá nhân",
+        "quy hoạch không gian biển quốc gia",
+        "quy hoạch sử dụng đất quốc gia"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D42_K4",
+      "position": {
+        "chapter": 3,
+        "article": 42,
+        "article_title": "Cung cấp thông tin quy hoạch cho cơ quan, tổ chức, cá nhân",
+        "clause": 4
+      },
+      "content": "Bộ, cơ quan ngang Bộ có trách nhiệm cung cấp thông tin về quy hoạch ngành quốc gia thuộc thẩm quyền tổ chức lập.",
+      "cross_references": [],
+      "tags": [
+        "cung cấp thông tin quy hoạch cho cơ quan, tổ chức, cá nhân",
+        "quy hoạch ngành quốc gia",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D42_K5",
+      "position": {
+        "chapter": 3,
+        "article": 42,
+        "article_title": "Cung cấp thông tin quy hoạch cho cơ quan, tổ chức, cá nhân",
+        "clause": 5
+      },
+      "content": "Ủy ban nhân dân cấp tỉnh có trách nhiệm cung cấp thông tin về quy hoạch tỉnh.",
+      "cross_references": [],
+      "tags": [
+        "cung cấp thông tin quy hoạch cho cơ quan, tổ chức, cá nhân",
+        "quy hoạch tỉnh",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D43_K1",
+      "position": {
+        "chapter": 3,
+        "article": 43,
+        "article_title": "Hình thức cung cấp thông tin quy hoạch",
+        "clause": 1
+      },
+      "content": "Cung cấp bằng văn bản hoặc thông tin trực tiếp theo yêu cầu của cơ quan, tổ chức, cá nhân.",
+      "cross_references": [],
+      "tags": [
+        "hình thức cung cấp thông tin quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D43_K2",
+      "position": {
+        "chapter": 3,
+        "article": 43,
+        "article_title": "Hình thức cung cấp thông tin quy hoạch",
+        "clause": 2
+      },
+      "content": "Đăng tải trên trang thông tin điện tử và phương tiện thông tin đại chúng theo quy định tại Điều 40 của Luật này.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D40",
+          "anchor_text": "Điều 40",
+          "description_summary": "Hình thức công bố quy hoạch"
+        }
+      ],
+      "tags": [
+        "hình thức cung cấp thông tin quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D43_K3",
+      "position": {
+        "chapter": 3,
+        "article": 43,
+        "article_title": "Hình thức cung cấp thông tin quy hoạch",
+        "clause": 3
+      },
+      "content": "Cung cấp các ấn phẩm về quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "hình thức cung cấp thông tin quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D44_K1",
+      "position": {
+        "chapter": 3,
+        "article": 44,
+        "article_title": "Lưu trữ hồ sơ quy hoạch",
+        "clause": 1
+      },
+      "content": "Hồ sơ quy hoạch được lưu trữ bao gồm: a) Hồ sơ trình thẩm định quy hoạch quy định tại Điều 31 của Luật này; b) Hồ sơ trình quyết định hoặc phê duyệt quy hoạch quy định tại Điều 35 của Luật này; c) Báo cáo thẩm tra quy hoạch đối với quy hoạch tổng thể quốc gia, quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia; d) Văn bản quyết định hoặc phê duyệt quy hoạch; đ) Tài liệu khác (nếu có).",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D31",
+          "anchor_text": "Điều 31",
+          "description_summary": "Hồ sơ trình thẩm định quy hoạch"
+        },
+        {
+          "target_id": "LQH_VBHN_D35",
+          "anchor_text": "Điều 35",
+          "description_summary": "Hồ sơ trình quyết định hoặc phê duyệt quy hoạch"
+        }
+      ],
+      "tags": [
+        "lưu trữ hồ sơ quy hoạch",
+        "quy hoạch tổng thể quốc gia",
+        "quy hoạch không gian biển quốc gia",
+        "quy hoạch sử dụng đất quốc gia",
+        "thẩm định quy hoạch",
+        "phê duyệt quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D44_K2",
+      "position": {
+        "chapter": 3,
+        "article": 44,
+        "article_title": "Lưu trữ hồ sơ quy hoạch",
+        "clause": 2
+      },
+      "content": "Việc lưu trữ hồ sơ quy hoạch thực hiện theo quy định của pháp luật về lưu trữ.",
+      "cross_references": [],
+      "tags": [
+        "lưu trữ hồ sơ quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D45_K1",
+      "position": {
+        "chapter": 4,
+        "article": 45,
+        "article_title": "Kế hoạch thực hiện quy hoạch",
+        "clause": 1
+      },
+      "content": "Kế hoạch thực hiện quy hoạch được ban hành sau khi quy hoạch được quyết định hoặc phê duyệt. Thẩm quyền ban hành kế hoạch thực hiện quy hoạch được quy định tại Điều 55 và Điều 56 của Luật này. Cơ quan có thẩm quyền ban hành kế hoạch thực hiện quy hoạch có thẩm quyền ban hành điều chỉnh kế hoạch thực hiện quy hoạch.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D55",
+          "anchor_text": "Điều 55",
+          "description_summary": "Trách nhiệm quản lý nhà nước về quy hoạch của Chính phủ, Bộ, cơ quan ngang Bộ"
+        },
+        {
+          "target_id": "LQH_VBHN_D56",
+          "anchor_text": "Điều 56",
+          "description_summary": "Trách nhiệm quản lý nhà nước về quy hoạch của Ủy ban nhân dân cấp tỉnh"
+        }
+      ],
+      "tags": [
+        "kế hoạch thực hiện quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D45_K2",
+      "position": {
+        "chapter": 4,
+        "article": 45,
+        "article_title": "Kế hoạch thực hiện quy hoạch",
+        "clause": 2
+      },
+      "content": "Kế hoạch thực hiện quy hoạch phải tuân thủ văn bản quyết định hoặc phê duyệt quy hoạch và bao gồm các nội dung chủ yếu sau đây: a) Dự án đầu tư công; b) Dự án đầu tư sử dụng nguồn vốn khác ngoài vốn đầu tư công; c) Xác định các nguồn lực và việc sử dụng nguồn lực để thực hiện quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "kế hoạch thực hiện quy hoạch",
+        "phê duyệt quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D45_K3",
+      "position": {
+        "chapter": 4,
+        "article": 45,
+        "article_title": "Kế hoạch thực hiện quy hoạch",
+        "clause": 3
+      },
+      "content": "Chính phủ quy định hồ sơ, trình tự, thủ tục ban hành, điều chỉnh kế hoạch thực hiện quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "kế hoạch thực hiện quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D46_K1",
+      "position": {
+        "chapter": 4,
+        "article": 46,
+        "article_title": "Chính sách, giải pháp thực hiện quy hoạch",
+        "clause": 1
+      },
+      "content": "Thu hút đầu tư phát triển theo quy hoạch đã được quyết định hoặc phê duyệt;",
+      "cross_references": [],
+      "tags": [
+        "chính sách, giải pháp thực hiện quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D46_K2",
+      "position": {
+        "chapter": 4,
+        "article": 46,
+        "article_title": "Chính sách, giải pháp thực hiện quy hoạch",
+        "clause": 2
+      },
+      "content": "Phát triển nguồn nhân lực;",
+      "cross_references": [],
+      "tags": [
+        "chính sách, giải pháp thực hiện quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D46_K3",
+      "position": {
+        "chapter": 4,
+        "article": 46,
+        "article_title": "Chính sách, giải pháp thực hiện quy hoạch",
+        "clause": 3
+      },
+      "content": "Phát triển khoa học và công nghệ;",
+      "cross_references": [],
+      "tags": [
+        "chính sách, giải pháp thực hiện quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D46_K4",
+      "position": {
+        "chapter": 4,
+        "article": 46,
+        "article_title": "Chính sách, giải pháp thực hiện quy hoạch",
+        "clause": 4
+      },
+      "content": "Bảo đảm an sinh xã hội;",
+      "cross_references": [],
+      "tags": [
+        "chính sách, giải pháp thực hiện quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D46_K5",
+      "position": {
+        "chapter": 4,
+        "article": 46,
+        "article_title": "Chính sách, giải pháp thực hiện quy hoạch",
+        "clause": 5
+      },
+      "content": "Bảo vệ môi trường;",
+      "cross_references": [],
+      "tags": [
+        "chính sách, giải pháp thực hiện quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D46_K6",
+      "position": {
+        "chapter": 4,
+        "article": 46,
+        "article_title": "Chính sách, giải pháp thực hiện quy hoạch",
+        "clause": 6
+      },
+      "content": "Bảo đảm nguồn lực tài chính;",
+      "cross_references": [],
+      "tags": [
+        "chính sách, giải pháp thực hiện quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D46_K7",
+      "position": {
+        "chapter": 4,
+        "article": 46,
+        "article_title": "Chính sách, giải pháp thực hiện quy hoạch",
+        "clause": 7
+      },
+      "content": "Bảo đảm quốc phòng, an ninh.",
+      "cross_references": [],
+      "tags": [
+        "chính sách, giải pháp thực hiện quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D47_K1",
+      "position": {
+        "chapter": 4,
+        "article": 47,
+        "article_title": "Nguồn lực thực hiện quy hoạch",
+        "clause": 1
+      },
+      "content": "Bộ, cơ quan ngang Bộ, trong phạm vi nhiệm vụ, quyền hạn của mình, bố trí hoặc trình cơ quan có thẩm quyền bố trí nguồn lực để thực hiện quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "nguồn lực thực hiện quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D47_K2",
+      "position": {
+        "chapter": 4,
+        "article": 47,
+        "article_title": "Nguồn lực thực hiện quy hoạch",
+        "clause": 2
+      },
+      "content": "Bộ Kế hoạch và Đầu tư chủ trì, phối hợp với Bộ Tài chính trình cơ quan có thẩm quyền bố trí các nguồn vốn cho dự án đầu tư công theo quy định của pháp luật về đầu tư công và pháp luật về ngân sách nhà nước.",
+      "cross_references": [],
+      "tags": [
+        "nguồn lực thực hiện quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D47_K4",
+      "position": {
+        "chapter": 4,
+        "article": 47,
+        "article_title": "Nguồn lực thực hiện quy hoạch",
+        "clause": 4
+      },
+      "content": "Ủy ban nhân dân cấp tỉnh, trong phạm vi nhiệm vụ, quyền hạn của mình, bố trí nguồn lực để thực hiện quy hoạch tỉnh.",
+      "cross_references": [],
+      "tags": [
+        "nguồn lực thực hiện quy hoạch",
+        "quy hoạch tỉnh",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D48_K1",
+      "position": {
+        "chapter": 4,
+        "article": 48,
+        "article_title": "Báo cáo về hoạt động quy hoạch",
+        "clause": 1
+      },
+      "content": "Bộ, cơ quan ngang Bộ, Ủy ban nhân dân cấp tỉnh gửi báo cáo về hoạt động quy hoạch đến Bộ Kế hoạch và Đầu tư trước ngày 31 tháng 10 để tổng hợp báo cáo Chính phủ trước ngày 31 tháng 12 hằng năm.",
+      "cross_references": [],
+      "tags": [
+        "báo cáo về hoạt động quy hoạch",
+        "hoạt động quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D48_K2",
+      "position": {
+        "chapter": 4,
+        "article": 48,
+        "article_title": "Báo cáo về hoạt động quy hoạch",
+        "clause": 2
+      },
+      "content": "Chính phủ có trách nhiệm báo cáo Quốc hội về hoạt động quy hoạch theo định kỳ 05 năm. Mục 2. ĐÁNH GIÁ THỰC HIỆN QUY HOẠCH",
+      "cross_references": [],
+      "tags": [
+        "báo cáo về hoạt động quy hoạch",
+        "hoạt động quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D49_K1",
+      "position": {
+        "chapter": 4,
+        "article": 49,
+        "article_title": "Trách nhiệm đánh giá thực hiện quy hoạch",
+        "clause": 1
+      },
+      "content": "Quy hoạch được đánh giá thực hiện theo định kỳ 05 năm hoặc đột xuất theo tiêu chí đánh giá do Chính phủ quy định.",
+      "cross_references": [],
+      "tags": [
+        "trách nhiệm đánh giá thực hiện quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D49_K2",
+      "position": {
+        "chapter": 4,
+        "article": 49,
+        "article_title": "Trách nhiệm đánh giá thực hiện quy hoạch",
+        "clause": 2
+      },
+      "content": "Trách nhiệm đánh giá thực hiện quy hoạch được quy định như sau: a) Bộ Kế hoạch và Đầu tư đánh giá thực hiện quy hoạch tổng thể quốc gia và quy hoạch vùng; b) Bộ Tài nguyên và Môi trường đánh giá thực hiện quy hoạch không gian biển quốc gia và quy hoạch sử dụng đất quốc gia; c) Bộ, cơ quan ngang Bộ đánh giá thực hiện quy hoạch ngành quốc gia theo thẩm quyền; d) Ủy ban nhân dân cấp tỉnh đánh giá thực hiện quy hoạch tỉnh.",
+      "cross_references": [],
+      "tags": [
+        "trách nhiệm đánh giá thực hiện quy hoạch",
+        "quy hoạch tổng thể quốc gia",
+        "quy hoạch không gian biển quốc gia",
+        "quy hoạch sử dụng đất quốc gia",
+        "quy hoạch ngành quốc gia",
+        "quy hoạch vùng"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D49_K3",
+      "position": {
+        "chapter": 4,
+        "article": 49,
+        "article_title": "Trách nhiệm đánh giá thực hiện quy hoạch",
+        "clause": 3
+      },
+      "content": "Cơ quan đánh giá thực hiện quy hoạch tổng thể quốc gia, quy hoạch không gian biển quốc gia và quy hoạch sử dụng đất quốc gia gửi báo cáo đánh giá đến Chính phủ. Trường hợp cần thiết, Chính phủ báo cáo Quốc hội. Cơ quan đánh giá thực hiện quy hoạch ngành quốc gia, quy hoạch vùng, quy hoạch tỉnh gửi báo cáo đến Thủ tướng Chính phủ.",
+      "cross_references": [],
+      "tags": [
+        "trách nhiệm đánh giá thực hiện quy hoạch",
+        "quy hoạch tổng thể quốc gia",
+        "quy hoạch không gian biển quốc gia",
+        "quy hoạch sử dụng đất quốc gia",
+        "quy hoạch ngành quốc gia",
+        "quy hoạch vùng"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D50_K1",
+      "position": {
+        "chapter": 4,
+        "article": 50,
+        "article_title": "Nội dung đánh giá thực hiện quy hoạch",
+        "clause": 1
+      },
+      "content": "Tổng hợp, phân tích, đánh giá tình hình và kết quả thực hiện quy hoạch; đánh giá mức độ đạt được so với quy hoạch hoặc so với mức đạt được của kỳ trước.",
+      "cross_references": [],
+      "tags": [
+        "nội dung đánh giá thực hiện quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D50_K2",
+      "position": {
+        "chapter": 4,
+        "article": 50,
+        "article_title": "Nội dung đánh giá thực hiện quy hoạch",
+        "clause": 2
+      },
+      "content": "Xác định yếu tố, nguyên nhân ảnh hưởng đến tình hình và kết quả thực hiện quy hoạch; đề xuất giải pháp nâng cao hiệu quả hoạt động quy hoạch trong kỳ quy hoạch, kỳ quy hoạch tiếp theo; kiến nghị điều chỉnh quy hoạch (nếu có). Mục 3. ĐIỀU CHỈNH QUY HOẠCH",
+      "cross_references": [],
+      "tags": [
+        "nội dung đánh giá thực hiện quy hoạch",
+        "hoạt động quy hoạch",
+        "điều chỉnh quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D51_K1",
+      "position": {
+        "chapter": 4,
+        "article": 51,
+        "article_title": "Nguyên tắc điều chỉnh quy hoạch",
+        "clause": 1
+      },
+      "content": "Quy hoạch được điều chỉnh theo trình tự, thủ tục quy định tại Điều 54 của Luật này khi có một trong các căn cứ được quy định tại Điều 53 của Luật này.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D54",
+          "anchor_text": "Điều 54",
+          "description_summary": "Trình tự, thủ tục và thẩm quyền điều chỉnh quy hoạch"
+        },
+        {
+          "target_id": "LQH_VBHN_D53",
+          "anchor_text": "Điều 53",
+          "description_summary": "Căn cứ điều chỉnh quy hoạch"
+        }
+      ],
+      "tags": [
+        "nguyên tắc điều chỉnh quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D51_K2",
+      "position": {
+        "chapter": 4,
+        "article": 51,
+        "article_title": "Nguyên tắc điều chỉnh quy hoạch",
+        "clause": 2
+      },
+      "content": "Cơ quan có thẩm quyền quyết định hoặc phê duyệt quy hoạch có thẩm quyền quyết định hoặc phê duyệt điều chỉnh quy hoạch, trừ trường hợp quy định tại điểm b và điểm c khoản 6 Điều 54a của Luật này.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D54a_K6",
+          "anchor_text": "điểm b khoản 6 Điều 54a",
+          "description_summary": "Bộ trưởng được giao tổ chức lập quy hoạch ngành quốc gia, lập quy hoạch vùng phê duyệt điều chỉnh quy hoạch ngành quốc gia, quy hoạch vùng và báo cáo Thủ tướng Chính phủ kết quả t…"
+        },
+        {
+          "target_id": "LQH_VBHN_D54a_K6",
+          "anchor_text": "điểm c khoản 6 Điều 54a",
+          "description_summary": "Chủ tịch Ủy ban nhân dân cấp tỉnh phê duyệt điều chỉnh quy hoạch tỉnh và báo cáo Thủ tướng Chính phủ kết quả thực hiện"
+        }
+      ],
+      "tags": [
+        "nguyên tắc điều chỉnh quy hoạch",
+        "phê duyệt quy hoạch",
+        "điều chỉnh quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D51_K3",
+      "position": {
+        "chapter": 4,
+        "article": 51,
+        "article_title": "Nguyên tắc điều chỉnh quy hoạch",
+        "clause": 3
+      },
+      "content": "Cơ quan có thẩm quyền tổ chức lập quy hoạch chịu trách nhiệm tổ chức lập điều chỉnh quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "nguyên tắc điều chỉnh quy hoạch",
+        "lập quy hoạch",
+        "điều chỉnh quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D51_K4",
+      "position": {
+        "chapter": 4,
+        "article": 51,
+        "article_title": "Nguyên tắc điều chỉnh quy hoạch",
+        "clause": 4
+      },
+      "content": "Việc điều chỉnh quy hoạch không làm thay đổi mục tiêu của quy hoạch, trừ trường hợp quy định tại các khoản 1, 2, 3 và 4 Điều 53 của Luật này.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D53_K1",
+          "anchor_text": "khoản 1 Điều 53",
+          "description_summary": "Có sự điều chỉnh mục tiêu của chiến lược phát triển kinh tế - xã hội, chiến lược phát triển ngành, lĩnh vực làm thay đổi mục tiêu của quy hoạch;"
+        },
+        {
+          "target_id": "LQH_VBHN_D53_K2",
+          "anchor_text": "khoản 2 Điều 53",
+          "description_summary": "Có sự điều chỉnh của quy hoạch cao hơn làm thay đổi nội dung quy hoạch hoặc có sự mâu thuẫn với quy hoạch cùng cấp;"
+        },
+        {
+          "target_id": "LQH_VBHN_D53_K3",
+          "anchor_text": "khoản 3 Điều 53",
+          "description_summary": "Có sự thay đổi, điều chỉnh địa giới hành chính làm ảnh hưởng đến tính chất, quy mô không gian lãnh thổ của quy hoạch;"
+        },
+        {
+          "target_id": "LQH_VBHN_D53_K4",
+          "anchor_text": "khoản 4 Điều 53",
+          "description_summary": "Do tác động của thiên tai, biến đổi khí hậu, chiến tranh làm thay đổi mục tiêu, định hướng, tổ chức không gian lãnh thổ của quy hoạch;"
+        }
+      ],
+      "tags": [
+        "nguyên tắc điều chỉnh quy hoạch",
+        "điều chỉnh quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D53_K1",
+      "position": {
+        "chapter": 4,
+        "article": 53,
+        "article_title": "Căn cứ điều chỉnh quy hoạch",
+        "clause": 1
+      },
+      "content": "Có sự điều chỉnh mục tiêu của chiến lược phát triển kinh tế - xã hội, chiến lược phát triển ngành, lĩnh vực làm thay đổi mục tiêu của quy hoạch;",
+      "cross_references": [],
+      "tags": [
+        "căn cứ điều chỉnh quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D53_K2",
+      "position": {
+        "chapter": 4,
+        "article": 53,
+        "article_title": "Căn cứ điều chỉnh quy hoạch",
+        "clause": 2
+      },
+      "content": "Có sự điều chỉnh của quy hoạch cao hơn làm thay đổi nội dung quy hoạch hoặc có sự mâu thuẫn với quy hoạch cùng cấp;",
+      "cross_references": [],
+      "tags": [
+        "căn cứ điều chỉnh quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D53_K3",
+      "position": {
+        "chapter": 4,
+        "article": 53,
+        "article_title": "Căn cứ điều chỉnh quy hoạch",
+        "clause": 3
+      },
+      "content": "Có sự thay đổi, điều chỉnh địa giới hành chính làm ảnh hưởng đến tính chất, quy mô không gian lãnh thổ của quy hoạch;",
+      "cross_references": [],
+      "tags": [
+        "căn cứ điều chỉnh quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D53_K4",
+      "position": {
+        "chapter": 4,
+        "article": 53,
+        "article_title": "Căn cứ điều chỉnh quy hoạch",
+        "clause": 4
+      },
+      "content": "Do tác động của thiên tai, biến đổi khí hậu, chiến tranh làm thay đổi mục tiêu, định hướng, tổ chức không gian lãnh thổ của quy hoạch;",
+      "cross_references": [],
+      "tags": [
+        "căn cứ điều chỉnh quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D53_K5",
+      "position": {
+        "chapter": 4,
+        "article": 53,
+        "article_title": "Căn cứ điều chỉnh quy hoạch",
+        "clause": 5
+      },
+      "content": "Do biến động bất thường của tình hình kinh tế - xã hội làm hạn chế nguồn lực thực hiện quy hoạch;",
+      "cross_references": [],
+      "tags": [
+        "căn cứ điều chỉnh quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D53_K6",
+      "position": {
+        "chapter": 4,
+        "article": 53,
+        "article_title": "Căn cứ điều chỉnh quy hoạch",
+        "clause": 6
+      },
+      "content": "Do sự phát triển của khoa học, công nghệ làm thay đổi cơ bản việc thực hiện quy hoạch;",
+      "cross_references": [],
+      "tags": [
+        "căn cứ điều chỉnh quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D53_K7",
+      "position": {
+        "chapter": 4,
+        "article": 53,
+        "article_title": "Căn cứ điều chỉnh quy hoạch",
+        "clause": 7
+      },
+      "content": "Do yêu cầu bảo đảm quốc phòng, an ninh.",
+      "cross_references": [],
+      "tags": [
+        "căn cứ điều chỉnh quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D54_K1",
+      "position": {
+        "chapter": 4,
+        "article": 54,
+        "article_title": "Trình tự, thủ tục và thẩm quyền điều chỉnh quy hoạch",
+        "clause": 1
+      },
+      "content": "Chính phủ trình Quốc hội quyết định chủ trương điều chỉnh quy hoạch tổng thể quốc gia, quy hoạch không gian biển quốc gia và quy hoạch sử dụng đất quốc gia. Bộ, cơ quan ngang Bộ trình Thủ tướng Chính phủ phê duyệt chủ trương điều chỉnh quy hoạch ngành quốc gia thuộc thẩm quyền tổ chức lập. Bộ Kế hoạch và Đầu tư trình Thủ tướng Chính phủ phê duyệt chủ trương điều chỉnh quy hoạch vùng. Ủy ban nhân dân cấp tỉnh trình Thủ tướng Chính phủ phê duyệt chủ trương điều chỉnh quy hoạch tỉnh.",
+      "cross_references": [],
+      "tags": [
+        "trình tự, thủ tục và thẩm quyền điều chỉnh quy hoạch",
+        "quy hoạch tổng thể quốc gia",
+        "quy hoạch không gian biển quốc gia",
+        "quy hoạch sử dụng đất quốc gia",
+        "quy hoạch ngành quốc gia",
+        "quy hoạch vùng"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D54_K2",
+      "position": {
+        "chapter": 4,
+        "article": 54,
+        "article_title": "Trình tự, thủ tục và thẩm quyền điều chỉnh quy hoạch",
+        "clause": 2
+      },
+      "content": "Trình tự, thủ tục điều chỉnh, công bố và cung cấp thông tin điều chỉnh quy hoạch được thực hiện như đối với việc lập, thẩm định, quyết định hoặc phê duyệt, công bố và cung cấp thông tin quy hoạch quy định tại Chương II và Chương III của Luật này.",
+      "cross_references": [],
+      "tags": [
+        "trình tự, thủ tục và thẩm quyền điều chỉnh quy hoạch",
+        "điều chỉnh quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D54_K3",
+      "position": {
+        "chapter": 4,
+        "article": 54,
+        "article_title": "Trình tự, thủ tục và thẩm quyền điều chỉnh quy hoạch",
+        "clause": 3
+      },
+      "content": "Cơ quan tổ chức lập quy hoạch có trách nhiệm cập nhật và thể hiện trong quy hoạch những nội dung được điều chỉnh.",
+      "cross_references": [],
+      "tags": [
+        "trình tự, thủ tục và thẩm quyền điều chỉnh quy hoạch",
+        "lập quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D54a_K1",
+      "position": {
+        "chapter": 4,
+        "article": "54a",
+        "article_title": "Điều chỉnh quy hoạch theo trình tự, thủ tục rút gọn",
+        "clause": 1
+      },
+      "content": "Việc điều chỉnh quy hoạch theo trình tự, thủ tục rút gọn không làm thay đổi quan điểm và mục tiêu của quy hoạch; bảo đảm tính liên kết, đồng bộ, kế thừa, ổn định giữa các quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "điều chỉnh quy hoạch theo trình tự, thủ tục rút gọn",
+        "điều chỉnh quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D54a_K2",
+      "position": {
+        "chapter": 4,
+        "article": "54a",
+        "article_title": "Điều chỉnh quy hoạch theo trình tự, thủ tục rút gọn",
+        "clause": 2
+      },
+      "content": "Quy hoạch cấp quốc gia, quy hoạch vùng và quy hoạch tỉnh được điều chỉnh theo trình tự, thủ tục rút gọn khi có một trong các căn cứ sau đây: a) Việc thực hiện nghị quyết của Quốc hội, Ủy ban Thường vụ Quốc hội hoặc Chính phủ về bảo đảm quốc phòng, an ninh, sắp xếp đơn vị hành chính, dự án quan trọng quốc gia làm thay đổi một hoặc một số nội dung quy hoạch; b) Quy hoạch có mâu thuẫn với quy hoạch cao hơn; c) Quy hoạch có mâu thuẫn với quy hoạch cùng cấp; d) Việc thực hiện dự án khẩn cấp, nhiệm vụ cấp bách làm thay đổi một hoặc một số nội dung quy hoạch theo quy định của Chính phủ.",
+      "cross_references": [],
+      "tags": [
+        "điều chỉnh quy hoạch theo trình tự, thủ tục rút gọn",
+        "quy hoạch vùng",
+        "quy hoạch tỉnh"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D54a_K3",
+      "position": {
+        "chapter": 4,
+        "article": "54a",
+        "article_title": "Điều chỉnh quy hoạch theo trình tự, thủ tục rút gọn",
+        "clause": 3
+      },
+      "content": "Khi có một trong các căn cứ quy định tại điểm b, điểm c khoản 2 Điều này thì Chính phủ xem xét, chấp thuận chủ trương điều chỉnh quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D54a_K2",
+          "anchor_text": "điểm c khoản 2 Điều này",
+          "description_summary": "Quy hoạch có mâu thuẫn với quy hoạch cùng cấp"
+        }
+      ],
+      "tags": [
+        "điều chỉnh quy hoạch theo trình tự, thủ tục rút gọn",
+        "quy hoạch không gian biển quốc gia",
+        "quy hoạch sử dụng đất quốc gia",
+        "điều chỉnh quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D54a_K4",
+      "position": {
+        "chapter": 4,
+        "article": "54a",
+        "article_title": "Điều chỉnh quy hoạch theo trình tự, thủ tục rút gọn",
+        "clause": 4
+      },
+      "content": "Khi có một trong các căn cứ quy định tại điểm b, điểm c khoản 2 Điều này thì Thủ tướng Chính phủ xem xét, chấp thuận chủ trương điều chỉnh quy hoạch ngành quốc gia, quy hoạch vùng, quy hoạch tỉnh.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D54a_K2",
+          "anchor_text": "điểm c khoản 2 Điều này",
+          "description_summary": "Quy hoạch có mâu thuẫn với quy hoạch cùng cấp"
+        }
+      ],
+      "tags": [
+        "điều chỉnh quy hoạch theo trình tự, thủ tục rút gọn",
+        "quy hoạch ngành quốc gia",
+        "quy hoạch vùng",
+        "quy hoạch tỉnh",
+        "điều chỉnh quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D54a_K5",
+      "position": {
+        "chapter": 4,
+        "article": "54a",
+        "article_title": "Điều chỉnh quy hoạch theo trình tự, thủ tục rút gọn",
+        "clause": 5
+      },
+      "content": "Cơ quan tổ chức lập quy hoạch hoặc cơ quan lập quy hoạch xây dựng hồ sơ điều chỉnh quy hoạch, gửi xin ý kiến của các cơ quan có liên quan; tiếp thu, giải trình và hoàn thiện hồ sơ điều chỉnh quy hoạch, trình cấp có thẩm quyền quyết định hoặc phê duyệt điều chỉnh quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "điều chỉnh quy hoạch theo trình tự, thủ tục rút gọn",
+        "lập quy hoạch",
+        "điều chỉnh quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D54a_K6",
+      "position": {
+        "chapter": 4,
+        "article": "54a",
+        "article_title": "Điều chỉnh quy hoạch theo trình tự, thủ tục rút gọn",
+        "clause": 6
+      },
+      "content": "Thẩm quyền quyết định hoặc phê duyệt điều chỉnh quy hoạch được quy định như sau: a) Quốc hội quyết định điều chỉnh quy hoạch tổng thể quốc gia, quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia; b) Bộ trưởng được giao tổ chức lập quy hoạch ngành quốc gia, lập quy hoạch vùng phê duyệt điều chỉnh quy hoạch ngành quốc gia, quy hoạch vùng và báo cáo Thủ tướng Chính phủ kết quả thực hiện; c) Chủ tịch Ủy ban nhân dân cấp tỉnh phê duyệt điều chỉnh quy hoạch tỉnh và báo cáo Thủ tướng Chính phủ kết quả thực hiện.",
+      "cross_references": [],
+      "tags": [
+        "điều chỉnh quy hoạch theo trình tự, thủ tục rút gọn",
+        "quy hoạch tổng thể quốc gia",
+        "quy hoạch không gian biển quốc gia",
+        "quy hoạch sử dụng đất quốc gia",
+        "quy hoạch ngành quốc gia",
+        "quy hoạch vùng"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D54a_K7",
+      "position": {
+        "chapter": 4,
+        "article": "54a",
+        "article_title": "Điều chỉnh quy hoạch theo trình tự, thủ tục rút gọn",
+        "clause": 7
+      },
+      "content": "Chính phủ quy định chi tiết khoản 1, khoản 2 và khoản 5 Điều này; quy định hồ sơ điều chỉnh quy hoạch theo trình tự, thủ tục rút gọn.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D54a_K5",
+          "anchor_text": "khoản 5 Điều này",
+          "description_summary": "Cơ quan tổ chức lập quy hoạch hoặc cơ quan lập quy hoạch xây dựng hồ sơ điều chỉnh quy hoạch, gửi xin ý kiến của các cơ quan có liên quan;"
+        }
+      ],
+      "tags": [
+        "điều chỉnh quy hoạch theo trình tự, thủ tục rút gọn",
+        "điều chỉnh quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D55_K1",
+      "position": {
+        "chapter": 5,
+        "article": 55,
+        "article_title": "Trách nhiệm quản lý nhà nước về quy hoạch của Chính phủ, Bộ, cơ quan ngang Bộ",
+        "clause": 1
+      },
+      "content": "Chính phủ thống nhất quản lý nhà nước về quy hoạch; ban hành kế hoạch, chính sách, giải pháp và bố trí nguồn lực thực hiện quy hoạch tổng thể quốc gia, quy hoạch không gian biển quốc gia và quy hoạch sử dụng đất quốc gia.",
+      "cross_references": [],
+      "tags": [
+        "trách nhiệm quản lý nhà nước về quy hoạch của chính phủ, bộ, cơ quan ngang bộ",
+        "quy hoạch tổng thể quốc gia",
+        "quy hoạch không gian biển quốc gia",
+        "quy hoạch sử dụng đất quốc gia",
+        "quản lý nhà nước về quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D55_K2",
+      "position": {
+        "chapter": 5,
+        "article": 55,
+        "article_title": "Trách nhiệm quản lý nhà nước về quy hoạch của Chính phủ, Bộ, cơ quan ngang Bộ",
+        "clause": 2
+      },
+      "content": "Thủ tướng Chính phủ ban hành chính sách, giải pháp và bố trí nguồn lực thực hiện quy hoạch ngành quốc gia, quy hoạch vùng; kế hoạch thực hiện quy hoạch vùng.",
+      "cross_references": [],
+      "tags": [
+        "trách nhiệm quản lý nhà nước về quy hoạch của chính phủ, bộ, cơ quan ngang bộ",
+        "quy hoạch ngành quốc gia",
+        "quy hoạch vùng"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D55_K3",
+      "position": {
+        "chapter": 5,
+        "article": 55,
+        "article_title": "Trách nhiệm quản lý nhà nước về quy hoạch của Chính phủ, Bộ, cơ quan ngang Bộ",
+        "clause": 3
+      },
+      "content": "Bộ Kế hoạch và Đầu tư là cơ quan đầu mối giúp Chính phủ thực hiện quản lý nhà nước về quy hoạch và có nhiệm vụ, quyền hạn sau đây: a) Ban hành hoặc trình cơ quan nhà nước có thẩm quyền ban hành và tổ chức thực hiện văn bản quy phạm pháp luật về quy hoạch; b) Trình cơ quan nhà nước có thẩm quyền ban hành kế hoạch, chính sách, giải pháp và bố trí nguồn lực thực hiện quy hoạch tổng thể quốc gia, quy hoạch vùng; c) Trình Thủ tướng Chính phủ thành lập Hội đồng thẩm định quy hoạch tổng thể quốc gia, quy hoạch vùng; d) Hướng dẫn Bộ, cơ quan ngang Bộ, Ủy ban nhân dân cấp tỉnh trong việc lập và tổ chức thực hiện quy hoạch; đ) Ban hành hướng dẫn xác định chi phí cho hoạt động quy hoạch của quy hoạch cấp quốc gia, quy hoạch vùng, quy hoạch tỉnh; e) Chủ trì, phối hợp với các cơ quan liên quan thực hiện các hoạt động hợp tác quốc tế về quy hoạch; g) Chủ trì, phối hợp tổ chức, quản lý hoạt động đào tạo, bồi dưỡng nguồn nhân lực, nghiên cứu, ứng dụng khoa học và công nghệ trong hoạt động quy hoạch; h) Phối hợp với cơ quan, tổ chức có liên quan phổ biến, giáo dục pháp luật về quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "trách nhiệm quản lý nhà nước về quy hoạch của chính phủ, bộ, cơ quan ngang bộ",
+        "quy hoạch tổng thể quốc gia",
+        "quy hoạch vùng",
+        "quy hoạch tỉnh",
+        "hoạt động quy hoạch",
+        "thẩm định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D55_K4",
+      "position": {
+        "chapter": 5,
+        "article": 55,
+        "article_title": "Trách nhiệm quản lý nhà nước về quy hoạch của Chính phủ, Bộ, cơ quan ngang Bộ",
+        "clause": 4
+      },
+      "content": "Bộ, cơ quan ngang Bộ, trong phạm vi nhiệm vụ, quyền hạn của mình, có trách nhiệm phối hợp với Bộ Kế hoạch và Đầu tư trong việc thực hiện quản lý nhà nước về quy hoạch và có nhiệm vụ, quyền hạn sau đây: a) Ban hành kế hoạch thực hiện quy hoạch ngành quốc gia; trình Thủ tướng Chính phủ ban hành chính sách, giải pháp và bố trí nguồn lực thực hiện quy hoạch ngành quốc gia; trình Thủ tướng Chính phủ thành lập Hội đồng thẩm định quy hoạch ngành quốc gia; b) Tổ chức thực hiện quy hoạch ngành quốc gia; các nội dung quy hoạch trong quy hoạch tổng thể quốc gia, quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia, quy hoạch vùng theo thẩm quyền; c) Kiểm tra, thanh tra, giải quyết khiếu nại, tố cáo và xử lý vi phạm pháp luật về quy hoạch; d) Khen thưởng cơ quan, tổ chức, cá nhân có thành tích trong hoạt động quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "trách nhiệm quản lý nhà nước về quy hoạch của chính phủ, bộ, cơ quan ngang bộ",
+        "quy hoạch tổng thể quốc gia",
+        "quy hoạch không gian biển quốc gia",
+        "quy hoạch sử dụng đất quốc gia",
+        "quy hoạch ngành quốc gia",
+        "quy hoạch vùng"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D55_K5",
+      "position": {
+        "chapter": 5,
+        "article": 55,
+        "article_title": "Trách nhiệm quản lý nhà nước về quy hoạch của Chính phủ, Bộ, cơ quan ngang Bộ",
+        "clause": 5
+      },
+      "content": "Bộ Tài nguyên và Môi trường có nhiệm vụ, quyền hạn quy định tại khoản 4 Điều này và nhiệm vụ, quyền hạn sau đây: a) Chủ trì, phối hợp với Bộ, cơ quan ngang Bộ và Ủy ban nhân dân cấp tỉnh trình cơ quan có thẩm quyền quyết định hoặc phê duyệt kế hoạch sử dụng đất để thực hiện quy hoạch cấp quốc gia, quy hoạch vùng; b) Trình Chính phủ ban hành kế hoạch, chính sách, giải pháp và bố trí nguồn lực thực hiện quy hoạch đối với quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia; c) Trình Thủ tướng Chính phủ thành lập Hội đồng thẩm định quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia, quy hoạch sử dụng đất quốc phòng cấp quốc gia, quy hoạch sử dụng đất an ninh cấp quốc gia.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D55_K4",
+          "anchor_text": "khoản 4 Điều này",
+          "description_summary": "Bộ, cơ quan ngang Bộ, trong phạm vi nhiệm vụ, quyền hạn của mình, có trách nhiệm phối hợp với Bộ Kế hoạch và Đầu tư trong việc thực hiện quản lý nhà nước về quy hoạch và có nhiệm…"
+        }
+      ],
+      "tags": [
+        "trách nhiệm quản lý nhà nước về quy hoạch của chính phủ, bộ, cơ quan ngang bộ",
+        "quy hoạch không gian biển quốc gia",
+        "quy hoạch sử dụng đất quốc gia",
+        "quy hoạch vùng",
+        "thẩm định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D56_K1",
+      "position": {
+        "chapter": 5,
+        "article": 56,
+        "article_title": "Trách nhiệm quản lý nhà nước về quy hoạch của Ủy ban nhân dân cấp tỉnh",
+        "clause": 1
+      },
+      "content": "Ban hành kế hoạch thực hiện quy hoạch tỉnh; ban hành theo thẩm quyền hoặc trình cơ quan có thẩm quyền ban hành chính sách, giải pháp và bố trí nguồn lực thực hiện quy hoạch tỉnh;",
+      "cross_references": [],
+      "tags": [
+        "trách nhiệm quản lý nhà nước về quy hoạch của ủy ban nhân dân cấp tỉnh",
+        "quy hoạch tỉnh",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D56_K2",
+      "position": {
+        "chapter": 5,
+        "article": 56,
+        "article_title": "Trách nhiệm quản lý nhà nước về quy hoạch của Ủy ban nhân dân cấp tỉnh",
+        "clause": 2
+      },
+      "content": "Tổ chức thực hiện quy hoạch tỉnh;",
+      "cross_references": [],
+      "tags": [
+        "trách nhiệm quản lý nhà nước về quy hoạch của ủy ban nhân dân cấp tỉnh",
+        "quy hoạch tỉnh",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D56_K3",
+      "position": {
+        "chapter": 5,
+        "article": 56,
+        "article_title": "Trách nhiệm quản lý nhà nước về quy hoạch của Ủy ban nhân dân cấp tỉnh",
+        "clause": 3
+      },
+      "content": "Phối hợp lập quy hoạch cấp quốc gia, quy hoạch vùng liên quan;",
+      "cross_references": [],
+      "tags": [
+        "trách nhiệm quản lý nhà nước về quy hoạch của ủy ban nhân dân cấp tỉnh",
+        "quy hoạch vùng",
+        "lập quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D56_K4",
+      "position": {
+        "chapter": 5,
+        "article": 56,
+        "article_title": "Trách nhiệm quản lý nhà nước về quy hoạch của Ủy ban nhân dân cấp tỉnh",
+        "clause": 4
+      },
+      "content": "Tổ chức phổ biến, giáo dục pháp luật về quy hoạch;",
+      "cross_references": [],
+      "tags": [
+        "trách nhiệm quản lý nhà nước về quy hoạch của ủy ban nhân dân cấp tỉnh",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D56_K5",
+      "position": {
+        "chapter": 5,
+        "article": 56,
+        "article_title": "Trách nhiệm quản lý nhà nước về quy hoạch của Ủy ban nhân dân cấp tỉnh",
+        "clause": 5
+      },
+      "content": "Kiểm tra, thanh tra, giải quyết khiếu nại, tố cáo và xử lý vi phạm pháp luật về quy hoạch;",
+      "cross_references": [],
+      "tags": [
+        "trách nhiệm quản lý nhà nước về quy hoạch của ủy ban nhân dân cấp tỉnh",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D56_K6",
+      "position": {
+        "chapter": 5,
+        "article": 56,
+        "article_title": "Trách nhiệm quản lý nhà nước về quy hoạch của Ủy ban nhân dân cấp tỉnh",
+        "clause": 6
+      },
+      "content": "Khen thưởng cơ quan, tổ chức, cá nhân có thành tích trong hoạt động quy hoạch.",
+      "cross_references": [],
+      "tags": [
+        "trách nhiệm quản lý nhà nước về quy hoạch của ủy ban nhân dân cấp tỉnh",
+        "hoạt động quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D57_K1",
+      "position": {
+        "chapter": 6,
+        "article": 57,
+        "article_title": "Sửa đổi, bổ sung một số điều của các luật có liên quan đến hoạt động quy hoạch",
+        "clause": 1
+      },
+      "content": "Sửa đổi, bổ sung khoản 2 Điều 50 của Luật Công nghệ thông tin số 67/2006/QH11 như sau: \"2. Bộ Thông tin và Truyền thông công bố danh mục và xây dựng chương trình phát triển các sản phẩm công nghệ thông tin trọng điểm trong từng thời kỳ phù hợp với chiến lược phát triển công nghiệp công nghệ thông tin.\".",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D50_K2",
+          "anchor_text": "khoản 2 Điều 50",
+          "description_summary": "Xác định yếu tố, nguyên nhân ảnh hưởng đến tình hình và kết quả thực hiện quy hoạch;"
+        }
+      ],
+      "tags": [
+        "sửa đổi, bổ sung một số điều của các luật có liên quan đến hoạt động quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D57_K3",
+      "position": {
+        "chapter": 6,
+        "article": 57,
+        "article_title": "Sửa đổi, bổ sung một số điều của các luật có liên quan đến hoạt động quy hoạch",
+        "clause": 3
+      },
+      "content": "Sửa đổi, bổ sung một số điều của Luật Thú y số 79/2015/QH13 như sau: a) Sửa đổi, bổ sung điểm b khoản 1 Điều 5 như sau: \"b) Xây dựng hệ thống truy xuất nguồn gốc động vật, sản phẩm động vật; xây dựng mạng lưới cơ sở giết mổ, sơ chế, chế biến sản phẩm động vật theo hướng công nghiệp gắn với vùng chăn nuôi;\"; b) Sửa đổi, bổ sung điểm b khoản 1 Điều 9 như sau: \"b) Xây dựng quy hoạch vùng và cơ sở an toàn dịch bệnh động vật, tích hợp vào quy hoạch tỉnh và tổ chức thực hiện; xây dựng, ban hành và tổ chức thực hiện kế hoạch phòng, chống dịch bệnh động vật, chương trình giám sát, khống chế, thanh toán dịch bệnh động vật;\"; c) Sửa đổi, bổ sung khoản 3 và khoản 4 Điều 40 như sau: \"3. Bộ trưởng Bộ Nông nghiệp và Phát triển nông thôn quy định việc lập trạm kiểm dịch động vật tại đầu mối giao thông trên phạm vi cả nước.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D40_K3",
+          "anchor_text": "khoản 3 Điều 40",
+          "description_summary": "Chính phủ quy định chi tiết khoản 2 Điều này."
+        },
+        {
+          "target_id": "LQH_VBHN_D40_K4",
+          "anchor_text": "khoản 4 Điều 40",
+          "description_summary": "Quy hoạch phải được đăng tải thường xuyên, liên tục trên trang thông tin điện tử của cơ quan tổ chức lập quy hoạch, cơ quan lập quy hoạch."
+        },
+        {
+          "target_id": "LQH_VBHN_D5_K1",
+          "anchor_text": "điểm b khoản 1 Điều 5",
+          "description_summary": "Quy hoạch cấp quốc gia."
+        },
+        {
+          "target_id": "LQH_VBHN_D9_K1",
+          "anchor_text": "điểm b khoản 1 Điều 9",
+          "description_summary": "Chi phí lập, công bố, điều chỉnh quy hoạch cấp quốc gia, quy hoạch vùng, quy hoạch tỉnh sử dụng nguồn vốn đầu tư công theo quy định của pháp luật về đầu tư công và nguồn vốn hợp p…"
+        }
+      ],
+      "tags": [
+        "sửa đổi, bổ sung một số điều của các luật có liên quan đến hoạt động quy hoạch",
+        "quy hoạch vùng",
+        "quy hoạch tỉnh"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D57_K4",
+      "position": {
+        "chapter": 6,
+        "article": 57,
+        "article_title": "Sửa đổi, bổ sung một số điều của các luật có liên quan đến hoạt động quy hoạch",
+        "clause": 4
+      },
+      "content": "Ủy ban nhân dân cấp tỉnh căn cứ quy định của Bộ trưởng Bộ Nông nghiệp và Phát triển nông thôn tại khoản 3 Điều này quyết định thành lập và tổ chức thực hiện việc kiểm dịch động vật, sản phẩm động vật của các trạm kiểm dịch động vật tại đầu mối giao thông trên địa bàn.\"; d) Sửa đổi, bổ sung điểm b khoản 1 Điều 76 như sau: \"b) Chỉ đạo xây dựng mạng lưới cơ sở giết mổ động vật tập trung và lập kế hoạch thực hiện việc giết mổ động vật tập trung;\"; đ) Sửa đổi, bổ sung điểm a khoản 2 Điều 76 như sau: \"a) Phối hợp với các phòng, ban, ngành liên quan tổ chức triển khai thực hiện mạng lưới cơ sở giết mổ động vật tập trung;\".",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D76_K1",
+          "anchor_text": "điểm b khoản 1 Điều 76",
+          "description_summary": "Nội dung quy định chi tiết tại điều khoản được viện dẫn."
+        },
+        {
+          "target_id": "LQH_VBHN_D76_K2",
+          "anchor_text": "điểm a khoản 2 Điều 76",
+          "description_summary": "Nội dung quy định chi tiết tại điều khoản được viện dẫn."
+        },
+        {
+          "target_id": "LQH_VBHN_D57_K3",
+          "anchor_text": "khoản 3 Điều này",
+          "description_summary": "Sửa đổi, bổ sung một số điều của Luật Thú y số 79/2015/QH13 như sau: a) Sửa đổi, bổ sung điểm b khoản 1 Điều 5 như sau: \"b) Xây dựng hệ thống truy xuất nguồn gốc động vật, sản phẩ…"
+        }
+      ],
+      "tags": [
+        "sửa đổi, bổ sung một số điều của các luật có liên quan đến hoạt động quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D57_K2",
+      "position": {
+        "chapter": 6,
+        "article": 57,
+        "article_title": "Sửa đổi, bổ sung một số điều của các luật có liên quan đến hoạt động quy hoạch",
+        "clause": 2
+      },
+      "content": "Quy hoạch tổng thể hệ thống kho dự trữ quốc gia bao gồm các nội dung theo quy định của Luật Quy hoạch và đáp ứng các yêu cầu sau đây: a) Phù hợp với mục tiêu và yêu cầu dự trữ quốc gia; b) Bảo đảm tính liên hoàn của hệ thống kho dự trữ quốc gia theo tuyến, vùng lãnh thổ; c) Bảo đảm phát triển theo hướng hiện đại hóa; d) Phù hợp với khả năng vốn đầu tư; đ) Xác định rõ giải pháp và lộ trình thực hiện.",
+      "cross_references": [],
+      "tags": [
+        "sửa đổi, bổ sung một số điều của các luật có liên quan đến hoạt động quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D57_K5",
+      "position": {
+        "chapter": 6,
+        "article": 57,
+        "article_title": "Sửa đổi, bổ sung một số điều của các luật có liên quan đến hoạt động quy hoạch",
+        "clause": 5
+      },
+      "content": "Sửa đổi, bổ sung Điều 8 của Luật Giáo dục nghề nghiệp số 74/2014/QH13 như sau: \"Điều 8. Quy hoạch mạng lưới cơ sở giáo dục nghề nghiệp",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D8",
+          "anchor_text": "Điều 8",
+          "description_summary": "Thời kỳ quy hoạch"
+        }
+      ],
+      "tags": [
+        "sửa đổi, bổ sung một số điều của các luật có liên quan đến hoạt động quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D57_K6",
+      "position": {
+        "chapter": 6,
+        "article": 57,
+        "article_title": "Sửa đổi, bổ sung một số điều của các luật có liên quan đến hoạt động quy hoạch",
+        "clause": 6
+      },
+      "content": "Bổ sung khoản 5 vào Điều 82 của Luật Khám bệnh, chữa bệnh số 40/2009/QH12 như sau: \"5. Quy hoạch hệ thống cơ sở khám bệnh, chữa bệnh trên toàn quốc và cơ sở khám bệnh, chữa bệnh chuyên ngành được tích hợp vào quy hoạch mạng lưới cơ sở y tế quốc gia; quy hoạch hệ thống cơ sở khám bệnh, chữa bệnh của địa phương được tích hợp vào quy hoạch tỉnh theo quy định của pháp luật về quy hoạch.\". Cơ sở khám bệnh, chữa bệnh trên toàn quốc và cơ sở khám bệnh, chữa bệnh chuyên ngành được tích hợp vào quy hoạch mạng lưới cơ sở y tế quốc gia; quy hoạch hệ thống cơ sở khám bệnh, chữa bệnh của địa phương được tích hợp vào quy hoạch tỉnh theo quy định của pháp luật về quy hoạch.\".",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D82",
+          "anchor_text": "Điều 82",
+          "description_summary": "Nội dung quy định chi tiết tại điều khoản được viện dẫn."
+        }
+      ],
+      "tags": [
+        "sửa đổi, bổ sung một số điều của các luật có liên quan đến hoạt động quy hoạch",
+        "quy hoạch tỉnh",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D57_K7",
+      "position": {
+        "chapter": 6,
+        "article": 57,
+        "article_title": "Sửa đổi, bổ sung một số điều của các luật có liên quan đến hoạt động quy hoạch",
+        "clause": 7
+      },
+      "content": "Sửa đổi, bổ sung một số điều của Luật Viễn thông số 41/2009/QH12 như sau: a) Sửa đổi, bổ sung điểm a khoản 2 Điều 8 như sau: \"a) Phù hợp với chiến lược phát triển kinh tế - xã hội, quy hoạch cấp quốc gia, kế hoạch phát triển kinh tế - xã hội của đất nước trong từng thời kỳ; tuân thủ pháp luật Việt Nam, điều ước quốc tế mà Cộng hòa xã hội chủ nghĩa Việt Nam là thành viên;\"; b) Sửa đổi, bổ sung khoản 3 Điều 8 như sau: \"3. Bộ Thông tin và Truyền thông xây dựng quy hoạch phát triển viễn thông quốc gia và tích hợp vào quy hoạch hạ tầng thông tin và truyền thông quốc gia theo quy định của pháp luật về quy hoạch và quy định khác của pháp luật có liên quan.\"; c) Sửa đổi, bổ sung điểm đ khoản 1 Điều 14 như sau: \"đ) Được phân bổ tài nguyên viễn thông theo quy định về quản lý tài nguyên viễn thông;\"; d) Sửa đổi, bổ sung khoản 3 Điều 38 như sau: \"3. Việc sửa đổi, bổ sung giấy phép viễn thông trong thời gian giấy phép còn hiệu lực được thực hiện theo đề nghị của tổ chức được cấp giấy phép hoặc theo yêu cầu của Bộ Thông tin và Truyền thông phải phù hợp với các quy định về quản lý tài nguyên viễn thông, kết nối, giá cước, tiêu chuẩn, quy chuẩn kỹ thuật viễn thông.\"; đ) Sửa đổi, bổ sung khoản 1 Điều 60 như sau: \"1. Việc sử dụng chung cơ sở hạ tầng kỹ thuật giao thông, cung cấp năng lượng, chiếu sáng công cộng, cấp nước, thoát nước, viễn thông và các công trình hạ tầng kỹ thuật khác được thực hiện theo nguyên tắc hiệu quả, tiết kiệm, bảo đảm yêu cầu về cảnh quan, môi trường, phù hợp với các quy hoạch được cơ quan có thẩm quyền quyết định hoặc phê duyệt.\".",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D8_K2",
+          "anchor_text": "điểm a khoản 2 Điều 8",
+          "description_summary": "Thời kỳ quy hoạch của các quy hoạch thuộc hệ thống quy hoạch quốc gia là 10 năm."
+        },
+        {
+          "target_id": "LQH_VBHN_D8_K3",
+          "anchor_text": "khoản 3 Điều 8",
+          "description_summary": "Thời kỳ quy hoạch là khoảng thời gian được xác định để làm cơ sở dự báo, tính toán các chỉ tiêu kinh tế - xã hội cho việc lập quy hoạch."
+        },
+        {
+          "target_id": "LQH_VBHN_D14_K1",
+          "anchor_text": "điểm đ khoản 1 Điều 14",
+          "description_summary": "Chính phủ tổ chức lập quy hoạch tổng thể quốc gia, quy hoạch không gian biển quốc gia, quy hoạch sử dụng đất quốc gia."
+        },
+        {
+          "target_id": "LQH_VBHN_D38_K3",
+          "anchor_text": "khoản 3 Điều 38",
+          "description_summary": "Chậm nhất là 15 ngày kể từ ngày quy hoạch được cơ quan có thẩm quyền quyết định hoặc phê duyệt, toàn bộ nội dung của quy hoạch phải được công bố công khai, trừ những nội dung liên…"
+        },
+        {
+          "target_id": "LQH_VBHN_D60_K1",
+          "anchor_text": "khoản 1 Điều 60",
+          "description_summary": "Nội dung quy định chi tiết tại điều khoản được viện dẫn."
+        }
+      ],
+      "tags": [
+        "sửa đổi, bổ sung một số điều của các luật có liên quan đến hoạt động quy hoạch",
+        "điều ước quốc tế",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D57_K8",
+      "position": {
+        "chapter": 6,
+        "article": 57,
+        "article_title": "Sửa đổi, bổ sung một số điều của các luật có liên quan đến hoạt động quy hoạch",
+        "clause": 8
+      },
+      "content": "Sửa đổi, bổ sung một số điều của Luật Thực hành tiết kiệm, chống lãng phí số 44/2013/QH13 như sau: a) Sửa đổi, bổ sung điểm d khoản 2 Điều 5 như sau: \"d) Các quy hoạch đã được cơ quan có thẩm quyền quyết định hoặc phê duyệt; kế hoạch phát triển kinh tế - xã hội; kế hoạch phát triển ngành, vùng; kế hoạch sử dụng đất; danh mục dự án đầu tư, nguồn vốn đầu tư; kế hoạch và hoạt động khai thác tài nguyên;\"; b) Sửa đổi, bổ sung Điều 33 như sau: \"Điều 33. Lập, thẩm định, phê duyệt quy hoạch, kế hoạch và danh mục dự án đầu tư",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D5_K2",
+          "anchor_text": "điểm d khoản 2 Điều 5",
+          "description_summary": "Quy hoạch vùng."
+        },
+        {
+          "target_id": "LQH_VBHN_D33",
+          "anchor_text": "Điều 33",
+          "description_summary": "Báo cáo thẩm định quy hoạch"
+        }
+      ],
+      "tags": [
+        "sửa đổi, bổ sung một số điều của các luật có liên quan đến hoạt động quy hoạch",
+        "phê duyệt quy hoạch",
+        "quy định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D57_K9",
+      "position": {
+        "chapter": 6,
+        "article": 57,
+        "article_title": "Sửa đổi, bổ sung một số điều của các luật có liên quan đến hoạt động quy hoạch",
+        "clause": 9
+      },
+      "content": "Quy hoạch phát triển kinh tế - xã hội, quy hoạch tổng thể phát triển kinh tế - xã hội tại Luật Quốc phòng số 39/2005/QH11, Luật Tần số vô tuyến điện số 42/2009/QH12, Luật Giáo dục số 38/2005/QH11 đã được sửa đổi, bổ sung theo Luật sửa đổi, bổ sung một số điều của Luật Giáo dục số 44/2009/QH12, Luật Biển Việt Nam số 18/2012/QH13, Luật Phòng, chống thiên tai số 33/2013/QH13, Luật Nhà ở số 65/2014/QH13, Luật Công an nhân dân số 73/2014/QH13, Luật Tài nguyên, môi trường biển và hải đảo số 82/2015/QH13, Luật Tiếp cận thông tin số 104/2016/QH13, Luật Du lịch số 09/2017/QH14, Pháp lệnh Dân số số 06/2003/PL-UBTVQH11 đã được sửa đổi, bổ sung theo Pháp lệnh sửa đổi Điều 10 của Pháp lệnh Dân số số 08/2008/PL-UBTVQH12, Pháp lệnh về Giống cây trồng số 15/2004/PL-UBTVQH11, Pháp lệnh về Giống vật nuôi số 16/2004/PL-UBTVQH11 và các văn bản quy phạm pháp luật khác được thay thế bằng quy hoạch được cơ quan có thẩm quyền quyết định hoặc phê duyệt.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D10",
+          "anchor_text": "Điều 10",
+          "description_summary": "Chính sách của nhà nước về hoạt động quy hoạch"
+        }
+      ],
+      "tags": [
+        "sửa đổi, bổ sung một số điều của các luật có liên quan đến hoạt động quy hoạch",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D58_K1",
+      "position": {
+        "chapter": 6,
+        "article": 58,
+        "article_title": "Hiệu lực thi hành",
+        "clause": 1
+      },
+      "content": "Luật này có hiệu lực thi hành từ ngày 01 tháng 01 năm 2019.",
+      "cross_references": [],
+      "tags": [
+        "hiệu lực thi hành",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D58_K2",
+      "position": {
+        "chapter": 6,
+        "article": 58,
+        "article_title": "Hiệu lực thi hành",
+        "clause": 2
+      },
+      "content": "Các quy định của Luật này về lập, thẩm định quy hoạch cấp quốc gia, quy hoạch vùng, quy hoạch tỉnh có hiệu lực thi hành từ ngày 01 tháng 3 năm 2018. Chính phủ bảo đảm kinh phí lập, thẩm định quy hoạch quy định tại khoản này theo quy định của pháp luật về đầu tư công và pháp luật về ngân sách nhà nước.",
+      "cross_references": [],
+      "tags": [
+        "hiệu lực thi hành",
+        "quy hoạch vùng",
+        "quy hoạch tỉnh",
+        "thẩm định quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D59_K1",
+      "position": {
+        "chapter": 6,
+        "article": 59,
+        "article_title": "Quy định chuyển tiếp",
+        "clause": 1
+      },
+      "content": "Các quy hoạch đã được quyết định hoặc phê duyệt theo quy định của pháp luật trước ngày Luật này có hiệu lực được thực hiện như sau: a) Quy hoạch cấp quốc gia, quy hoạch vùng, quy hoạch tỉnh được thực hiện đến hết thời kỳ quy hoạch; trường hợp nội dung của quy hoạch đó không phù hợp với quy định của Luật này thì phải điều chỉnh theo quy định của Luật này; b) Các quy hoạch có tính chất kỹ thuật, chuyên ngành quy định tại Phụ lục 2 của Luật này được tiếp tục thực hiện theo quy định của pháp luật có liên quan; trường hợp nội dung của quy hoạch đó không phù hợp với quy hoạch cao hơn đã được quyết định hoặc phê duyệt theo quy định của Luật này thì phải điều chỉnh cho phù hợp với quy hoạch cao hơn; c) Các quy hoạch được tích hợp vào quy hoạch cấp quốc gia, quy hoạch vùng, quy hoạch tỉnh được thực hiện cho đến khi quy hoạch cấp quốc gia, quy hoạch vùng, quy hoạch tỉnh được quyết định hoặc phê duyệt theo quy định của Luật này, trừ trường hợp quy định tại điểm b khoản này; d) Các quy hoạch về đầu tư phát triển hàng hóa, dịch vụ, sản phẩm cụ thể, ấn định khối lượng, số lượng hàng hóa, dịch vụ, sản phẩm được sản xuất, tiêu thụ đã được quyết định hoặc phê duyệt hết hiệu lực chậm nhất là ngày 31 tháng 12 năm 2018.",
+      "cross_references": [],
+      "tags": [
+        "quy định chuyển tiếp",
+        "quy hoạch vùng",
+        "quy hoạch tỉnh"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D59_K2",
+      "position": {
+        "chapter": 6,
+        "article": 59,
+        "article_title": "Quy định chuyển tiếp",
+        "clause": 2
+      },
+      "content": "Quy hoạch cấp quốc gia, quy hoạch vùng, quy hoạch tỉnh đã được lập, thẩm định trước ngày Luật này có hiệu lực mà chưa được quyết định hoặc phê duyệt thì được thực hiện quyết định hoặc phê duyệt theo quy định của Luật này.",
+      "cross_references": [],
+      "tags": [
+        "quy định chuyển tiếp",
+        "quy hoạch vùng",
+        "quy hoạch tỉnh"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D59_K3",
+      "position": {
+        "chapter": 6,
+        "article": 59,
+        "article_title": "Quy định chuyển tiếp",
+        "clause": 3
+      },
+      "content": "Dự án đã được cơ quan có thẩm quyền phê duyệt theo quy hoạch đã được công bố trước ngày Luật này có hiệu lực thì được thực hiện đến hết thời hạn của dự án đó theo quy định của pháp luật có liên quan.",
+      "cross_references": [],
+      "tags": [
+        "quy định chuyển tiếp",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    },
+    {
+      "id": "LQH_VBHN_D59_K4",
+      "position": {
+        "chapter": 6,
+        "article": 59,
+        "article_title": "Quy định chuyển tiếp",
+        "clause": 4
+      },
+      "content": "Chính phủ rà soát, ban hành danh mục các quy hoạch quy định tại điểm c và điểm d khoản 1 Điều này.",
+      "cross_references": [
+        {
+          "target_id": "LQH_VBHN_D59_K1",
+          "anchor_text": "điểm d khoản 1 Điều này",
+          "description_summary": "Các quy hoạch về đầu tư phát triển hàng hóa, dịch vụ, sản phẩm cụ thể, ấn định khối lượng, số lượng hàng hóa, dịch vụ, sản phẩm được sản xuất, tiêu thụ đã được quyết định hoặc phê…"
+        }
+      ],
+      "tags": [
+        "quy định chuyển tiếp",
+        "quy định quy hoạch",
+        "hoạt động quy hoạch"
+      ]
+    }
+  ]
+}
