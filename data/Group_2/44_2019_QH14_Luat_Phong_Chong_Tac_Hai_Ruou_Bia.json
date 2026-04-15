@@ -1,0 +1,1818 @@
+{
+  "law_info": {
+    "law_id": "LPCTHRB_2019",
+    "law_name": "Luật Phòng, chống tác hại của rượu, bia 2019",
+    "publisher": "Quốc hội",
+    "document_number": "44/2019/QH14",
+    "issue_date": "14/06/2019",
+    "effective_date": "01/01/2020",
+    "status": "Đang có hiệu lực",
+    "executive_summary": "Luật Phòng, chống tác hại của rượu, bia quy định các biện pháp giảm mức tiêu thụ, quản lý việc cung cấp rượu bia, giảm tác hại của rượu bia đối với sức khỏe, xã hội và an toàn giao thông; trách nhiệm của cơ quan, tổ chức, cá nhân trong phòng, chống tác hại của rượu, bia."
+  },
+  "clauses": [
+    {
+      "id": "LPCTHRB_2019_D1",
+      "position": {
+        "chapter": 0,
+        "article": "1",
+        "article_title": "Phạm vi điều chỉnh",
+        "clause": null
+      },
+      "content": "Luật này quy định biện pháp giảm mức tiêu thụ rượu, bia; biện pháp quản lý việc cung cấp rượu, bia; biện pháp giảm tác hại của rượu, bia; điều kiện bảo đảm cho hoạt động phòng, chống tác hại của rượu, bia; quản lý nhà nước và trách nhiệm của cơ quan, tổ chức, cá nhân trong phòng, chống tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D2_K0",
+      "position": {
+        "chapter": 0,
+        "article": "2",
+        "article_title": "Giải thích từ ngữ",
+        "clause": 0
+      },
+      "content": "Trong Luật này, các từ ngữ dưới đây được hiểu như sau:",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D2_K1",
+      "position": {
+        "chapter": 0,
+        "article": "2",
+        "article_title": "Giải thích từ ngữ",
+        "clause": 1
+      },
+      "content": "1. Rượu là đồ uống có cồn thực phẩm, được sản xuất từ quá trình lên men từ một hoặc hỗn hợp của các loại nguyên liệu chủ yếu gồm tinh bột của ngũ cốc, dịch đường của cây, hoa, củ, quả hoặc là đồ uống được pha chế từ cồn thực phẩm.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D2_K2",
+      "position": {
+        "chapter": 0,
+        "article": "2",
+        "article_title": "Giải thích từ ngữ",
+        "clause": 2
+      },
+      "content": "2. Bia là đồ uống có cồn thực phẩm, được sản xuất từ quá trình lên men từ hỗn hợp của các loại nguyên liệu chủ yếu gồm mạch nha (malt), đại mạch, nấm men bia, hoa bia (hoa houblon), nước.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D2_K3",
+      "position": {
+        "chapter": 0,
+        "article": "2",
+        "article_title": "Giải thích từ ngữ",
+        "clause": 3
+      },
+      "content": "3. Cồn thực phẩm là hợp chất hữu cơ có công thức phân tử là C2H5OH và có tên khoa học là ethanol đã được loại bỏ tạp chất, đạt yêu cầu dùng trong thực phẩm theo quy chuẩn kỹ thuật quốc gia, có khả năng gây nghiện và gây ngộ độc cấp tính.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D2_K4",
+      "position": {
+        "chapter": 0,
+        "article": "2",
+        "article_title": "Giải thích từ ngữ",
+        "clause": 4
+      },
+      "content": "4. Độ cồn là số đo chỉ hàm lượng cồn thực phẩm có trong rượu, bia tính theo phần trăm thể tích. Độ cồn được tính bằng số mililít ethanol nguyên chất trong 100 ml dung dịch ở 20 °C.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D2_K5",
+      "position": {
+        "chapter": 0,
+        "article": "2",
+        "article_title": "Giải thích từ ngữ",
+        "clause": 5
+      },
+      "content": "5. Tác hại của rượu, bia là ảnh hưởng, tác động có hại của rượu, bia đối với sức khỏe con người, gia đình, cộng đồng, an toàn giao thông, trật tự, an toàn xã hội, kinh tế và các vấn đề xã hội khác.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D2_K6",
+      "position": {
+        "chapter": 0,
+        "article": "2",
+        "article_title": "Giải thích từ ngữ",
+        "clause": 6
+      },
+      "content": "6. Nghiện rượu, bia là tình trạng lệ thuộc vào rượu, bia với biểu hiện đặc trưng như thường xuyên thèm uống, lượng uống có thể tăng theo thời gian, không thể tự kiểm soát lượng uống hay ngừng uống.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D2_K7",
+      "position": {
+        "chapter": 0,
+        "article": "2",
+        "article_title": "Giải thích từ ngữ",
+        "clause": 7
+      },
+      "content": "7. Sản xuất rượu thủ công là hoạt động sản xuất rượu bằng dụng cụ truyền thống, không sử dụng máy móc, thiết bị công nghiệp.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D2_K8",
+      "position": {
+        "chapter": 0,
+        "article": "2",
+        "article_title": "Giải thích từ ngữ",
+        "clause": 8
+      },
+      "content": "8. Sản xuất rượu công nghiệp là hoạt động sản xuất rượu bằng máy móc, thiết bị công nghiệp.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D3_K1",
+      "position": {
+        "chapter": 0,
+        "article": "3",
+        "article_title": "Chính sách của Nhà nước trong phòng, chống tác hại của rượu, bia",
+        "clause": 1
+      },
+      "content": "1. Thực hiện đồng bộ các biện pháp phòng, chống tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D3_K2",
+      "position": {
+        "chapter": 0,
+        "article": "3",
+        "article_title": "Chính sách của Nhà nước trong phòng, chống tác hại của rượu, bia",
+        "clause": 2
+      },
+      "content": "2. Ưu tiên hoạt động thông tin, giáo dục, truyền thông; giảm tính sẵn có, dễ tiếp cận của rượu, bia; giảm tác hại của rượu, bia; tăng cường quản lý sản xuất rượu thủ công; thực hiện các biện pháp phòng, chống tác hại của rượu, bia đối với trẻ em, học sinh, sinh viên, thanh niên, phụ nữ mang thai.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D3_K3",
+      "position": {
+        "chapter": 0,
+        "article": "3",
+        "article_title": "Chính sách của Nhà nước trong phòng, chống tác hại của rượu, bia",
+        "clause": 3
+      },
+      "content": "3. Bảo đảm nguồn lực cho công tác phòng, chống tác hại của rượu, bia; chú trọng các hoạt động phòng, chống tác hại của rượu, bia của y tế cơ sở và ở cộng đồng; huy động xã hội hóa các hoạt động phòng, chống tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D3_K4",
+      "position": {
+        "chapter": 0,
+        "article": "3",
+        "article_title": "Chính sách của Nhà nước trong phòng, chống tác hại của rượu, bia",
+        "clause": 4
+      },
+      "content": "4. Khuyến khích nghiên cứu khoa học, phát triển công nghệ và ứng dụng công nghệ cao, công nghệ tiên tiến, công nghệ mới nhằm giảm tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D3_K5",
+      "position": {
+        "chapter": 0,
+        "article": "3",
+        "article_title": "Chính sách của Nhà nước trong phòng, chống tác hại của rượu, bia",
+        "clause": 5
+      },
+      "content": "5. Khen thưởng tập thể, cá nhân có thành tích trong phòng, chống tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D4_K1",
+      "position": {
+        "chapter": 0,
+        "article": "4",
+        "article_title": "Quyền và nghĩa vụ của cá nhân, tổ chức trong phòng, chống tác hại của rượu, bia",
+        "clause": 1
+      },
+      "content": "1. Được sống trong môi trường không chịu ảnh hưởng bởi tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D4_K2",
+      "position": {
+        "chapter": 0,
+        "article": "4",
+        "article_title": "Quyền và nghĩa vụ của cá nhân, tổ chức trong phòng, chống tác hại của rượu, bia",
+        "clause": 2
+      },
+      "content": "2. Được cung cấp thông tin phù hợp, chính xác, khách quan, khoa học, đầy đủ về rượu, bia, nguồn gốc, xuất xứ, chất lượng và tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D4_K3",
+      "position": {
+        "chapter": 0,
+        "article": "4",
+        "article_title": "Quyền và nghĩa vụ của cá nhân, tổ chức trong phòng, chống tác hại của rượu, bia",
+        "clause": 3
+      },
+      "content": "3. Phản ánh, tố cáo hành vi vi phạm pháp luật về phòng, chống tác hại của rượu, bia; tố cáo việc cơ quan, người có thẩm quyền không xử lý hành vi vi phạm pháp luật về phòng, chống tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D4_K4",
+      "position": {
+        "chapter": 0,
+        "article": "4",
+        "article_title": "Quyền và nghĩa vụ của cá nhân, tổ chức trong phòng, chống tác hại của rượu, bia",
+        "clause": 4
+      },
+      "content": "4. Tuân thủ quy định của pháp luật về phòng, chống tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D5_K1",
+      "position": {
+        "chapter": 0,
+        "article": "5",
+        "article_title": "Các hành vi bị nghiêm cấm trong phòng, chống tác hại của rượu, bia",
+        "clause": 1
+      },
+      "content": "1. Xúi giục, kích động, lôi kéo, ép buộc người khác uống rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D5_K2",
+      "position": {
+        "chapter": 0,
+        "article": "5",
+        "article_title": "Các hành vi bị nghiêm cấm trong phòng, chống tác hại của rượu, bia",
+        "clause": 2
+      },
+      "content": "2. Người chưa đủ 18 tuổi uống rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D5_K3",
+      "position": {
+        "chapter": 0,
+        "article": "5",
+        "article_title": "Các hành vi bị nghiêm cấm trong phòng, chống tác hại của rượu, bia",
+        "clause": 3
+      },
+      "content": "3. Bán, cung cấp, khuyến mại rượu, bia cho người chưa đủ 18 tuổi.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D5_K4",
+      "position": {
+        "chapter": 0,
+        "article": "5",
+        "article_title": "Các hành vi bị nghiêm cấm trong phòng, chống tác hại của rượu, bia",
+        "clause": 4
+      },
+      "content": "4. Sử dụng lao động là người chưa đủ 18 tuổi trực tiếp tham gia vào việc sản xuất, mua bán rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D5_K5",
+      "position": {
+        "chapter": 0,
+        "article": "5",
+        "article_title": "Các hành vi bị nghiêm cấm trong phòng, chống tác hại của rượu, bia",
+        "clause": 5
+      },
+      "content": "5. Cán bộ, công chức, viên chức, người lao động trong các cơ quan, tổ chức, sĩ quan, hạ sĩ quan, quân nhân chuyên nghiệp, chiến sĩ, người làm việc trong lực lượng vũ trang nhân dân, học sinh, sinh viên uống rượu, bia ngay trước, trong giờ làm việc, học tập và nghỉ giữa giờ làm việc, học tập.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D5_K6",
+      "position": {
+        "chapter": 0,
+        "article": "5",
+        "article_title": "Các hành vi bị nghiêm cấm trong phòng, chống tác hại của rượu, bia",
+        "clause": 6
+      },
+      "content": "6. Điều khiển phương tiện giao thông mà trong máu hoặc hơi thở có nồng độ cồn.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D5_K7",
+      "position": {
+        "chapter": 0,
+        "article": "5",
+        "article_title": "Các hành vi bị nghiêm cấm trong phòng, chống tác hại của rượu, bia",
+        "clause": 7
+      },
+      "content": "7. Quảng cáo rượu có độ cồn từ 15 độ trở lên.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D5_K8",
+      "position": {
+        "chapter": 0,
+        "article": "5",
+        "article_title": "Các hành vi bị nghiêm cấm trong phòng, chống tác hại của rượu, bia",
+        "clause": 8
+      },
+      "content": "8. Cung cấp thông tin không chính xác, sai sự thật về ảnh hưởng của rượu, bia đối với sức khỏe.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D5_K9",
+      "position": {
+        "chapter": 0,
+        "article": "5",
+        "article_title": "Các hành vi bị nghiêm cấm trong phòng, chống tác hại của rượu, bia",
+        "clause": 9
+      },
+      "content": "9. Khuyến mại trong hoạt động kinh doanh rượu, bia có độ cồn từ 15 độ trở lên; sử dụng rượu, bia có độ cồn từ 15 độ trở lên để khuyến mại dưới mọi hình thức.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D5_K10",
+      "position": {
+        "chapter": 0,
+        "article": "5",
+        "article_title": "Các hành vi bị nghiêm cấm trong phòng, chống tác hại của rượu, bia",
+        "clause": 10
+      },
+      "content": "10. Sử dụng nguyên liệu, phụ gia, chất hỗ trợ chế biến không được phép dùng trong thực phẩm; nguyên liệu, phụ gia thực phẩm, chất hỗ trợ chế biến thực phẩm không bảo đảm chất lượng và không rõ nguồn gốc, xuất xứ để sản xuất, pha chế rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D5_K11",
+      "position": {
+        "chapter": 0,
+        "article": "5",
+        "article_title": "Các hành vi bị nghiêm cấm trong phòng, chống tác hại của rượu, bia",
+        "clause": 11
+      },
+      "content": "11. Kinh doanh rượu không có giấy phép hoặc không đăng ký; bán rượu, bia bằng máy bán hàng tự động.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D5_K12",
+      "position": {
+        "chapter": 0,
+        "article": "5",
+        "article_title": "Các hành vi bị nghiêm cấm trong phòng, chống tác hại của rượu, bia",
+        "clause": 12
+      },
+      "content": "12. Kinh doanh, tàng trữ, vận chuyển rượu, bia giả, nhập lậu, không bảo đảm chất lượng, không rõ nguồn gốc, xuất xứ, nhập lậu rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D5_K13",
+      "position": {
+        "chapter": 0,
+        "article": "5",
+        "article_title": "Các hành vi bị nghiêm cấm trong phòng, chống tác hại của rượu, bia",
+        "clause": 13
+      },
+      "content": "13. Các hành vi bị nghiêm cấm khác liên quan đến rượu, bia do luật định.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D6_K1",
+      "position": {
+        "chapter": 1,
+        "article": "6",
+        "article_title": "Mục đích, yêu cầu trong thông tin, giáo dục, truyền thông về phòng, chống tác hại của rượu, bia",
+        "clause": 1
+      },
+      "content": "1. Thông tin, giáo dục, truyền thông nhằm nâng cao nhận thức, định hướng hành vi, thay đổi thói quen có hại để phòng, chống tác hại của rượu, bia đối với sức khỏe con người, gia đình, cộng đồng, an toàn giao thông, trật tự, an toàn xã hội, kinh tế và các vấn đề xã hội khác.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D6_K2",
+      "position": {
+        "chapter": 1,
+        "article": "6",
+        "article_title": "Mục đích, yêu cầu trong thông tin, giáo dục, truyền thông về phòng, chống tác hại của rượu, bia",
+        "clause": 2
+      },
+      "content": "2. Việc thông tin, giáo dục, truyền thông về phòng, chống tác hại của rượu, bia phải bảo đảm các yêu cầu sau đây:\n\na) Chính xác, khách quan và khoa học;\n\nb) Thường xuyên; phù hợp, dễ tiếp cận và hiệu quả đối với từng đối tượng, trình độ, lứa tuổi, giới tính; phù hợp với truyền thống, văn hóa, bản sắc dân tộc, tôn giáo và phong tục tập quán; chú trọng đối với học sinh, sinh viên, thanh niên, phụ nữ mang thai và cá nhân, tổ chức, hộ gia đình sản xuất rượu thủ công.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D7_K1",
+      "position": {
+        "chapter": 1,
+        "article": "7",
+        "article_title": "Nội dung thông tin, giáo dục, truyền thông về phòng, chống tác hại của rượu, bia",
+        "clause": 1
+      },
+      "content": "1. Chính sách, pháp luật của Nhà nước về phòng, chống tác hại của rượu, bia; các hành vi bị nghiêm cấm trong phòng, chống tác hại của rượu, bia; các chế tài xử phạt và vận động cá nhân, tổ chức tuân thủ quy định của pháp luật về phòng, chống tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D7_K2",
+      "position": {
+        "chapter": 1,
+        "article": "7",
+        "article_title": "Nội dung thông tin, giáo dục, truyền thông về phòng, chống tác hại của rượu, bia",
+        "clause": 2
+      },
+      "content": "2. Quyền, nghĩa vụ của cá nhân và trách nhiệm của cơ quan, tổ chức, gia đình, cộng đồng trong phòng, chống tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D7_K3",
+      "position": {
+        "chapter": 1,
+        "article": "7",
+        "article_title": "Nội dung thông tin, giáo dục, truyền thông về phòng, chống tác hại của rượu, bia",
+        "clause": 3
+      },
+      "content": "3. Tác hại của rượu, bia; tác hại của rượu, bia giả, không bảo đảm chất lượng, an toàn thực phẩm; các mức độ nguy cơ khi uống rượu, bia; các biện pháp giảm tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D7_K4",
+      "position": {
+        "chapter": 1,
+        "article": "7",
+        "article_title": "Nội dung thông tin, giáo dục, truyền thông về phòng, chống tác hại của rượu, bia",
+        "clause": 4
+      },
+      "content": "4. Bệnh, tình trạng sức khỏe, đối tượng không nên uống rượu, bia; độ tuổi không được uống rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D7_K5",
+      "position": {
+        "chapter": 1,
+        "article": "7",
+        "article_title": "Nội dung thông tin, giáo dục, truyền thông về phòng, chống tác hại của rượu, bia",
+        "clause": 5
+      },
+      "content": "5. Kỹ năng từ chối uống rượu, bia; kỹ năng nhận biết và ứng xử, xử trí khi gặp người say rượu, bia, người nghiện rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D7_K6",
+      "position": {
+        "chapter": 1,
+        "article": "7",
+        "article_title": "Nội dung thông tin, giáo dục, truyền thông về phòng, chống tác hại của rượu, bia",
+        "clause": 6
+      },
+      "content": "6. Vận động hạn chế uống rượu, bia và không điều khiển phương tiện giao thông, vận hành máy móc sau khi uống rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D7_K7",
+      "position": {
+        "chapter": 1,
+        "article": "7",
+        "article_title": "Nội dung thông tin, giáo dục, truyền thông về phòng, chống tác hại của rượu, bia",
+        "clause": 7
+      },
+      "content": "7. Hướng dẫn hộ gia đình, cá nhân sản xuất rượu thủ công bảo đảm an toàn thực phẩm theo quy định của pháp luật.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D7_K8",
+      "position": {
+        "chapter": 1,
+        "article": "7",
+        "article_title": "Nội dung thông tin, giáo dục, truyền thông về phòng, chống tác hại của rượu, bia",
+        "clause": 8
+      },
+      "content": "8. Tuyên truyền, vận động, hướng dẫn hộ gia đình, cá nhân sản xuất rượu thủ công làm thủ tục cấp giấy phép sản xuất, đăng ký với Ủy ban nhân dân cấp xã việc bán rượu cho cơ sở có giấy phép sản xuất rượu để chế biến lại, kê khai việc sản xuất rượu thủ công không nhằm mục đích kinh doanh.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D8_K1",
+      "position": {
+        "chapter": 1,
+        "article": "8",
+        "article_title": "Hình thức thông tin, giáo dục, truyền thông về phòng, chống tác hại của rượu, bia",
+        "clause": 1
+      },
+      "content": "1. Thực hiện trực tiếp; tư vấn, hướng dẫn tìm hiểu pháp luật; cung cấp, phổ biến tài liệu.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D8_K2",
+      "position": {
+        "chapter": 1,
+        "article": "8",
+        "article_title": "Hình thức thông tin, giáo dục, truyền thông về phòng, chống tác hại của rượu, bia",
+        "clause": 2
+      },
+      "content": "2. Thông qua phương tiện thông tin đại chúng, loa truyền thanh, mạng Internet, pa-nô, áp-phích, tranh cổ động.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D8_K3",
+      "position": {
+        "chapter": 1,
+        "article": "8",
+        "article_title": "Hình thức thông tin, giáo dục, truyền thông về phòng, chống tác hại của rượu, bia",
+        "clause": 3
+      },
+      "content": "3. Thi tuyên truyền, tìm hiểu.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D8_K4",
+      "position": {
+        "chapter": 1,
+        "article": "8",
+        "article_title": "Hình thức thông tin, giáo dục, truyền thông về phòng, chống tác hại của rượu, bia",
+        "clause": 4
+      },
+      "content": "4. Chiến dịch truyền thông.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D8_K5",
+      "position": {
+        "chapter": 1,
+        "article": "8",
+        "article_title": "Hình thức thông tin, giáo dục, truyền thông về phòng, chống tác hại của rượu, bia",
+        "clause": 5
+      },
+      "content": "5. Lồng ghép trong việc giảng dạy, học tập tại cơ sở giáo dục thuộc hệ thống giáo dục quốc dân; trong hoạt động văn hóa, nghệ thuật, thể thao; trong hoạt động của cơ quan, tổ chức, cộng đồng và các thiết chế văn hóa, thể thao cơ sở.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D9_K1",
+      "position": {
+        "chapter": 1,
+        "article": "9",
+        "article_title": "Trách nhiệm trong thông tin, giáo dục, truyền thông về phòng, chống tác hại của rượu, bia",
+        "clause": 1
+      },
+      "content": "1. Cơ quan, tổ chức, cá nhân có trách nhiệm thực hiện thông tin, giáo dục, truyền thông quy định tại các điều 6, 7 và 8 của Luật này.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D9_K2",
+      "position": {
+        "chapter": 1,
+        "article": "9",
+        "article_title": "Trách nhiệm trong thông tin, giáo dục, truyền thông về phòng, chống tác hại của rượu, bia",
+        "clause": 2
+      },
+      "content": "2. Chính phủ quy định trách nhiệm thực hiện thông tin, giáo dục, truyền thông về phòng, chống tác hại của rượu, bia và việc hạn chế sử dụng hình ảnh diễn viên uống rượu, bia trong tác phẩm điện ảnh, sân khấu, truyền hình.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D10_K1",
+      "position": {
+        "chapter": 1,
+        "article": "10",
+        "article_title": "Địa điểm không uống rượu, bia",
+        "clause": 1
+      },
+      "content": "1. Cơ sở y tế.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D10_K2",
+      "position": {
+        "chapter": 1,
+        "article": "10",
+        "article_title": "Địa điểm không uống rượu, bia",
+        "clause": 2
+      },
+      "content": "2. Cơ sở giáo dục trong thời gian giảng dạy, học tập, làm việc.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D10_K3",
+      "position": {
+        "chapter": 1,
+        "article": "10",
+        "article_title": "Địa điểm không uống rượu, bia",
+        "clause": 3
+      },
+      "content": "3. Cơ sở, khu vực chăm sóc, nuôi dưỡng, vui chơi, giải trí dành cho người chưa đủ 18 tuổi.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D10_K4",
+      "position": {
+        "chapter": 1,
+        "article": "10",
+        "article_title": "Địa điểm không uống rượu, bia",
+        "clause": 4
+      },
+      "content": "4. Cơ sở cai nghiện, cơ sở giáo dục bắt buộc, trường giáo dưỡng, cơ sở giam giữ phạm nhân và cơ sở giam giữ khác.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D10_K5",
+      "position": {
+        "chapter": 1,
+        "article": "10",
+        "article_title": "Địa điểm không uống rượu, bia",
+        "clause": 5
+      },
+      "content": "5. Cơ sở bảo trợ xã hội.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D10_K6",
+      "position": {
+        "chapter": 1,
+        "article": "10",
+        "article_title": "Địa điểm không uống rượu, bia",
+        "clause": 6
+      },
+      "content": "6. Nơi làm việc của cơ quan nhà nước, tổ chức chính trị, tổ chức chính trị - xã hội, tổ chức chính trị xã hội - nghề nghiệp, đơn vị sự nghiệp công lập trong thời gian làm việc, trừ địa điểm được phép kinh doanh rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D10_K7",
+      "position": {
+        "chapter": 1,
+        "article": "10",
+        "article_title": "Địa điểm không uống rượu, bia",
+        "clause": 7
+      },
+      "content": "7. Các địa điểm công cộng theo quy định của Chính phủ.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D11",
+      "position": {
+        "chapter": 1,
+        "article": "11",
+        "article_title": "Quản lý việc khuyến mại rượu, bia có độ cồn dưới 15 độ",
+        "clause": null
+      },
+      "content": "Tổ chức, cá nhân thực hiện khuyến mại rượu, bia có độ cồn dưới 15 độ phải tuân thủ các quy định của Luật này và quy định khác của pháp luật về khuyến mại.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D12_K1",
+      "position": {
+        "chapter": 1,
+        "article": "12",
+        "article_title": "Quản lý việc quảng cáo rượu, bia có độ cồn dưới 5,5 độ",
+        "clause": 1
+      },
+      "content": "1. Tổ chức, cá nhân thực hiện quảng cáo rượu, bia phải tuân thủ các quy định của Luật này và quy định khác của pháp luật về quảng cáo.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D12_K2",
+      "position": {
+        "chapter": 1,
+        "article": "12",
+        "article_title": "Quản lý việc quảng cáo rượu, bia có độ cồn dưới 5,5 độ",
+        "clause": 2
+      },
+      "content": "2. Quảng cáo không thể hiện các nội dung sau đây:\n\na) Có thông tin, hình ảnh nhằm khuyến khích uống rượu, bia; thông tin rượu, bia có tác dụng tạo sự trưởng thành, thành đạt, thân thiện, hấp dẫn về giới tính; hướng đến trẻ em, học sinh, sinh viên, thanh niên, phụ nữ mang thai;\n\nb) Sử dụng vật dụng, hình ảnh, biểu tượng, âm nhạc, nhân vật trong phim, nhãn hiệu sản phẩm dành cho trẻ em, học sinh, sinh viên; sử dụng người chưa đủ 18 tuổi hoặc hình ảnh của người chưa đủ 18 tuổi trong quảng cáo rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D12_K3",
+      "position": {
+        "chapter": 1,
+        "article": "12",
+        "article_title": "Quản lý việc quảng cáo rượu, bia có độ cồn dưới 5,5 độ",
+        "clause": 3
+      },
+      "content": "3. Không thực hiện quảng cáo trên các phương tiện quảng cáo trong trường hợp sau đây:\n\na) Sự kiện, phương tiện quảng cáo, sản phẩm dành cho người chưa đủ 18 tuổi, học sinh, sinh viên, thanh niên, phụ nữ mang thai;\n\nb) Phương tiện giao thông;\n\nc) Báo nói, báo hình ngay trước, trong và ngay sau chương trình dành cho trẻ em; trong thời gian từ 18 giờ đến 21 giờ hằng ngày, trừ trường hợp quảng cáo có sẵn trong các chương trình thể thao mua bản quyền tiếp sóng trực tiếp từ nước ngoài và trường hợp khác theo quy định của Chính phủ;\n\nd) Phương tiện quảng cáo ngoài trời vi phạm quy định về kích thước, khoảng cách đặt phương tiện quảng cáo tính từ khuôn viên của cơ sở giáo dục, cơ sở, khu vực chăm sóc, nuôi dưỡng, vui chơi, giải trí dành cho người chưa đủ 18 tuổi.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D12_K4",
+      "position": {
+        "chapter": 1,
+        "article": "12",
+        "article_title": "Quản lý việc quảng cáo rượu, bia có độ cồn dưới 5,5 độ",
+        "clause": 4
+      },
+      "content": "4. Quảng cáo phải có cảnh báo để phòng, chống tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D12_K5",
+      "position": {
+        "chapter": 1,
+        "article": "12",
+        "article_title": "Quản lý việc quảng cáo rượu, bia có độ cồn dưới 5,5 độ",
+        "clause": 5
+      },
+      "content": "5. Quảng cáo trên báo điện tử, trang thông tin điện tử, phương tiện điện tử, thiết bị đầu cuối và thiết bị viễn thông khác phải có hệ thống công nghệ chặn lọc, phần mềm kiểm soát tuổi của người truy cập để ngăn ngừa người chưa đủ 18 tuổi tiếp cận, truy cập, tìm kiếm thông tin về rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D12_K6",
+      "position": {
+        "chapter": 1,
+        "article": "12",
+        "article_title": "Quản lý việc quảng cáo rượu, bia có độ cồn dưới 5,5 độ",
+        "clause": 6
+      },
+      "content": "6. Chính phủ quy định chi tiết điểm d khoản 3, khoản 4 và khoản 5 Điều này.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D13_K0",
+      "position": {
+        "chapter": 1,
+        "article": "13",
+        "article_title": "Quản lý việc quảng cáo rượu có độ cồn từ 5,5 độ đến dưới 15 độ và bia có độ cồn từ 5,5 độ trở lên",
+        "clause": 0
+      },
+      "content": "Tổ chức, cá nhân thực hiện quảng cáo rượu có độ cồn từ 5,5 độ đến dưới 15 độ và bia có độ cồn từ 5,5 độ trở lên phải tuân thủ quy định tại Điều 12 của Luật này và không quảng cáo trong trường hợp sau đây:",
+      "cross_references": [
+        {
+          "target_id": "LPCTHRB_2019_D12_K1",
+          "anchor_text": "Điều 12",
+          "description_summary": "Quản lý việc quảng cáo rượu, bia có độ cồn dưới 5,5 độ"
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D13_K1",
+      "position": {
+        "chapter": 1,
+        "article": "13",
+        "article_title": "Quản lý việc quảng cáo rượu có độ cồn từ 5,5 độ đến dưới 15 độ và bia có độ cồn từ 5,5 độ trở lên",
+        "clause": 1
+      },
+      "content": "1. Trong các chương trình, hoạt động văn hóa, sân khấu, điện ảnh, thể thao;",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D13_K2",
+      "position": {
+        "chapter": 1,
+        "article": "13",
+        "article_title": "Quản lý việc quảng cáo rượu có độ cồn từ 5,5 độ đến dưới 15 độ và bia có độ cồn từ 5,5 độ trở lên",
+        "clause": 2
+      },
+      "content": "2. Trên các phương tiện quảng cáo ngoài trời, trừ biển hiệu của cơ sở kinh doanh rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D14",
+      "position": {
+        "chapter": 1,
+        "article": "14",
+        "article_title": "Quản lý việc tài trợ của tổ chức, cá nhân kinh doanh rượu, bia",
+        "clause": null
+      },
+      "content": "Tổ chức, cá nhân kinh doanh rượu, bia thực hiện tài trợ phải tuân thủ các quy định của pháp luật có liên quan đến việc tài trợ và không được tài trợ bằng sản phẩm rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D15_K1",
+      "position": {
+        "chapter": 2,
+        "article": "15",
+        "article_title": "Quản lý kinh doanh rượu",
+        "clause": 1
+      },
+      "content": "1. Điều kiện cấp phép sản xuất rượu công nghiệp có độ cồn từ 5,5 độ trở lên bao gồm:\n\na) Doanh nghiệp được thành lập theo quy định của pháp luật;\n\nb) Có dây chuyền máy móc, thiết bị công nghiệp, quy trình công nghệ sản xuất rượu đáp ứng quy mô dự kiến sản xuất;\n\nc) Bảo đảm điều kiện về an toàn thực phẩm và bảo vệ môi trường theo quy định của pháp luật;\n\nd) Có nhân viên kỹ thuật có trình độ, chuyên môn phù hợp với ngành, nghề sản xuất rượu.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D15_K2",
+      "position": {
+        "chapter": 2,
+        "article": "15",
+        "article_title": "Quản lý kinh doanh rượu",
+        "clause": 2
+      },
+      "content": "2. Điều kiện cấp phép sản xuất rượu thủ công có độ cồn từ 5,5 độ trở lên nhằm mục đích kinh doanh, trừ trường hợp quy định tại khoản 3 Điều này, bao gồm:\n\na) Doanh nghiệp, hợp tác xã, liên hiệp hợp tác xã hoặc hộ kinh doanh được thành lập theo quy định của pháp luật;\n\nb) Bảo đảm điều kiện về an toàn thực phẩm theo quy ánh của pháp luật.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D15_K3",
+      "position": {
+        "chapter": 2,
+        "article": "15",
+        "article_title": "Quản lý kinh doanh rượu",
+        "clause": 3
+      },
+      "content": "3. Điều kiện đối với hộ gia đình, cá nhân sản xuất rượu thủ công có độ cồn từ 5,5 độ trở lên bán cho cơ sở có giấy phép sản xuất rượu để chế biến lại bao gồm:\n\na) Có hợp đồng mua bán với cơ sở có giấy phép sản xuất rượu và có đăng ký với Ủy ban nhân dân cấp xã nơi có cơ sở sản xuất;\n\nb) Bảo đảm điều kiện về an toàn thực phẩm theo quy định của pháp luật.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D15_K4",
+      "position": {
+        "chapter": 2,
+        "article": "15",
+        "article_title": "Quản lý kinh doanh rượu",
+        "clause": 4
+      },
+      "content": "4. Điều kiện cấp phép mua bán rượu có độ cồn từ 5,5 độ trở lên bao gồm:\n\na) Đăng ký kinh doanh theo quy định của pháp luật;\n\nb) Đáp ứng điều kiện theo từng loại hình mua bán rượu.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D15_K5",
+      "position": {
+        "chapter": 2,
+        "article": "15",
+        "article_title": "Quản lý kinh doanh rượu",
+        "clause": 5
+      },
+      "content": "5. Chính phủ quy định chi tiết Điều này và quy định việc quản lý kinh doanh rượu có độ cồn dưới 5,5 độ.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D16_K1",
+      "position": {
+        "chapter": 2,
+        "article": "16",
+        "article_title": "Điều kiện bán rượu, bia theo hình thức thương mại điện tử",
+        "clause": 1
+      },
+      "content": "1. Đáp ứng quy định tại khoản 4, khoản 5 Điều 15 và Điều 18 của Luật này.",
+      "cross_references": [
+        {
+          "target_id": "LPCTHRB_2019_D18",
+          "anchor_text": "Điều 18",
+          "description_summary": "Bảo đảm chất lượng, an toàn thực phẩm đối với rượu, bia"
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D16_K2",
+      "position": {
+        "chapter": 2,
+        "article": "16",
+        "article_title": "Điều kiện bán rượu, bia theo hình thức thương mại điện tử",
+        "clause": 2
+      },
+      "content": "2. Đáp ứng điều kiện theo quy định của pháp luật về thương mại điện tử.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D16_K3",
+      "position": {
+        "chapter": 2,
+        "article": "16",
+        "article_title": "Điều kiện bán rượu, bia theo hình thức thương mại điện tử",
+        "clause": 3
+      },
+      "content": "3. Thực hiện biện pháp theo quy định của Chính phủ để ngăn ngừa người chưa đủ 18 tuổi tiếp cận, truy cập, tìm kiếm thông tin và mua rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D16_K4",
+      "position": {
+        "chapter": 2,
+        "article": "16",
+        "article_title": "Điều kiện bán rượu, bia theo hình thức thương mại điện tử",
+        "clause": 4
+      },
+      "content": "4. Áp dụng hình thức thanh toán không dùng tiền mặt.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D17_K1",
+      "position": {
+        "chapter": 2,
+        "article": "17",
+        "article_title": "Biện pháp quản lý đối với sản xuất rượu thủ công không nhằm mục đích kinh doanh",
+        "clause": 1
+      },
+      "content": "1. Hộ gia đình, cá nhân sản xuất rượu thủ công không nhằm mục đích kinh doanh phải có bản kê khai gửi Ủy ban nhân dân cấp xã về lượng rượu được sản xuất, phạm vi sử dụng, cam kết bảo đảm an toàn thực phẩm và không bán rượu ra thị trường theo mẫu do Bộ trưởng Bộ Công Thương quy định. Việc kê khai không phải nộp phí, lệ phí.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D17_K2",
+      "position": {
+        "chapter": 2,
+        "article": "17",
+        "article_title": "Biện pháp quản lý đối với sản xuất rượu thủ công không nhằm mục đích kinh doanh",
+        "clause": 2
+      },
+      "content": "2. Ủy ban nhân dân các cấp hướng dẫn việc thực hiện các quy định của pháp luật về an toàn thực phẩm; báo cáo sản lượng và tình hình bảo đảm an toàn thực phẩm đối với sản xuất rượu thủ công không nhằm mục đích kinh doanh trên địa bàn.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D18",
+      "position": {
+        "chapter": 2,
+        "article": "18",
+        "article_title": "Bảo đảm chất lượng, an toàn thực phẩm đối với rượu, bia",
+        "clause": null
+      },
+      "content": "Rượu, bia được kinh doanh, lưu hành tại Việt Nam phải bảo đảm tiêu chuẩn, quy chuẩn kỹ thuật, chất lượng sản phẩm, hàng hóa và an toàn thực phẩm theo quy định của pháp luật.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D19_K1",
+      "position": {
+        "chapter": 2,
+        "article": "19",
+        "article_title": "Địa điểm không bán rượu, bia",
+        "clause": 1
+      },
+      "content": "1. Cơ sở y tế.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D19_K2",
+      "position": {
+        "chapter": 2,
+        "article": "19",
+        "article_title": "Địa điểm không bán rượu, bia",
+        "clause": 2
+      },
+      "content": "2. Cơ sở giáo dục.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D19_K3",
+      "position": {
+        "chapter": 2,
+        "article": "19",
+        "article_title": "Địa điểm không bán rượu, bia",
+        "clause": 3
+      },
+      "content": "3. Cơ sở, khu vực chăm sóc, nuôi dưỡng, vui chơi, giải trí dành cho người chưa đủ 18 tuổi.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D19_K4",
+      "position": {
+        "chapter": 2,
+        "article": "19",
+        "article_title": "Địa điểm không bán rượu, bia",
+        "clause": 4
+      },
+      "content": "4. Cơ sở cai nghiện, cơ sở giáo dục bắt buộc, trường giáo dưỡng, cơ sở giam giữ phạm nhân và cơ sở giam giữ khác.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D19_K5",
+      "position": {
+        "chapter": 2,
+        "article": "19",
+        "article_title": "Địa điểm không bán rượu, bia",
+        "clause": 5
+      },
+      "content": "5. Cơ sở bảo trợ xã hội.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D19_K6",
+      "position": {
+        "chapter": 2,
+        "article": "19",
+        "article_title": "Địa điểm không bán rượu, bia",
+        "clause": 6
+      },
+      "content": "6. Nơi làm việc của cơ quan nhà nước, tổ chức chính trị, tổ chức chính trị - xã hội, tổ chức chính trị xã hội - nghề nghiệp, đơn vị sự nghiệp công lập, trừ địa điểm được phép kinh doanh rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D20_K1",
+      "position": {
+        "chapter": 2,
+        "article": "20",
+        "article_title": "Phòng ngừa và xử lý rượu, bia giả, không bảo đảm chất lượng, an toàn thực phẩm; rượu, bia nhập lậu, không rõ nguồn gốc, xuất xứ",
+        "clause": 1
+      },
+      "content": "1. Rượu, bia giả, không bảo đảm chất lượng, an toàn thực phẩm và rượu, bia nhập lậu, không rõ nguồn gốc, xuất xứ đều bị tịch thu, xử lý theo quy định của pháp luật.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D20_K2",
+      "position": {
+        "chapter": 2,
+        "article": "20",
+        "article_title": "Phòng ngừa và xử lý rượu, bia giả, không bảo đảm chất lượng, an toàn thực phẩm; rượu, bia nhập lậu, không rõ nguồn gốc, xuất xứ",
+        "clause": 2
+      },
+      "content": "2. Tổ chức, cá nhân có trách nhiệm phối hợp, tham gia với cơ quan có thẩm quyền trong phòng, chống rượu, bia giả, không bảo đảm chất lượng, an toàn thực phẩm và rượu, bia nhập lậu, không rõ nguồn gốc, xuất xứ.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D20_K3",
+      "position": {
+        "chapter": 2,
+        "article": "20",
+        "article_title": "Phòng ngừa và xử lý rượu, bia giả, không bảo đảm chất lượng, an toàn thực phẩm; rượu, bia nhập lậu, không rõ nguồn gốc, xuất xứ",
+        "clause": 3
+      },
+      "content": "3. Bộ Công Thương, Bộ Y tế, trong phạm vi nhiệm vụ, quyền hạn của mình, hướng dẫn việc bổ sung chất chỉ thị màu vào các sản phẩm cồn không dùng trong thực phẩm để phân biệt với cồn thực phẩm và phòng ngừa pha chế rượu từ sản phẩm cồn không được phép dùng trong thực phẩm.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D21_K1",
+      "position": {
+        "chapter": 3,
+        "article": "21",
+        "article_title": "Phòng ngừa tai nạn giao thông liên quan đến sử dụng rượu, bia",
+        "clause": 1
+      },
+      "content": "1. Người điều khiển phương tiện giao thông không uống rượu, bia trước và trong khi tham gia giao thông.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D21_K2",
+      "position": {
+        "chapter": 3,
+        "article": "21",
+        "article_title": "Phòng ngừa tai nạn giao thông liên quan đến sử dụng rượu, bia",
+        "clause": 2
+      },
+      "content": "2. Người đứng đầu cơ sở kinh doanh vận tải, chủ phương tiện giao thông vận tải có trách nhiệm chủ động thực hiện biện pháp phòng ngừa, phát hiện, ngăn chặn người điều khiển phương tiện vận tải uống rượu, bia ngay trước và trong khi tham gia giao thông.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D21_K3",
+      "position": {
+        "chapter": 3,
+        "article": "21",
+        "article_title": "Phòng ngừa tai nạn giao thông liên quan đến sử dụng rượu, bia",
+        "clause": 3
+      },
+      "content": "3. Cơ quan, người có thẩm quyền có trách nhiệm kiểm tra nồng độ cồn trong máu, hơi thở của người điều khiển phương tiện giao thông đang tham gia giao thông hoặc gây ra tai nạn giao thông.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D21_K4",
+      "position": {
+        "chapter": 3,
+        "article": "21",
+        "article_title": "Phòng ngừa tai nạn giao thông liên quan đến sử dụng rượu, bia",
+        "clause": 4
+      },
+      "content": "4. Bộ Giao thông vận tải có trách nhiệm xây dựng nội dung và tổ chức việc đào tạo về phòng, chống tác hại của rượu, bia trong chương trình đào tạo cấp bằng, chứng chỉ, giấy phép điều khiển phương tiện giao thông thuộc phạm vi quản lý.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D22_K1",
+      "position": {
+        "chapter": 3,
+        "article": "22",
+        "article_title": "Phòng ngừa, can thiệp và giảm tác hại của việc uống rượu, bia đối với sức khỏe",
+        "clause": 1
+      },
+      "content": "1. Các biện pháp phòng ngừa, can thiệp và giảm tác hại của việc uống rượu, bia đối với sức khỏe bao gồm:\n\na) Tư vấn về phòng, chống tác hại của rượu, bia cho người đến khám bệnh, chữa bệnh tại cơ sở y tế;\n\nb) Sàng lọc, phát hiện sớm yếu tố nguy cơ đối với sức khỏe của người uống rượu, bia; người mắc bệnh, rối loạn chức năng do uống rượu, bia; người nghiện rượu, bia;\n\nc) Can thiệp giảm tác hại cho người có yếu tố nguy cơ đối với sức khỏe, phụ nữ mang thai có hội chứng hoặc nguy cơ ngộ độc rượu ở thai nhi; phòng, chống nghiện và tái nghiện rượu, bia;\n\nd) Chẩn đoán, điều trị, phục hồi chức năng cho người mắc bệnh, rối loạn chức năng có liên quan đến uống rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D22_K2",
+      "position": {
+        "chapter": 3,
+        "article": "22",
+        "article_title": "Phòng ngừa, can thiệp và giảm tác hại của việc uống rượu, bia đối với sức khỏe",
+        "clause": 2
+      },
+      "content": "2. Cơ sở y tế thực hiện các biện pháp quy định tại khoản 1 Điều này theo hướng dẫn chuyên môn, kỹ thuật của Bộ Y tế.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D23_K1",
+      "position": {
+        "chapter": 3,
+        "article": "23",
+        "article_title": "Tư vấn về phòng, chống tác hại của rượu, bia",
+        "clause": 1
+      },
+      "content": "1. Tư vấn về phòng, chống tác hại của rượu, bia bao gồm các nội dung sau đây:\n\na) Thông tin, kiến thức, pháp luật về phòng, chống tác hại của rượu, bia;\n\nb) Biện pháp giảm tác hại của rượu, bia; kỹ năng từ chối uống rượu, bia; kỹ năng nhận biết và ứng xử, xử trí khi gặp người say rượu, bia, người nghiện rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D23_K2",
+      "position": {
+        "chapter": 3,
+        "article": "23",
+        "article_title": "Tư vấn về phòng, chống tác hại của rượu, bia",
+        "clause": 2
+      },
+      "content": "2. Việc tư vấn về phòng, chống tác hại của rượu, bia tập trung vào các đối tượng sau đây:\n\na) Người thường xuyên uống rượu, bia;\n\nb) Người nghiện rượu, bia;\n\nc) Thành viên gia đình có người thường xuyên uống rượu, bia, người nghiện rượu, bia;\n\nd) Trẻ em, học sinh, sinh viên, thanh niên, phụ nữ mang thai;\n\nđ) Người bị ảnh hưởng bởi tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D23_K3",
+      "position": {
+        "chapter": 3,
+        "article": "23",
+        "article_title": "Tư vấn về phòng, chống tác hại của rượu, bia",
+        "clause": 3
+      },
+      "content": "3. Ủy ban nhân dân cấp xã chủ trì phối hợp với Ủy ban Mặt trận Tổ quốc Việt Nam cùng cấp và các tổ chức thành viên của Mặt trận hướng dẫn, tạo điều kiện cho hoạt động tư vấn về phòng, chống tác hại của rượu, bia trên địa bàn.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D23_K4",
+      "position": {
+        "chapter": 3,
+        "article": "23",
+        "article_title": "Tư vấn về phòng, chống tác hại của rượu, bia",
+        "clause": 4
+      },
+      "content": "4. Nhà nước tạo điều kiện và khuyến khích tổ chức, cá nhân thực hiện tư vấn về phòng, chống tác hại của rượu, bia cho thành viên trong cộng đồng.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D23_K5",
+      "position": {
+        "chapter": 3,
+        "article": "23",
+        "article_title": "Tư vấn về phòng, chống tác hại của rượu, bia",
+        "clause": 5
+      },
+      "content": "5. Cơ quan, tổ chức, cá nhân thực hiện hoạt động tư vấn quy định tại khoản 1 và khoản 2 Điều này phù hợp với chức năng, nhiệm vụ được giao.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D24_K1",
+      "position": {
+        "chapter": 3,
+        "article": "24",
+        "article_title": "Biện pháp phòng ngừa tác hại của rượu, bia tại cộng đồng",
+        "clause": 1
+      },
+      "content": "1. Tuyên truyền, vận động các gia đình, thành viên thuộc tổ chức, cộng đồng tham gia tuyên truyền và thực hiện quy định của pháp luật về phòng, chống tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D24_K2",
+      "position": {
+        "chapter": 3,
+        "article": "24",
+        "article_title": "Biện pháp phòng ngừa tác hại của rượu, bia tại cộng đồng",
+        "clause": 2
+      },
+      "content": "2. Lồng ghép hoạt động phòng, chống tác hại của rượu, bia vào các phong trào, hoạt động văn hóa, văn nghệ, thể thao, xây dựng đời sống văn hóa và hoạt động khác tại cộng đồng.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D24_K3",
+      "position": {
+        "chapter": 3,
+        "article": "24",
+        "article_title": "Biện pháp phòng ngừa tác hại của rượu, bia tại cộng đồng",
+        "clause": 3
+      },
+      "content": "3. Vận động, khuyến khích quy định trong hương ước, quy ước việc hạn chế hoặc không uống rượu, bia tại đám cưới, đám tang, lễ hội trên địa bàn dân cư.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D24_K4",
+      "position": {
+        "chapter": 3,
+        "article": "24",
+        "article_title": "Biện pháp phòng ngừa tác hại của rượu, bia tại cộng đồng",
+        "clause": 4
+      },
+      "content": "4. Vận động cá nhân, tổ chức không sử dụng sản phẩm rượu, bia không rõ nguồn gốc, xuất xứ, chưa được kiểm nghiệm an toàn thực phẩm.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D24_K5",
+      "position": {
+        "chapter": 3,
+        "article": "24",
+        "article_title": "Biện pháp phòng ngừa tác hại của rượu, bia tại cộng đồng",
+        "clause": 5
+      },
+      "content": "5. Phát hiện, phản ánh người say rượu, bia, người nghiện rượu, bia để cảnh báo, phòng ngừa, xử lý hành vi gây ảnh hưởng đến trật tự, an toàn xã hội.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D25_K1",
+      "position": {
+        "chapter": 3,
+        "article": "25",
+        "article_title": "Chăm sóc, hỗ trợ, bảo vệ trẻ em, phụ nữ và các đối tượng yếu thế khác để phòng ngừa, giảm tác hại của rượu, bia",
+        "clause": 1
+      },
+      "content": "1. Các biện pháp chăm sóc, hỗ trợ, bảo vệ trẻ em, phụ nữ và các đối tượng yếu thế khác để phòng ngừa, giảm tác hại của rượu, bia bao gồm:\n\na) Tư vấn cho phụ nữ trong độ tuổi sinh đẻ, phụ nữ mang thai, phụ nữ đang cho con bú về tác hại của rượu, bia đối với thai nhi, trẻ em; cho người bị ảnh hưởng bởi tác hại của rượu, bia khi sử dụng dịch vụ tại cơ sở y tế, cơ sở trợ giúp xã hội, cơ sở hỗ trợ nạn nhân bị bạo lực gia đình;\n\nb) Can thiệp, hỗ trợ, áp dụng biện pháp cấm tiếp xúc, bảo đảm an toàn theo quy định của pháp luật về phòng, chống bạo lực gia đình đối với trẻ em, phụ nữ và các đối tượng yếu thế khác để không bị ảnh hưởng bởi tác hại của rượu, bia;\n\nc) Các biện pháp ngăn chặn theo quy định của pháp luật.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D25_K2",
+      "position": {
+        "chapter": 3,
+        "article": "25",
+        "article_title": "Chăm sóc, hỗ trợ, bảo vệ trẻ em, phụ nữ và các đối tượng yếu thế khác để phòng ngừa, giảm tác hại của rượu, bia",
+        "clause": 2
+      },
+      "content": "2. Các biện pháp quy định tại khoản 1 Điều này phải được lồng ghép trong chương trình, kế hoạch, hoạt động có liên quan đến trẻ em, phụ nữ và các đối tượng yếu thế khác.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D25_K3",
+      "position": {
+        "chapter": 3,
+        "article": "25",
+        "article_title": "Chăm sóc, hỗ trợ, bảo vệ trẻ em, phụ nữ và các đối tượng yếu thế khác để phòng ngừa, giảm tác hại của rượu, bia",
+        "clause": 3
+      },
+      "content": "3. Cơ quan, tổ chức, gia đình, cá nhận thực hiện quy định tại khoản 1 và khoản 2 Điều này phù hợp với chức năng, nhiệm vụ được giao.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D26_K1",
+      "position": {
+        "chapter": 4,
+        "article": "26",
+        "article_title": "Kinh phí cho hoạt động phòng, chống tác hại của rượu, bia",
+        "clause": 1
+      },
+      "content": "1. Kinh phí cho hoạt động phòng, chống tác hại của rượu, bia bao gồm:\n\na) Ngân sách nhà nước;\n\nb) Kinh phí hợp pháp khác.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D26_K2",
+      "position": {
+        "chapter": 4,
+        "article": "26",
+        "article_title": "Kinh phí cho hoạt động phòng, chống tác hại của rượu, bia",
+        "clause": 2
+      },
+      "content": "2. Kinh phí cho hoạt động phòng, chống tác hại của rượu, bia được phân bổ, quản lý, sử dụng đúng mục đích, hiệu quả và theo quy định của pháp luật",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D26_K3",
+      "position": {
+        "chapter": 4,
+        "article": "26",
+        "article_title": "Kinh phí cho hoạt động phòng, chống tác hại của rượu, bia",
+        "clause": 3
+      },
+      "content": "3. Chính phủ quy định nội dung chi, mức chi cho hoạt động phòng, chống tác hại của rượu, bia được ngân sách nhà nước bảo đảm.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D27_K1",
+      "position": {
+        "chapter": 4,
+        "article": "27",
+        "article_title": "Đào tạo, bồi dưỡng kiến thức chuyên môn, nghiệp vụ cho người làm công tác phòng, chống tác hại của rượu, bia",
+        "clause": 1
+      },
+      "content": "1. Người làm công tác phòng, chống tác hại của rượu, bia được đào tạo, bồi dưỡng kiến thức chuyên môn, nghiệp vụ phù hợp với trách nhiệm được giao.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D27_K2",
+      "position": {
+        "chapter": 4,
+        "article": "27",
+        "article_title": "Đào tạo, bồi dưỡng kiến thức chuyên môn, nghiệp vụ cho người làm công tác phòng, chống tác hại của rượu, bia",
+        "clause": 2
+      },
+      "content": "2. Nhân viên y tế cơ sở, cộng tác viên thực hiện phòng, chống tác hại của rượu, bia được ưu tiên tham gia các hoạt động bồi dưỡng nâng cao năng lực, kiến thức chuyên môn, nghiệp vụ liên quan đến phòng, chống tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D28_K1",
+      "position": {
+        "chapter": 4,
+        "article": "28",
+        "article_title": "Xử lý vi phạm pháp luật về phòng, chống tác hại của rượu, bia",
+        "clause": 1
+      },
+      "content": "1. Tổ chức, cá nhân có hành vi vi phạm pháp luật về phòng, chống tác hại của rượu, bia thì tùy theo tính chất, mức độ vi phạm mà bị xử lý kỷ luật, xử phạt vi phạm hành chính hoặc bị truy cứu trách nhiệm hình sự, nếu gây thiệt hại thì phải bồi thường theo quy định của pháp luật.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D28_K2",
+      "position": {
+        "chapter": 4,
+        "article": "28",
+        "article_title": "Xử lý vi phạm pháp luật về phòng, chống tác hại của rượu, bia",
+        "clause": 2
+      },
+      "content": "2. Cơ quan, người có thẩm quyền được sử dụng phương tiện, thiết bị kỹ thuật nghiệp vụ để phát hiện, xử lý kịp thời hành vi vi phạm pháp luật về phòng, chống tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D28_K3",
+      "position": {
+        "chapter": 4,
+        "article": "28",
+        "article_title": "Xử lý vi phạm pháp luật về phòng, chống tác hại của rượu, bia",
+        "clause": 3
+      },
+      "content": "3. Chính phủ quy định về xử phạt vi phạm hành chính trong phòng, chống tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D29_K1",
+      "position": {
+        "chapter": 5,
+        "article": "29",
+        "article_title": "Nội dung quản lý nhà nước về phòng, chống tác hại của rượu, bia",
+        "clause": 1
+      },
+      "content": "1. Ban hành, trình cấp có thẩm quyền ban hành và tổ chức thực hiện chính sách, pháp luật, kế hoạch về phòng, chống tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D29_K2",
+      "position": {
+        "chapter": 5,
+        "article": "29",
+        "article_title": "Nội dung quản lý nhà nước về phòng, chống tác hại của rượu, bia",
+        "clause": 2
+      },
+      "content": "2. Thông tin, tuyên truyền, phổ biến, giáo dục về phòng, chống tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D29_K3",
+      "position": {
+        "chapter": 5,
+        "article": "29",
+        "article_title": "Nội dung quản lý nhà nước về phòng, chống tác hại của rượu, bia",
+        "clause": 3
+      },
+      "content": "3. Đào tạo, bồi dưỡng về công tác phòng, chống tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D29_K4",
+      "position": {
+        "chapter": 5,
+        "article": "29",
+        "article_title": "Nội dung quản lý nhà nước về phòng, chống tác hại của rượu, bia",
+        "clause": 4
+      },
+      "content": "4. Thống kê, sơ kết, tổng kết, định kỳ báo cáo việc thực hiện phòng, chống tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D29_K5",
+      "position": {
+        "chapter": 5,
+        "article": "29",
+        "article_title": "Nội dung quản lý nhà nước về phòng, chống tác hại của rượu, bia",
+        "clause": 5
+      },
+      "content": "5. Thanh tra, kiểm tra, xử lý vi phạm pháp luật và giải quyết khiếu nại, tố cáo về phòng, chống tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D29_K6",
+      "position": {
+        "chapter": 5,
+        "article": "29",
+        "article_title": "Nội dung quản lý nhà nước về phòng, chống tác hại của rượu, bia",
+        "clause": 6
+      },
+      "content": "6. Nghiên cứu khoa học và hợp tác quốc tế về phòng, chống tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D30_K1",
+      "position": {
+        "chapter": 5,
+        "article": "30",
+        "article_title": "Trách nhiệm quản lý nhà nước về phòng, chống tác hại của rượu, bia",
+        "clause": 1
+      },
+      "content": "1. Chính phủ thống nhất quản lý nhà nước về phòng, chống tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D30_K2",
+      "position": {
+        "chapter": 5,
+        "article": "30",
+        "article_title": "Trách nhiệm quản lý nhà nước về phòng, chống tác hại của rượu, bia",
+        "clause": 2
+      },
+      "content": "2. Bộ Y tế là cơ quan đầu mối giúp Chính phủ thực hiện quản lý nhà nước về phòng, chống tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D30_K3",
+      "position": {
+        "chapter": 5,
+        "article": "30",
+        "article_title": "Trách nhiệm quản lý nhà nước về phòng, chống tác hại của rượu, bia",
+        "clause": 3
+      },
+      "content": "3. Bộ, cơ quan ngang Bộ, trong phạm vi nhiệm vụ, quyền hạn của mình, có trách nhiệm thực hiện quản lý nhà nước về phòng, chống tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D30_K4",
+      "position": {
+        "chapter": 5,
+        "article": "30",
+        "article_title": "Trách nhiệm quản lý nhà nước về phòng, chống tác hại của rượu, bia",
+        "clause": 4
+      },
+      "content": "4. Ủy ban nhân dân các cấp, trong phạm vi nhiệm vụ, quyền hạn của mình, thực hiện quản lý nhà nước về phòng, chống tác hại của rượu, bia tại địa phương.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D31_K1",
+      "position": {
+        "chapter": 5,
+        "article": "31",
+        "article_title": "Trách nhiệm của Mặt trận Tổ quốc Việt Nam, các tổ chức thành viên của Mặt trận và tổ chức xã hội - nghề nghiệp, tổ chức xã hội",
+        "clause": 1
+      },
+      "content": "1. Mặt trận Tổ quốc Việt Nam và các tổ chức thành viên của Mặt trận, trong phạm vi chức năng, nhiệm vụ của mình, có trách nhiệm giáo dục, tuyên truyền, vận động nhân dân, đoàn viên, hội viên thực hiện chính sách, pháp luật về phòng, chống tác hại của rượu, bia; đưa nội dung phòng, chống tác hại của rượu, bia vào nội quy, quy chế của cơ quan, tổ chức; tham gia ý kiến xây dựng pháp luật, thực hiện giám sát, phản biện xã hội trong lĩnh vực phòng, chống tác hại của rượu, bia theo quy định của pháp luật.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D31_K2",
+      "position": {
+        "chapter": 5,
+        "article": "31",
+        "article_title": "Trách nhiệm của Mặt trận Tổ quốc Việt Nam, các tổ chức thành viên của Mặt trận và tổ chức xã hội - nghề nghiệp, tổ chức xã hội",
+        "clause": 2
+      },
+      "content": "2. Đoàn Thanh niên Cộng sản Hồ Chí Minh có trách nhiệm sau đây:\n\na) Thực hiện trách nhiệm quy định tại khoản 1 Điều này;\n\nb) Tuyên truyền, giáo dục trẻ em, học sinh, sinh viên, thanh niên không uống rượu, bia;\n\nc) Phối hợp với cơ quan, tổ chức có liên quan để bảo vệ và hỗ trợ trẻ em, học sinh, sinh viên, thanh niên bị ảnh hưởng bởi tác hại của rượu, bia;\n\nd) Lồng ghép hoạt động phòng, chống tác hại của rượu, bia trong công tác đoàn, đội.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D31_K3",
+      "position": {
+        "chapter": 5,
+        "article": "31",
+        "article_title": "Trách nhiệm của Mặt trận Tổ quốc Việt Nam, các tổ chức thành viên của Mặt trận và tổ chức xã hội - nghề nghiệp, tổ chức xã hội",
+        "clause": 3
+      },
+      "content": "3. Hội Liên hiệp Phụ nữ Việt Nam có trách nhiệm sau đây:\n\na) Thực hiện trách nhiệm quy định tại khoản 1 Điều này;\n\nb) Phối hợp với cơ quan, tổ chức có liên quan để bảo vệ và hỗ trợ phụ nữ, trẻ em bị ảnh hưởng bởi tác hại của rượu, bia;\n\nc) Lồng ghép hoạt động phòng, chống tác hại của rượu, bia trong công tác hội.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D31_K4",
+      "position": {
+        "chapter": 5,
+        "article": "31",
+        "article_title": "Trách nhiệm của Mặt trận Tổ quốc Việt Nam, các tổ chức thành viên của Mặt trận và tổ chức xã hội - nghề nghiệp, tổ chức xã hội",
+        "clause": 4
+      },
+      "content": "4. Tổ chức xã hội - nghề nghiệp, tổ chức xã hội, trong phạm vi chức năng, nhiệm vụ của mình, tham gia giáo dục, tuyên truyền, vận động thực hiện chính sách, pháp luật về phòng, chống tác hại của rượu, bia; tham gia ý kiến xây dựng pháp luật về phòng, chống tác hại của rượu, bia; cung cấp thông tin về phòng, chống tác hại của rượu, bia theo quy định của pháp luật.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D32_K1",
+      "position": {
+        "chapter": 5,
+        "article": "32",
+        "article_title": "Trách nhiệm của cơ sở kinh doanh rượu, bia",
+        "clause": 1
+      },
+      "content": "1. Tuân thủ quy định của pháp luật về điều kiện kinh doanh rượu, bia; về quảng cáo, khuyến mại, tài trợ, an toàn thực phẩm, chất lượng, tiêu chuẩn, quy chuẩn kỹ thuật, ghi nhãn hàng hóa đối với rượu, bia. Thông tin về sản phẩm rượu, bia phải bảo đảm chính xác, khoa học.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D32_K2",
+      "position": {
+        "chapter": 5,
+        "article": "32",
+        "article_title": "Trách nhiệm của cơ sở kinh doanh rượu, bia",
+        "clause": 2
+      },
+      "content": "2. Cung cấp thông tin đầy đủ, chính xác về hoạt động kinh doanh của cơ sở theo yêu cầu của cơ quan có thẩm quyền.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D32_K3",
+      "position": {
+        "chapter": 5,
+        "article": "32",
+        "article_title": "Trách nhiệm của cơ sở kinh doanh rượu, bia",
+        "clause": 3
+      },
+      "content": "3. Không sử dụng lao động là người chưa đủ 18 tuổi trực tiếp tham gia vào việc kinh doanh, quảng cáo rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D32_K4",
+      "position": {
+        "chapter": 5,
+        "article": "32",
+        "article_title": "Trách nhiệm của cơ sở kinh doanh rượu, bia",
+        "clause": 4
+      },
+      "content": "4. Thu hồi và xử lý rượu, bia không bảo đảm chất lượng, an toàn thực phẩm do cơ sở mình sản xuất, mua bán theo quy định của pháp luật về an toàn thực phẩm.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D32_K5",
+      "position": {
+        "chapter": 5,
+        "article": "32",
+        "article_title": "Trách nhiệm của cơ sở kinh doanh rượu, bia",
+        "clause": 5
+      },
+      "content": "5. Cơ sở bán rượu, bia phải niêm yết thông báo không bán rượu, bia cho người chưa đủ 18 tuổi. Trường hợp nghi ngờ về độ tuổi của người mua rượu, bia thì người bán có quyền yêu cầu người mua xuất trình giấy tờ chứng minh.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D32_K6",
+      "position": {
+        "chapter": 5,
+        "article": "32",
+        "article_title": "Trách nhiệm của cơ sở kinh doanh rượu, bia",
+        "clause": 6
+      },
+      "content": "6. Cơ sở bán rượu, bia tiêu dùng tại chỗ nhắc nhở và có hình thức thông tin phù hợp đối với khách hàng về việc không điều khiển phương tiện giao thông, hỗ trợ khách hàng thuê, sử dụng phương tiện giao thông công cộng sau khi uống rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D32_K7",
+      "position": {
+        "chapter": 5,
+        "article": "32",
+        "article_title": "Trách nhiệm của cơ sở kinh doanh rượu, bia",
+        "clause": 7
+      },
+      "content": "7. Kể từ ngày Luật này có hiệu lực, không được mở mới điểm bán rượu, bia để tiêu dùng tại chỗ trong bán kính 100 m tính từ khuôn viên của cơ sở y tế, nhà trẻ, trường mẫu giáo, trường mầm non, cơ sở giáo dục phổ thông.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D33_K1",
+      "position": {
+        "chapter": 5,
+        "article": "33",
+        "article_title": "Trách nhiệm của người đứng đầu cơ quan, tổ chức trong phòng, chống tác hại của rượu, bia",
+        "clause": 1
+      },
+      "content": "1. Người đứng đầu cơ quan, tổ chức, trong phạm vi nhiệm vụ, quyền hạn của mình, có trách nhiệm tổ chức thực hiện các biện pháp phòng, chống tác hại của rượu, bia; tổ chức thực hiện nghiêm quy định không uống rượu, bia trong thời gian làm việc, tại nơi làm việc của cơ quan, tổ chức.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D33_K2",
+      "position": {
+        "chapter": 5,
+        "article": "33",
+        "article_title": "Trách nhiệm của người đứng đầu cơ quan, tổ chức trong phòng, chống tác hại của rượu, bia",
+        "clause": 2
+      },
+      "content": "2. Người đứng đầu tổ dân phố, khu phố, khối phố, thôn, ấp, bản, làng, buôn, phum, sóc, tổ chức tại cơ sở, cộng đồng tham gia các hoạt động phòng, chống tác hại của rượu, bia quy định tại Điều 24 của Luật này.",
+      "cross_references": [
+        {
+          "target_id": "LPCTHRB_2019_D24_K1",
+          "anchor_text": "Điều 24",
+          "description_summary": "Biện pháp phòng ngừa tác hại của rượu, bia tại cộng đồng"
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D33_K3",
+      "position": {
+        "chapter": 5,
+        "article": "33",
+        "article_title": "Trách nhiệm của người đứng đầu cơ quan, tổ chức trong phòng, chống tác hại của rượu, bia",
+        "clause": 3
+      },
+      "content": "3. Người đứng đầu, người quản lý, điều hành địa điểm quy định tại Điều 10 và Điều 19 của Luật này có trách nhiệm sau đây:\n\na) Nhắc nhở, yêu cầu chấm dứt hành vi vi phạm quy định tại Điều 10 và Điều 19 của Luật này; từ chối cung cấp dịch vụ nếu người vi phạm tiếp tục vi phạm sau khi đã được nhắc nhở, yêu cầu;\n\nb) Tổ chức thực hiện, hướng dẫn, kiểm tra, đôn đốc mọi người thực hiện đúng quy định về không được uống, không được bán rượu, bia tại địa điểm thuộc, quyền quản lý, điều hành.",
+      "cross_references": [
+        {
+          "target_id": "LPCTHRB_2019_D19_K1",
+          "anchor_text": "Điều 19",
+          "description_summary": "Địa điểm không bán rượu, bia"
+        }
+      ],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D34_K1",
+      "position": {
+        "chapter": 5,
+        "article": "34",
+        "article_title": "Trách nhiệm của gia đình trong phòng, chống tác hại của rượu, bia",
+        "clause": 1
+      },
+      "content": "1. Giáo dục, giám sát, nhắc nhở thành viên chưa đủ 18 tuổi không uống rượu, bia, các thành viên khác trong gia đình hạn chế uống rượu, bia; động viên, giúp đỡ người nghiện rượu, bia trong gia đình cai nghiện rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D34_K2",
+      "position": {
+        "chapter": 5,
+        "article": "34",
+        "article_title": "Trách nhiệm của gia đình trong phòng, chống tác hại của rượu, bia",
+        "clause": 2
+      },
+      "content": "2. Hướng dẫn các thành viên trong gia đình kỹ năng từ chối uống rượu, bia; kỹ năng nhận biết, ứng xử, xử trí khi gặp người say rượu, bia, người nghiện rượu, bia và thực hiện các biện pháp phòng, chống tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D34_K3",
+      "position": {
+        "chapter": 5,
+        "article": "34",
+        "article_title": "Trách nhiệm của gia đình trong phòng, chống tác hại của rượu, bia",
+        "clause": 3
+      },
+      "content": "3. Tham gia với các cơ quan, tổ chức và cộng đồng thực hiện phòng, chống tác hại của rượu, bia.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D35_K1",
+      "position": {
+        "chapter": 6,
+        "article": "35",
+        "article_title": "Sửa đổi, bổ sung quy định của một số luật khác",
+        "clause": 1
+      },
+      "content": "1. Sửa đổi, bổ sung khoản 8 Điều 8 của Luật Giao thông đường bộ số 23/2008/QH12 đã được sửa đổi, bổ sung một số điều theo Luật số 35/2018/QH14 như sau:\n\n“8. Điều khiển phương tiện tham gia giao thông đường bộ mà trong máu hoặc hơi thở có nồng độ cồn”.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D35_K2",
+      "position": {
+        "chapter": 6,
+        "article": "35",
+        "article_title": "Sửa đổi, bổ sung quy định của một số luật khác",
+        "clause": 2
+      },
+      "content": "2. Sửa đổi, bổ sung khoản 8 Điều 8 của Luật Giao thông đường thủy nội địa số 23/2004/QH11 đã được sửa đổi, bổ sung một số điều theo Luật số 48/2014/QH13, Luật số 97/2015/QH13 và Luật số 35/2018/QH14 như sau:\n\n“8. Thuyền viên, người lái phương tiện đang làm việc trên phương tiện mà trong máu hoặc hơi thở có nồng độ cồn hoặc có các chất kích thích khác mà luật cấm sử dụng.”.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D35_K3",
+      "position": {
+        "chapter": 6,
+        "article": "35",
+        "article_title": "Sửa đổi, bổ sung quy định của một số luật khác",
+        "clause": 3
+      },
+      "content": "3. Thay thế một số cụm từ tại một số điều của Luật Thương mại số 36/2005/QH11 đã dược sửa đổi, bổ sung một số điều theo Luật số 05/2017/QH14 như sau:\n\na) Thay thế cụm từ “rượu có độ cồn từ 30 độ trở lên” bằng cụm từ “rượu, bia có độ cồn từ 15 độ trở lên” tại khoản 4 Điều 100;\n\nb) Thay thế cụm từ “rượu có độ cồn từ 30 độ trở lên” bằng cụm từ “rượu có độ cồn từ 15 độ trở lên” tại khoản 4 Điều 109.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D36_K1",
+      "position": {
+        "chapter": 6,
+        "article": "36",
+        "article_title": "Hiệu lực thi hành",
+        "clause": 1
+      },
+      "content": "1. Luật này có hiệu lực thi hành từ ngày 01 tháng 01 năm 2020.",
+      "cross_references": [],
+      "tags": []
+    },
+    {
+      "id": "LPCTHRB_2019_D36_K2",
+      "position": {
+        "chapter": 6,
+        "article": "36",
+        "article_title": "Hiệu lực thi hành",
+        "clause": 2
+      },
+      "content": "2. Kể từ ngày Luật này có hiệu lực đến ngày 01 tháng 01 năm 2022, việc cấp phép sản xuất rượu thủ công quy định tại khoản 2 Điều 15 của Luật này và việc đăng ký sản xuất rượu thủ công quy định tại khoản 3 Điều 15 của Luật này không phải nộp phí, lệ phí.\n\nLuật này được Quốc hội nước Cộng hòa xã hội chủ nghĩa Việt Nam khóa XIV, kỳ họp thứ 7 thông qua ngày 14 tháng 6 năm 2019.",
+      "cross_references": [
+        {
+          "target_id": "LPCTHRB_2019_D15_K2",
+          "anchor_text": "khoản 2 Điều 15",
+          "description_summary": "Quản lý kinh doanh rượu"
+        },
+        {
+          "target_id": "LPCTHRB_2019_D15_K3",
+          "anchor_text": "khoản 3 Điều 15",
+          "description_summary": "Quản lý kinh doanh rượu"
+        },
+        {
+          "target_id": "LPCTHRB_2019_D15_K1",
+          "anchor_text": "Điều 15",
+          "description_summary": "Quản lý kinh doanh rượu"
+        }
+      ],
+      "tags": []
+    }
+  ]
+}
