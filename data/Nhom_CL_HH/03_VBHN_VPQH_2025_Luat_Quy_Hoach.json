@@ -8,7 +8,7 @@
   },
   "clauses": [
     {
-      "id": "LQH_VBHN_D1_K1",
+      "id": "LQH_VBHN_D1",
       "position": {
         "chapter": 1,
         "article": 1,
@@ -25,7 +25,7 @@
       ]
     },
     {
-      "id": "LQH_VBHN_D2_K1",
+      "id": "LQH_VBHN_D2",
       "position": {
         "chapter": 1,
         "article": 2,
@@ -2427,7 +2427,7 @@
       ]
     },
     {
-      "id": "LQH_VBHN_D37_K1",
+      "id": "LQH_VBHN_D37",
       "position": {
         "chapter": 3,
         "article": 37,

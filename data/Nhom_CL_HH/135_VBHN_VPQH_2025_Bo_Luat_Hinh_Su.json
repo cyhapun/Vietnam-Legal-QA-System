@@ -8,7 +8,7 @@
   },
   "clauses": [
     {
-      "id": "BLHS_VBHN_D1_K1",
+      "id": "BLHS_VBHN_D1",
       "position": {
         "chapter": 1,
         "article": 1,
@@ -632,7 +632,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D13_K1",
+      "id": "BLHS_VBHN_D13",
       "position": {
         "chapter": 3,
         "article": 13,
@@ -852,7 +852,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D15_K1",
+      "id": "BLHS_VBHN_D15",
       "position": {
         "chapter": 3,
         "article": 15,
@@ -869,7 +869,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D16_K1",
+      "id": "BLHS_VBHN_D16",
       "position": {
         "chapter": 3,
         "article": 16,
@@ -1093,7 +1093,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D20_K1",
+      "id": "BLHS_VBHN_D20",
       "position": {
         "chapter": 4,
         "article": 20,
@@ -1109,7 +1109,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D21_K1",
+      "id": "BLHS_VBHN_D21",
       "position": {
         "chapter": 4,
         "article": 21,
@@ -1221,7 +1221,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D25_K1",
+      "id": "BLHS_VBHN_D25",
       "position": {
         "chapter": 4,
         "article": 25,
@@ -1501,7 +1501,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D30_K1",
+      "id": "BLHS_VBHN_D30",
       "position": {
         "chapter": 6,
         "article": 30,
@@ -1517,7 +1517,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D31_K1",
+      "id": "BLHS_VBHN_D31",
       "position": {
         "chapter": 6,
         "article": 31,
@@ -1633,7 +1633,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D34_K1",
+      "id": "BLHS_VBHN_D34",
       "position": {
         "chapter": 6,
         "article": 34,
@@ -1783,7 +1783,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D37_K1",
+      "id": "BLHS_VBHN_D37",
       "position": {
         "chapter": 6,
         "article": 37,
@@ -1831,7 +1831,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D39_K1",
+      "id": "BLHS_VBHN_D39",
       "position": {
         "chapter": 6,
         "article": 39,
@@ -1918,7 +1918,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D41_K1",
+      "id": "BLHS_VBHN_D41",
       "position": {
         "chapter": 6,
         "article": 41,
@@ -1934,7 +1934,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D42_K1",
+      "id": "BLHS_VBHN_D42",
       "position": {
         "chapter": 6,
         "article": 42,
@@ -1950,7 +1950,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D43_K1",
+      "id": "BLHS_VBHN_D43",
       "position": {
         "chapter": 6,
         "article": 43,
@@ -2595,7 +2595,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D58_K1",
+      "id": "BLHS_VBHN_D58",
       "position": {
         "chapter": 8,
         "article": 58,
@@ -2748,7 +2748,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D61_K1",
+      "id": "BLHS_VBHN_D61",
       "position": {
         "chapter": 9,
         "article": 61,
@@ -3013,7 +3013,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D64_K1",
+      "id": "BLHS_VBHN_D64",
       "position": {
         "chapter": 9,
         "article": 64,
@@ -3551,7 +3551,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D72_K1",
+      "id": "BLHS_VBHN_D72",
       "position": {
         "chapter": 10,
         "article": 72,
@@ -3676,7 +3676,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D74_K1",
+      "id": "BLHS_VBHN_D74",
       "position": {
         "chapter": 11,
         "article": 74,
@@ -3738,7 +3738,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D76_K1",
+      "id": "BLHS_VBHN_D76",
       "position": {
         "chapter": 11,
         "article": 76,
@@ -4195,7 +4195,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D83_K1",
+      "id": "BLHS_VBHN_D83",
       "position": {
         "chapter": 11,
         "article": 83,
@@ -4401,7 +4401,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D88_K1",
+      "id": "BLHS_VBHN_D88",
       "position": {
         "chapter": 11,
         "article": 88,
@@ -8904,7 +8904,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D181_K1",
+      "id": "BLHS_VBHN_D181",
       "position": {
         "chapter": 17,
         "article": 181,
@@ -8952,7 +8952,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D183_K1",
+      "id": "BLHS_VBHN_D183",
       "position": {
         "chapter": 17,
         "article": 183,
@@ -8968,7 +8968,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D184_K1",
+      "id": "BLHS_VBHN_D184",
       "position": {
         "chapter": 17,
         "article": 184,
@@ -9016,7 +9016,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D186_K1",
+      "id": "BLHS_VBHN_D186",
       "position": {
         "chapter": 17,
         "article": 186,
@@ -21299,7 +21299,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D339_K1",
+      "id": "BLHS_VBHN_D339",
       "position": {
         "chapter": 22,
         "article": 339,
@@ -21635,7 +21635,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D347_K1",
+      "id": "BLHS_VBHN_D347",
       "position": {
         "chapter": 22,
         "article": 347,
@@ -23053,7 +23053,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D367_K1",
+      "id": "BLHS_VBHN_D367",
       "position": {
         "chapter": 24,
         "article": 367,
@@ -26306,7 +26306,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D424_K1",
+      "id": "BLHS_VBHN_D424",
       "position": {
         "chapter": 26,
         "article": 424,
@@ -26322,7 +26322,7 @@
       ]
     },
     {
-      "id": "BLHS_VBHN_D425_K1",
+      "id": "BLHS_VBHN_D425",
       "position": {
         "chapter": 26,
         "article": 425,
@@ -26624,7 +26624,7 @@
           "description_summary": "Người mắc bệnh ung thư giai đoạn cuối"
         },
         {
-          "target_id": "BLHS_VBHN_D1_K1",
+          "target_id": "BLHS_VBHN_D1",
           "anchor_text": "khoản 1 Điều 1",
           "description_summary": "Bộ luật Hình sự có nhiệm vụ bảo vệ chủ quyền quốc gia, an ninh của đất nước, bảo vệ chế độ xã hội chủ nghĩa, quyền con người, quyền công dân, bảo vệ quyền bình đẳng giữa đồng bà…"
         },
