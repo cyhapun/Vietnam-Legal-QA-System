@@ -1,0 +1,4035 @@
+  "law_info": {
+    "law_id": "LCC_VBHN",
+    "law_name": "Luật Căn cước (VBHN 2026)",
+    "publisher": "Văn phòng Quốc hội",
+    "status": "Văn bản hợp nhất",
+    "executive_summary": "Luật quy định về Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước; việc quản lý, cấp thẻ căn cước, căn cước điện tử, giấy chứng nhận căn cước; cùng quyền, nghĩa vụ và trách nhiệm của các cơ quan, tổ chức, cá nhân có liên quan."
+  },
+  "clauses": [
+    {
+      "id": "LCC_VBHN_D1_K0",
+      "position": {
+        "chapter": 1,
+        "article": 1,
+        "article_title": "Phạm vi điều chỉnh",
+        "clause": 0
+      },
+      "content": "Luật này quy định về Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước; thẻ căn cước, căn cước điện tử; giấy chứng nhận căn cước; quyền, nghĩa vụ, trách nhiệm của cơ quan, tổ chức, cá nhân có liên quan.",
+      "cross_references": [],
+      "tags": [
+        "phạm vi điều chỉnh",
+        "cơ sở dữ liệu dân cư",
+        "cơ sở dữ liệu căn cước",
+        "thẻ căn cước",
+        "căn cước điện tử"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D2_K0",
+      "position": {
+        "chapter": 1,
+        "article": 2,
+        "article_title": "Đối tượng áp dụng",
+        "clause": 0
+      },
+      "content": "Luật này áp dụng đối với công dân Việt Nam; người gốc Việt Nam chưa xác định được quốc tịch đang sinh sống tại Việt Nam; cơ quan, tổ chức, cá nhân có liên quan.",
+      "cross_references": [],
+      "tags": [
+        "đối tượng áp dụng",
+        "công dân Việt Nam",
+        "người gốc Việt Nam",
+        "chưa xác định quốc tịch"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D3_K1",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 1
+      },
+      "content": "Căn cước là thông tin cơ bản về nhân thân, lai lịch, nhân dạng và sinh trắc học của một người.",
+      "cross_references": [],
+      "tags": [
+        "căn cước",
+        "nhân thân",
+        "nhân dạng",
+        "sinh trắc học"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D3_K2",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 2
+      },
+      "content": "Nhân dạng là đặc điểm cá biệt và ổn định bên ngoài của một người để nhận diện, phân biệt người này với người khác.",
+      "cross_references": [],
+      "tags": [
+        "nhân dạng",
+        "nhận diện"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D3_K3",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 3
+      },
+      "content": "Sinh trắc học là những thuộc tính vật lý, đặc điểm sinh học cá biệt và ổn định của một người để nhận diện, phân biệt người này với người khác.",
+      "cross_references": [],
+      "tags": [
+        "sinh trắc học",
+        "đặc điểm sinh học"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D3_K4",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 4
+      },
+      "content": "Người gốc Việt Nam chưa xác định được quốc tịch đang sinh sống tại Việt Nam là người đang sinh sống tại Việt Nam, không có giấy tờ, tài liệu chứng minh có quốc tịch Việt Nam và nước khác nhưng có cùng dòng máu về trực hệ với người đã từng có quốc tịch Việt Nam được xác định theo nguyên tắc huyết thống.",
+      "cross_references": [],
+      "tags": [
+        "người gốc Việt Nam",
+        "chưa xác định quốc tịch",
+        "huyết thống"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D3_K5",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 5
+      },
+      "content": "Tàng thư căn cước là hệ thống hồ sơ, tài liệu về căn cước, được phân loại, sắp xếp, lưu trữ, quản lý theo trình tự nhất định để tra cứu và khai thác thông tin.",
+      "cross_references": [],
+      "tags": [
+        "tàng thư căn cước",
+        "lưu trữ hồ sơ"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D3_K6",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 6
+      },
+      "content": "Cơ sở dữ liệu quốc gia về dân cư là cơ sở dữ liệu dùng chung, tập hợp thông tin của công dân Việt Nam, người gốc Việt Nam chưa xác định được quốc tịch được số hóa, chuẩn hóa, lưu trữ, quản lý bằng cơ sở hạ tầng thông tin để phục vụ quản lý nhà nước và giao dịch của cơ quan, tổ chức, cá nhân.",
+      "cross_references": [],
+      "tags": [
+        "cơ sở dữ liệu quốc gia về dân cư"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D3_K7",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 7
+      },
+      "content": "Cơ sở dữ liệu căn cước là cơ sở dữ liệu chuyên ngành, tập hợp thông tin về căn cước của công dân Việt Nam, người gốc Việt Nam chưa xác định được quốc tịch được số hóa, chuẩn hóa, lưu trữ, quản lý bằng cơ sở hạ tầng thông tin để phục vụ quản lý nhà nước về căn cước và giao dịch của cơ quan, tổ chức, cá nhân.",
+      "cross_references": [],
+      "tags": [
+        "cơ sở dữ liệu căn cước"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D3_K8",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 8
+      },
+      "content": "Cơ sở dữ liệu chuyên ngành là tập hợp thông tin về một hoặc một số lĩnh vực quản lý nhất định của Bộ, cơ quan ngang Bộ, cơ quan thuộc Chính phủ, Ủy ban nhân dân cấp tỉnh và tổ chức chính trị, tổ chức chính trị - xã hội được số hóa, chuẩn hóa, lưu trữ, quản lý bằng cơ sở hạ tầng thông tin để phục vụ quản lý nhà nước theo chuyên ngành và giao dịch của cơ quan, tổ chức, cá nhân.",
+      "cross_references": [],
+      "tags": [
+        "cơ sở dữ liệu chuyên ngành"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D3_K9",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 9
+      },
+      "content": "Cơ sở hạ tầng thông tin Cơ sở dữ liệu quốc gia về dân cư và Cơ sở dữ liệu căn cước là tập hợp phần cứng, phần mềm và hệ quản trị cơ sở dữ liệu phục vụ cho việc sản xuất, thu thập, xử lý, lưu trữ, truyền đưa, trao đổi và chia sẻ thông tin về dân cư và căn cước.",
+      "cross_references": [],
+      "tags": [
+        "cơ sở hạ tầng thông tin"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D3_K10",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 10
+      },
+      "content": "Cơ quan quản lý căn cước là cơ quan được Bộ Công an giao thực hiện nhiệm vụ quản lý căn cước, Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, hệ thống định danh và xác thực điện tử.",
+      "cross_references": [],
+      "tags": [
+        "cơ quan quản lý căn cước",
+        "Bộ Công an"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D3_K11",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 11
+      },
+      "content": "Thẻ căn cước là giấy tờ tùy thân chứa đựng căn cước và thông tin khác đã được tích hợp vào thẻ căn cước của công dân Việt Nam, do cơ quan quản lý căn cước cấp theo quy định của Luật này.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN",
+          "anchor_text": "Luật này",
+          "description_summary": "Quy định về cấp thẻ căn cước",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "thẻ căn cước",
+        "giấy tờ tùy thân"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D3_K12",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 12
+      },
+      "content": "Giấy chứng nhận căn cước là giấy tờ tùy thân chứa đựng căn cước của người gốc Việt Nam chưa xác định được quốc tịch, do cơ quan quản lý căn cước cấp theo quy định của Luật này.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN",
+          "anchor_text": "Luật này",
+          "description_summary": "Quy định cấp giấy chứng nhận căn cước",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "giấy chứng nhận căn cước"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D3_K13",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 13
+      },
+      "content": "Danh tính điện tử của công dân Việt Nam là một số thông tin sau đây của công dân trong Cơ sở dữ liệu căn cước cho phép xác định duy nhất người đó trên môi trường điện tử thông qua hệ thống định danh và xác thực điện tử và để tạo lập căn cước điện tử: a) Số định danh cá nhân; b) Họ, chữ đệm và tên khai sinh; c) Ngày, tháng, năm sinh; d) Giới tính; đ) Ảnh khuôn mặt; e) Vân tay.",
+      "cross_references": [],
+      "tags": [
+        "danh tính điện tử",
+        "xác định duy nhất"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D3_K14",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 14
+      },
+      "content": "Hệ thống định danh và xác thực điện tử là hệ thống thông tin để thực hiện đăng ký, tạo lập, quản lý tài khoản định danh điện tử và thực hiện xác thực điện tử.",
+      "cross_references": [],
+      "tags": [
+        "hệ thống định danh",
+        "xác thực điện tử"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D3_K15",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 15
+      },
+      "content": "Định danh điện tử đối với công dân Việt Nam là hoạt động đăng ký, đối soát, gắn danh tính điện tử và cấp căn cước điện tử cho một công dân.",
+      "cross_references": [],
+      "tags": [
+        "định danh điện tử",
+        "cấp căn cước điện tử"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D3_K16",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 16
+      },
+      "content": "Xác thực điện tử đối với danh tính điện tử của công dân Việt Nam là hoạt động xác nhận, khẳng định tính chính xác của danh tính điện tử thông qua việc khai thác, đối chiếu thông tin trong Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước qua hệ thống định danh và xác thực điện tử.",
+      "cross_references": [],
+      "tags": [
+        "xác thực điện tử",
+        "đối chiếu thông tin"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D3_K17",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 17
+      },
+      "content": "Căn cước điện tử là căn cước của công dân Việt Nam được thể hiện thông qua tài khoản định danh điện tử do hệ thống định danh và xác thực điện tử tạo lập.",
+      "cross_references": [],
+      "tags": [
+        "căn cước điện tử",
+        "tài khoản định danh điện tử"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D3_K18",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 18
+      },
+      "content": "Ứng dụng định danh quốc gia (VNeID) là ứng dụng trên thiết bị số để phục vụ hoạt động định danh điện tử và xác thực điện tử trong giải quyết thủ tục hành chính, dịch vụ công và các giao dịch khác trên môi trường điện tử, phát triển các tiện ích để phục vụ cơ quan, tổ chức, cá nhân.",
+      "cross_references": [],
+      "tags": [
+        "VNeID",
+        "ứng dụng định danh quốc gia"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D3_K19",
+      "position": {
+        "chapter": 1,
+        "article": 3,
+        "article_title": "Giải thích từ ngữ",
+        "clause": 19
+      },
+      "content": "Trung tâm dữ liệu quốc gia là nơi tập hợp, lưu trữ, xử lý, điều phối thông tin, dữ liệu từ các cơ sở dữ liệu và hệ thống thông tin để cung cấp các ứng dụng liên quan đến dữ liệu và cơ sở hạ tầng thông tin theo quy định của Chính phủ.",
+      "cross_references": [],
+      "tags": [
+        "trung tâm dữ liệu quốc gia",
+        "lưu trữ dữ liệu"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D4_K1",
+      "position": {
+        "chapter": 1,
+        "article": 4,
+        "article_title": "Nguyên tắc quản lý căn cước, Cơ sở dữ liệu quốc gia về dân cư và Cơ sở dữ liệu căn cước",
+        "clause": 1
+      },
+      "content": "Tuân thủ Hiến pháp và pháp luật; bảo đảm quyền con người, quyền công dân.",
+      "cross_references": [],
+      "tags": [
+        "nguyên tắc quản lý",
+        "tuân thủ hiến pháp",
+        "quyền con người"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D4_K2",
+      "position": {
+        "chapter": 1,
+        "article": 4,
+        "article_title": "Nguyên tắc quản lý căn cước, Cơ sở dữ liệu quốc gia về dân cư và Cơ sở dữ liệu căn cước",
+        "clause": 2
+      },
+      "content": "Bảo đảm công khai, minh bạch, bình đẳng, thuận lợi cho cơ quan, tổ chức, cá nhân.",
+      "cross_references": [],
+      "tags": [
+        "công khai",
+        "minh bạch",
+        "bình đẳng"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D4_K3",
+      "position": {
+        "chapter": 1,
+        "article": 4,
+        "article_title": "Nguyên tắc quản lý căn cước, Cơ sở dữ liệu quốc gia về dân cư và Cơ sở dữ liệu căn cước",
+        "clause": 3
+      },
+      "content": "Bảo đảm an ninh mạng, bảo vệ dữ liệu cá nhân.",
+      "cross_references": [],
+      "tags": [
+        "an ninh mạng",
+        "bảo vệ dữ liệu cá nhân"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D4_K4",
+      "position": {
+        "chapter": 1,
+        "article": 4,
+        "article_title": "Nguyên tắc quản lý căn cước, Cơ sở dữ liệu quốc gia về dân cư và Cơ sở dữ liệu căn cước",
+        "clause": 4
+      },
+      "content": "Thu thập, cập nhật, điều chỉnh thông tin, tài liệu đầy đủ, chính xác, kịp thời; quản lý tập trung, thống nhất, chặt chẽ, duy trì, kết nối, chia sẻ, khai thác, sử dụng hiệu quả, lưu trữ lâu dài.",
+      "cross_references": [],
+      "tags": [
+        "thu thập thông tin",
+        "quản lý tập trung"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D5_K1",
+      "position": {
+        "chapter": 1,
+        "article": 5,
+        "article_title": "Quyền, nghĩa vụ của công dân Việt Nam và người gốc Việt Nam chưa xác định được quốc tịch về căn cước, Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước",
+        "clause": 1
+      },
+      "content": "Công dân Việt Nam có quyền sau đây: a) Được bảo vệ dữ liệu cá nhân trong Cơ sở dữ liệu quốc gia về dân cư và Cơ sở dữ liệu căn cước theo quy định của pháp luật; b) Yêu cầu cơ quan quản lý căn cước cập nhật, điều chỉnh thông tin của mình trong Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, thẻ căn cước, căn cước điện tử theo quy định của pháp luật về căn cước; c) Được xác lập số định danh cá nhân của công dân Việt Nam; được cấp, cấp đổi, cấp lại thẻ căn cước theo quy định của Luật này; được xác nhận thông tin về căn cước, thông tin trong Cơ sở dữ liệu quốc gia về dân cư; d) Sử dụng thẻ căn cước, căn cước điện tử trong giao dịch, thực hiện quyền, lợi ích hợp pháp; đ) Khai thác thông tin của mình trong Cơ sở dữ liệu quốc gia về dân cư và Cơ sở dữ liệu căn cước.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN",
+          "anchor_text": "theo quy định của Luật này",
+          "description_summary": "Quy định cấp, cấp đổi, cấp lại thẻ căn cước",
+          "type": "internal",
+          "relation": "based_on"
+        }
+      ],
+      "tags": [
+        "quyền công dân Việt Nam",
+        "bảo vệ dữ liệu",
+        "xác lập số định danh"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D5_K2",
+      "position": {
+        "chapter": 1,
+        "article": 5,
+        "article_title": "Quyền, nghĩa vụ của công dân Việt Nam và người gốc Việt Nam chưa xác định được quốc tịch về căn cước, Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước",
+        "clause": 2
+      },
+      "content": "Người gốc Việt Nam chưa xác định được quốc tịch có quyền sau đây: a) Được bảo vệ dữ liệu cá nhân trong Cơ sở dữ liệu quốc gia về dân cư và Cơ sở dữ liệu căn cước theo quy định của pháp luật; b) Yêu cầu cơ quan quản lý căn cước cập nhật, điều chỉnh thông tin của mình trong Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, giấy chứng nhận căn cước theo quy định của pháp luật về căn cước; c) Được xác lập số định danh cá nhân của người gốc Việt Nam chưa xác định được quốc tịch; được cấp, cấp đổi, cấp lại giấy chứng nhận căn cước theo quy định của Luật này; d) Sử dụng giấy chứng nhận căn cước trong giao dịch, thực hiện quyền, lợi ích hợp pháp; đ) Khai thác thông tin của mình trong Cơ sở dữ liệu quốc gia về dân cư và Cơ sở dữ liệu căn cước.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN",
+          "anchor_text": "theo quy định của Luật này",
+          "description_summary": "Quy định cấp chứng nhận căn cước",
+          "type": "internal",
+          "relation": "based_on"
+        }
+      ],
+      "tags": [
+        "quyền người gốc Việt Nam",
+        "giấy chứng nhận căn cước"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D5_K3",
+      "position": {
+        "chapter": 1,
+        "article": 5,
+        "article_title": "Quyền, nghĩa vụ của công dân Việt Nam và người gốc Việt Nam chưa xác định được quốc tịch về căn cước, Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước",
+        "clause": 3
+      },
+      "content": "Công dân Việt Nam, người gốc Việt Nam chưa xác định được quốc tịch có nghĩa vụ sau đây: a) Làm thủ tục cấp, cấp đổi, cấp lại thẻ căn cước, giấy chứng nhận căn cước theo quy định của pháp luật về căn cước; bảo quản thẻ căn cước, giấy chứng nhận căn cước đã được cấp; b) Cung cấp đầy đủ, chính xác, kịp thời thông tin, tài liệu của mình để cập nhật, điều chỉnh thông tin trong Cơ sở dữ liệu quốc gia về dân cư và Cơ sở dữ liệu căn cước, thẻ căn cước, căn cước điện tử theo quy định của pháp luật về căn cước; c) Cung cấp đầy đủ, chính xác, kịp thời thông tin, tài liệu của mình đã thay đổi so với thông tin trên thẻ căn cước, giấy chứng nhận căn cước khi thực hiện giao dịch có liên quan và chịu trách nhiệm về tính đầy đủ, chính xác của thông tin, tài liệu; d) Xuất trình thẻ căn cước, căn cước điện tử, giấy chứng nhận căn cước hoặc cung cấp số định danh cá nhân khi người có thẩm quyền yêu cầu theo quy định của pháp luật; đ) Nộp thẻ căn cước, giấy chứng nhận căn cước cho cơ quan có thẩm quyền trong trường hợp cấp đổi, bị thu hồi, bị giữ thẻ căn cước, giấy chứng nhận căn cước theo quy định của Luật này.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN",
+          "anchor_text": "theo quy định của Luật này",
+          "description_summary": "Quy định về thu hồi, giữ thẻ căn cước",
+          "type": "internal",
+          "relation": "based_on"
+        }
+      ],
+      "tags": [
+        "nghĩa vụ công dân",
+        "cung cấp thông tin",
+        "xuất trình thẻ"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D5_K4",
+      "position": {
+        "chapter": 1,
+        "article": 5,
+        "article_title": "Quyền, nghĩa vụ của công dân Việt Nam và người gốc Việt Nam chưa xác định được quốc tịch về căn cước, Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước",
+        "clause": 4
+      },
+      "content": "Người mất năng lực hành vi dân sự, người có khó khăn trong nhận thức, làm chủ hành vi theo quy định của Bộ luật Dân sự, người dưới 14 tuổi được thực hiện quyền và nghĩa vụ quy định tại Điều này thông qua người đại diện hợp pháp của mình hoặc tự mình thực hiện khi được người đại diện hợp pháp đồng ý theo quy định của Bộ luật Dân sự.",
+      "cross_references": [
+        {
+          "target_id": "Bo_luat_Dan_su",
+          "anchor_text": "theo quy định của Bộ luật Dân sự",
+          "description_summary": "Xác định người mất năng lực hành vi",
+          "type": "external",
+          "relation": "based_on"
+        },
+        {
+          "target_id": "LCC_VBHN_D5",
+          "anchor_text": "Điều này",
+          "description_summary": "Quyền, nghĩa vụ",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "người mất năng lực hành vi",
+        "người dưới 14 tuổi",
+        "người đại diện"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D6_K1",
+      "position": {
+        "chapter": 1,
+        "article": 6,
+        "article_title": "Trách nhiệm của cơ quan quản lý căn cước",
+        "clause": 1
+      },
+      "content": "Thu thập, cập nhật, điều chỉnh thông tin trong Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước đầy đủ, chính xác, kịp thời.",
+      "cross_references": [],
+      "tags": [
+        "trách nhiệm cơ quan quản lý",
+        "thu thập thông tin"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D6_K2",
+      "position": {
+        "chapter": 1,
+        "article": 6,
+        "article_title": "Trách nhiệm của cơ quan quản lý căn cước",
+        "clause": 2
+      },
+      "content": "Niêm yết công khai và hướng dẫn các thủ tục hành chính liên quan đến căn cước, Cơ sở dữ liệu quốc gia về dân cư và Cơ sở dữ liệu căn cước theo quy định của pháp luật.",
+      "cross_references": [],
+      "tags": [
+        "niêm yết công khai",
+        "thủ tục hành chính"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D6_K3",
+      "position": {
+        "chapter": 1,
+        "article": 6,
+        "article_title": "Trách nhiệm của cơ quan quản lý căn cước",
+        "clause": 3
+      },
+      "content": "Bảo đảm an ninh mạng, bảo vệ dữ liệu cá nhân trong Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, hệ thống định danh và xác thực điện tử.",
+      "cross_references": [],
+      "tags": [
+        "an ninh mạng",
+        "bảo vệ dữ liệu"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D6_K4",
+      "position": {
+        "chapter": 1,
+        "article": 6,
+        "article_title": "Trách nhiệm của cơ quan quản lý căn cước",
+        "clause": 4
+      },
+      "content": "Cung cấp đầy đủ, chính xác, kịp thời thông tin, tài liệu về người dân khi được cơ quan, tổ chức, cá nhân yêu cầu theo quy định của pháp luật.",
+      "cross_references": [],
+      "tags": [
+        "cung cấp thông tin"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D6_K5",
+      "position": {
+        "chapter": 1,
+        "article": 6,
+        "article_title": "Trách nhiệm của cơ quan quản lý căn cước",
+        "clause": 5
+      },
+      "content": "Cấp, quản lý căn cước điện tử; cấp, cấp đổi, cấp lại, thu hồi thẻ căn cước, giấy chứng nhận căn cước theo quy định của Luật này.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN",
+          "anchor_text": "theo quy định của Luật này",
+          "description_summary": "Quy định cấp, quản lý thẻ căn cước",
+          "type": "internal",
+          "relation": "based_on"
+        }
+      ],
+      "tags": [
+        "cấp thẻ căn cước",
+        "quản lý căn cước điện tử"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D6_K6",
+      "position": {
+        "chapter": 1,
+        "article": 6,
+        "article_title": "Trách nhiệm của cơ quan quản lý căn cước",
+        "clause": 6
+      },
+      "content": "Quản lý về định danh và xác thực điện tử.",
+      "cross_references": [],
+      "tags": [
+        "quản lý định danh",
+        "xác thực điện tử"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D6_K7",
+      "position": {
+        "chapter": 1,
+        "article": 6,
+        "article_title": "Trách nhiệm của cơ quan quản lý căn cước",
+        "clause": 7
+      },
+      "content": "Giải quyết khiếu nại, tố cáo và xử lý vi phạm pháp luật về căn cước theo quy định của pháp luật.",
+      "cross_references": [],
+      "tags": [
+        "giải quyết khiếu nại",
+        "xử lý vi phạm"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D7_K1",
+      "position": {
+        "chapter": 1,
+        "article": 7,
+        "article_title": "Các hành vi bị nghiêm cấm",
+        "clause": 1
+      },
+      "content": "Cấp, cấp đổi, cấp lại, thu hồi thẻ căn cước, giấy chứng nhận căn cước trái quy định của pháp luật.",
+      "cross_references": [],
+      "tags": [
+        "hành vi bị nghiêm cấm",
+        "cấp thẻ trái quy định"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D7_K2",
+      "position": {
+        "chapter": 1,
+        "article": 7,
+        "article_title": "Các hành vi bị nghiêm cấm",
+        "clause": 2
+      },
+      "content": "Giữ thẻ căn cước, giấy chứng nhận căn cước trái quy định của pháp luật.",
+      "cross_references": [],
+      "tags": [
+        "giữ thẻ trái quy định"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D7_K3",
+      "position": {
+        "chapter": 1,
+        "article": 7,
+        "article_title": "Các hành vi bị nghiêm cấm",
+        "clause": 3
+      },
+      "content": "Nhũng nhiễu, gây phiền hà, phân biệt đối xử khi giải quyết thủ tục hành chính liên quan đến căn cước, Cơ sở dữ liệu quốc gia về dân cư và Cơ sở dữ liệu căn cước.",
+      "cross_references": [],
+      "tags": [
+        "nhũng nhiễu",
+        "gây phiền hà",
+        "phân biệt đối xử"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D7_K4",
+      "position": {
+        "chapter": 1,
+        "article": 7,
+        "article_title": "Các hành vi bị nghiêm cấm",
+        "clause": 4
+      },
+      "content": "Làm sai lệch sổ sách, hồ sơ về căn cước, thông tin trong Cơ sở dữ liệu quốc gia về dân cư và Cơ sở dữ liệu căn cước; không cung cấp, cung cấp không đầy đủ, cung cấp không chính xác, cung cấp trái quy định của pháp luật các thông tin, tài liệu về căn cước hoặc thông tin trong Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước.",
+      "cross_references": [],
+      "tags": [
+        "làm sai lệch hồ sơ",
+        "cung cấp thông tin trái quy định"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D7_K5",
+      "position": {
+        "chapter": 1,
+        "article": 7,
+        "article_title": "Các hành vi bị nghiêm cấm",
+        "clause": 5
+      },
+      "content": "Không thực hiện thủ tục cấp thẻ căn cước theo quy định tại khoản 2 Điều 19 của Luật này.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D19_K2",
+          "anchor_text": "khoản 2 Điều 19 của Luật này",
+          "description_summary": "Nghĩa vụ cấp thẻ căn cước từ đủ 14 tuổi",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "không thực hiện thủ tục cấp thẻ"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D7_K6",
+      "position": {
+        "chapter": 1,
+        "article": 7,
+        "article_title": "Các hành vi bị nghiêm cấm",
+        "clause": 6
+      },
+      "content": "Sản xuất, đưa vào sử dụng công cụ, phương tiện, phần mềm hoặc có hành vi khác gây cản trở, rối loạn hoạt động của cơ sở hạ tầng thông tin Cơ sở dữ liệu quốc gia về dân cư và Cơ sở dữ liệu căn cước, hệ thống định danh và xác thực điện tử.",
+      "cross_references": [],
+      "tags": [
+        "gây rối loạn hoạt động",
+        "cản trở cơ sở hạ tầng"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D7_K7",
+      "position": {
+        "chapter": 1,
+        "article": 7,
+        "article_title": "Các hành vi bị nghiêm cấm",
+        "clause": 7
+      },
+      "content": "Làm giả, sửa chữa, cố ý làm sai lệch nội dung thẻ căn cước, căn cước điện tử, giấy chứng nhận căn cước; chiếm đoạt, sử dụng trái phép thẻ căn cước, căn cước điện tử, giấy chứng nhận căn cước của người khác; thuê, cho thuê, cầm cố, nhận cầm cố, hủy hoại thẻ căn cước, giấy chứng nhận căn cước; sử dụng thẻ căn cước giả, căn cước điện tử giả, giấy chứng nhận căn cước giả.",
+      "cross_references": [],
+      "tags": [
+        "làm giả thẻ căn cước",
+        "sử dụng trái phép thẻ căn cước",
+        "cầm cố thẻ"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D7_K8",
+      "position": {
+        "chapter": 1,
+        "article": 7,
+        "article_title": "Các hành vi bị nghiêm cấm",
+        "clause": 8
+      },
+      "content": "Truy nhập, làm thay đổi, xóa, hủy, phát tán hoặc thực hiện các hoạt động khác liên quan đến xử lý dữ liệu cá nhân trong Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, hệ thống định danh và xác thực điện tử trái quy định của pháp luật.",
+      "cross_references": [],
+      "tags": [
+        "truy nhập trái phép",
+        "phá hoại dữ liệu cá nhân"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D7_K9",
+      "position": {
+        "chapter": 1,
+        "article": 7,
+        "article_title": "Các hành vi bị nghiêm cấm",
+        "clause": 9
+      },
+      "content": "Khai thác, chia sẻ, mua, bán, trao đổi, chiếm đoạt, sử dụng trái phép thông tin, dữ liệu trong Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, hệ thống định danh và xác thực điện tử.",
+      "cross_references": [],
+      "tags": [
+        "mua bán dữ liệu",
+        "sử dụng trái phép thông tin"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D7_K10",
+      "position": {
+        "chapter": 1,
+        "article": 7,
+        "article_title": "Các hành vi bị nghiêm cấm",
+        "clause": 10
+      },
+      "content": "Yêu cầu công dân xuất trình giấy tờ đã được tích hợp vào căn cước điện tử, ứng dụng định danh quốc gia để giải quyết thủ tục hành chính, trừ trường hợp thông tin công dân cung cấp không thống nhất với thông tin đã được tích hợp hoặc pháp luật có quy định khác.",
+      "cross_references": [],
+      "tags": [
+        "yêu cầu xuất trình giấy tờ",
+        "giấy tờ tích hợp"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D8_K1",
+      "position": {
+        "chapter": 2,
+        "article": 8,
+        "article_title": "Yêu cầu xây dựng và quản lý Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 1
+      },
+      "content": "Cơ sở dữ liệu quốc gia về dân cư được xây dựng và quản lý tập trung, thống nhất tại cơ quan quản lý căn cước của Bộ Công an.",
+      "cross_references": [],
+      "tags": [
+        "xây dựng Cơ sở dữ liệu",
+        "quản lý tập trung"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D8_K2",
+      "position": {
+        "chapter": 2,
+        "article": 8,
+        "article_title": "Yêu cầu xây dựng và quản lý Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 2
+      },
+      "content": "Cơ sở dữ liệu quốc gia về dân cư được xây dựng theo tiêu chuẩn, quy chuẩn kỹ thuật công nghệ thông tin, định mức kinh tế - kỹ thuật, bảo đảm hoạt động ổn định, liên tục.",
+      "cross_references": [],
+      "tags": [
+        "tiêu chuẩn kỹ thuật",
+        "hoạt động ổn định"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D8_K3",
+      "position": {
+        "chapter": 2,
+        "article": 8,
+        "article_title": "Yêu cầu xây dựng và quản lý Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 3
+      },
+      "content": "Bảo đảm an ninh mạng, bảo vệ dữ liệu cá nhân, thuận lợi cho việc thu thập, cập nhật, điều chỉnh, khai thác, sử dụng.",
+      "cross_references": [],
+      "tags": [
+        "an ninh mạng",
+        "bảo vệ dữ liệu cá nhân"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D8_K4",
+      "position": {
+        "chapter": 2,
+        "article": 8,
+        "article_title": "Yêu cầu xây dựng và quản lý Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 4
+      },
+      "content": "Bảo đảm kết nối, chia sẻ với các cơ sở dữ liệu quốc gia, cơ sở dữ liệu chuyên ngành, cơ sở dữ liệu khác, trung tâm dữ liệu quốc gia và cổng dịch vụ công, hệ thống thông tin giải quyết thủ tục hành chính.",
+      "cross_references": [],
+      "tags": [
+        "kết nối cơ sở dữ liệu",
+        "chia sẻ dữ liệu"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D8_K5",
+      "position": {
+        "chapter": 2,
+        "article": 8,
+        "article_title": "Yêu cầu xây dựng và quản lý Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 5
+      },
+      "content": "Bảo đảm quyền khai thác thông tin của cơ quan, tổ chức, cá nhân theo quy định của pháp luật.",
+      "cross_references": [],
+      "tags": [
+        "quyền khai thác thông tin"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D8_K6",
+      "position": {
+        "chapter": 2,
+        "article": 8,
+        "article_title": "Yêu cầu xây dựng và quản lý Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 6
+      },
+      "content": "Bảo đảm lưu trữ đầy đủ thông tin của người dân trong các lần thu thập, cập nhật, điều chỉnh trong cơ sở dữ liệu.",
+      "cross_references": [],
+      "tags": [
+        "lưu trữ đầy đủ",
+        "cập nhật thông tin"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K1",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 1
+      },
+      "content": "Họ, chữ đệm và tên khai sinh.",
+      "cross_references": [],
+      "tags": [
+        "họ tên khai sinh",
+        "thông tin dân cư"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K2",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 2
+      },
+      "content": "Tên gọi khác.",
+      "cross_references": [],
+      "tags": [
+        "tên gọi khác",
+        "thông tin dân cư"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K3",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 3
+      },
+      "content": "Số định danh cá nhân.",
+      "cross_references": [],
+      "tags": [
+        "số định danh cá nhân",
+        "thông tin dân cư"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K4",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 4
+      },
+      "content": "Ngày, tháng, năm sinh.",
+      "cross_references": [],
+      "tags": [
+        "ngày sinh",
+        "thông tin dân cư"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K5",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 5
+      },
+      "content": "Giới tính.",
+      "cross_references": [],
+      "tags": [
+        "giới tính",
+        "thông định dân cư"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K6",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 6
+      },
+      "content": "Nơi sinh.",
+      "cross_references": [],
+      "tags": [
+        "nơi sinh",
+        "thông tin dân cư"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K7",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 7
+      },
+      "content": "Nơi đăng ký khai sinh.",
+      "cross_references": [],
+      "tags": [
+        "nơi đăng ký khai sinh",
+        "thông tin dân cư"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K8",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 8
+      },
+      "content": "Quê quán.",
+      "cross_references": [],
+      "tags": [
+        "quê quán",
+        "thông tin dân cư"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K9",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 9
+      },
+      "content": "Dân tộc.",
+      "cross_references": [],
+      "tags": [
+        "dân tộc",
+        "thông tin dân cư"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K10",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 10
+      },
+      "content": "Tôn giáo.",
+      "cross_references": [],
+      "tags": [
+        "tôn giáo",
+        "thông tin dân cư"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K11",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 11
+      },
+      "content": "Quốc tịch.",
+      "cross_references": [],
+      "tags": [
+        "quốc tịch",
+        "thông tin dân cư"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K12",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 12
+      },
+      "content": "Nhóm máu.",
+      "cross_references": [],
+      "tags": [
+        "nhóm máu",
+        "thông tin dân cư"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K13",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 13
+      },
+      "content": "Số chứng minh nhân dân 09 số.",
+      "cross_references": [],
+      "tags": [
+        "chứng minh nhân dân",
+        "thông tin dân cư"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K14",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 14
+      },
+      "content": "Ngày, tháng, năm cấp, nơi cấp, thời hạn sử dụng của thẻ căn cước, thẻ căn cước công dân, chứng minh nhân dân 12 số đã được cấp.",
+      "cross_references": [],
+      "tags": [
+        "ngày cấp",
+        "nơi cấp",
+        "thời hạn sử dụng thẻ"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K15",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 15
+      },
+      "content": "Họ, chữ đệm và tên, số định danh cá nhân, số chứng minh nhân dân 09 số, quốc tịch của cha, mẹ, vợ, chồng, con, người đại diện hợp pháp, người được đại diện.",
+      "cross_references": [],
+      "tags": [
+        "thông tin nhân thân",
+        "người đại diện hợp pháp"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K16",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 16
+      },
+      "content": "Nơi thường trú.",
+      "cross_references": [],
+      "tags": [
+        "nơi thường trú",
+        "thông tin dân cư"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K17",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 17
+      },
+      "content": "Nơi tạm trú.",
+      "cross_references": [],
+      "tags": [
+        "nơi tạm trú",
+        "thông tin dân cư"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K18",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 18
+      },
+      "content": "Nơi ở hiện tại.",
+      "cross_references": [],
+      "tags": [
+        "nơi ở hiện tại",
+        "thông tin dân cư"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K19",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 19
+      },
+      "content": "Tình trạng khai báo tạm vắng.",
+      "cross_references": [],
+      "tags": [
+        "khai báo tạm vắng",
+        "thông tin dân cư"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K20",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 20
+      },
+      "content": "Số hồ sơ cư trú.",
+      "cross_references": [],
+      "tags": [
+        "số hồ sơ cư trú",
+        "thông tin dân cư"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K21",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 21
+      },
+      "content": "Tình trạng hôn nhân.",
+      "cross_references": [],
+      "tags": [
+        "tình trạng hôn nhân",
+        "thông tin dân cư"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K22",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 22
+      },
+      "content": "Mối quan hệ với chủ hộ.",
+      "cross_references": [],
+      "tags": [
+        "mối quan hệ chủ hộ",
+        "thông tin dân cư"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K23",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 23
+      },
+      "content": "Họ, chữ đệm và tên, số định danh cá nhân, số chứng minh nhân dân 09 số của chủ hộ và các thành viên hộ gia đình.",
+      "cross_references": [],
+      "tags": [
+        "thành viên hộ gia đình",
+        "chủ hộ"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K24",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 24
+      },
+      "content": "Ngày, tháng, năm chết hoặc mất tích.",
+      "cross_references": [],
+      "tags": [
+        "ngày chết",
+        "mất tích"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K25",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 25
+      },
+      "content": "Số thuê bao di động, địa chỉ thư điện tử.",
+      "cross_references": [],
+      "tags": [
+        "số thuê bao di động",
+        "địa chỉ thư điện tử"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D9_K26",
+      "position": {
+        "chapter": 2,
+        "article": 9,
+        "article_title": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 26
+      },
+      "content": "Thông tin khác theo quy định của Chính phủ.",
+      "cross_references": [],
+      "tags": [
+        "thông tin khác"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D10_K1",
+      "position": {
+        "chapter": 2,
+        "article": 10,
+        "article_title": "Thu thập, cập nhật, điều chỉnh, quản lý, kết nối, chia sẻ, khai thác thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 1
+      },
+      "content": "Thông tin quy định tại Điều 9 của Luật này được thu thập, cập nhật, điều chỉnh vào Cơ sở dữ liệu quốc gia về dân cư từ tàng thư do lực lượng Công an nhân dân quản lý và Cơ sở dữ liệu căn cước, Cơ sở dữ liệu về cư trú, Cơ sở dữ liệu hộ tịch và cơ sở dữ liệu quốc gia, cơ sở dữ liệu chuyên ngành khác, cơ sở dữ liệu khác theo quy định của pháp luật.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D9",
+          "anchor_text": "Điều 9 của Luật này",
+          "description_summary": "Thông tin lưu trữ trong Cơ sở dữ liệu quốc gia về dân cư",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "thu thập thông tin",
+        "cập nhật thông tin",
+        "điều chỉnh thông tin"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D10_K2",
+      "position": {
+        "chapter": 2,
+        "article": 10,
+        "article_title": "Thu thập, cập nhật, điều chỉnh, quản lý, kết nối, chia sẻ, khai thác thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 2
+      },
+      "content": "Trường hợp thông tin quy định tại các khoản 1, 4, 5, 7, 8, 9 và 11 Điều 9 của Luật này chưa có hoặc chưa đầy đủ thì cơ quan quản lý căn cước yêu cầu người dân cung cấp.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D9",
+          "anchor_text": "các khoản 1, 4, 5, 7, 8, 9 và 11 Điều 9 của Luật này",
+          "description_summary": "Thông tin cơ bản về dân cư",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "yêu cầu cung cấp thông tin"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D10_K3",
+      "position": {
+        "chapter": 2,
+        "article": 10,
+        "article_title": "Thu thập, cập nhật, điều chỉnh, quản lý, kết nối, chia sẻ, khai thác thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 3
+      },
+      "content": "Cơ quan quản lý căn cước phối hợp với cơ quan, tổ chức, cá nhân có liên quan kiểm tra thông tin khi thu thập, cập nhật, điều chỉnh để bảo đảm tính chính xác, thống nhất.",
+      "cross_references": [],
+      "tags": [
+        "kiểm tra thông tin",
+        "phối hợp"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D10_K4",
+      "position": {
+        "chapter": 2,
+        "article": 10,
+        "article_title": "Thu thập, cập nhật, điều chỉnh, quản lý, kết nối, chia sẻ, khai thác thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 4
+      },
+      "content": "Hệ thống cơ sở hạ tầng thông tin Cơ sở dữ liệu quốc gia về dân cư được Nhà nước bảo vệ theo quy định của pháp luật về bảo vệ công trình quan trọng liên quan đến an ninh quốc gia, pháp luật về an ninh mạng.",
+      "cross_references": [],
+      "tags": [
+        "bảo vệ cơ sở hạ tầng",
+        "an ninh mạng"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D10_K5",
+      "position": {
+        "chapter": 2,
+        "article": 10,
+        "article_title": "Thu thập, cập nhật, điều chỉnh, quản lý, kết nối, chia sẻ, khai thác thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 5
+      },
+      "content": "Phương thức khai thác thông tin trong Cơ sở dữ liệu quốc gia về dân cư bao gồm: a) Kết nối, chia sẻ trực tiếp giữa cơ sở dữ liệu quốc gia, cơ sở dữ liệu chuyên ngành, cơ sở dữ liệu khác, trung tâm dữ liệu quốc gia với Cơ sở dữ liệu quốc gia về dân cư hoặc theo các phương thức khác của Khung kiến trúc Chính phủ điện tử Việt Nam; b) Cổng dịch vụ công quốc gia, cổng dịch vụ công Bộ Công an; c) Văn bản cung cấp thông tin; d) Ứng dụng định danh quốc gia; đ) Nền tảng định danh và xác thực điện tử; e) Phương thức khác do Thủ tướng Chính phủ quyết định.",
+      "cross_references": [],
+      "tags": [
+        "phương thức khai thác",
+        "kết nối chia sẻ",
+        "cổng dịch vụ công"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D10_K6",
+      "position": {
+        "chapter": 2,
+        "article": 10,
+        "article_title": "Thu thập, cập nhật, điều chỉnh, quản lý, kết nối, chia sẻ, khai thác thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 6
+      },
+      "content": "Cơ quan nhà nước, tổ chức chính trị, tổ chức chính trị - xã hội được khai thác thông tin trong Cơ sở dữ liệu quốc gia về dân cư phù hợp với chức năng, nhiệm vụ của cơ quan, tổ chức đó.",
+      "cross_references": [],
+      "tags": [
+        "khai thác thông tin",
+        "cơ quan nhà nước"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D10_K7",
+      "position": {
+        "chapter": 2,
+        "article": 10,
+        "article_title": "Thu thập, cập nhật, điều chỉnh, quản lý, kết nối, chia sẻ, khai thác thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 7
+      },
+      "content": "Cá nhân được khai thác thông tin của mình trong Cơ sở dữ liệu quốc gia về dân cư.",
+      "cross_references": [],
+      "tags": [
+        "khai thác thông tin cá nhân"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D10_K8",
+      "position": {
+        "chapter": 2,
+        "article": 10,
+        "article_title": "Thu thập, cập nhật, điều chỉnh, quản lý, kết nối, chia sẻ, khai thác thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 8
+      },
+      "content": "Tổ chức và cá nhân không thuộc quy định tại khoản 6 và khoản 7 Điều này khi khai thác thông tin cá nhân trong Cơ sở dữ liệu quốc gia về dân cư phải được sự đồng ý của cơ quan quản lý căn cước và cá nhân là chủ thể của thông tin được khai thác. Trường hợp khai thác thông tin của người bị mất năng lực hành vi dân sự, người có khó khăn trong nhận thức, làm chủ hành vi theo quy định của Bộ luật Dân sự, người dưới 14 tuổi, người bị tuyên bố mất tích, người đã chết phải được sự đồng ý của cơ quan quản lý căn cước và một trong những người đại diện hợp pháp, người thừa kế theo quy định tại khoản 9 Điều này.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D10_K6",
+          "anchor_text": "khoản 6",
+          "description_summary": "Khai thác bởi cơ quan nhà nước",
+          "type": "internal",
+          "relation": "exception_of"
+        },
+        {
+          "target_id": "LCC_VBHN_D10_K7",
+          "anchor_text": "khoản 7 Điều này",
+          "description_summary": "Khai thác bởi cá nhân",
+          "type": "internal",
+          "relation": "exception_of"
+        },
+        {
+          "target_id": "Bo_luat_Dan_su",
+          "anchor_text": "theo quy định của Bộ luật Dân sự",
+          "description_summary": "Xác định người mất năng lực hành vi",
+          "type": "external",
+          "relation": "based_on"
+        },
+        {
+          "target_id": "LCC_VBHN_D10_K9",
+          "anchor_text": "khoản 9 Điều này",
+          "description_summary": "Quy định về người đại diện, thừa kế khai thác thông tin",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "đồng ý khai thác",
+        "người đại diện hợp pháp"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D10_K9",
+      "position": {
+        "chapter": 2,
+        "article": 10,
+        "article_title": "Thu thập, cập nhật, điều chỉnh, quản lý, kết nối, chia sẻ, khai thác thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 9
+      },
+      "content": "Người bị mất năng lực hành vi dân sự, người có khó khăn trong nhận thức, làm chủ hành vi theo quy định của Bộ luật Dân sự, người dưới 14 tuổi khai thác thông tin của mình thông qua người đại diện hợp pháp. Việc khai thác thông tin của người bị tuyên bố mất tích do người đại diện hợp pháp của người đó quyết định. Việc khai thác thông tin của người đã chết do người được xác định là người thừa kế của người đó quyết định.",
+      "cross_references": [
+        {
+          "target_id": "Bo_luat_Dan_su",
+          "anchor_text": "theo quy định của Bộ luật Dân sự",
+          "description_summary": "Người mất năng lực hành vi dân sự",
+          "type": "external",
+          "relation": "based_on"
+        }
+      ],
+      "tags": [
+        "người đại diện hợp pháp",
+        "người thừa kế quyết định"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D10_K10",
+      "position": {
+        "chapter": 2,
+        "article": 10,
+        "article_title": "Thu thập, cập nhật, điều chỉnh, quản lý, kết nối, chia sẻ, khai thác thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 10
+      },
+      "content": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư là căn cứ để cơ quan, tổ chức, cá nhân kiểm tra, thống nhất thông tin về cá nhân.",
+      "cross_references": [],
+      "tags": [
+        "căn cứ kiểm tra",
+        "thống nhất thông tin"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D10_K11",
+      "position": {
+        "chapter": 2,
+        "article": 10,
+        "article_title": "Thu thập, cập nhật, điều chỉnh, quản lý, kết nối, chia sẻ, khai thác thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 11
+      },
+      "content": "Chính phủ quy định chi tiết các khoản 1, 2, 3, 5 và 9 Điều này; quy định trình tự, thủ tục khai thác thông tin trong Cơ sở dữ liệu quốc gia về dân cư; lộ trình và thời hạn hoàn thành việc kết nối, chia sẻ dữ liệu với Cơ sở dữ liệu quốc gia về dân cư.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D10",
+          "anchor_text": "các khoản 1, 2, 3, 5 và 9 Điều này",
+          "description_summary": "Các khoản cần quy định chi tiết",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "Chính phủ quy định chi tiết",
+        "trình tự thủ tục"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D11_K1",
+      "position": {
+        "chapter": 2,
+        "article": 11,
+        "article_title": "Mối quan hệ giữa Cơ sở dữ liệu quốc gia về dân cư với các cơ sở dữ liệu quốc gia, cơ sở dữ liệu chuyên ngành, trung tâm dữ liệu quốc gia, cổng dịch vụ công, hệ thống thông tin giải quyết thủ tục hành chính",
+        "clause": 1
+      },
+      "content": "Cơ quan, tổ chức quản lý cơ sở dữ liệu quốc gia, cơ sở dữ liệu chuyên ngành khi có một trong các thông tin của cá nhân trong Cơ sở dữ liệu quốc gia về dân cư phải thực hiện kết nối, chia sẻ với Cơ sở dữ liệu quốc gia về dân cư.",
+      "cross_references": [],
+      "tags": [
+        "kết nối cơ sở dữ liệu",
+        "chia sẻ thông tin"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D11_K2",
+      "position": {
+        "chapter": 2,
+        "article": 11,
+        "article_title": "Mối quan hệ giữa Cơ sở dữ liệu quốc gia về dân cư với các cơ sở dữ liệu quốc gia, cơ sở dữ liệu chuyên ngành, trung tâm dữ liệu quốc gia, cổng dịch vụ công, hệ thống thông tin giải quyết thủ tục hành chính",
+        "clause": 2
+      },
+      "content": "Cơ quan quản lý căn cước chia sẻ thông tin trong Cơ sở dữ liệu quốc gia về dân cư cho cơ quan, tổ chức quản lý cơ sở dữ liệu quốc gia, cơ sở dữ liệu chuyên ngành để thực hiện chức năng, nhiệm vụ được giao.",
+      "cross_references": [],
+      "tags": [
+        "chia sẻ thông tin dân cư"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D11_K3",
+      "position": {
+        "chapter": 2,
+        "article": 11,
+        "article_title": "Mối quan hệ giữa Cơ sở dữ liệu quốc gia về dân cư với các cơ sở dữ liệu quốc gia, cơ sở dữ liệu chuyên ngành, trung tâm dữ liệu quốc gia, cổng dịch vụ công, hệ thống thông tin giải quyết thủ tục hành chính",
+        "clause": 3
+      },
+      "content": "Cơ quan quản lý cổng dịch vụ công hoặc cơ quan quản lý hệ thống thông tin giải quyết thủ tục hành chính cấp Bộ, cấp tỉnh khi có kết quả giải quyết thủ tục hành chính đối với các thông tin quy định tại Điều 9 của Luật này có trách nhiệm chia sẻ cho cơ quan quản lý căn cước; cơ quan quản lý căn cước có trách nhiệm cập nhật, điều chỉnh thông tin vào Cơ sở dữ liệu quốc gia về dân cư đầy đủ, chính xác, kịp thời.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D9",
+          "anchor_text": "Điều 9 của Luật này",
+          "description_summary": "Thông tin trong Cơ sở dữ liệu quốc gia về dân cư",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "chia sẻ kết quả thủ tục",
+        "cập nhật thông tin dân cư"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D11_K4",
+      "position": {
+        "chapter": 2,
+        "article": 11,
+        "article_title": "Mối quan hệ giữa Cơ sở dữ liệu quốc gia về dân cư với các cơ sở dữ liệu quốc gia, cơ sở dữ liệu chuyên ngành, trung tâm dữ liệu quốc gia, cổng dịch vụ công, hệ thống thông tin giải quyết thủ tục hành chính",
+        "clause": 4
+      },
+      "content": "Trường hợp thông tin của cá nhân trong cơ sở dữ liệu quốc gia, cơ sở dữ liệu chuyên ngành không thống nhất với thông tin trong Cơ sở dữ liệu quốc gia về dân cư thì cơ quan quản lý căn cước có trách nhiệm phối hợp với cơ quan có liên quan hoặc cá nhân đó để kiểm tra các thông tin và cập nhật, điều chỉnh trong Cơ sở dữ liệu quốc gia về dân cư, cơ sở dữ liệu quốc gia, cơ sở dữ liệu chuyên ngành bảo đảm chính xác, thống nhất.",
+      "cross_references": [],
+      "tags": [
+        "thông tin không thống nhất",
+        "kiểm tra cập nhật"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D11_K5",
+      "position": {
+        "chapter": 2,
+        "article": 11,
+        "article_title": "Mối quan hệ giữa Cơ sở dữ liệu quốc gia về dân cư với các cơ sở dữ liệu quốc gia, cơ sở dữ liệu chuyên ngành, trung tâm dữ liệu quốc gia, cổng dịch vụ công, hệ thống thông tin giải quyết thủ tục hành chính",
+        "clause": 5
+      },
+      "content": "Việc kết nối, chia sẻ, cập nhật, điều chỉnh, khai thác, sử dụng thông tin giữa Cơ sở dữ liệu quốc gia về dân cư với trung tâm dữ liệu quốc gia, cơ sở dữ liệu quốc gia, cơ sở dữ liệu chuyên ngành của các cơ quan, tổ chức phải bảo đảm hiệu quả, an toàn, phù hợp với chức năng, nhiệm vụ, quyền hạn theo quy định của Luật này và quy định khác của pháp luật có liên quan.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN",
+          "anchor_text": "theo quy định của Luật này",
+          "description_summary": "Bảo đảm hiệu quả, an toàn phù hợp Luật",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "bảo đảm an toàn",
+        "hiệu quả kết nối"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D12_K1",
+      "position": {
+        "chapter": 2,
+        "article": 12,
+        "article_title": "Số định danh cá nhân của công dân Việt Nam",
+        "clause": 1
+      },
+      "content": "Số định danh cá nhân của công dân Việt Nam là dãy số tự nhiên gồm 12 chữ số do Cơ sở dữ liệu quốc gia về dân cư xác lập cho công dân Việt Nam.",
+      "cross_references": [],
+      "tags": [
+        "số định danh cá nhân",
+        "12 chữ số"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D12_K2",
+      "position": {
+        "chapter": 2,
+        "article": 12,
+        "article_title": "Số định danh cá nhân của công dân Việt Nam",
+        "clause": 2
+      },
+      "content": "Số định danh cá nhân của công dân Việt Nam do Bộ Công an thống nhất quản lý trên toàn quốc và xác lập cho mỗi công dân Việt Nam, không lặp lại ở người khác.",
+      "cross_references": [],
+      "tags": [
+        "quản lý thống nhất",
+        "không lặp lại"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D12_K3",
+      "position": {
+        "chapter": 2,
+        "article": 12,
+        "article_title": "Số định danh cá nhân của công dân Việt Nam",
+        "clause": 3
+      },
+      "content": "Số định danh cá nhân của công dân Việt Nam dùng để cấp thẻ căn cước, khai thác thông tin về công dân trong Cơ sở dữ liệu quốc gia về dân cư và các cơ sở dữ liệu quốc gia, cơ sở dữ liệu chuyên ngành, trung tâm dữ liệu quốc gia và cổng dịch vụ công, hệ thống thông tin giải quyết thủ tục hành chính.",
+      "cross_references": [],
+      "tags": [
+        "dùng cấp thẻ căn cước",
+        "khai thác thông tin"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D12_K4",
+      "position": {
+        "chapter": 2,
+        "article": 12,
+        "article_title": "Số định danh cá nhân của công dân Việt Nam",
+        "clause": 4
+      },
+      "content": "Chính phủ quy định việc xác lập, hủy, xác lập lại số định danh cá nhân của công dân Việt Nam.",
+      "cross_references": [],
+      "tags": [
+        "Chính phủ quy định",
+        "hủy số định danh"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D13_K1",
+      "position": {
+        "chapter": 2,
+        "article": 13,
+        "article_title": "Trách nhiệm của cơ quan, tổ chức, cá nhân liên quan trong việc cung cấp, thu thập, cập nhật, điều chỉnh thông tin, tài liệu vào Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 1
+      },
+      "content": "Cơ quan, tổ chức, cá nhân liên quan có trách nhiệm sau đây: a) Tuân thủ quy trình cung cấp, thu thập, cập nhật, điều chỉnh thông tin, tài liệu; b) Bảo đảm việc cung cấp, thu thập thông tin, tài liệu đầy đủ, chính xác, kịp thời; c) Thông báo kịp thời thông tin của người dân khi có sự thay đổi hoặc chưa chính xác cho cơ quan quản lý căn cước.",
+      "cross_references": [],
+      "tags": [
+        "trách nhiệm cung cấp",
+        "tuân thủ quy trình",
+        "thông báo thay đổi"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D13_K2",
+      "position": {
+        "chapter": 2,
+        "article": 13,
+        "article_title": "Trách nhiệm của cơ quan, tổ chức, cá nhân liên quan trong việc cung cấp, thu thập, cập nhật, điều chỉnh thông tin, tài liệu vào Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 2
+      },
+      "content": "Người được giao nhiệm vụ thu thập, cập nhật, điều chỉnh thông tin, tài liệu có trách nhiệm sau đây: a) Kiểm tra thông tin, tài liệu của người dân; thường xuyên theo dõi, cập nhật, điều chỉnh thông tin; b) Giữ gìn, bảo vệ thông tin, tài liệu có liên quan; không được sửa chữa, tẩy xóa hoặc làm hư hỏng tài liệu và chịu trách nhiệm về tính chính xác, đầy đủ của thông tin đã cập nhật, điều chỉnh.",
+      "cross_references": [],
+      "tags": [
+        "người được giao nhiệm vụ",
+        "kiểm tra thông tin",
+        "bảo vệ tài liệu"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D13_K3",
+      "position": {
+        "chapter": 2,
+        "article": 13,
+        "article_title": "Trách nhiệm của cơ quan, tổ chức, cá nhân liên quan trong việc cung cấp, thu thập, cập nhật, điều chỉnh thông tin, tài liệu vào Cơ sở dữ liệu quốc gia về dân cư",
+        "clause": 3
+      },
+      "content": "Thủ trưởng cơ quan quản lý căn cước có trách nhiệm sau đây: a) Tổ chức quản lý việc thu thập, cập nhật, điều chỉnh, lưu trữ thông tin, tài liệu; b) Kiểm tra, chịu trách nhiệm về thông tin, tài liệu đã cập nhật, điều chỉnh, lưu trữ.",
+      "cross_references": [],
+      "tags": [
+        "thủ trưởng cơ quan",
+        "tổ chức quản lý"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D14_K1",
+      "position": {
+        "chapter": 2,
+        "article": 14,
+        "article_title": "Yêu cầu xây dựng và quản lý Cơ sở dữ liệu căn cước",
+        "clause": 1
+      },
+      "content": "Cơ sở dữ liệu căn cước được xây dựng và quản lý tập trung, thống nhất tại cơ quan quản lý căn cước của Bộ Công an.",
+      "cross_references": [],
+      "tags": [
+        "cơ sở dữ liệu căn cước",
+        "quản lý tập trung"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D14_K2",
+      "position": {
+        "chapter": 2,
+        "article": 14,
+        "article_title": "Yêu cầu xây dựng và quản lý Cơ sở dữ liệu căn cước",
+        "clause": 2
+      },
+      "content": "Cơ sở dữ liệu căn cước được xây dựng theo tiêu chuẩn, quy chuẩn kỹ thuật công nghệ thông tin, định mức kinh tế - kỹ thuật, bảo đảm kết nối với Cơ sở dữ liệu quốc gia về dân cư, hoạt động ổn định, liên tục.",
+      "cross_references": [],
+      "tags": [
+        "tiêu chuẩn kỹ thuật",
+        "kết nối"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D14_K3",
+      "position": {
+        "chapter": 2,
+        "article": 14,
+        "article_title": "Yêu cầu xây dựng và quản lý Cơ sở dữ liệu căn cước",
+        "clause": 3
+      },
+      "content": "Bảo đảm an ninh mạng, bảo vệ dữ liệu cá nhân, thuận lợi cho việc thu thập, cập nhật, điều chỉnh, khai thác, sử dụng.",
+      "cross_references": [],
+      "tags": [
+        "an ninh mạng",
+        "bảo vệ dữ liệu cá nhân"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D14_K4",
+      "position": {
+        "chapter": 2,
+        "article": 14,
+        "article_title": "Yêu cầu xây dựng và quản lý Cơ sở dữ liệu căn cước",
+        "clause": 4
+      },
+      "content": "Bảo đảm quyền khai thác thông tin của cơ quan, tổ chức, cá nhân theo quy định của pháp luật.",
+      "cross_references": [],
+      "tags": [
+        "quyền khai thác thông tin"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D14_K5",
+      "position": {
+        "chapter": 2,
+        "article": 14,
+        "article_title": "Yêu cầu xây dựng và quản lý Cơ sở dữ liệu căn cước",
+        "clause": 5
+      },
+      "content": "Bảo đảm việc thu thập, cập nhật, điều chỉnh thông tin đầy đủ, chính xác, kịp thời; lưu trữ đầy đủ thông tin của người dân tại các lần thu thập, cập nhật, điều chỉnh trong cơ sở dữ liệu.",
+      "cross_references": [],
+      "tags": [
+        "thu thập đầy đủ",
+        "lưu trữ đầy đủ"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D15_K1",
+      "position": {
+        "chapter": 2,
+        "article": 15,
+        "article_title": "Thông tin trong Cơ sở dữ liệu căn cước",
+        "clause": 1
+      },
+      "content": "Thông tin quy định từ khoản 1 đến khoản 18, khoản 24 và khoản 25 Điều 9 của Luật này.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D9",
+          "anchor_text": "khoản 1 đến khoản 18, khoản 24 và khoản 25 Điều 9 của Luật này",
+          "description_summary": "Các thông tin về cá nhân trong Cơ sở dữ liệu quốc gia về dân cư",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "thông tin căn cước"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D15_K2",
+      "position": {
+        "chapter": 2,
+        "article": 15,
+        "article_title": "Thông tin trong Cơ sở dữ liệu căn cước",
+        "clause": 2
+      },
+      "content": "Thông tin nhân dạng.",
+      "cross_references": [],
+      "tags": [
+        "thông tin nhân dạng"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D15_K3",
+      "position": {
+        "chapter": 2,
+        "article": 15,
+        "article_title": "Thông tin trong Cơ sở dữ liệu căn cước",
+        "clause": 3
+      },
+      "content": "Thông tin sinh trắc học gồm ảnh khuôn mặt, vân tay, mống mắt, ADN, giọng nói.",
+      "cross_references": [],
+      "tags": [
+        "thông tin sinh trắc học",
+        "ảnh khuôn mặt",
+        "ADN"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D15_K4",
+      "position": {
+        "chapter": 2,
+        "article": 15,
+        "article_title": "Thông tin trong Cơ sở dữ liệu căn cước",
+        "clause": 4
+      },
+      "content": "Nghề nghiệp, trừ lực lượng Quân đội nhân dân, Công an nhân dân, Cơ yếu.",
+      "cross_references": [],
+      "tags": [
+        "nghề nghiệp",
+        "trừ Quân đội",
+        "trừ Công an"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D15_K5",
+      "position": {
+        "chapter": 2,
+        "article": 15,
+        "article_title": "Thông tin trong Cơ sở dữ liệu căn cước",
+        "clause": 5
+      },
+      "content": "Trạng thái của căn cước điện tử. Trạng thái của căn cước điện tử được thể hiện dưới hình thức khóa, mở khóa và các mức độ định danh điện tử.",
+      "cross_references": [],
+      "tags": [
+        "trạng thái",
+        "căn cước điện tử"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D16_K1",
+      "position": {
+        "chapter": 2,
+        "article": 16,
+        "article_title": "Thu thập, cập nhật, điều chỉnh, quản lý, kết nối, chia sẻ, khai thác thông tin trong Cơ sở dữ liệu căn cước",
+        "clause": 1
+      },
+      "content": "Thông tin trong Cơ sở dữ liệu căn cước được thu thập, cập nhật, điều chỉnh từ các nguồn sau đây: a) Từ việc kết nối, chia sẻ thông tin với Cơ sở dữ liệu quốc gia về dân cư, cơ sở dữ liệu quốc gia, cơ sở dữ liệu chuyên ngành khác; b) Từ tàng thư căn cước; hồ sơ cấp, quản lý thẻ căn cước; hồ sơ cấp, quản lý giấy chứng nhận căn cước; c) Từ cá nhân là chủ thể của thông tin, trừ trường hợp quy định tại điểm d khoản này; d) Thông tin sinh trắc học về ADN và giọng nói được thu thập khi người dân tự nguyện cung cấp hoặc cơ quan tiến hành tố tụng hình sự, cơ quan quản lý người bị áp dụng biện pháp xử lý hành chính trong quá trình giải quyết vụ việc theo chức năng, nhiệm vụ có thực hiện trưng cầu giám định hoặc thu thập được thông tin sinh trắc học về ADN, giọng nói của người dân thì chia sẻ cho cơ quan quản lý căn cước để cập nhật, điều chỉnh vào Cơ sở dữ liệu căn cước.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D16_K1",
+          "anchor_text": "điểm d khoản này",
+          "description_summary": "Thu thập ADN, giọng nói",
+          "type": "internal",
+          "relation": "exception_of"
+        }
+      ],
+      "tags": [
+        "nguồn thu thập",
+        "thông tin sinh trắc học",
+        "cơ quan tiến hành tố tụng"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D16_K2",
+      "position": {
+        "chapter": 2,
+        "article": 16,
+        "article_title": "Thu thập, cập nhật, điều chỉnh, quản lý, kết nối, chia sẻ, khai thác thông tin trong Cơ sở dữ liệu căn cước",
+        "clause": 2
+      },
+      "content": "Chia sẻ thông tin trong Cơ sở dữ liệu căn cước được quy định như sau: a) Cơ sở dữ liệu căn cước được chia sẻ thông tin với Cơ sở dữ liệu quốc gia về dân cư và cơ sở dữ liệu chuyên ngành khác do Bộ Công an quản lý để phục vụ công tác quản lý dân cư, quản lý căn cước và đấu tranh phòng, chống tội phạm; b) Việc chia sẻ thông tin trong Cơ sở dữ liệu căn cước với cơ sở dữ liệu khác ngoài cơ sở dữ liệu quy định tại điểm a khoản này thực hiện theo quy định của Chính phủ.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D16_K2",
+          "anchor_text": "điểm a khoản này",
+          "description_summary": "Cơ sở dữ liệu do Bộ Công an quản lý",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "chia sẻ thông tin căn cước",
+        "phòng chống tội phạm"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D16_K3",
+      "position": {
+        "chapter": 2,
+        "article": 16,
+        "article_title": "Thu thập, cập nhật, điều chỉnh, quản lý, kết nối, chia sẻ, khai thác thông tin trong Cơ sở dữ liệu căn cước",
+        "clause": 3
+      },
+      "content": "Khai thác thông tin trong Cơ sở dữ liệu căn cước được quy định như sau: a) Cơ quan nhà nước, tổ chức chính trị, tổ chức chính trị - xã hội được khai thác thông tin trong Cơ sở dữ liệu căn cước để thực hiện chức năng, nhiệm vụ thông qua việc chia sẻ thông tin quy định tại khoản 2 Điều này hoặc thông qua hình thức gửi văn bản yêu cầu cung cấp thông tin đến cơ quan quản lý căn cước; b) Cá nhân được khai thác thông tin của mình trong Cơ sở dữ liệu căn cước thông qua hình thức gửi yêu cầu cung cấp thông tin đến cơ quan quản lý căn cước; c) Tổ chức và cá nhân không thuộc quy định tại điểm a và điểm b khoản này khi khai thác thông tin cá nhân trong Cơ sở dữ liệu căn cước phải gửi văn bản yêu cầu cung cấp thông tin đến cơ quan quản lý căn cước và phải được sự đồng ý của cơ quan quản lý căn cước, cá nhân là chủ thể của thông tin được khai thác. Trường hợp khai thác thông tin của người bị mất năng lực hành vi dân sự, người có khó khăn trong nhận thức, làm chủ hành vi theo quy định của Bộ luật Dân sự, người dưới 14 tuổi, người bị tuyên bố mất tích, người đã chết phải được sự đồng ý của cơ quan quản lý căn cước và một trong những người đại diện hợp pháp, người thừa kế theo quy định tại điểm d khoản này; d) Người bị mất năng lực hành vi dân sự, người có khó khăn trong nhận thức, làm chủ hành vi theo quy định của Bộ luật Dân sự, người dưới 14 tuổi khai thác thông tin của mình thông qua người đại diện hợp pháp. Việc khai thác thông tin của người bị tuyên bố mất tích do người đại diện hợp pháp của người đó quyết định. Việc khai thác thông tin của người đã chết do người được xác định là người thừa kế của người đó quyết định.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D16_K2",
+          "anchor_text": "khoản 2 Điều này",
+          "description_summary": "Quy định về chia sẻ thông tin",
+          "type": "internal",
+          "relation": "refers_to"
+        },
+        {
+          "target_id": "LCC_VBHN_D16_K3",
+          "anchor_text": "điểm a và điểm b khoản này",
+          "description_summary": "Khai thác bởi cơ quan nhà nước và cá nhân",
+          "type": "internal",
+          "relation": "exception_of"
+        },
+        {
+          "target_id": "LCC_VBHN_D16_K3",
+          "anchor_text": "điểm d khoản này",
+          "description_summary": "Khai thác thông qua người đại diện",
+          "type": "internal",
+          "relation": "refers_to"
+        },
+        {
+          "target_id": "Bo_luat_Dan_su",
+          "anchor_text": "theo quy định của Bộ luật Dân sự",
+          "description_summary": "Người mất năng lực hành vi",
+          "type": "external",
+          "relation": "based_on"
+        }
+      ],
+      "tags": [
+        "khai thác thông tin căn cước",
+        "văn bản yêu cầu",
+        "người đại diện hợp pháp"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D16_K4",
+      "position": {
+        "chapter": 2,
+        "article": 16,
+        "article_title": "Thu thập, cập nhật, điều chỉnh, quản lý, kết nối, chia sẻ, khai thác thông tin trong Cơ sở dữ liệu căn cước",
+        "clause": 4
+      },
+      "content": "Thủ trưởng cơ quan quản lý căn cước của Bộ Công an có thẩm quyền cho phép khai thác thông tin trong Cơ sở dữ liệu căn cước.",
+      "cross_references": [],
+      "tags": [
+        "thẩm quyền khai thác"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D16_K5",
+      "position": {
+        "chapter": 2,
+        "article": 16,
+        "article_title": "Thu thập, cập nhật, điều chỉnh, quản lý, kết nối, chia sẻ, khai thác thông tin trong Cơ sở dữ liệu căn cước",
+        "clause": 5
+      },
+      "content": "Chính phủ quy định chi tiết khoản 1 và khoản 3 Điều này.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D16",
+          "anchor_text": "khoản 1 và khoản 3 Điều này",
+          "description_summary": "Nguồn thu thập và quy định khai thác",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "Chính phủ quy định chi tiết"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D17_K1",
+      "position": {
+        "chapter": 2,
+        "article": 17,
+        "article_title": "Trách nhiệm của cơ quan, tổ chức, cá nhân liên quan trong việc chia sẻ, cung cấp, cập nhật, điều chỉnh thông tin, tài liệu vào Cơ sở dữ liệu căn cước",
+        "clause": 1
+      },
+      "content": "Cơ quan, tổ chức, cá nhân liên quan có trách nhiệm sau đây: a) Chia sẻ, cung cấp đầy đủ, chính xác, kịp thời thông tin, tài liệu theo quy định của Luật này; b) Thông báo kịp thời thông tin, tài liệu về căn cước của người dân khi có sự thay đổi hoặc chưa chính xác cho cơ quan quản lý căn cước; c) Cơ quan tiến hành tố tụng hình sự, cơ quan quản lý người bị áp dụng biện pháp xử lý hành chính có thông tin sinh trắc học về ADN, giọng nói của người dân thì phải chuyển cho cơ quan quản lý căn cước để cập nhật, điều chỉnh.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN",
+          "anchor_text": "theo quy định của Luật này",
+          "description_summary": "Chia sẻ, cung cấp thông tin",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "trách nhiệm chia sẻ",
+        "cung cấp thông tin",
+        "cơ quan tiến hành tố tụng"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D17_K2",
+      "position": {
+        "chapter": 2,
+        "article": 17,
+        "article_title": "Trách nhiệm của cơ quan, tổ chức, cá nhân liên quan trong việc chia sẻ, cung cấp, cập nhật, điều chỉnh thông tin, tài liệu vào Cơ sở dữ liệu căn cước",
+        "clause": 2
+      },
+      "content": "Người được giao nhiệm vụ cập nhật, điều chỉnh thông tin, tài liệu có trách nhiệm sau đây: a) Kiểm tra thông tin, tài liệu của người dân; thường xuyên theo dõi, cập nhật, điều chỉnh thông tin; b) Giữ gìn, bảo vệ thông tin, tài liệu có liên quan; không được sửa chữa, tẩy xóa hoặc làm hư hỏng tài liệu và chịu trách nhiệm về tính chính xác, đầy đủ của thông tin đã cập nhật, điều chỉnh.",
+      "cross_references": [],
+      "tags": [
+        "người được giao nhiệm vụ",
+        "kiểm tra thông tin"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D17_K3",
+      "position": {
+        "chapter": 2,
+        "article": 17,
+        "article_title": "Trách nhiệm của cơ quan, tổ chức, cá nhân liên quan trong việc chia sẻ, cung cấp, cập nhật, điều chỉnh thông tin, tài liệu vào Cơ sở dữ liệu căn cước",
+        "clause": 3
+      },
+      "content": "Thủ trưởng cơ quan quản lý căn cước có trách nhiệm sau đây: a) Tổ chức quản lý việc thu thập, cập nhật, điều chỉnh, lưu trữ thông tin, tài liệu; b) Kiểm tra, chịu trách nhiệm về thông tin, tài liệu đã cập nhật, điều chỉnh, lưu trữ.",
+      "cross_references": [],
+      "tags": [
+        "thủ trưởng cơ quan quản lý",
+        "tổ chức quản lý"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D18_K1",
+      "position": {
+        "chapter": 3,
+        "article": 18,
+        "article_title": "Nội dung thể hiện trên thẻ căn cước",
+        "clause": 1
+      },
+      "content": "Thẻ căn cước có thông tin được in trên thẻ và bộ phận lưu trữ thông tin được mã hóa.",
+      "cross_references": [],
+      "tags": [
+        "thông tin in",
+        "bộ phận lưu trữ",
+        "mã hóa"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D18_K2",
+      "position": {
+        "chapter": 3,
+        "article": 18,
+        "article_title": "Nội dung thể hiện trên thẻ căn cước",
+        "clause": 2
+      },
+      "content": "Thông tin được in trên thẻ căn cước bao gồm: a) Hình Quốc huy nước Cộng hòa xã hội chủ nghĩa Việt Nam; b) Dòng chữ “CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM, Độc lập - Tự do - Hạnh phúc”; c) Dòng chữ “CĂN CƯỚC”; d) Ảnh khuôn mặt; đ) Số định danh cá nhân; e) Họ, chữ đệm và tên khai sinh; g) Ngày, tháng, năm sinh; h) Giới tính; i) Nơi đăng ký khai sinh; k) Quốc tịch; l) Nơi cư trú; m) Ngày, tháng, năm cấp thẻ; ngày, tháng, năm hết hạn sử dụng; n) Nơi cấp: Bộ Công an.",
+      "cross_references": [],
+      "tags": [
+        "nội dung in",
+        "hình Quốc huy",
+        "ảnh khuôn mặt",
+        "số định danh"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D18_K3",
+      "position": {
+        "chapter": 3,
+        "article": 18,
+        "article_title": "Nội dung thể hiện trên thẻ căn cước",
+        "clause": 3
+      },
+      "content": "Thông tin được mã hóa, lưu trữ trong bộ phận lưu trữ trên thẻ căn cước gồm thông tin về ảnh khuôn mặt, vân tay, mống mắt của công dân, các thông tin quy định từ khoản 1 đến khoản 18 Điều 9, khoản 2 Điều 15 và khoản 2 Điều 22 của Luật này.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D9",
+          "anchor_text": "khoản 1 đến khoản 18 Điều 9",
+          "description_summary": "Thông tin về công dân trong Cơ sở dữ liệu quốc gia về dân cư",
+          "type": "internal",
+          "relation": "refers_to"
+        },
+        {
+          "target_id": "LCC_VBHN_D15_K2",
+          "anchor_text": "khoản 2 Điều 15",
+          "description_summary": "Thông tin nhân dạng",
+          "type": "internal",
+          "relation": "refers_to"
+        },
+        {
+          "target_id": "LCC_VBHN_D22_K2",
+          "anchor_text": "khoản 2 Điều 22 của Luật này",
+          "description_summary": "Thông tin được tích hợp vào thẻ căn cước",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "thông tin mã hóa",
+        "vân tay",
+        "mống mắt"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D18_K4",
+      "position": {
+        "chapter": 3,
+        "article": 18,
+        "article_title": "Nội dung thể hiện trên thẻ căn cước",
+        "clause": 4
+      },
+      "content": "Bộ trưởng Bộ Công an quy định quy cách, ngôn ngữ khác, hình dáng, kích thước, chất liệu của thẻ căn cước; việc mã hóa thông tin trong bộ phận lưu trữ trên thẻ căn cước; nội dung thể hiện trên thẻ căn cước đối với thông tin về nơi cư trú và trường hợp không có hoặc không thu nhận được đầy đủ thông tin quy định tại khoản 2 và khoản 3 Điều này.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D18",
+          "anchor_text": "khoản 2 và khoản 3 Điều này",
+          "description_summary": "Thông tin in và thông tin mã hóa",
+          "type": "internal",
+          "relation": "exception_of"
+        }
+      ],
+      "tags": [
+        "Bộ trưởng Bộ Công an quy định",
+        "quy cách thẻ căn cước"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D19_K1",
+      "position": {
+        "chapter": 3,
+        "article": 19,
+        "article_title": "Người được cấp thẻ căn cước",
+        "clause": 1
+      },
+      "content": "Người được cấp thẻ căn cước là công dân Việt Nam.",
+      "cross_references": [],
+      "tags": [
+        "người được cấp thẻ",
+        "công dân Việt Nam"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D19_K2",
+      "position": {
+        "chapter": 3,
+        "article": 19,
+        "article_title": "Người được cấp thẻ căn cước",
+        "clause": 2
+      },
+      "content": "Công dân Việt Nam từ đủ 14 tuổi trở lên phải thực hiện thủ tục cấp thẻ căn cước.",
+      "cross_references": [],
+      "tags": [
+        "từ đủ 14 tuổi",
+        "thủ tục cấp thẻ"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D19_K3",
+      "position": {
+        "chapter": 3,
+        "article": 19,
+        "article_title": "Người được cấp thẻ căn cước",
+        "clause": 3
+      },
+      "content": "Công dân Việt Nam dưới 14 tuổi được cấp thẻ căn cước theo nhu cầu.",
+      "cross_references": [],
+      "tags": [
+        "dưới 14 tuổi",
+        "cấp thẻ theo nhu cầu"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D20_K1",
+      "position": {
+        "chapter": 3,
+        "article": 20,
+        "article_title": "Giá trị sử dụng của thẻ căn cước",
+        "clause": 1
+      },
+      "content": "Thẻ căn cước có giá trị chứng minh về căn cước và thông tin khác đã được tích hợp vào thẻ căn cước của người được cấp thẻ để thực hiện thủ tục hành chính, dịch vụ công, các giao dịch và hoạt động khác trên lãnh thổ Việt Nam.",
+      "cross_references": [],
+      "tags": [
+        "giá trị sử dụng",
+        "chứng minh căn cước",
+        "thủ tục hành chính"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D20_K2",
+      "position": {
+        "chapter": 3,
+        "article": 20,
+        "article_title": "Giá trị sử dụng của thẻ căn cước",
+        "clause": 2
+      },
+      "content": "Thẻ căn cước được sử dụng thay cho giấy tờ xuất nhập cảnh trong trường hợp nước Cộng hòa xã hội chủ nghĩa Việt Nam và nước ngoài ký kết điều ước hoặc thỏa thuận quốc tế cho phép người dân nước ký kết được sử dụng thẻ căn cước thay cho giấy tờ xuất nhập cảnh trên lãnh thổ của nhau.",
+      "cross_references": [],
+      "tags": [
+        "giấy tờ xuất nhập cảnh",
+        "thỏa thuận quốc tế"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D20_K3",
+      "position": {
+        "chapter": 3,
+        "article": 20,
+        "article_title": "Giá trị sử dụng của thẻ căn cước",
+        "clause": 3
+      },
+      "content": "Thẻ căn cước hoặc số định danh cá nhân được sử dụng để cơ quan, tổ chức, cá nhân kiểm tra thông tin của người được cấp thẻ trong Cơ sở dữ liệu quốc gia về dân cư, cơ sở dữ liệu quốc gia khác và cơ sở dữ liệu chuyên ngành theo quy định của pháp luật. Trường hợp người được cấp thẻ căn cước phải xuất trình thẻ căn cước theo yêu cầu của cơ quan, tổ chức, cá nhân có thẩm quyền thì cơ quan, tổ chức, cá nhân đó không được yêu cầu người được cấp thẻ xuất trình giấy tờ hoặc cung cấp thông tin đã được in, tích hợp vào thẻ căn cước; trường hợp thông tin đã thay đổi so với thông tin trên thẻ căn cước, người được cấp thẻ phải cung cấp giấy tờ, tài liệu có giá trị pháp lý chứng minh các thông tin đã thay đổi.",
+      "cross_references": [],
+      "tags": [
+        "kiểm tra thông tin",
+        "xuất trình thẻ",
+        "chứng minh thông tin thay đổi"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D20_K4",
+      "position": {
+        "chapter": 3,
+        "article": 20,
+        "article_title": "Giá trị sử dụng của thẻ căn cước",
+        "clause": 4
+      },
+      "content": "Nhà nước bảo vệ quyền, lợi ích hợp pháp của người được cấp thẻ căn cước theo quy định của pháp luật.",
+      "cross_references": [],
+      "tags": [
+        "bảo vệ quyền lợi",
+        "lợi ích hợp pháp"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D21_K1",
+      "position": {
+        "chapter": 3,
+        "article": 21,
+        "article_title": "Độ tuổi cấp đổi thẻ căn cước",
+        "clause": 1
+      },
+      "content": "Công dân Việt Nam đã được cấp thẻ căn cước phải thực hiện thủ tục cấp đổi thẻ căn cước khi đủ 14 tuổi, 25 tuổi, 40 tuổi và 60 tuổi.",
+      "cross_references": [],
+      "tags": [
+        "độ tuổi cấp đổi",
+        "đủ 14 tuổi",
+        "đủ 25 tuổi",
+        "đủ 40 tuổi",
+        "đủ 60 tuổi"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D21_K2",
+      "position": {
+        "chapter": 3,
+        "article": 21,
+        "article_title": "Độ tuổi cấp đổi thẻ căn cước",
+        "clause": 2
+      },
+      "content": "Thẻ căn cước đã được cấp, cấp đổi, cấp lại trong thời hạn 02 năm trước độ tuổi cấp đổi thẻ căn cước quy định tại khoản 1 Điều này có giá trị sử dụng đến tuổi cấp đổi thẻ căn cước tiếp theo.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D21_K1",
+          "anchor_text": "khoản 1 Điều này",
+          "description_summary": "Độ tuổi phải cấp đổi thẻ căn cước",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "giá trị sử dụng",
+        "02 năm trước độ tuổi"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D22_K1",
+      "position": {
+        "chapter": 3,
+        "article": 22,
+        "article_title": "Tích hợp thông tin vào thẻ căn cước và sử dụng, khai thác thông tin được tích hợp",
+        "clause": 1
+      },
+      "content": "Tích hợp thông tin vào thẻ căn cước là việc bổ sung vào bộ phận lưu trữ của thẻ căn cước những thông tin ngoài thông tin về căn cước và được mã hóa. Thông tin được tích hợp theo đề nghị của công dân và phải được xác thực thông qua cơ sở dữ liệu quốc gia, cơ sở dữ liệu chuyên ngành.",
+      "cross_references": [],
+      "tags": [
+        "tích hợp thông tin",
+        "mã hóa",
+        "xác thực"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D22_K2",
+      "position": {
+        "chapter": 3,
+        "article": 22,
+        "article_title": "Tích hợp thông tin vào thẻ căn cước và sử dụng, khai thác thông tin được tích hợp",
+        "clause": 2
+      },
+      "content": "Thông tin được tích hợp vào thẻ căn cước gồm thông tin thẻ bảo hiểm y tế, sổ bảo hiểm xã hội, giấy phép lái xe, giấy khai sinh, giấy chứng nhận kết hôn hoặc giấy tờ khác do Thủ tướng Chính phủ quyết định, trừ thông tin trên giấy tờ do Bộ Quốc phòng cấp.",
+      "cross_references": [],
+      "tags": [
+        "bảo hiểm y tế",
+        "giấy phép lái xe",
+        "ngoại trừ Bộ Quốc phòng"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D22_K3",
+      "position": {
+        "chapter": 3,
+        "article": 22,
+        "article_title": "Tích hợp thông tin vào thẻ căn cước và sử dụng, khai thác thông tin được tích hợp",
+        "clause": 3
+      },
+      "content": "Việc sử dụng thông tin đã được tích hợp vào thẻ căn cước có giá trị tương đương như việc cung cấp thông tin hoặc sử dụng giấy tờ có chứa thông tin đó trong thực hiện thủ tục hành chính, dịch vụ công, các giao dịch và hoạt động khác.",
+      "cross_references": [],
+      "tags": [
+        "giá trị tương đương",
+        "sử dụng thông tin tích hợp"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D22_K4",
+      "position": {
+        "chapter": 3,
+        "article": 22,
+        "article_title": "Tích hợp thông tin vào thẻ căn cước và sử dụng, khai thác thông tin được tích hợp",
+        "clause": 4
+      },
+      "content": "Người dân đề nghị tích hợp thông tin vào thẻ căn cước khi có nhu cầu hoặc khi thực hiện việc cấp, cấp đổi, cấp lại thẻ căn cước.",
+      "cross_references": [],
+      "tags": [
+        "đề nghị tích hợp",
+        "khi có nhu cầu"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D22_K5",
+      "position": {
+        "chapter": 3,
+        "article": 22,
+        "article_title": "Tích hợp thông tin vào thẻ căn cước và sử dụng, khai thác thông tin được tích hợp",
+        "clause": 5
+      },
+      "content": "Việc khai thác thông tin tích hợp được mã hóa trong thẻ căn cước được quy định như sau: a) Sử dụng thiết bị chuyên dụng để khai thác thông tin tích hợp trong bộ phận lưu trữ được mã hóa của thẻ căn cước; b) Sử dụng thông tin trên thẻ căn cước qua thiết bị chuyên dụng để truy xuất, khai thác thông tin tích hợp qua Cơ sở dữ liệu quốc gia về dân cư và hệ thống định danh và xác thực điện tử; c) Cơ quan nhà nước, tổ chức chính trị, tổ chức chính trị - xã hội được khai thác thông tin tích hợp được mã hóa trong thẻ căn cước để thực hiện chức năng, nhiệm vụ được giao; d) Tổ chức và cá nhân khai thác thông tin tích hợp được mã hóa trong thẻ căn cước của công dân khi được sự đồng ý của công dân đó.",
+      "cross_references": [],
+      "tags": [
+        "khai thác thông tin",
+        "thiết bị chuyên dụng",
+        "sự đồng ý của công dân"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D22_K6",
+      "position": {
+        "chapter": 3,
+        "article": 22,
+        "article_title": "Tích hợp thông tin vào thẻ căn cước và sử dụng, khai thác thông tin được tích hợp",
+        "clause": 6
+      },
+      "content": "Chính phủ quy định chi tiết Điều này; quy định trình tự, thủ tục cập nhật, điều chỉnh thông tin trên thẻ căn cước.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D22",
+          "anchor_text": "Điều này",
+          "description_summary": "Tích hợp thông tin vào thẻ căn cước",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "Chính phủ quy định",
+        "trình tự thủ tục"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D23_K1",
+      "position": {
+        "chapter": 3,
+        "article": 23,
+        "article_title": "Trình tự, thủ tục cấp thẻ căn cước",
+        "clause": 1
+      },
+      "content": "Trình tự, thủ tục cấp thẻ căn cước cho người từ đủ 14 tuổi trở lên được thực hiện như sau: a) Người tiếp nhận kiểm tra, đối chiếu thông tin của người cần cấp thẻ căn cước từ Cơ sở dữ liệu quốc gia về dân cư, cơ sở dữ liệu quốc gia, cơ sở dữ liệu chuyên ngành để xác định chính xác người cần cấp thẻ căn cước; trường hợp chưa có thông tin của người cần cấp thẻ căn cước trong Cơ sở dữ liệu quốc gia về dân cư thì phải thực hiện thủ tục cập nhật, điều chỉnh thông tin vào Cơ sở dữ liệu quốc gia về dân cư theo quy định tại các khoản 1, 2 và 3 Điều 10 của Luật này; b) Người tiếp nhận thu nhận thông tin nhân dạng và thông tin sinh trắc học gồm ảnh khuôn mặt, vân tay, mống mắt của người cần cấp thẻ căn cước; c) Người cần cấp thẻ căn cước kiểm tra, ký vào phiếu thu nhận thông tin căn cước; d) Người tiếp nhận cấp giấy hẹn trả thẻ căn cước; đ) Trả thẻ căn cước theo địa điểm ghi trong giấy hẹn; trường hợp người cần cấp thẻ căn cước có yêu cầu trả thẻ căn cước tại địa điểm khác thì cơ quan quản lý căn cước trả thẻ căn cước tại địa điểm theo yêu cầu và người đó phải trả phí dịch vụ chuyển phát.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D10",
+          "anchor_text": "các khoản 1, 2 và 3 Điều 10 của Luật này",
+          "description_summary": "Thủ tục cập nhật, điều chỉnh thông tin vào CSDL",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "trình tự thủ tục",
+        "từ đủ 14 tuổi",
+        "thu nhận thông tin",
+        "trả thẻ căn cước"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D23_K2",
+      "position": {
+        "chapter": 3,
+        "article": 23,
+        "article_title": "Trình tự, thủ tục cấp thẻ căn cước",
+        "clause": 2
+      },
+      "content": "Người dưới 14 tuổi hoặc người đại diện hợp pháp của người dưới 14 tuổi được đề nghị cơ quan quản lý căn cước cấp thẻ căn cước. Trình tự, thủ tục cấp thẻ căn cước cho người dưới 14 tuổi được thực hiện như sau: a) Người đại diện hợp pháp thực hiện thủ tục cấp thẻ căn cước cho người dưới 06 tuổi thông qua cổng dịch vụ công hoặc ứng dụng định danh quốc gia. Trường hợp người dưới 06 tuổi chưa đăng ký khai sinh thì người đại diện hợp pháp thực hiện thủ tục cấp thẻ căn cước thông qua các thủ tục liên thông với đăng ký khai sinh trên cổng dịch vụ công, ứng dụng định danh quốc gia hoặc trực tiếp tại cơ quan quản lý căn cước. Cơ quan quản lý căn cước không thu nhận thông tin nhân dạng và thông tin sinh trắc học đối với người dưới 06 tuổi; b) Người từ đủ 06 tuổi đến dưới 14 tuổi cùng người đại diện hợp pháp đến cơ quan quản lý căn cước để thu nhận thông tin nhân dạng và thông tin sinh trắc học theo quy định tại điểm b khoản 1 Điều này. Người đại diện hợp pháp của người từ đủ 06 tuổi đến dưới 14 tuổi thực hiện thủ tục cấp thẻ căn cước thay cho người đó.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D23_K1",
+          "anchor_text": "điểm b khoản 1 Điều này",
+          "description_summary": "Thu nhận thông tin nhân dạng và sinh trắc học",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "người dưới 14 tuổi",
+        "người đại diện hợp pháp",
+        "dưới 06 tuổi"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D23_K3",
+      "position": {
+        "chapter": 3,
+        "article": 23,
+        "article_title": "Trình tự, thủ tục cấp thẻ căn cước",
+        "clause": 3
+      },
+      "content": "Trường hợp người mất năng lực hành vi dân sự, người có khó khăn trong nhận thức, làm chủ hành vi thì phải có người đại diện hợp pháp hỗ trợ làm thủ tục quy định tại khoản 1 Điều này.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D23_K1",
+          "anchor_text": "khoản 1 Điều này",
+          "description_summary": "Trình tự thủ tục cấp thẻ căn cước",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "mất năng lực hành vi",
+        "người đại diện hợp pháp"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D23_K4",
+      "position": {
+        "chapter": 3,
+        "article": 23,
+        "article_title": "Trình tự, thủ tục cấp thẻ căn cước",
+        "clause": 4
+      },
+      "content": "Trường hợp từ chối cấp thẻ căn cước thì cơ quan quản lý căn cước phải trả lời bằng văn bản và nêu rõ lý do.",
+      "cross_references": [],
+      "tags": [
+        "từ chối cấp thẻ",
+        "trả lời bằng văn bản"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D23_K5",
+      "position": {
+        "chapter": 3,
+        "article": 23,
+        "article_title": "Trình tự, thủ tục cấp thẻ căn cước",
+        "clause": 5
+      },
+      "content": "Chính phủ quy định chi tiết Điều này.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D23",
+          "anchor_text": "Điều này",
+          "description_summary": "Trình tự, thủ tục cấp thẻ căn cước",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "Chính phủ quy định chi tiết"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D24_K1",
+      "position": {
+        "chapter": 3,
+        "article": 24,
+        "article_title": "Các trường hợp cấp đổi, cấp lại thẻ căn cước",
+        "clause": 1
+      },
+      "content": "Các trường hợp cấp đổi thẻ căn cước bao gồm: a) Các trường hợp quy định tại khoản 1 Điều 21 của Luật này; b) Thay đổi, cải chính thông tin về họ, chữ đệm, tên khai sinh; ngày, tháng, năm sinh; c) Thay đổi nhân dạng; bổ sung thông tin về ảnh khuôn mặt, vân tay; xác định lại giới tính hoặc chuyển đổi giới tính theo quy định của pháp luật; d) Có sai sót về thông tin in trên thẻ căn cước; đ) Theo yêu cầu của người được cấp thẻ căn cước khi thông tin trên thẻ căn cước thay đổi do sắp xếp đơn vị hành chính; e) Xác lập lại số định danh cá nhân; g) Khi người được cấp thẻ căn cước có yêu cầu.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D21_K1",
+          "anchor_text": "khoản 1 Điều 21 của Luật này",
+          "description_summary": "Độ tuổi quy định phải cấp đổi thẻ",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "trường hợp cấp đổi",
+        "thay đổi thông tin",
+        "xác định lại giới tính"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D24_K2",
+      "position": {
+        "chapter": 3,
+        "article": 24,
+        "article_title": "Các trường hợp cấp đổi, cấp lại thẻ căn cước",
+        "clause": 2
+      },
+      "content": "Các trường hợp cấp lại thẻ căn cước bao gồm: a) Bị mất thẻ căn cước hoặc thẻ căn cước bị hư hỏng không sử dụng được, trừ trường hợp quy định tại Điều 21 của Luật này; b) Được trở lại quốc tịch Việt Nam theo quy định của pháp luật về quốc tịch Việt Nam.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D21",
+          "anchor_text": "Điều 21 của Luật này",
+          "description_summary": "Trường hợp cấp đổi theo độ tuổi",
+          "type": "internal",
+          "relation": "exception_of"
+        }
+      ],
+      "tags": [
+        "trường hợp cấp lại",
+        "mất thẻ",
+        "hư hỏng thẻ",
+        "trở lại quốc tịch"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D25_K1",
+      "position": {
+        "chapter": 3,
+        "article": 25,
+        "article_title": "Trình tự, thủ tục cấp đổi, cấp lại thẻ căn cước",
+        "clause": 1
+      },
+      "content": "Trình tự, thủ tục cấp lại thẻ căn cước đối với trường hợp quy định tại điểm b khoản 2 Điều 24 của Luật này và cấp đổi thẻ căn cước thực hiện theo quy định tại Điều 23 của Luật này.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D24_K2",
+          "anchor_text": "điểm b khoản 2 Điều 24 của Luật này",
+          "description_summary": "Trường hợp được trở lại quốc tịch Việt Nam",
+          "type": "internal",
+          "relation": "refers_to"
+        },
+        {
+          "target_id": "LCC_VBHN_D23",
+          "anchor_text": "Điều 23 của Luật này",
+          "description_summary": "Trình tự thủ tục cấp thẻ",
+          "type": "internal",
+          "relation": "based_on"
+        }
+      ],
+      "tags": [
+        "trình tự thủ tục",
+        "cấp đổi",
+        "cấp lại"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D25_K2",
+      "position": {
+        "chapter": 3,
+        "article": 25,
+        "article_title": "Trình tự, thủ tục cấp đổi, cấp lại thẻ căn cước",
+        "clause": 2
+      },
+      "content": "Trường hợp cấp đổi thẻ căn cước do xác định lại giới tính hoặc chuyển đổi giới tính hoặc thay đổi, cải chính thông tin quy định tại điểm b khoản 1 Điều 24 của Luật này mà thông tin đó chưa được cập nhật, điều chỉnh trong Cơ sở dữ liệu quốc gia về dân cư thì người cần cấp thẻ căn cước phải xuất trình các giấy tờ, tài liệu có giá trị pháp lý chứng minh những thông tin đã thay đổi để thực hiện thủ tục cập nhật, điều chỉnh thông tin vào Cơ sở dữ liệu quốc gia về dân cư.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D24_K1",
+          "anchor_text": "điểm b khoản 1 Điều 24 của Luật này",
+          "description_summary": "Trường hợp thay đổi họ tên, ngày sinh",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "xuất trình giấy tờ",
+        "cập nhật dữ liệu",
+        "chứng minh thông tin"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D25_K3",
+      "position": {
+        "chapter": 3,
+        "article": 25,
+        "article_title": "Trình tự, thủ tục cấp đổi, cấp lại thẻ căn cước",
+        "clause": 3
+      },
+      "content": "Cơ quan quản lý căn cước thu lại thẻ căn cước công dân, thẻ căn cước đã sử dụng đối với các trường hợp cấp đổi thẻ căn cước.",
+      "cross_references": [],
+      "tags": [
+        "thu lại thẻ",
+        "thẻ đã sử dụng",
+        "cấp đổi thẻ"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D25_K4",
+      "position": {
+        "chapter": 3,
+        "article": 25,
+        "article_title": "Trình tự, thủ tục cấp đổi, cấp lại thẻ căn cước",
+        "clause": 4
+      },
+      "content": "Việc cấp đổi, cấp lại thẻ căn cước đối với trường hợp quy định tại điểm đ khoản 1, điểm a khoản 2 Điều 24 của Luật này được thực hiện trực tuyến trên cổng dịch vụ công, ứng dụng định danh quốc gia hoặc trực tiếp tại nơi làm thủ tục cấp thẻ căn cước. Cơ quan quản lý căn cước sử dụng thông tin về ảnh khuôn mặt, vân tay, mống mắt đã được thu nhận lần gần nhất và các thông tin hiện có trong Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước để cấp lại thẻ căn cước.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D24_K1",
+          "anchor_text": "điểm đ khoản 1",
+          "description_summary": "Thay đổi do sắp xếp đơn vị hành chính",
+          "type": "internal",
+          "relation": "refers_to"
+        },
+        {
+          "target_id": "LCC_VBHN_D24_K2",
+          "anchor_text": "điểm a khoản 2 Điều 24 của Luật này",
+          "description_summary": "Mất thẻ hoặc thẻ hư hỏng",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "thực hiện trực tuyến",
+        "cổng dịch vụ công",
+        "thu nhận lần gần nhất"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D25_K5",
+      "position": {
+        "chapter": 3,
+        "article": 25,
+        "article_title": "Trình tự, thủ tục cấp đổi, cấp lại thẻ căn cước",
+        "clause": 5
+      },
+      "content": "Chính phủ quy định chi tiết Điều này.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D25",
+          "anchor_text": "Điều này",
+          "description_summary": "Trình tự thủ tục cấp đổi, cấp lại thẻ căn cước",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "Chính phủ quy định chi tiết"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D26_K0",
+      "position": {
+        "chapter": 3,
+        "article": 26,
+        "article_title": "Thời hạn cấp, cấp đổi, cấp lại thẻ căn cước",
+        "clause": 0
+      },
+      "content": "Trong thời hạn 07 ngày làm việc kể từ ngày nhận đủ hồ sơ theo quy định của Luật này, cơ quan quản lý căn cước phải cấp, cấp đổi, cấp lại thẻ căn cước.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN",
+          "anchor_text": "theo quy định của Luật này",
+          "description_summary": "Quy định về hồ sơ xin cấp, đổi, cấp lại",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "thời hạn cấp thẻ",
+        "07 ngày làm việc",
+        "nhận đủ hồ sơ"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D27_K1",
+      "position": {
+        "chapter": 3,
+        "article": 27,
+        "article_title": "Nơi làm thủ tục cấp, cấp đổi, cấp lại thẻ căn cước",
+        "clause": 1
+      },
+      "content": "Tại cơ quan quản lý căn cước của Công an tỉnh, thành phố và Công an xã, phường, đặc khu.",
+      "cross_references": [],
+      "tags": [
+        "nơi làm thủ tục",
+        "Công an tỉnh",
+        "Công an xã",
+        "đặc khu"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D27_K2",
+      "position": {
+        "chapter": 3,
+        "article": 27,
+        "article_title": "Nơi làm thủ tục cấp, cấp đổi, cấp lại thẻ căn cước",
+        "clause": 2
+      },
+      "content": "Tại cơ quan quản lý căn cước của Bộ Công an đối với những trường hợp do thủ trưởng cơ quan quản lý căn cước của Bộ Công an quyết định.",
+      "cross_references": [],
+      "tags": [
+        "Bộ Công an",
+        "thủ trưởng quyết định"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D27_K3",
+      "position": {
+        "chapter": 3,
+        "article": 27,
+        "article_title": "Nơi làm thủ tục cấp, cấp đổi, cấp lại thẻ căn cước",
+        "clause": 3
+      },
+      "content": "Trong trường hợp cần thiết, cơ quan quản lý căn cước quy định tại khoản 1 và khoản 2 Điều này tổ chức làm thủ tục cấp thẻ căn cước tại cơ quan, đơn vị khác hoặc tại chỗ ở của công dân.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D27",
+          "anchor_text": "khoản 1 và khoản 2 Điều này",
+          "description_summary": "Cơ quan công an địa phương và Bộ Công an",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "trường hợp cần thiết",
+        "tại chỗ ở",
+        "tổ chức làm thủ tục"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D28_K0",
+      "position": {
+        "chapter": 3,
+        "article": 28,
+        "article_title": "Thẩm quyền cấp, cấp đổi, cấp lại thẻ căn cước",
+        "clause": 0
+      },
+      "content": "Thủ trưởng cơ quan quản lý căn cước của Bộ Công an có thẩm quyền cấp, cấp đổi, cấp lại thẻ căn cước.",
+      "cross_references": [],
+      "tags": [
+        "thẩm quyền",
+        "Thủ trưởng cơ quan",
+        "Bộ Công an"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D29_K1",
+      "position": {
+        "chapter": 3,
+        "article": 29,
+        "article_title": "Thu hồi, giữ thẻ căn cước",
+        "clause": 1
+      },
+      "content": "Thẻ căn cước bị thu hồi trong trường hợp sau đây: a) Công dân bị tước quốc tịch Việt Nam, được thôi quốc tịch Việt Nam, bị hủy bỏ quyết định cho nhập quốc tịch Việt Nam, bị hủy bỏ quyết định cho trở lại quốc tịch Việt Nam; b) Thẻ căn cước cấp sai quy định; c) Thẻ căn cước đã tẩy xóa, sửa chữa.",
+      "cross_references": [],
+      "tags": [
+        "thu hồi thẻ",
+        "tước quốc tịch",
+        "cấp sai quy định",
+        "tẩy xóa sửa chữa"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D29_K2",
+      "position": {
+        "chapter": 3,
+        "article": 29,
+        "article_title": "Thu hồi, giữ thẻ căn cước",
+        "clause": 2
+      },
+      "content": "Thẻ căn cước bị giữ trong trường hợp sau đây: a) Người đang chấp hành biện pháp tư pháp giáo dục tại trường giáo dưỡng; người đang chấp hành quyết định áp dụng biện pháp xử lý hành chính đưa vào trường giáo dưỡng, cơ sở giáo dục bắt buộc, cơ sở cai nghiện bắt buộc; b) Người đang bị tạm giữ, tạm giam, chấp hành án phạt tù.",
+      "cross_references": [],
+      "tags": [
+        "giữ thẻ căn cước",
+        "trường giáo dưỡng",
+        "tạm giam",
+        "án phạt tù"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D29_K3",
+      "position": {
+        "chapter": 3,
+        "article": 29,
+        "article_title": "Thu hồi, giữ thẻ căn cước",
+        "clause": 3
+      },
+      "content": "Trong thời gian bị giữ thẻ căn cước, cơ quan giữ thẻ căn cước xem xét cho phép người bị giữ thẻ căn cước quy định tại khoản 2 Điều này sử dụng thẻ căn cước của mình để thực hiện giao dịch, thực hiện quyền, lợi ích hợp pháp.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D29_K2",
+          "anchor_text": "khoản 2 Điều này",
+          "description_summary": "Trường hợp bị giữ thẻ",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "sử dụng thẻ",
+        "thực hiện giao dịch",
+        "quyền lợi hợp pháp"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D29_K4",
+      "position": {
+        "chapter": 3,
+        "article": 29,
+        "article_title": "Thu hồi, giữ thẻ căn cước",
+        "clause": 4
+      },
+      "content": "Người bị giữ thẻ căn cước quy định tại khoản 2 Điều này được trả lại thẻ căn cước khi hết thời hạn tạm giữ, tạm giam hoặc có quyết định hủy bỏ việc tạm giữ, tạm giam; chấp hành xong án phạt tù, chấp hành xong biện pháp tư pháp giáo dục tại trường giáo dưỡng; chấp hành xong quyết định áp dụng biện pháp xử lý hành chính đưa vào trường giáo dưỡng, cơ sở giáo dục bắt buộc, cơ sở cai nghiện bắt buộc.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D29_K2",
+          "anchor_text": "khoản 2 Điều này",
+          "description_summary": "Trường hợp bị giữ thẻ",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "trả lại thẻ",
+        "hết thời hạn tạm giữ",
+        "chấp hành xong"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D29_K5",
+      "position": {
+        "chapter": 3,
+        "article": 29,
+        "article_title": "Thu hồi, giữ thẻ căn cước",
+        "clause": 5
+      },
+      "content": "Thẩm quyền thu hồi, giữ thẻ căn cước được quy định như sau: a) Cơ quan quản lý căn cước thực hiện thu hồi thẻ căn cước trong trường hợp quy định tại khoản 1 Điều này; b) Cơ quan tiếp nhận, trả kết quả khi thực hiện thủ tục tước quốc tịch Việt Nam, cho thôi quốc tịch Việt Nam hoặc hủy bỏ quyết định cho nhập quốc tịch Việt Nam thì có trách nhiệm thu hồi để hủy thẻ căn cước của công dân và thông báo cho cơ quan quản lý căn cước; c) Cơ quan thi hành quyết định tạm giữ, tạm giam; cơ quan thi hành án phạt tù; cơ quan thi hành biện pháp tư pháp giáo dục tại trường giáo dưỡng; cơ quan thi hành quyết định áp dụng biện pháp xử lý hành chính đưa vào trường giáo dưỡng, cơ sở giáo dục bắt buộc, cơ sở cai nghiện bắt buộc thực hiện giữ thẻ căn cước trong trường hợp quy định tại khoản 2 Điều này.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D29_K1",
+          "anchor_text": "khoản 1 Điều này",
+          "description_summary": "Trường hợp thu hồi thẻ",
+          "type": "internal",
+          "relation": "refers_to"
+        },
+        {
+          "target_id": "LCC_VBHN_D29_K2",
+          "anchor_text": "khoản 2 Điều này",
+          "description_summary": "Trường hợp giữ thẻ",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "thẩm quyền",
+        "thu hồi thẻ",
+        "giữ thẻ"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D29_K6",
+      "position": {
+        "chapter": 3,
+        "article": 29,
+        "article_title": "Thu hồi, giữ thẻ căn cước",
+        "clause": 6
+      },
+      "content": "Chính phủ quy định chi tiết khoản 2 Điều này; quy định trình tự, thủ tục thu hồi, giữ, trả lại thẻ căn cước.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D29_K2",
+          "anchor_text": "khoản 2 Điều này",
+          "description_summary": "Trường hợp bị giữ thẻ",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "Chính phủ quy định",
+        "trình tự thủ tục"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D30_K1",
+      "position": {
+        "chapter": 3,
+        "article": 30,
+        "article_title": "Giấy chứng nhận căn cước và quản lý về căn cước đối với người gốc Việt Nam chưa xác định được quốc tịch được cấp giấy chứng nhận căn cước",
+        "clause": 1
+      },
+      "content": "Giấy chứng nhận căn cước được cấp cho người gốc Việt Nam chưa xác định được quốc tịch mà đang sinh sống liên tục từ 06 tháng trở lên tại đơn vị hành chính cấp xã.",
+      "cross_references": [],
+      "tags": [
+        "giấy chứng nhận căn cước",
+        "người gốc Việt Nam",
+        "sinh sống liên tục"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D30_K2",
+      "position": {
+        "chapter": 3,
+        "article": 30,
+        "article_title": "Giấy chứng nhận căn cước và quản lý về căn cước đối với người gốc Việt Nam chưa xác định được quốc tịch được cấp giấy chứng nhận căn cước",
+        "clause": 2
+      },
+      "content": "Nội dung quản lý về căn cước đối với người gốc Việt Nam chưa xác định được quốc tịch được cấp giấy chứng nhận căn cước bao gồm: a) Thu thập thông tin về căn cước của người gốc Việt Nam chưa xác định được quốc tịch; b) Cập nhật, điều chỉnh, khai thác, sử dụng thông tin về căn cước của người gốc Việt Nam chưa xác định được quốc tịch đã được thu thập vào Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước; c) Xác lập số định danh cá nhân cho người gốc Việt Nam chưa xác định được quốc tịch; d) Cấp, cấp đổi, cấp lại, thu hồi, giữ, trả lại giấy chứng nhận căn cước.",
+      "cross_references": [],
+      "tags": [
+        "nội dung quản lý",
+        "thu thập thông tin",
+        "xác lập số định danh"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D30_K3",
+      "position": {
+        "chapter": 3,
+        "article": 30,
+        "article_title": "Giấy chứng nhận căn cước và quản lý về căn cước đối với người gốc Việt Nam chưa xác định được quốc tịch được cấp giấy chứng nhận căn cước",
+        "clause": 3
+      },
+      "content": "Thông tin được in trên giấy chứng nhận căn cước bao gồm: a) Hình Quốc huy nước Cộng hòa xã hội chủ nghĩa Việt Nam; b) Dòng chữ “CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM, Độc lập - Tự do - Hạnh phúc”; c) Dòng chữ “CHỨNG NHẬN CĂN CƯỚC”; d) Ảnh khuôn mặt, vân tay; đ) Số định danh cá nhân; e) Họ, chữ đệm và tên; g) Ngày, tháng, năm sinh; h) Giới tính; i) Nơi sinh; k) Quê quán; l) Dân tộc; m) Tôn giáo; n) Tình trạng hôn nhân; o) Nơi ở hiện tại; p) Họ, chữ đệm và tên, quốc tịch của cha, mẹ, vợ, chồng, người đại diện hợp pháp, người giám hộ, người được giám hộ; q) Ngày, tháng, năm cấp, cơ quan cấp; r) Thời hạn sử dụng.",
+      "cross_references": [],
+      "tags": [
+        "thông tin in",
+        "hình Quốc huy",
+        "ảnh khuôn mặt",
+        "số định danh"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D30_K4",
+      "position": {
+        "chapter": 3,
+        "article": 30,
+        "article_title": "Giấy chứng nhận căn cước và quản lý về căn cước đối với người gốc Việt Nam chưa xác định được quốc tịch được cấp giấy chứng nhận căn cước",
+        "clause": 4
+      },
+      "content": "Nơi làm thủ tục cấp, cấp đổi, cấp lại giấy chứng nhận căn cước được quy định như sau: a) Công an xã, phường, đặc khu, cơ quan quản lý căn cước của Công an tỉnh, thành phố nơi người gốc Việt Nam chưa xác định được quốc tịch sinh sống; b) Trong trường hợp cần thiết, cơ quan quản lý căn cước quy định tại điểm a khoản này tổ chức làm thủ tục cấp giấy chứng nhận căn cước tại xã, phường, đặc khu, cơ quan, đơn vị hoặc tại chỗ ở của người gốc Việt Nam chưa xác định được quốc tịch.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D30_K4",
+          "anchor_text": "điểm a khoản này",
+          "description_summary": "Cơ quan công an địa phương",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "nơi làm thủ tục",
+        "Công an xã",
+        "tại chỗ ở"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D30_K5",
+      "position": {
+        "chapter": 3,
+        "article": 30,
+        "article_title": "Giấy chứng nhận căn cước và quản lý về căn cước đối với người gốc Việt Nam chưa xác định được quốc tịch được cấp giấy chứng nhận căn cước",
+        "clause": 5
+      },
+      "content": "Giá trị sử dụng của giấy chứng nhận căn cước được quy định như sau: a) Giấy chứng nhận căn cước có giá trị chứng minh về căn cước để thực hiện các giao dịch, thực hiện quyền, lợi ích hợp pháp trên lãnh thổ Việt Nam; b) Cơ quan, tổ chức, cá nhân sử dụng số định danh cá nhân trên giấy chứng nhận căn cước để kiểm tra thông tin của người được cấp giấy chứng nhận căn cước trong Cơ sở dữ liệu quốc gia về dân cư, cơ sở dữ liệu quốc gia khác và cơ sở dữ liệu chuyên ngành theo quy định của pháp luật. Khi người gốc Việt Nam chưa xác định được quốc tịch phải xuất trình giấy chứng nhận căn cước theo yêu cầu của cơ quan, tổ chức, cá nhân có thẩm quyền thì cơ quan, tổ chức, cá nhân đó không được yêu cầu người gốc Việt Nam chưa xác định được quốc tịch xuất trình giấy tờ hoặc cung cấp thông tin đã được chứng nhận trong giấy chứng nhận căn cước, trừ trường hợp thông tin của người đó đã được thay đổi hoặc thông tin trong giấy chứng nhận căn cước không thống nhất với thông tin trong Cơ sở dữ liệu quốc gia về dân cư; c) Nhà nước bảo vệ quyền, lợi ích chính đáng của người được cấp giấy chứng nhận căn cước theo quy định của pháp luật.",
+      "cross_references": [],
+      "tags": [
+        "giá trị sử dụng",
+        "chứng minh căn cước",
+        "bảo vệ quyền lợi"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D30_K6",
+      "position": {
+        "chapter": 3,
+        "article": 30,
+        "article_title": "Giấy chứng nhận căn cước và quản lý về căn cước đối với người gốc Việt Nam chưa xác định được quốc tịch được cấp giấy chứng nhận căn cước",
+        "clause": 6
+      },
+      "content": "Chính phủ quy định chi tiết khoản 2 Điều này; quy định thẩm quyền, trình tự, thủ tục cấp, cấp đổi, cấp lại, thu hồi, giữ, trả lại và thời hạn sử dụng của giấy chứng nhận căn cước. Bộ trưởng Bộ Công an quy định mẫu giấy chứng nhận căn cước.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D30_K2",
+          "anchor_text": "khoản 2 Điều này",
+          "description_summary": "Nội dung quản lý căn cước đối với người gốc Việt Nam",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "Chính phủ quy định chi tiết",
+        "mẫu giấy chứng nhận"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D31_K1",
+      "position": {
+        "chapter": 4,
+        "article": 31,
+        "article_title": "Căn cước điện tử",
+        "clause": 1
+      },
+      "content": "Mỗi công dân Việt Nam được cấp 01 căn cước điện tử.",
+      "cross_references": [],
+      "tags": [
+        "căn cước điện tử",
+        "cấp 1 lần"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D31_K2",
+      "position": {
+        "chapter": 4,
+        "article": 31,
+        "article_title": "Căn cước điện tử",
+        "clause": 2
+      },
+      "content": "Căn cước điện tử có danh tính điện tử và các thông tin sau đây: a) Thông tin quy định từ khoản 6 đến khoản 18 và khoản 25 Điều 9, khoản 2 và khoản 4 Điều 15 của Luật này; b) Thông tin quy định tại khoản 2 Điều 22 của Luật này được tích hợp theo đề nghị của công dân và phải được xác thực thông qua cơ sở dữ liệu quốc gia, cơ sở dữ liệu chuyên ngành.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D9",
+          "anchor_text": "khoản 6 đến khoản 18 và khoản 25 Điều 9",
+          "description_summary": "Các thông tin trong CSDL dân cư",
+          "type": "internal",
+          "relation": "refers_to"
+        },
+        {
+          "target_id": "LCC_VBHN_D15",
+          "anchor_text": "khoản 2 và khoản 4 Điều 15 của Luật này",
+          "description_summary": "Thông tin nhân dạng và nghề nghiệp",
+          "type": "internal",
+          "relation": "refers_to"
+        },
+        {
+          "target_id": "LCC_VBHN_D22_K2",
+          "anchor_text": "khoản 2 Điều 22 của Luật này",
+          "description_summary": "Thông tin được tích hợp",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "danh tính điện tử",
+        "thông tin tích hợp"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D31_K3",
+      "position": {
+        "chapter": 4,
+        "article": 31,
+        "article_title": "Căn cước điện tử",
+        "clause": 3
+      },
+      "content": "Căn cước điện tử sử dụng để thực hiện thủ tục hành chính, dịch vụ công, các giao dịch và hoạt động khác theo nhu cầu của công dân.",
+      "cross_references": [],
+      "tags": [
+        "sử dụng căn cước điện tử",
+        "thủ tục hành chính"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D31_K4",
+      "position": {
+        "chapter": 4,
+        "article": 31,
+        "article_title": "Căn cước điện tử",
+        "clause": 4
+      },
+      "content": "Thủ trưởng cơ quan quản lý căn cước của Bộ Công an có thẩm quyền cấp căn cước điện tử.",
+      "cross_references": [],
+      "tags": [
+        "thẩm quyền cấp",
+        "Bộ Công an"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D31_K5",
+      "position": {
+        "chapter": 4,
+        "article": 31,
+        "article_title": "Căn cước điện tử",
+        "clause": 5
+      },
+      "content": "Chính phủ quy định trình tự, thủ tục cấp căn cước điện tử.",
+      "cross_references": [],
+      "tags": [
+        "Chính phủ quy định",
+        "trình tự thủ tục"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D32_K1",
+      "position": {
+        "chapter": 4,
+        "article": 32,
+        "article_title": "Kết nối, chia sẻ, khai thác, sử dụng thông tin trong hệ thống định danh và xác thực điện tử",
+        "clause": 1
+      },
+      "content": "Hệ thống thông tin của cơ quan nhà nước, tổ chức chính trị, tổ chức chính trị - xã hội, tổ chức cung cấp dịch vụ công kết nối với hệ thống định danh và xác thực điện tử để khai thác thông tin của chủ thể danh tính điện tử phục vụ giải quyết thủ tục hành chính, dịch vụ công trên môi trường điện tử và các hoạt động quản lý nhà nước khác theo chức năng, nhiệm vụ được giao qua nền tảng định danh và xác thực điện tử.",
+      "cross_references": [],
+      "tags": [
+        "hệ thống thông tin",
+        "kết nối",
+        "giải quyết thủ tục"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D32_K2",
+      "position": {
+        "chapter": 4,
+        "article": 32,
+        "article_title": "Kết nối, chia sẻ, khai thác, sử dụng thông tin trong hệ thống định danh và xác thực điện tử",
+        "clause": 2
+      },
+      "content": "Cơ quan nhà nước, tổ chức chính trị, tổ chức chính trị - xã hội, tổ chức cung cấp dịch vụ công khai thác thông tin trong hệ thống định danh và xác thực điện tử qua ứng dụng định danh quốc gia, trang thông tin định danh điện tử, thẻ căn cước bằng thiết bị, phần mềm đáp ứng yêu cầu kỹ thuật theo quy định của Bộ trưởng Bộ Công an.",
+      "cross_references": [],
+      "tags": [
+        "khai thác thông tin",
+        "ứng dụng định danh quốc gia"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D32_K3",
+      "position": {
+        "chapter": 4,
+        "article": 32,
+        "article_title": "Kết nối, chia sẻ, khai thác, sử dụng thông tin trong hệ thống định danh và xác thực điện tử",
+        "clause": 3
+      },
+      "content": "Chủ thể danh tính điện tử khai thác, chia sẻ thông tin danh tính điện tử và thông tin khác của mình đã được tích hợp vào tài khoản định danh điện tử trên hệ thống định danh và xác thực điện tử với tổ chức, cá nhân khác qua ứng dụng định danh quốc gia hoặc hình thức khác theo quy định của pháp luật.",
+      "cross_references": [],
+      "tags": [
+        "chủ thể danh tính",
+        "chia sẻ thông tin"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D33_K1",
+      "position": {
+        "chapter": 4,
+        "article": 33,
+        "article_title": "Giá trị sử dụng của căn cước điện tử",
+        "clause": 1
+      },
+      "content": "Căn cước điện tử có giá trị chứng minh về căn cước và thông tin khác đã được tích hợp vào căn cước điện tử của người được cấp căn cước điện tử để thực hiện thủ tục hành chính, dịch vụ công, các giao dịch và hoạt động khác theo nhu cầu của công dân.",
+      "cross_references": [],
+      "tags": [
+        "giá trị sử dụng",
+        "chứng minh",
+        "thủ tục hành chính"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D33_K2",
+      "position": {
+        "chapter": 4,
+        "article": 33,
+        "article_title": "Giá trị sử dụng của căn cước điện tử",
+        "clause": 2
+      },
+      "content": "Trong quá trình giải quyết thủ tục hành chính, dịch vụ công, thực hiện các giao dịch và hoạt động khác, nếu phát hiện có sự khác nhau giữa thông tin in trên thẻ căn cước hoặc thông tin lưu trữ trong bộ phận lưu trữ được mã hóa của thẻ căn cước với thông tin trong căn cước điện tử thì cơ quan, tổ chức, cá nhân sử dụng thông tin trong căn cước điện tử.",
+      "cross_references": [],
+      "tags": [
+        "sự khác nhau",
+        "ưu tiên thông tin điện tử"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D33_K3",
+      "position": {
+        "chapter": 4,
+        "article": 33,
+        "article_title": "Giá trị sử dụng của căn cước điện tử",
+        "clause": 3
+      },
+      "content": "Trường hợp người được cấp căn cước điện tử đã xuất trình căn cước điện tử theo yêu cầu của cơ quan, tổ chức, cá nhân có thẩm quyền thì cơ quan, tổ chức, cá nhân đó không được yêu cầu người được cấp căn cước điện tử xuất trình giấy tờ hoặc cung cấp thông tin đã được tích hợp vào căn cước điện tử.",
+      "cross_references": [],
+      "tags": [
+        "xuất trình căn cước điện tử",
+        "không yêu cầu giấy tờ thêm"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D34_K1",
+      "position": {
+        "chapter": 4,
+        "article": 34,
+        "article_title": "Khóa, mở khóa căn cước điện tử",
+        "clause": 1
+      },
+      "content": "Căn cước điện tử bị khóa trong các trường hợp sau đây: a) Khi người được cấp căn cước điện tử yêu cầu khóa; b) Khi người được cấp căn cước điện tử vi phạm thỏa thuận sử dụng ứng dụng định danh quốc gia; c) Khi người được cấp căn cước điện tử bị thu hồi, bị giữ thẻ căn cước; d) Khi người được cấp căn cước điện tử chết; đ) Khi có yêu cầu của cơ quan tiến hành tố tụng hoặc cơ quan khác có thẩm quyền.",
+      "cross_references": [],
+      "tags": [
+        "khóa căn cước điện tử",
+        "yêu cầu khóa",
+        "vi phạm thỏa thuận"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D34_K2",
+      "position": {
+        "chapter": 4,
+        "article": 34,
+        "article_title": "Khóa, mở khóa căn cước điện tử",
+        "clause": 2
+      },
+      "content": "Căn cước điện tử được mở khóa trong các trường hợp sau đây: a) Khi người được cấp căn cước điện tử quy định tại điểm a khoản 1 Điều này yêu cầu mở khóa; b) Khi người được cấp căn cước điện tử quy định tại điểm b khoản 1 Điều này đã khắc phục những vi phạm thỏa thuận sử dụng ứng dụng định danh quốc gia; c) Khi người được cấp căn cước điện tử quy định tại điểm c khoản 1 Điều này được trả lại thẻ căn cước; d) Khi cơ quan tiến hành tố tụng hoặc cơ quan khác có thẩm quyền quy định tại điểm đ khoản 1 Điều này yêu cầu mở khóa.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D34_K1",
+          "anchor_text": "điểm a khoản 1 Điều này",
+          "description_summary": "Người dân tự yêu cầu khóa",
+          "type": "internal",
+          "relation": "refers_to"
+        },
+        {
+          "target_id": "LCC_VBHN_D34_K1",
+          "anchor_text": "điểm b khoản 1 Điều này",
+          "description_summary": "Vi phạm thỏa thuận",
+          "type": "internal",
+          "relation": "refers_to"
+        },
+        {
+          "target_id": "LCC_VBHN_D34_K1",
+          "anchor_text": "điểm c khoản 1 Điều này",
+          "description_summary": "Bị thu hồi, giữ thẻ",
+          "type": "internal",
+          "relation": "refers_to"
+        },
+        {
+          "target_id": "LCC_VBHN_D34_K1",
+          "anchor_text": "điểm đ khoản 1 Điều này",
+          "description_summary": "Yêu cầu của cơ quan tiến hành tố tụng",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "mở khóa căn cước điện tử",
+        "khắc phục vi phạm",
+        "trả lại thẻ"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D34_K3",
+      "position": {
+        "chapter": 4,
+        "article": 34,
+        "article_title": "Khóa, mở khóa căn cước điện tử",
+        "clause": 3
+      },
+      "content": "Khi khóa căn cước điện tử đối với trường hợp quy định tại các điểm a, b, c và đ khoản 1 Điều này, cơ quan quản lý căn cước phải thông báo ngay cho người bị khóa căn cước điện tử.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D34_K1",
+          "anchor_text": "các điểm a, b, c và đ khoản 1 Điều này",
+          "description_summary": "Các trường hợp bị khóa thẻ căn cước điện tử",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "thông báo khóa",
+        "cơ quan quản lý căn cước"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D34_K4",
+      "position": {
+        "chapter": 4,
+        "article": 34,
+        "article_title": "Khóa, mở khóa căn cước điện tử",
+        "clause": 4
+      },
+      "content": "Thủ trưởng cơ quan quản lý căn cước của Bộ Công an có thẩm quyền khóa, mở khóa căn cước điện tử.",
+      "cross_references": [],
+      "tags": [
+        "thẩm quyền",
+        "khóa mở khóa",
+        "Bộ Công an"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D34_K5",
+      "position": {
+        "chapter": 4,
+        "article": 34,
+        "article_title": "Khóa, mở khóa căn cước điện tử",
+        "clause": 5
+      },
+      "content": "Chính phủ quy định trình tự, thủ tục khóa, mở khóa căn cước điện tử.",
+      "cross_references": [],
+      "tags": [
+        "trình tự thủ tục",
+        "Chính phủ quy định"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D35_K1",
+      "position": {
+        "chapter": 5,
+        "article": 35,
+        "article_title": "Bảo đảm cơ sở hạ tầng thông tin Cơ sở dữ liệu quốc gia về dân cư và Cơ sở dữ liệu căn cước, hệ thống định danh và xác thực điện tử",
+        "clause": 1
+      },
+      "content": "Cơ sở hạ tầng thông tin Cơ sở dữ liệu quốc gia về dân cư và Cơ sở dữ liệu căn cước được phát triển, bảo đảm chất lượng, đồng bộ, đầy đủ, chính xác, kịp thời; được xây dựng và quản lý tập trung, thống nhất từ trung ương đến địa phương.",
+      "cross_references": [],
+      "tags": [
+        "cơ sở hạ tầng",
+        "quản lý tập trung",
+        "đồng bộ"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D35_K2",
+      "position": {
+        "chapter": 5,
+        "article": 35,
+        "article_title": "Bảo đảm cơ sở hạ tầng thông tin Cơ sở dữ liệu quốc gia về dân cư và Cơ sở dữ liệu căn cước, hệ thống định danh và xác thực điện tử",
+        "clause": 2
+      },
+      "content": "Nhà nước bảo đảm cơ sở hạ tầng thông tin Cơ sở dữ liệu quốc gia về dân cư và Cơ sở dữ liệu căn cước, hệ thống định danh và xác thực điện tử phù hợp với yêu cầu bảo đảm quốc phòng, an ninh và phát triển kinh tế - xã hội.",
+      "cross_references": [],
+      "tags": [
+        "nhà nước bảo đảm",
+        "quốc phòng an ninh",
+        "phát triển kinh tế"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D36_K1",
+      "position": {
+        "chapter": 5,
+        "article": 36,
+        "article_title": "Người làm công tác quản lý căn cước",
+        "clause": 1
+      },
+      "content": "Người làm công tác quản lý căn cước bao gồm người quản lý; người được giao nhiệm vụ thu thập, cập nhật, điều chỉnh, lưu trữ thông tin, tài liệu vào Cơ sở dữ liệu quốc gia về dân cư và Cơ sở dữ liệu căn cước; người làm thủ tục cấp, cấp đổi, cấp lại thẻ căn cước, giấy chứng nhận căn cước, cấp, khóa, mở khóa căn cước điện tử; người làm công tác định danh điện tử đối với công dân Việt Nam và xác thực điện tử đối với danh tính điện tử của công dân Việt Nam.",
+      "cross_references": [],
+      "tags": [
+        "người làm công tác",
+        "quản lý căn cước",
+        "định danh điện tử"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D36_K2",
+      "position": {
+        "chapter": 5,
+        "article": 36,
+        "article_title": "Người làm công tác quản lý căn cước",
+        "clause": 2
+      },
+      "content": "Người làm công tác quản lý căn cước được đào tạo, huấn luyện chuyên môn, nghiệp vụ phù hợp với nhiệm vụ, quyền hạn được giao.",
+      "cross_references": [],
+      "tags": [
+        "đào tạo",
+        "huấn luyện chuyên môn"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D36_K3",
+      "position": {
+        "chapter": 5,
+        "article": 36,
+        "article_title": "Người làm công tác quản lý căn cước",
+        "clause": 3
+      },
+      "content": "Người làm công tác quản lý căn cước chịu trách nhiệm bảo đảm an ninh, an toàn và tính đầy đủ, chính xác của thông tin trong quản lý căn cước.",
+      "cross_references": [],
+      "tags": [
+        "chịu trách nhiệm",
+        "an ninh an toàn"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D37_K1",
+      "position": {
+        "chapter": 5,
+        "article": 37,
+        "article_title": "Bảo đảm kinh phí và cơ sở vật chất phục vụ hoạt động quản lý căn cước, Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, hệ thống định danh và xác thực điện tử",
+        "clause": 1
+      },
+      "content": "Nhà nước bảo đảm ngân sách, cơ sở vật chất cho hoạt động quản lý căn cước, Cơ sở dữ liệu quốc gia về dân cư và Cơ sở dữ liệu căn cước; xây dựng, quản lý, vận hành hệ thống định danh và xác thực điện tử.",
+      "cross_references": [],
+      "tags": [
+        "ngân sách",
+        "cơ sở vật chất",
+        "vận hành hệ thống"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D37_K2",
+      "position": {
+        "chapter": 5,
+        "article": 37,
+        "article_title": "Bảo đảm kinh phí và cơ sở vật chất phục vụ hoạt động quản lý căn cước, Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, hệ thống định danh và xác thực điện tử",
+        "clause": 2
+      },
+      "content": "Nhà nước ưu tiên đầu tư cơ sở hạ tầng, nguồn nhân lực, công nghệ bảo đảm cho xây dựng và quản lý Cơ sở dữ liệu quốc gia về dân cư.",
+      "cross_references": [],
+      "tags": [
+        "ưu tiên đầu tư",
+        "nguồn nhân lực"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D37_K3",
+      "position": {
+        "chapter": 5,
+        "article": 37,
+        "article_title": "Bảo đảm kinh phí và cơ sở vật chất phục vụ hoạt động quản lý căn cước, Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, hệ thống định danh và xác thực điện tử",
+        "clause": 3
+      },
+      "content": "Nhà nước khuyến khích tổ chức, cá nhân trong nước và ngoài nước tài trợ, hỗ trợ để xây dựng, quản lý Cơ sở dữ liệu quốc gia về dân cư và Cơ sở dữ liệu căn cước; khuyến khích sử dụng phần mềm, thiết bị, giải pháp tích hợp là sản phẩm của nhiệm vụ khoa học và công nghệ do tổ chức, doanh nghiệp, công dân Việt Nam tự nghiên cứu, thiết kế, chế tạo trong việc xây dựng, quản lý, vận hành Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, hệ thống định danh và xác thực điện tử.",
+      "cross_references": [],
+      "tags": [
+        "khuyến khích tài trợ",
+        "sử dụng phần mềm Việt Nam"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D38_K1",
+      "position": {
+        "chapter": 5,
+        "article": 38,
+        "article_title": "Phí khai thác, sử dụng thông tin trong Cơ sở dữ liệu quốc gia về dân cư và lệ phí cấp, cấp đổi, cấp lại thẻ căn cước, giấy chứng nhận căn cước",
+        "clause": 1
+      },
+      "content": "Tổ chức, cá nhân quy định tại khoản 8 Điều 10 của Luật này khi khai thác, sử dụng thông tin trong Cơ sở dữ liệu quốc gia về dân cư phải nộp phí theo quy định của pháp luật về phí và lệ phí.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D10_K8",
+          "anchor_text": "khoản 8 Điều 10 của Luật này",
+          "description_summary": "Tổ chức cá nhân khai thác thông tin khi có sự đồng ý",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "phí khai thác",
+        "nộp phí",
+        "sử dụng thông tin"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D38_K2",
+      "position": {
+        "chapter": 5,
+        "article": 38,
+        "article_title": "Phí khai thác, sử dụng thông tin trong Cơ sở dữ liệu quốc gia về dân cư và lệ phí cấp, cấp đổi, cấp lại thẻ căn cước, giấy chứng nhận căn cước",
+        "clause": 2
+      },
+      "content": "Công dân không phải nộp lệ phí khi được cấp thẻ căn cước lần đầu.",
+      "cross_references": [],
+      "tags": [
+        "không nộp lệ phí",
+        "cấp thẻ lần đầu"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D38_K3",
+      "position": {
+        "chapter": 5,
+        "article": 38,
+        "article_title": "Phí khai thác, sử dụng thông tin trong Cơ sở dữ liệu quốc gia về dân cư và lệ phí cấp, cấp đổi, cấp lại thẻ căn cước, giấy chứng nhận căn cước",
+        "clause": 3
+      },
+      "content": "Công dân phải nộp lệ phí khi cấp đổi, cấp lại thẻ căn cước, trừ những trường hợp sau đây: a) Cấp đổi thẻ căn cước theo quy định tại điểm a và điểm đ khoản 1 Điều 24 của Luật này; b) Có sai sót về thông tin in trên thẻ căn cước do lỗi của cơ quan quản lý căn cước.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D24_K1",
+          "anchor_text": "điểm a và điểm đ khoản 1 Điều 24 của Luật này",
+          "description_summary": "Thay đổi do độ tuổi hoặc sắp xếp đơn vị hành chính",
+          "type": "internal",
+          "relation": "exception_of"
+        }
+      ],
+      "tags": [
+        "nộp lệ phí",
+        "cấp đổi thẻ",
+        "ngoại lệ lệ phí"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D38_K4",
+      "position": {
+        "chapter": 5,
+        "article": 38,
+        "article_title": "Phí khai thác, sử dụng thông tin trong Cơ sở dữ liệu quốc gia về dân cư và lệ phí cấp, cấp đổi, cấp lại thẻ căn cước, giấy chứng nhận căn cước",
+        "clause": 4
+      },
+      "content": "Không thu lệ phí đối với trường hợp cấp, cấp đổi, cấp lại giấy chứng nhận căn cước cho người gốc Việt Nam chưa xác định được quốc tịch.",
+      "cross_references": [],
+      "tags": [
+        "không thu lệ phí",
+        "người gốc Việt Nam"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D39_K1",
+      "position": {
+        "chapter": 5,
+        "article": 39,
+        "article_title": "Bảo vệ Cơ sở dữ liệu quốc gia về dân cư và Cơ sở dữ liệu căn cước",
+        "clause": 1
+      },
+      "content": "Cơ quan quản lý căn cước có trách nhiệm sau đây: a) Ứng dụng công nghệ thông tin để nhập, xử lý và kết xuất thông tin về dân cư và căn cước bảo đảm an toàn dữ liệu theo đúng các nguyên tắc, định dạng các hệ quản trị cơ sở dữ liệu; b) Bảo đảm an toàn các thiết bị thu thập, lưu trữ, truyền đưa, xử lý, trao đổi thông tin về dân cư và căn cước; c) Bảo vệ dữ liệu cá nhân, an ninh thông tin về dân cư và căn cước trên mạng máy tính; bảo đảm an ninh mạng lưu trữ trong cơ sở dữ liệu; phòng, chống các hành vi truy nhập, sử dụng trái phép, làm hư hỏng Cơ sở dữ liệu quốc gia về dân cư và Cơ sở dữ liệu căn cước.",
+      "cross_references": [],
+      "tags": [
+        "bảo vệ cơ sở dữ liệu",
+        "an toàn dữ liệu",
+        "an ninh mạng"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D39_K2",
+      "position": {
+        "chapter": 5,
+        "article": 39,
+        "article_title": "Bảo vệ Cơ sở dữ liệu quốc gia về dân cư và Cơ sở dữ liệu căn cước",
+        "clause": 2
+      },
+      "content": "Cơ sở dữ liệu quốc gia về dân cư và Cơ sở dữ liệu căn cước được lưu trữ trên thiết bị lưu trữ đã được thực hiện các biện pháp chống truy nhập trái phép thông qua hệ thống bảo mật của hệ quản trị cơ sở dữ liệu và hệ điều hành mạng.",
+      "cross_references": [],
+      "tags": [
+        "lưu trữ dữ liệu",
+        "chống truy nhập trái phép"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D40_K1",
+      "position": {
+        "chapter": 6,
+        "article": 40,
+        "article_title": "Trách nhiệm quản lý nhà nước về căn cước, Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, định danh và xác thực điện tử",
+        "clause": 1
+      },
+      "content": "Chính phủ thống nhất quản lý nhà nước về căn cước, Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, định danh và xác thực điện tử.",
+      "cross_references": [],
+      "tags": [
+        "quản lý nhà nước",
+        "Chính phủ thống nhất"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D40_K2",
+      "position": {
+        "chapter": 6,
+        "article": 40,
+        "article_title": "Trách nhiệm quản lý nhà nước về căn cước, Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, định danh và xác thực điện tử",
+        "clause": 2
+      },
+      "content": "Bộ Công an là cơ quan đầu mối giúp Chính phủ thực hiện quản lý nhà nước về căn cước, Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, định danh và xác thực điện tử.",
+      "cross_references": [],
+      "tags": [
+        "cơ quan đầu mối",
+        "Bộ Công an"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D41_K1",
+      "position": {
+        "chapter": 6,
+        "article": 41,
+        "article_title": "Trách nhiệm của Bộ Công an",
+        "clause": 1
+      },
+      "content": "Ban hành theo thẩm quyền hoặc trình cơ quan có thẩm quyền ban hành văn bản quy phạm pháp luật về căn cước, Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, định danh và xác thực điện tử; quy định cơ quan thực hiện nhiệm vụ quản lý căn cước, Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, hệ thống định danh và xác thực điện tử.",
+      "cross_references": [],
+      "tags": [
+        "ban hành văn bản",
+        "quy định cơ quan"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D41_K2",
+      "position": {
+        "chapter": 6,
+        "article": 41,
+        "article_title": "Trách nhiệm của Bộ Công an",
+        "clause": 2
+      },
+      "content": "Tổ chức phổ biến, giáo dục pháp luật và tổ chức thực hiện các văn bản quy phạm pháp luật về căn cước, Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, định danh và xác thực điện tử.",
+      "cross_references": [],
+      "tags": [
+        "phổ biến giáo dục",
+        "tổ chức thực hiện"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D41_K3",
+      "position": {
+        "chapter": 6,
+        "article": 41,
+        "article_title": "Trách nhiệm của Bộ Công an",
+        "clause": 3
+      },
+      "content": "Kiến nghị cấp có thẩm quyền bãi bỏ, đình chỉ việc thi hành hoặc bãi bỏ theo thẩm quyền văn bản quy phạm pháp luật về căn cước, Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, định danh và xác thực điện tử của cơ quan, tổ chức, cá nhân trái với quy định của Luật này.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN",
+          "anchor_text": "trái với quy định của Luật này",
+          "description_summary": "Quy định trong Luật",
+          "type": "internal",
+          "relation": "exception_of"
+        }
+      ],
+      "tags": [
+        "kiến nghị bãi bỏ",
+        "đình chỉ thi hành"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D41_K4",
+      "position": {
+        "chapter": 6,
+        "article": 41,
+        "article_title": "Trách nhiệm của Bộ Công an",
+        "clause": 4
+      },
+      "content": "Xây dựng, trình Chính phủ quy định về việc xác lập, hủy, xác lập lại số định danh cá nhân; cấp, quản lý tài khoản định danh điện tử, xác thực điện tử; sao lưu, phục hồi dữ liệu quốc gia về dân cư và căn cước.",
+      "cross_references": [],
+      "tags": [
+        "trình Chính phủ",
+        "xác lập số định danh"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D41_K5",
+      "position": {
+        "chapter": 6,
+        "article": 41,
+        "article_title": "Trách nhiệm của Bộ Công an",
+        "clause": 5
+      },
+      "content": "Ban hành biểu mẫu dùng trong quản lý căn cước, Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, định danh và xác thực điện tử; quy định về quản lý tàng thư căn cước; quy định về thỏa thuận sử dụng ứng dụng định danh quốc gia.",
+      "cross_references": [],
+      "tags": [
+        "ban hành biểu mẫu",
+        "quản lý tàng thư"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D41_K6",
+      "position": {
+        "chapter": 6,
+        "article": 41,
+        "article_title": "Trách nhiệm của Bộ Công an",
+        "clause": 6
+      },
+      "content": "Tổ chức sản xuất, cấp, quản lý thẻ căn cước, giấy chứng nhận căn cước, ứng dụng khoa học kỹ thuật bảo an, chống làm giả thẻ căn cước, giấy chứng nhận căn cước; bảo đảm cơ sở vật chất, trang thiết bị, công nghệ để sản xuất thẻ căn cước, giấy chứng nhận căn cước.",
+      "cross_references": [],
+      "tags": [
+        "sản xuất thẻ",
+        "chống làm giả"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D41_K7",
+      "position": {
+        "chapter": 6,
+        "article": 41,
+        "article_title": "Trách nhiệm của Bộ Công an",
+        "clause": 7
+      },
+      "content": "Xây dựng, quản lý, bảo vệ, vận hành hệ thống định danh và xác thực điện tử; ứng dụng tài khoản định danh điện tử vào công tác quản lý nhà nước, cải cách hành chính, phòng, chống thiên tai, dịch bệnh.",
+      "cross_references": [],
+      "tags": [
+        "vận hành hệ thống",
+        "ứng dụng tài khoản định danh"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D41_K8",
+      "position": {
+        "chapter": 6,
+        "article": 41,
+        "article_title": "Trách nhiệm của Bộ Công an",
+        "clause": 8
+      },
+      "content": "Tổ chức xây dựng, quản lý, vận hành nền tảng định danh và xác thực điện tử; chủ trì, phối hợp với Bộ, cơ quan ngang Bộ, cơ quan thuộc Chính phủ trong liên thông các cơ sở dữ liệu quốc gia, cơ sở dữ liệu chuyên ngành phục vụ việc tích hợp thông tin, cấp tài khoản định danh điện tử.",
+      "cross_references": [],
+      "tags": [
+        "vận hành nền tảng",
+        "liên thông dữ liệu"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D41_K9",
+      "position": {
+        "chapter": 6,
+        "article": 41,
+        "article_title": "Trách nhiệm của Bộ Công an",
+        "clause": 9
+      },
+      "content": "Kết nối, tích hợp hệ thống định danh và xác thực điện tử với nền tảng định danh và xác thực điện tử của cổng dịch vụ công phục vụ giải quyết thủ tục hành chính, cung cấp dịch vụ công trực tuyến theo quy định của pháp luật.",
+      "cross_references": [],
+      "tags": [
+        "kết nối tích hợp",
+        "cổng dịch vụ công"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D41_K10",
+      "position": {
+        "chapter": 6,
+        "article": 41,
+        "article_title": "Trách nhiệm của Bộ Công an",
+        "clause": 10
+      },
+      "content": "Quản lý Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, hệ thống định danh và xác thực điện tử; có cơ chế giám sát độc lập về việc kết nối, chia sẻ, sử dụng dữ liệu trong Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, hệ thống định danh và xác thực điện tử; chỉ đạo, hướng dẫn nghiệp vụ về quản lý căn cước, Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, hệ thống định danh và xác thực điện tử.",
+      "cross_references": [],
+      "tags": [
+        "quản lý",
+        "giám sát độc lập",
+        "hướng dẫn nghiệp vụ"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D41_K11",
+      "position": {
+        "chapter": 6,
+        "article": 41,
+        "article_title": "Trách nhiệm của Bộ Công an",
+        "clause": 11
+      },
+      "content": "Trang bị phương tiện, đào tạo, huấn luyện người làm công tác quản lý căn cước.",
+      "cross_references": [],
+      "tags": [
+        "trang bị",
+        "đào tạo huấn luyện"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D41_K12",
+      "position": {
+        "chapter": 6,
+        "article": 41,
+        "article_title": "Trách nhiệm của Bộ Công an",
+        "clause": 12
+      },
+      "content": "Thống kê về căn cước, Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, định danh và xác thực điện tử.",
+      "cross_references": [],
+      "tags": [
+        "thống kê"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D41_K13",
+      "position": {
+        "chapter": 6,
+        "article": 41,
+        "article_title": "Trách nhiệm của Bộ Công an",
+        "clause": 13
+      },
+      "content": "Kiểm tra, thanh tra, giải quyết khiếu nại, tố cáo và xử lý vi phạm về quản lý căn cước, Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, định danh và xác thực điện tử theo quy định của pháp luật.",
+      "cross_references": [],
+      "tags": [
+        "kiểm tra thanh tra",
+        "xử lý vi phạm"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D41_K14",
+      "position": {
+        "chapter": 6,
+        "article": 41,
+        "article_title": "Trách nhiệm của Bộ Công an",
+        "clause": 14
+      },
+      "content": "Hợp tác quốc tế về quản lý căn cước, Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, định danh và xác thực điện tử.",
+      "cross_references": [],
+      "tags": [
+        "hợp tác quốc tế"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D42_K1",
+      "position": {
+        "chapter": 6,
+        "article": 42,
+        "article_title": "Trách nhiệm của Bộ, cơ quan ngang Bộ, cơ quan thuộc Chính phủ",
+        "clause": 1
+      },
+      "content": "Bộ, cơ quan ngang Bộ, cơ quan thuộc Chính phủ, trong phạm vi nhiệm vụ, quyền hạn của mình, có trách nhiệm sau đây: a) Phối hợp với Bộ Công an, Ủy ban nhân dân cấp tỉnh trong quản lý nhà nước, xây dựng cơ chế, chính sách về phát triển, ứng dụng về căn cước, Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, định danh và xác thực điện tử; b) Phối hợp với Bộ Công an trong thực hiện khai thác Cơ sở dữ liệu quốc gia về dân cư và tích hợp thông tin vào thẻ căn cước, căn cước điện tử.",
+      "cross_references": [],
+      "tags": [
+        "trách nhiệm",
+        "Bộ cơ quan ngang Bộ",
+        "phối hợp"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D42_K2",
+      "position": {
+        "chapter": 6,
+        "article": 42,
+        "article_title": "Trách nhiệm của Bộ, cơ quan ngang Bộ, cơ quan thuộc Chính phủ",
+        "clause": 2
+      },
+      "content": "Bộ Tư pháp tổ chức thực hiện và cung cấp, chia sẻ thông tin về hộ tịch với Cơ sở dữ liệu quốc gia về dân cư.",
+      "cross_references": [],
+      "tags": [
+        "Bộ Tư pháp",
+        "cung cấp thông tin hộ tịch"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D42_K3",
+      "position": {
+        "chapter": 6,
+        "article": 42,
+        "article_title": "Trách nhiệm của Bộ, cơ quan ngang Bộ, cơ quan thuộc Chính phủ",
+        "clause": 3
+      },
+      "content": "Bộ Tài chính chủ trì, phối hợp với Bộ Công an tổng hợp, trình cấp có thẩm quyền bố trí nguồn vốn đầu tư công để xây dựng cơ sở vật chất, bố trí kinh phí thường xuyên cho hoạt động của Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, hệ thống định danh và xác thực điện tử; kinh phí bảo đảm cho việc sản xuất, cấp, cấp đổi, cấp lại thẻ căn cước, giấy chứng nhận căn cước theo quy định của pháp luật về đầu tư công, ngân sách nhà nước và quy định khác của pháp luật có liên quan.",
+      "cross_references": [],
+      "tags": [
+        "Bộ Tài chính",
+        "bố trí nguồn vốn",
+        "ngân sách"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D43_K1",
+      "position": {
+        "chapter": 6,
+        "article": 43,
+        "article_title": "Trách nhiệm của Ủy ban nhân dân cấp tỉnh",
+        "clause": 1
+      },
+      "content": "Triển khai, tổ chức thực hiện các văn bản quy phạm pháp luật về căn cước, Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, định danh và xác thực điện tử tại địa phương.",
+      "cross_references": [],
+      "tags": [
+        "Ủy ban nhân dân cấp tỉnh",
+        "triển khai thực hiện"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D43_K2",
+      "position": {
+        "chapter": 6,
+        "article": 43,
+        "article_title": "Trách nhiệm của Ủy ban nhân dân cấp tỉnh",
+        "clause": 2
+      },
+      "content": "Tổ chức phổ biến, giáo dục pháp luật về căn cước, Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, định danh và xác thực điện tử tại địa phương.",
+      "cross_references": [],
+      "tags": [
+        "phổ biến giáo dục",
+        "tại địa phương"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D43_K3",
+      "position": {
+        "chapter": 6,
+        "article": 43,
+        "article_title": "Trách nhiệm của Ủy ban nhân dân cấp tỉnh",
+        "clause": 3
+      },
+      "content": "Trong phạm vi nhiệm vụ, quyền hạn của mình, kiểm tra và xử lý vi phạm pháp luật về căn cước, Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước, định danh và xác thực điện tử theo quy định của pháp luật.",
+      "cross_references": [],
+      "tags": [
+        "kiểm tra xử lý",
+        "vi phạm pháp luật"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D44_K0",
+      "position": {
+        "chapter": 7,
+        "article": 44,
+        "article_title": "Sửa đổi, bổ sung Luật Đầu tư",
+        "clause": 0
+      },
+      "content": "Thay thế cụm từ “kinh doanh dịch vụ định danh và xác thực điện tử” bằng cụm từ “kinh doanh dịch vụ xác thực điện tử” tại điểm 131 Phụ lục IV - Danh mục ngành, nghề đầu tư kinh doanh có điều kiện ban hành kèm theo Luật Đầu tư số 61/2020/QH14 đã được sửa đổi, bổ sung một số điều theo Luật số 72/2020/QH14, Luật số 03/2022/QH15, Luật số 05/2022/QH15, Luật số 08/2022/QH15, Luật số 09/2022/QH15 và Luật số 20/2023/QH15.",
+      "cross_references": [
+        {
+          "target_id": "Luat_Dau_tu_61_2020",
+          "anchor_text": "Luật Đầu tư số 61/2020/QH14",
+          "description_summary": "Sửa đổi danh mục ngành nghề đầu tư kinh doanh có điều kiện",
+          "type": "external",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "sửa đổi bổ sung",
+        "Luật Đầu tư",
+        "kinh doanh dịch vụ"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D45_K1",
+      "position": {
+        "chapter": 7,
+        "article": 45,
+        "article_title": "Hiệu lực thi hành",
+        "clause": 1
+      },
+      "content": "Luật này có hiệu lực thi hành từ ngày 01 tháng 7 năm 2024, trừ trường hợp quy định tại khoản 2 Điều này.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D45_K2",
+          "anchor_text": "khoản 2 Điều này",
+          "description_summary": "Ngoại lệ về hiệu lực thi hành",
+          "type": "internal",
+          "relation": "exception_of"
+        }
+      ],
+      "tags": [
+        "hiệu lực thi hành",
+        "01 tháng 7 năm 2024"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D45_K2",
+      "position": {
+        "chapter": 7,
+        "article": 45,
+        "article_title": "Hiệu lực thi hành",
+        "clause": 2
+      },
+      "content": "Quy định tại khoản 3 Điều 46 của Luật này có hiệu lực thi hành từ ngày 15 tháng 01 năm 2024.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D46_K3",
+          "anchor_text": "khoản 3 Điều 46 của Luật này",
+          "description_summary": "Giá trị sử dụng của thẻ hết hạn",
+          "type": "internal",
+          "relation": "refers_to"
+        }
+      ],
+      "tags": [
+        "hiệu lực sớm",
+        "15 tháng 01 năm 2024"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D45_K3",
+      "position": {
+        "chapter": 7,
+        "article": 45,
+        "article_title": "Hiệu lực thi hành",
+        "clause": 3
+      },
+      "content": "Luật Căn cước công dân số 59/2014/QH13 đã được sửa đổi, bổ sung một số điều theo Luật số 68/2020/QH14 hết hiệu lực kể từ ngày Luật này có hiệu lực thi hành.",
+      "cross_references": [
+        {
+          "target_id": "Luat_Can_cuoc_cong_dan_59_2014",
+          "anchor_text": "Luật Căn cước công dân số 59/2014/QH13",
+          "description_summary": "Luật cũ bị thay thế",
+          "type": "external",
+          "relation": "based_on"
+        }
+      ],
+      "tags": [
+        "hết hiệu lực",
+        "Luật Căn cước công dân 2014"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D46_K1",
+      "position": {
+        "chapter": 7,
+        "article": 46,
+        "article_title": "Quy định chuyển tiếp",
+        "clause": 1
+      },
+      "content": "Thẻ căn cước công dân đã được cấp trước ngày Luật này có hiệu lực thi hành có giá trị sử dụng đến hết thời hạn được in trên thẻ, trừ trường hợp quy định tại khoản 3 Điều này. Công dân khi có nhu cầu thì được cấp đổi sang thẻ căn cước.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN_D46_K3",
+          "anchor_text": "khoản 3 Điều này",
+          "description_summary": "Thẻ hết hạn trong giai đoạn chuyển tiếp",
+          "type": "internal",
+          "relation": "exception_of"
+        }
+      ],
+      "tags": [
+        "quy định chuyển tiếp",
+        "thẻ cũ",
+        "giá trị sử dụng"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D46_K2",
+      "position": {
+        "chapter": 7,
+        "article": 46,
+        "article_title": "Quy định chuyển tiếp",
+        "clause": 2
+      },
+      "content": "Chứng minh nhân dân còn hạn sử dụng đến sau ngày 31 tháng 12 năm 2024 thì có giá trị sử dụng đến hết ngày 31 tháng 12 năm 2024. Các loại giấy tờ có giá trị pháp lý đã phát hành có sử dụng thôngত্তিn từ chứng minh nhân dân, căn cước công dân được giữ nguyên giá trị sử dụng; cơ quan nhà nước không được yêu cầu công dân thay đổi, điều chỉnh thông tin về chứng minh nhân dân, căn cước công dân trong giấy tờ đã cấp.",
+      "cross_references": [],
+      "tags": [
+        "chứng minh nhân dân",
+        "giữ nguyên giá trị",
+        "không yêu cầu thay đổi"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D46_K3",
+      "position": {
+        "chapter": 7,
+        "article": 46,
+        "article_title": "Quy định chuyển tiếp",
+        "clause": 3
+      },
+      "content": "Thẻ căn cước công dân, chứng minh nhân dân hết hạn sử dụng từ ngày 15 tháng 01 năm 2024 đến trước ngày 30 tháng 6 năm 2024 thì tiếp tục có giá trị sử dụng đến hết ngày 30 tháng 6 năm 2024.",
+      "cross_references": [],
+      "tags": [
+        "hết hạn sử dụng",
+        "tiếp tục có giá trị"
+      ]
+    },
+    {
+      "id": "LCC_VBHN_D46_K4",
+      "position": {
+        "chapter": 7,
+        "article": 46,
+        "article_title": "Quy định chuyển tiếp",
+        "clause": 4
+      },
+      "content": "Quy định về việc sử dụng căn cước công dân, chứng minh nhân dân trong các văn bản quy phạm pháp luật ban hành trước ngày Luật này có hiệu lực thi hành được áp dụng như đối với thẻ căn cước quy định tại Luật này cho đến khi văn bản quy phạm pháp luật đó được sửa đổi, bổ sung hoặc thay thế.",
+      "cross_references": [
+        {
+          "target_id": "LCC_VBHN",
+          "anchor_text": "tại Luật này",
+          "description_summary": "Áp dụng tương đương thẻ căn cước",
+          "type": "internal",
+          "relation": "based_on"
+        }
+      ],
+      "tags": [
+        "văn bản quy phạm pháp luật khác",
+        "áp dụng tương đương"
+      ]
+    }
+  ]
+}
