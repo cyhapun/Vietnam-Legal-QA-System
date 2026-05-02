@@ -1,9 +1,13 @@
+{
   "law_info": {
     "law_id": "LCC_VBHN",
-    "law_name": "Luật Căn cước (VBHN 2026)",
+    "law_name": "Luật Căn cước 2023 (Văn bản hợp nhất 09/VBHN-VPQH)",
     "publisher": "Văn phòng Quốc hội",
-    "status": "Văn bản hợp nhất",
-    "executive_summary": "Luật quy định về Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước; việc quản lý, cấp thẻ căn cước, căn cước điện tử, giấy chứng nhận căn cước; cùng quyền, nghĩa vụ và trách nhiệm của các cơ quan, tổ chức, cá nhân có liên quan."
+    "document_number": "09/VBHN-VPQH",
+    "issue_date": "05/02/2026",
+    "effective_date": "01/07/2024",
+    "status": "Đang có hiệu lực",
+    "executive_summary": "Luật này quy định về Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu căn cước; thẻ căn cước, căn cước điện tử; giấy chứng nhận căn cước; quyền, nghĩa vụ, trách nhiệm của cơ quan, tổ chức, cá nhân có liên quan."
   },
   "clauses": [
     {

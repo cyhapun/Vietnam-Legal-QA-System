@@ -1,9 +1,12 @@
 {
   "law_info": {
     "law_id": "BLTTHS_VBHN",
-    "law_name": "Bộ luật Tố tụng hình sự (VBHN 2025)",
+    "law_name": "Bộ luật Tố tụng hình sự 2015 (Văn bản hợp nhất 46/VBHN-VPQH)",
     "publisher": "Văn phòng Quốc hội",
-    "status": "Văn bản hợp nhất",
+    "document_number": "46/VBHN-VPQH",
+    "issue_date": "28/02/2025",
+    "effective_date": "01/07/2016",
+    "status": "Đang có hiệu lực",
     "executive_summary": "Bộ luật quy định trình tự, thủ tục tiếp nhận, giải quyết nguồn tin về tội phạm, khởi tố, điều tra, truy tố, xét xử và thi hành án hình sự; nhiệm vụ, quyền hạn của cơ quan, người có thẩm quyền tiến hành tố tụng và người tham gia tố tụng."
   },
   "clauses": [

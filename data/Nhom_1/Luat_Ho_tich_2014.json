@@ -1,8 +1,12 @@
+{
   "law_info": {
     "law_id": "LHT_2014",
     "law_name": "Luật Hộ tịch 2014",
     "publisher": "Quốc hội",
-    "status": "Văn bản gốc",
+    "document_number": "60/2014/QH13",
+    "issue_date": "20/11/2014",
+    "effective_date": "01/01/2016",
+    "status": "Đang có hiệu lực",
     "executive_summary": "Luật này quy định về hộ tịch; quyền, nghĩa vụ, nguyên tắc, thẩm quyền, thủ tục đăng ký hộ tịch; Cơ sở dữ liệu hộ tịch và quản lý nhà nước về hộ tịch."
   },
   "clauses": [
