@@ -1,9 +1,12 @@
 {
   "law_info": {
     "law_id": "BLHH_VBHN",
-    "law_name": "Bộ Luật Hàng Hải Việt Nam",
-    "publisher": "VĂN PHÒNG QUỐC HỘI",
-    "status": "Bộ luật Hàng hải Việt Nam số 95/2015/QH13 ngày 25 tháng 11 năm 2015 của Quốc hội, có hiệu lực kể từ ngày 01 tháng 7 năm 2017, được sửa đổi, bổ sung bởi:",
+    "law_name": "Bộ luật Hàng hải Việt Nam 2015 (Văn bản hợp nhất 101/VBHN-VPQH)",
+    "publisher": "Văn phòng Quốc hội",
+    "document_number": "101/VBHN-VPQH",
+    "issue_date": "26/08/2025",
+    "effective_date": "01/07/2017",
+    "status": "Đang có hiệu lực",
     "executive_summary": "Bộ luật Hàng hải Việt Nam điều chỉnh toàn diện hoạt động hàng hải, bao gồm chế định về tàu biển, cảng biển, luồng hàng hải, vận tải biển và dịch vụ hàng hải. Văn bản quy định các nguyên tắc pháp lý về an toàn, an ninh hàng hải, bảo vệ môi trường biển, trách nhiệm của chủ thể tham gia hoạt động hàng hải và quản lý nhà nước trong lĩnh vực này. Bộ luật cũng thiết lập cơ chế giải quyết quan hệ hợp đồng, tranh chấp và các tình huống pháp lý phát sinh trong hoạt động hàng hải có yếu tố trong nước và quốc tế."
   },
   "clauses": [
@@ -48,7 +51,7 @@
         "chapter": 1,
         "article": 2,
         "article_title": "Đối tượng áp dụng",
-        "clause": 1
+        "clause": null
       },
       "content": "Bộ luật này áp dụng đối với tổ chức, cá nhân Việt Nam; tổ chức, cá nhân nước ngoài liên quan đến hoạt động hàng hải tại Việt Nam.",
       "cross_references": [],
@@ -1403,7 +1406,7 @@
         "chapter": 2,
         "article": 13,
         "article_title": "Tàu biển",
-        "clause": 1
+        "clause": null
       },
       "content": "Tàu biển là phương tiện nổi di động chuyên dùng hoạt động trên biển. Tàu biển quy định trong Bộ luật này không bao gồm tàu quân sự, tàu công vụ, tàu cá, phương tiện thủy nội địa, tàu ngầm, tàu lặn, thủy phi cơ, kho chứa nổi, giàn di động, ụ nổi.",
       "cross_references": [],
@@ -2000,7 +2003,7 @@
         "chapter": 2,
         "article": 26,
         "article_title": "Quy định chi tiết về đăng ký, xóa đăng ký tàu biển Việt Nam",
-        "clause": 1
+        "clause": null
       },
       "content": "Tàu biển Việt Nam phải được đặt tên và theo nguyên tắc sau đây: Chính phủ quy định chi tiết về thủ tục đăng ký, xóa đăng ký tàu biển Việt Nam; trường hợp tàu biển thuộc sở hữu của tổ chức, cá nhân Việt Nam được đăng ký mang cờ quốc tịch nước ngoài; trường hợp tàu biển thuộc sở hữu của tổ chức, cá nhân nước ngoài được đăng ký mang cờ quốc tịch Việt Nam.",
       "cross_references": [],
@@ -2016,7 +2019,7 @@
         "chapter": 2,
         "article": 27,
         "article_title": "Đăng ký tàu biển công vụ, tàu ngầm, tàu lặn, kho chứa nổi và giàn di động",
-        "clause": 1
+        "clause": null
       },
       "content": "Tàu biển công vụ, tàu ngầm, tàu lặn, kho chứa nổi và giàn di động được đăng ký theo quy định tại Mục này. Chính phủ quy định chi tiết việc đăng ký tại Điều này. Mục 3. ĐĂNG KIỂM TÀU BIỂN VIỆT NAM",
       "cross_references": [
@@ -2217,7 +2220,7 @@
         "chapter": 2,
         "article": 32,
         "article_title": "Giám sát kỹ thuật đối với tàu biển Việt Nam",
-        "clause": 1
+        "clause": null
       },
       "content": "Tàu biển đóng mới, hoán cải, sửa chữa phục hồi, phải chịu sự giám sát kỹ thuật của tổ chức đăng kiểm về chất lượng, an toàn kỹ thuật phù hợp với hồ sơ thiết kế được duyệt và cấp giấy chứng nhận có liên quan. Tàu biển đóng mới, hoán cải, sửa chữa phục hồi phải được thực hiện tại cơ sở có đủ điều kiện theo quy định của pháp luật.",
       "cross_references": [],
@@ -3295,7 +3298,7 @@
         "chapter": 3,
         "article": 50,
         "article_title": "Thuyền bộ",
-        "clause": 1
+        "clause": null
       },
       "content": "Thuyền bộ là những thuyền viên thuộc định biên của tàu biển, bao gồm thuyền trưởng, các sĩ quan và các chức danh khác được bố trí làm việc trên tàu biển.",
       "cross_references": [],
@@ -3900,7 +3903,7 @@
         "chapter": 3,
         "article": 58,
         "article_title": "Trách nhiệm báo cáo của thuyền trưởng khi xảy ra tai nạn hàng hải",
-        "clause": 1
+        "clause": null
       },
       "content": "Khi xảy ra tai nạn hàng hải đối với tàu biển hay phát hiện tai nạn hoặc vụ việc khác liên quan đến an toàn hàng hải, an ninh hàng hải thuyền trưởng có trách nhiệm thông báo ngay cho cơ quan nhà nước có thẩm quyền và báo cáo tai nạn hàng hải theo quy định. Mục 2. THUYỀN VIÊN",
       "cross_references": [],
@@ -5316,7 +5319,7 @@
         "chapter": 4,
         "article": 79,
         "article_title": "Công bố mở, đóng cảng biển và vùng nước cảng biển",
-        "clause": 1
+        "clause": null
       },
       "content": "Cảng biển, cảng dầu khí ngoài khơi, bến cảng, cầu cảng, bến phao, khu nước, vùng nước phải được đặt tên và theo nguyên tắc sau đây: Chính phủ quy định thẩm quyền, điều kiện, thủ tục công bố mở, đóng cảng biển, cầu cảng, bến cảng, bến phao, khu nước, vùng nước, vùng nước cảng biển, quản lý luồng hàng hải và hoạt động hàng hải tại cảng biển.",
       "cross_references": [],
@@ -5628,7 +5631,7 @@
         "chapter": 4,
         "article": 84,
         "article_title": "Hải đồ vùng nước cảng biển và luồng, tuyến hàng hải",
-        "clause": 1
+        "clause": null
       },
       "content": "Bộ Giao thông vận tải chủ trì phối hợp với Bộ Quốc phòng tổ chức xây dựng, phát hành hải đồ vùng nước cảng biển và luồng, tuyến hàng hải phục vụ cho công tác bảo đảm an toàn hàng hải theo đề nghị của Cơ quan quản lý nhà nước chuyên ngành hàng hải.",
       "cross_references": [],
@@ -5756,7 +5759,7 @@
         "chapter": 4,
         "article": 87,
         "article_title": "Ban quản lý và khai thác cảng",
-        "clause": 1
+        "clause": null
       },
       "content": "Ban quản lý và khai thác cảng do Chính phủ thành lập, được giao vùng đất, vùng nước cảng biển để quy hoạch, đầu tư, xây dựng, phát triển, khai thác kết cấu hạ tầng cảng biển, khu hậu cần sau cảng.",
       "cross_references": [],
@@ -6648,7 +6651,7 @@
         "chapter": 4,
         "article": 99,
         "article_title": "Thẩm quyền, trình tự, thủ tục cho tàu thuyền đến, rời cảng biển",
-        "clause": 1
+        "clause": null
       },
       "content": "Chính phủ quy định chi tiết thẩm quyền và trình tự, thủ tục cho tàu thuyền đến, rời cảng biển và tàu thuyền quân sự nước ngoài đến Việt Nam. Mục 4. CẢNG CẠN",
       "cross_references": [],
@@ -7881,7 +7884,7 @@
         "chapter": 5,
         "article": 117,
         "article_title": "Khiếu nại và giải quyết khiếu nại quyết định tạm giữ tàu biển",
-        "clause": 1
+        "clause": null
       },
       "content": "Tạm giữ tàu biển được thực hiện trong trường hợp sau đây: Thuyền trưởng hoặc chủ tàu, người khai thác tàu có quyền khiếu nại quyết định tạm giữ tàu biển. Trình tự, thủ tục giải quyết khiếu nại thực hiện theo quy định của pháp luật về khiếu nại.",
       "cross_references": [],
@@ -8101,7 +8104,7 @@
         "chapter": 5,
         "article": 121,
         "article_title": "Trình kháng nghị hàng hải bổ sung",
-        "clause": 1
+        "clause": null
       },
       "content": "Thuyền trưởng có quyền lập kháng nghị hàng hải bổ sung nếu thấy cần thiết và trình cho cơ quan có thẩm quyền xác nhận.",
       "cross_references": [],
@@ -8485,7 +8488,7 @@
         "chapter": 6,
         "article": 129,
         "article_title": "Bắt giữ tàu biển",
-        "clause": 1
+        "clause": null
       },
       "content": "Bắt giữ tàu biển là việc không cho phép tàu biển di chuyển hoặc hạn chế di chuyển tàu biển bằng quyết định của Tòa án để bảo đảm giải quyết khiếu nại hàng hải, áp dụng biện pháp khẩn cấp tạm thời, thi hành án dân sự và thực hiện tương trợ tư pháp.",
       "cross_references": [],
@@ -9288,7 +9291,7 @@
         "chapter": 6,
         "article": 143,
         "article_title": "Yêu cầu thả tàu biển đang bị bắt giữ để bảo đảm giải quyết khiếu nại hàng hải",
-        "clause": 1
+        "clause": null
       },
       "content": "Khiếu nại hàng hải làm phát sinh quyền bắt giữ tàu biển là khiếu nại trong các trường hợp sau đây: Khi có một trong các căn cứ quy định tại các điểm a, b và c khoản 1 Điều 142 của Bộ luật này, chủ tàu, người thuê tàu, người khai thác tàu, thuyền trưởng, người đã yêu cầu bắt giữ tàu biển và những người khác có liên quan có quyền yêu cầu thả tàu biển đang bị bắt giữ.",
       "cross_references": [
@@ -9656,7 +9659,7 @@
         "chapter": 7,
         "article": 150,
         "article_title": "Nghĩa vụ của người vận chuyển",
-        "clause": 1
+        "clause": null
       },
       "content": "Người vận chuyển phải mẫn cán để trước và khi bắt đầu chuyến đi, tàu biển có đủ khả năng đi biển, có thuyền bộ thích hợp, được cung ứng đầy đủ trang thiết bị và vật phẩm dự trữ; các hầm hàng, hầm lạnh và khu vực khác dùng để vận chuyển hàng hóa có đủ các điều kiện nhận, vận chuyển và bảo quản hàng hóa phù hợp với tính chất của hàng hóa.",
       "cross_references": [],
@@ -9921,7 +9924,7 @@
         "chapter": 7,
         "article": 156,
         "article_title": "Miễn trách nhiệm của người giao hàng",
-        "clause": 1
+        "clause": null
       },
       "content": "Người giao hàng được miễn trách nhiệm bồi thường về các mất mát, hư hỏng xảy ra đối với người vận chuyển hoặc tàu biển, nếu chứng minh được rằng mình hoặc người làm công, đại lý của mình không có lỗi gây ra tổn thất đó.",
       "cross_references": [],
@@ -10227,7 +10230,7 @@
         "chapter": 7,
         "article": 163,
         "article_title": "Thay vận đơn bằng chứng từ vận chuyển khác",
-        "clause": 1
+        "clause": null
       },
       "content": "Người giao hàng có thể thỏa thuận với người vận chuyển việc thay vận đơn bằng giấy gửi hàng đường biển hoặc chứng từ vận chuyển khác và thỏa thuận về nội dung, giá trị của các chứng từ này theo tập quán hàng hải quốc tế.",
       "cross_references": [],
@@ -10243,7 +10246,7 @@
         "chapter": 7,
         "article": 164,
         "article_title": "Áp dụng đối với vận đơn suốt đường biển",
-        "clause": 1
+        "clause": null
       },
       "content": "Các quy định của Bộ luật này về vận đơn được áp dụng đối với vận đơn suốt đường biển do người vận chuyển ký phát, trừ trường hợp pháp luật có quy định khác.",
       "cross_references": [],
@@ -10297,7 +10300,7 @@
         "chapter": 7,
         "article": 166,
         "article_title": "Nghĩa vụ trả hàng",
-        "clause": 1
+        "clause": null
       },
       "content": "Khi tàu biển đến cảng trả hàng, người vận chuyển có nghĩa vụ trả hàng cho người nhận hàng hợp pháp nếu có vận đơn gốc, giấy gửi hàng đường biển hoặc chứng từ vận chuyển khác có giá trị để nhận hàng quy định tại Điều 162 của Bộ luật này. Sau khi hàng hóa đã được trả, các chứng từ vận chuyển còn lại không còn giá trị để nhận hàng.",
       "cross_references": [
@@ -10483,7 +10486,7 @@
         "chapter": 7,
         "article": 169,
         "article_title": "Thời hiệu khởi kiện về hư hỏng, mất mát hàng hóa",
-        "clause": 1
+        "clause": null
       },
       "content": "Thời hiệu khởi kiện về hư hỏng, mất mát hàng hóa là 01 năm kể từ ngày trả hàng hoặc lẽ ra phải trả hàng cho người nhận hàng. Mục 2. HỢP ĐỒNG VẬN CHUYỂN HÀNG HÓA THEO CHỨNG TỪ VẬN CHUYỂN",
       "cross_references": [],
@@ -10595,7 +10598,7 @@
         "chapter": 7,
         "article": 172,
         "article_title": "Hàng hóa chở trên boong",
-        "clause": 1
+        "clause": null
       },
       "content": "Ngoài nghĩa vụ quy định tại Điều 150 của Bộ luật này, người vận chuyển hàng hóa theo chứng từ vận chuyển còn phải có nghĩa vụ sau đây: Hàng hóa chỉ được chở trên boong nếu có thỏa thuận giữa người vận chuyển với người giao hàng hoặc theo tập quán thương mại và phải được ghi rõ trong chứng từ vận chuyển.",
       "cross_references": [
@@ -10767,7 +10770,7 @@
         "chapter": 7,
         "article": 175,
         "article_title": "Sử dụng tàu biển trong hợp đồng vận chuyển theo chuyến",
-        "clause": 1
+        "clause": null
       },
       "content": "Người vận chuyển có nghĩa vụ dùng tàu biển đã được chỉ định trong hợp đồng để vận chuyển hàng hóa, trừ trường hợp người thuê vận chuyển đồng ý cho người vận chuyển thay thế tàu biển đã được chỉ định bằng tàu khác.",
       "cross_references": [],
@@ -10783,7 +10786,7 @@
         "chapter": 7,
         "article": 176,
         "article_title": "Chuyển giao quyền trong hợp đồng vận chuyển theo chuyến",
-        "clause": 1
+        "clause": null
       },
       "content": "Người thuê vận chuyển có thể chuyển giao quyền theo hợp đồng cho người thứ ba mà không cần người vận chuyển đồng ý, nhưng vẫn phải chịu trách nhiệm về việc thực hiện hợp đồng đã giao kết.",
       "cross_references": [],
@@ -10799,7 +10802,7 @@
         "chapter": 7,
         "article": 177,
         "article_title": "Ký phát vận đơn trong hợp đồng vận chuyển theo chuyến",
-        "clause": 1
+        "clause": null
       },
       "content": "Trường hợp vận đơn được ký phát theo hợp đồng vận chuyển theo chuyến và người giữ vận đơn không phải là người thuê vận chuyển thì các quyền và nghĩa vụ của người vận chuyển và người giữ vận đơn sẽ được điều chỉnh bằng các điều khoản của vận đơn; nếu các điều khoản của hợp đồng vận chuyển theo chuyến đã được đưa vào vận đơn thì các điều khoản này được áp dụng.",
       "cross_references": [],
@@ -11351,7 +11354,7 @@
         "chapter": 7,
         "article": 189,
         "article_title": "Thanh toán giá dịch vụ vận chuyển, lưu kho và xử lý tiền bán đấu giá hàng hóa",
-        "clause": 1
+        "clause": null
       },
       "content": "Các quy định về thanh toán giá dịch vụ vận chuyển, xử lý hàng hóa bị lưu giữ, tiền bán đấu giá hàng hóa tại các điều 157, 158, 167 và 168 của Bộ luật này được áp dụng tương tự đối với việc vận chuyển hàng hóa theo hợp đồng vận chuyển theo chuyến.",
       "cross_references": [
@@ -11480,7 +11483,7 @@
         "chapter": 7,
         "article": 191,
         "article_title": "Quyền chấm dứt hợp đồng của người vận chuyển",
-        "clause": 1
+        "clause": null
       },
       "content": "Người vận chuyển có quyền chấm dứt hợp đồng trước khi bắt đầu chuyến đi, nếu số hàng hóa đã bốc lên tàu biển chưa đủ theo hợp đồng và tổng giá trị của số hàng hóa đó không đủ để bảo đảm cho giá dịch vụ vận chuyển và chi phí liên quan mà người vận chuyển phải chi cho hàng hóa, trừ trường hợp người thuê vận chuyển đã trả đủ giá dịch vụ vận chuyển hoặc có sự bảo đảm cần thiết. Người thuê vận chuyển phải trả chi phí liên quan đến việc dỡ hàng và một nửa giá dịch vụ vận chuyển đã thỏa thuận.",
       "cross_references": [],
@@ -11594,7 +11597,7 @@
         "chapter": 7,
         "article": 194,
         "article_title": "Bảo quản hàng hóa khi chấm dứt hợp đồng",
-        "clause": 1
+        "clause": null
       },
       "content": "Khi hợp đồng chấm dứt theo quy định tại Mục này thì người vận chuyển vẫn phải có nghĩa vụ bảo quản hàng hóa đến khi giao cho người có quyền nhận hàng, trừ trường hợp quy định tại điểm a và điểm b khoản 1 Điều 193 của Bộ luật này.",
       "cross_references": [
@@ -11616,7 +11619,7 @@
         "chapter": 7,
         "article": 195,
         "article_title": "Thời hiệu khởi kiện về việc thực hiện hợp đồng vận chuyển theo chuyến",
-        "clause": 1
+        "clause": null
       },
       "content": "Thời hiệu khởi kiện về việc thực hiện hợp đồng vận chuyển theo chuyến là 02 năm kể từ ngày người khởi kiện biết hoặc phải biết quyền lợi của mình bị xâm phạm. Mục 4. HỢP ĐỒNG VẬN TẢI ĐA PHƯƠNG THỨC",
       "cross_references": [],
@@ -12135,7 +12138,7 @@
         "chapter": 8,
         "article": 204,
         "article_title": "Trách nhiệm của người vận chuyển và người vận chuyển thực tế trong vận chuyển hành khách",
-        "clause": 1
+        "clause": null
       },
       "content": "Trách nhiệm của người vận chuyển và người vận chuyển thực tế trong vận chuyển hành khách bằng đường biển được áp dụng theo quy định tại Điều 173 của Bộ luật này.",
       "cross_references": [
@@ -12157,7 +12160,7 @@
         "chapter": 8,
         "article": 205,
         "article_title": "Miễn trách nhiệm của người vận chuyển khi hành khách bị bắt giữ",
-        "clause": 1
+        "clause": null
       },
       "content": "Người vận chuyển không chịu trách nhiệm về việc hành khách bị cơ quan nhà nước có thẩm quyền tại cảng mà tàu biển ghé vào trong thời gian thực hiện chuyến đi bắt giữ do những nguyên nhân hành khách tự gây ra.",
       "cross_references": [],
@@ -12437,7 +12440,7 @@
         "chapter": 8,
         "article": 211,
         "article_title": "Mất mát, hư hỏng đồ vật quý, tài sản có giá trị khác",
-        "clause": 1
+        "clause": null
       },
       "content": "Người vận chuyển chịu trách nhiệm bồi thường đồ vật quý, tiền, giấy tờ có giá, tác phẩm nghệ thuật và tài sản có giá trị khác bị mất mát, hư hỏng, nếu hành khách đã khai báo về tính chất và giá trị của các tài sản đó cho thuyền trưởng hoặc sĩ quan có trách nhiệm về hành lý biết khi gửi để bảo quản.",
       "cross_references": [],
@@ -12615,7 +12618,7 @@
         "chapter": 9,
         "article": 215,
         "article_title": "Hợp đồng thuê tàu",
-        "clause": 1
+        "clause": null
       },
       "content": "Hợp đồng thuê tàu là hợp đồng được giao kết giữa chủ tàu và người thuê tàu, theo đó chủ tàu giao quyền sử dụng tàu biển của mình cho người thuê tàu trong một thời hạn nhất định với mục đích cụ thể được thỏa thuận trong hợp đồng và nhận tiền thuê tàu do người thuê tàu trả.",
       "cross_references": [],
@@ -12695,7 +12698,7 @@
         "chapter": 9,
         "article": 218,
         "article_title": "Nguyên tắc áp dụng quy định pháp luật trong hợp đồng thuê tàu",
-        "clause": 1
+        "clause": null
       },
       "content": "Các quy định liên quan đến quyền và nghĩa vụ của chủ tàu và người thuê tàu quy định tại Chương này chỉ áp dụng khi chủ tàu và người thuê tàu không có thỏa thuận khác.",
       "cross_references": [],
@@ -12711,7 +12714,7 @@
         "chapter": 9,
         "article": 219,
         "article_title": "Thời hiệu khởi kiện liên quan đến hợp đồng thuê tàu",
-        "clause": 1
+        "clause": null
       },
       "content": "Thời hiệu khởi kiện đối với vụ việc liên quan đến hợp đồng thuê tàu là 02 năm kể từ ngày chấm dứt hợp đồng. Mục 2. THUÊ TÀU ĐỊNH HẠN",
       "cross_references": [],
@@ -12925,7 +12928,7 @@
         "chapter": 9,
         "article": 225,
         "article_title": "Chia tiền công cứu hộ trong thuê tàu định hạn",
-        "clause": 1
+        "clause": null
       },
       "content": "Trường hợp tàu cho thuê định hạn tham gia cứu hộ trong thời gian cho thuê thì tiền công cứu hộ được chia đều giữa chủ tàu và người thuê tàu sau khi đã trừ các chi phí liên quan đến hoạt động cứu hộ và tiền thưởng công cứu hộ cho thuyền bộ.",
       "cross_references": [],
@@ -12941,7 +12944,7 @@
         "chapter": 9,
         "article": 226,
         "article_title": "Quá thời hạn thuê tàu định hạn",
-        "clause": 1
+        "clause": null
       },
       "content": "Trên cơ sở của việc tính toán hợp lý, nếu tàu hoàn thành chuyến đi cuối cùng vượt quá thời gian trả tàu được xác định trong hợp đồng thuê tàu thì người thuê tàu có quyền tiếp tục sử dụng tàu để hoàn thành chuyến đi đó; người thuê tàu phải trả tiền thuê cho thời gian vượt quá đó theo mức giá được xác định trong hợp đồng thuê tàu; nếu giá thuê tàu trên thị trường cao hơn so với giá được xác định trong hợp đồng thuê tàu thì người thuê tàu phải trả tiền thuê theo giá thị trường tại thời điểm đó.",
       "cross_references": [],
@@ -13235,7 +13238,7 @@
         "chapter": 9,
         "article": 232,
         "article_title": "Nghĩa vụ trả tàu, quá thời hạn thuê tàu và chấm dứt hợp đồng thuê tàu trần",
-        "clause": 1
+        "clause": null
       },
       "content": "Nghĩa vụ trả tàu, quá thời hạn thuê tàu và chấm dứt hợp đồng thuê tàu trần được thực hiện theo quy định tại khoản 3 Điều 223, Điều 226 và Điều 228 của Bộ luật này.",
       "cross_references": [
@@ -13267,7 +13270,7 @@
         "chapter": 9,
         "article": 233,
         "article_title": "Thanh toán tiền thuê tàu trần",
-        "clause": 1
+        "clause": null
       },
       "content": "Người thuê tàu trần phải trả tiền thuê tàu theo thỏa thuận trong hợp đồng thuê tàu. Trường hợp tàu bị tổn thất toàn bộ hoặc mất tích, việc thanh toán tiền thuê tàu chấm dứt từ ngày tàu bị tổn thất toàn bộ hoặc từ ngày nhận được thông tin cuối cùng về tàu. Tiền thuê tàu trả trước phải được trả lại tương ứng với thời gian chưa sử dụng tàu.",
       "cross_references": [],
@@ -13331,7 +13334,7 @@
         "chapter": 10,
         "article": 235,
         "article_title": "Đại lý tàu biển",
-        "clause": 1
+        "clause": null
       },
       "content": "Đại lý tàu biển là dịch vụ mà người đại lý tàu biển nhân danh chủ tàu hoặc người khai thác tàu tiến hành các dịch vụ liên quan đến tàu biển hoạt động tại cảng, bao gồm: việc thực hiện các thủ tục tàu biển đến, rời cảng; ký kết hợp đồng vận chuyển, hợp đồng bảo hiểm hàng hải, hợp đồng bốc dỡ hàng hóa, hợp đồng thuê tàu, hợp đồng thuê thuyền viên; ký phát vận đơn hoặc chứng từ vận chuyển tương đương; cung ứng vật tư, nhiên liệu, thực phẩm, nước sinh hoạt cho tàu biển; trình kháng nghị hàng hải; thông tin liên lạc với chủ tàu hoặc người khai thác tàu; dịch vụ liên quan đến thuyền viên; thu, chi các khoản tiền liên quan đến hoạt động khai thác tàu; giải quyết tranh chấp về hợp đồng vận chuyển hoặc về tai nạn hàng hải và dịch vụ khác liên quan đến tàu biển.",
       "cross_references": [],
@@ -13380,7 +13383,7 @@
         "chapter": 10,
         "article": 237,
         "article_title": "Hợp đồng đại lý tàu biển",
-        "clause": 1
+        "clause": null
       },
       "content": "Hợp đồng đại lý tàu biển là hợp đồng được giao kết bằng văn bản giữa người ủy thác và người đại lý tàu biển, theo đó người ủy thác ủy thác cho người đại lý tàu biển thực hiện các dịch vụ đại lý tàu biển đối với từng chuyến tàu hoặc trong một thời hạn cụ thể.",
       "cross_references": [],
@@ -13460,7 +13463,7 @@
         "chapter": 10,
         "article": 240,
         "article_title": "Giá dịch vụ đại lý tàu biển",
-        "clause": 1
+        "clause": null
       },
       "content": "Giá dịch vụ đại lý tàu biển do các bên thỏa thuận, trừ trường hợp pháp luật có quy định khác.",
       "cross_references": [],
@@ -13476,7 +13479,7 @@
         "chapter": 10,
         "article": 241,
         "article_title": "Thời hiệu khởi kiện về việc thực hiện hợp đồng đại lý tàu biển",
-        "clause": 1
+        "clause": null
       },
       "content": "Thời hiệu khởi kiện về việc thực hiện hợp đồng đại lý tàu biển là 02 năm kể từ ngày phát sinh tranh chấp.",
       "cross_references": [],
@@ -13562,7 +13565,7 @@
         "chapter": 10,
         "article": 243,
         "article_title": "Đại lý tàu biển đối với tàu công vụ, tàu cá, tàu ngầm, tàu lặn, kho chứa nổi, giàn di động, thủy phi cơ và tàu quân sự nước ngoài đến Việt Nam",
-        "clause": 1
+        "clause": null
       },
       "content": "Các quy định về đại lý tàu biển tại Mục này được áp dụng đối với tàu công vụ, tàu cá, tàu ngầm, tàu lặn, kho chứa nổi, giàn di động, thủy phi cơ và tàu quân sự nước ngoài đến Việt Nam. Mục 2. MÔI GIỚI HÀNG HẢI",
       "cross_references": [],
@@ -13793,7 +13796,7 @@
         "chapter": 11,
         "article": 248,
         "article_title": "Tổ chức hoa tiêu hàng hải",
-        "clause": 1
+        "clause": null
       },
       "content": "Tổ chức hoa tiêu hàng hải là doanh nghiệp cung cấp dịch vụ dẫn tàu thuyền đến, rời cảng biển, hoạt động trong vùng hoa tiêu hàng hải bắt buộc của Việt Nam.",
       "cross_references": [],
@@ -14049,7 +14052,7 @@
         "chapter": 11,
         "article": 253,
         "article_title": "Trách nhiệm của hoa tiêu hàng hải khi xảy ra tổn thất do lỗi dẫn tàu",
-        "clause": 1
+        "clause": null
       },
       "content": "Hoa tiêu hàng hải chỉ chịu trách nhiệm hành chính, hình sự theo quy định của pháp luật mà không phải chịu trách nhiệm dân sự trong trường hợp xảy ra tổn thất do lỗi dẫn tàu của hoa tiêu.",
       "cross_references": [],
@@ -14065,7 +14068,7 @@
         "chapter": 11,
         "article": 254,
         "article_title": "Quy định chi tiết về hoa tiêu hàng hải",
-        "clause": 1
+        "clause": null
       },
       "content": "Bộ trưởng Bộ Giao thông vận tải quy định vùng hoa tiêu hàng hải bắt buộc; tiêu chuẩn đào tạo hoa tiêu hàng hải; cấp, thu hồi chứng chỉ chuyên môn hoa tiêu hàng hải và giấy chứng nhận vùng hoạt động hoa tiêu hàng hải.",
       "cross_references": [],
@@ -14381,7 +14384,7 @@
         "chapter": 12,
         "article": 262,
         "article_title": "Thời hiệu khởi kiện về việc thực hiện hợp đồng lai dắt tàu biển",
-        "clause": 1
+        "clause": null
       },
       "content": "Thời hiệu khởi kiện về việc thực hiện hợp đồng lai dắt tàu biển là 02 năm kể từ ngày phát sinh tranh chấp.",
       "cross_references": [],
@@ -14798,7 +14801,7 @@
         "chapter": 13,
         "article": 269,
         "article_title": "Nguyên tắc xác định giá trị của tàu biển hoặc tài sản cứu được",
-        "clause": 1
+        "clause": null
       },
       "content": "Giá trị của tàu biển hoặc tài sản cứu được là giá trị thực tế tính tại nơi để tàu biển, tài sản sau khi được cứu hộ hoặc tiền bán, định giá tài sản, sau khi đã trừ chi phí gửi, bảo quản, tổ chức bán đấu giá và chi phí liên quan khác.",
       "cross_references": [],
@@ -14846,7 +14849,7 @@
         "chapter": 13,
         "article": 271,
         "article_title": "Tiền thưởng công cứu hộ trong các trường hợp khác",
-        "clause": 1
+        "clause": null
       },
       "content": "Người đang thực hiện nhiệm vụ hoa tiêu hàng hải hoặc lai dắt tàu biển được hưởng tiền thưởng công cứu hộ, nếu có sự giúp đỡ đặc biệt ngoài phạm vi trách nhiệm theo hợp đồng để cứu hộ tàu biển mà mình đang phục vụ.",
       "cross_references": [],
@@ -14948,7 +14951,7 @@
         "chapter": 13,
         "article": 274,
         "article_title": "Thời hiệu khởi kiện về việc thực hiện hợp đồng cứu hộ hàng hải",
-        "clause": 1
+        "clause": null
       },
       "content": "Thời hiệu khởi kiện về việc thực hiện hợp đồng cứu hộ hàng hải là 02 năm kể từ ngày kết thúc hành động cứu hộ.",
       "cross_references": [],
@@ -15218,7 +15221,7 @@
         "chapter": 14,
         "article": 280,
         "article_title": "Quyền ưu tiên trục vớt tài sản chìm đắm",
-        "clause": 1
+        "clause": null
       },
       "content": "Trừ trường hợp quy định tại Điều 279 của Bộ luật này, thời hạn thông báo và trục vớt tài sản chìm đắm được quy định như sau: Tổ chức, cá nhân Việt Nam được quyền ưu tiên trong việc giao kết hợp đồng trục vớt tài sản chìm đắm tại nội thủy, lãnh hải Việt Nam.",
       "cross_references": [
@@ -15639,7 +15642,7 @@
         "chapter": 15,
         "article": 285,
         "article_title": "Tai nạn đâm va",
-        "clause": 1
+        "clause": null
       },
       "content": "Tai nạn đâm va là tai nạn xảy ra do đâm va giữa tàu biển với tàu biển, tàu biển với phương tiện thủy nội địa, tàu biển với thủy phi cơ hoặc giữa các phương tiện khác trên biển, trong vùng nước cảng biển.",
       "cross_references": [],
@@ -15822,7 +15825,7 @@
         "chapter": 15,
         "article": 288,
         "article_title": "Đâm va do bất khả kháng, ngẫu nhiên, không xác định được lỗi",
-        "clause": 1
+        "clause": null
       },
       "content": "Trường hợp tai nạn đâm va xảy ra do các nguyên nhân bất khả kháng, ngẫu nhiên hoặc khi không xác định được tàu có lỗi thì thiệt hại của tàu nào tàu đó chịu, kể cả trường hợp tàu đang được neo, buộc hoặc cập mạn một tàu khác thì xảy ra đâm va.",
       "cross_references": [],
@@ -15838,7 +15841,7 @@
         "chapter": 15,
         "article": 289,
         "article_title": "Đâm va không trực tiếp",
-        "clause": 1
+        "clause": null
       },
       "content": "Các quy định của Chương này được áp dụng khi tàu có lỗi gây ra tổn thất cho tàu, người và tài sản trên tàu khác mà không có sự đâm va trực tiếp.",
       "cross_references": [],
@@ -16074,7 +16077,7 @@
         "chapter": 16,
         "article": 294,
         "article_title": "Phân bổ tổn thất chung cho hàng hóa bốc lậu lên tàu",
-        "clause": 1
+        "clause": null
       },
       "content": "Tổn thất của hàng hóa bốc lậu lên tàu hoặc khai sai về chủng loại và giá trị không được tính vào tổn thất chung; nếu hàng hóa đó cũng được cứu thoát khỏi hiểm họa chung thì cũng phải chịu một giá trị phân bổ tương ứng.",
       "cross_references": [],
@@ -16090,7 +16093,7 @@
         "chapter": 16,
         "article": 295,
         "article_title": "Tổn thất riêng",
-        "clause": 1
+        "clause": null
       },
       "content": "Mọi tổn thất về tàu, hàng hóa, hành lý, giá dịch vụ vận chuyển hàng hóa, hành khách không được tính vào tổn thất chung theo nguyên tắc quy định tại Điều 292 của Bộ luật này được gọi là tổn thất riêng. Người bị thiệt hại không được bồi thường, nếu không chứng minh được tổn thất xảy ra do lỗi của người khác.",
       "cross_references": [
@@ -17009,7 +17012,7 @@
         "chapter": 18,
         "article": 309,
         "article_title": "Đương nhiên chấm dứt hiệu lực hợp đồng bảo hiểm hàng hải",
-        "clause": 1
+        "clause": null
       },
       "content": "Hợp đồng bảo hiểm hàng hải đương nhiên chấm dứt hiệu lực, nếu vào thời điểm giao kết hợp đồng, rủi ro được bảo hiểm đã xảy ra hoặc không có khả năng xảy ra trong thực tế; trong trường hợp này, người bảo hiểm không phải bồi thường nhưng vẫn có quyền thu phí bảo hiểm theo hợp đồng, trừ trường hợp trước khi giao kết, người bảo hiểm đã biết về sự kiện đó.",
       "cross_references": [],
@@ -17283,7 +17286,7 @@
         "chapter": 18,
         "article": 315,
         "article_title": "Cách thức chuyển nhượng đơn bảo hiểm hàng hải",
-        "clause": 1
+        "clause": null
       },
       "content": "Giá trị bảo hiểm là giá trị thực tế của đối tượng bảo hiểm và được xác định như sau: Đơn bảo hiểm hàng hải có thể chuyển nhượng bằng cách người được bảo hiểm ký bổ sung trên đơn hoặc theo tập quán thương mại. Mục 4. BẢO HIỂM BAO",
       "cross_references": [],
@@ -17369,7 +17372,7 @@
         "chapter": 18,
         "article": 318,
         "article_title": "Chấm dứt hợp đồng bảo hiểm bao",
-        "clause": 1
+        "clause": null
       },
       "content": "Các bên có quyền yêu cầu chấm dứt hợp đồng bảo hiểm bao với điều kiện phải thông báo cho nhau biết trước 90 ngày. Mục 5. THỰC HIỆN HỢP ĐỒNG BẢO HIỂM HÀNG HẢI",
       "cross_references": [],
@@ -17385,7 +17388,7 @@
         "chapter": 18,
         "article": 319,
         "article_title": "Nộp phí bảo hiểm",
-        "clause": 1
+        "clause": null
       },
       "content": "Người được bảo hiểm có nghĩa vụ nộp phí bảo hiểm cho người bảo hiểm ngay sau khi ký kết hợp đồng hoặc ngay sau khi được cấp đơn bảo hiểm, giấy chứng nhận bảo hiểm, trừ trường hợp các bên có thỏa thuận khác.",
       "cross_references": [],
@@ -17477,7 +17480,7 @@
         "chapter": 18,
         "article": 322,
         "article_title": "Trách nhiệm bồi hoàn của người bảo hiểm",
-        "clause": 1
+        "clause": null
       },
       "content": "Người bảo hiểm có trách nhiệm bồi hoàn cho người được bảo hiểm mọi chi phí hợp lý và cần thiết do người được bảo hiểm sử dụng để ngăn ngừa, hạn chế tổn thất thuộc trách nhiệm bảo hiểm; những chi phí để thực hiện các chỉ dẫn của người bảo hiểm quy định tại Điều 321 của Bộ luật này hoặc chi phí xác định nguyên nhân, mức độ tổn thất thuộc phạm vi trách nhiệm của người bảo hiểm và chi phí đóng góp vào tổn thất chung. Các chi phí này phải được bồi hoàn theo tỷ lệ giữa số tiền bảo hiểm và giá trị bảo hiểm.",
       "cross_references": [
@@ -17676,7 +17679,7 @@
         "chapter": 18,
         "article": 326,
         "article_title": "Chuyển quyền đòi bồi thường",
-        "clause": 1
+        "clause": null
       },
       "content": "Khi đã trả tiền bồi thường cho người được bảo hiểm, người bảo hiểm được quyền truy đòi người có lỗi gây ra tổn thất đó (sau đây gọi là người thứ ba) trong phạm vi số tiền đã trả. Người bảo hiểm thực hiện quyền này theo quy định đối với người được bảo hiểm.",
       "cross_references": [],
@@ -17880,7 +17883,7 @@
         "chapter": 18,
         "article": 331,
         "article_title": "Nghĩa vụ của người được bảo hiểm khi tuyên bố từ bỏ đối tượng bảo hiểm",
-        "clause": 1
+        "clause": null
       },
       "content": "Khi tuyên bố từ bỏ đối tượng bảo hiểm, người được bảo hiểm có nghĩa vụ cung cấp cho người bảo hiểm những thông tin liên quan đến quyền về tài sản đối với đối tượng bảo hiểm, các khoản bảo hiểm và hạn chế khác mà người được bảo hiểm biết.",
       "cross_references": [],
@@ -17992,7 +17995,7 @@
         "chapter": 18,
         "article": 334,
         "article_title": "Hoàn trả tiền bảo hiểm",
-        "clause": 1
+        "clause": null
       },
       "content": "Trường hợp người bảo hiểm đã trả tiền bồi thường mà sau đó tàu biển lại thoát khỏi rủi ro hàng hải thì người bảo hiểm có quyền yêu cầu người được bảo hiểm tiếp tục sở hữu tàu biển đó và hoàn lại số tiền đã được bồi thường sau khi khấu trừ tiền bồi thường tổn thất bộ phận của tàu biển với điều kiện tổn thất bộ phận đó là hậu quả trực tiếp của rủi ro hàng hải được bảo hiểm. Mục 8. GIẢI QUYẾT BỒI THƯỜNG",
       "cross_references": [],
@@ -18008,7 +18011,7 @@
         "chapter": 18,
         "article": 335,
         "article_title": "Trách nhiệm giải quyết bồi thường",
-        "clause": 1
+        "clause": null
       },
       "content": "Khi thanh toán tiền bồi thường tổn thất của đối tượng bảo hiểm, người bảo hiểm có quyền yêu cầu người được bảo hiểm trình bày về sự kiện liên quan, xuất trình tài liệu, bằng chứng cần thiết cho việc đánh giá sự kiện và mức độ tổn thất.",
       "cross_references": [],
@@ -18056,7 +18059,7 @@
         "chapter": 19,
         "article": 337,
         "article_title": "Tranh chấp hàng hải",
-        "clause": 1
+        "clause": null
       },
       "content": "Tranh chấp hàng hải là các tranh chấp phát sinh liên quan đến hoạt động hàng hải.",
       "cross_references": [],

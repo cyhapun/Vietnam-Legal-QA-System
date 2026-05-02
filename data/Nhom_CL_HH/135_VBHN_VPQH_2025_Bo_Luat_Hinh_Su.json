@@ -1,9 +1,12 @@
 {
   "law_info": {
     "law_id": "BLHS_VBHN",
-    "law_name": "Bộ Luật Hình Sự",
-    "publisher": "VĂN PHÒNG QUỐC HỘI",
-    "status": "Có hiệu lực kể từ 01/01/2018; đã được sửa đổi, bổ sung và hợp nhất",
+    "law_name": "Bộ luật Hình sự 2015 (Văn bản hợp nhất 135/VBHN-VPQH)",
+    "publisher": "Văn phòng Quốc hội",
+    "document_number": "135/VBHN-VPQH",
+    "issue_date": "05/09/2025",
+    "effective_date": "01/01/2018",
+    "status": "Đang có hiệu lực",
     "executive_summary": "Bộ luật Hình sự quy định nguyên tắc xử lý tội phạm, căn cứ chịu trách nhiệm hình sự và hệ thống hình phạt áp dụng đối với cá nhân, pháp nhân thương mại phạm tội. Văn bản điều chỉnh toàn diện các nhóm tội phạm, chế định miễn trách nhiệm, các biện pháp tư pháp và nguyên tắc thi hành theo thời gian, lãnh thổ. Mục tiêu trọng tâm là bảo vệ trật tự pháp luật, quyền con người, lợi ích Nhà nước và phòng ngừa, đấu tranh chống tội phạm."
   },
   "clauses": [
@@ -13,7 +16,7 @@
         "chapter": 1,
         "article": 1,
         "article_title": "Nhiệm vụ của Bộ luật Hình sự",
-        "clause": 1
+        "clause": null
       },
       "content": "Bộ luật Hình sự có nhiệm vụ bảo vệ chủ quyền quốc gia, an ninh của đất nước, bảo vệ chế độ xã hội chủ nghĩa, quyền con người, quyền công dân, bảo vệ quyền bình đẳng giữa đồng bào các dân tộc, bảo vệ lợi ích của Nhà nước, tổ chức, bảo vệ trật tự pháp luật, chống mọi hành vi phạm tội; giáo dục mọi người ý thức tuân theo pháp luật, phòng ngừa và đấu tranh chống tội phạm. Bộ luật này quy định về tội phạm và hình phạt.",
       "cross_references": [],
@@ -637,7 +640,7 @@
         "chapter": 3,
         "article": 13,
         "article_title": "Phạm tội do dùng rượu, bia hoặc chất kích thích mạnh khác",
-        "clause": 1
+        "clause": null
       },
       "content": "Cố ý phạm tội là phạm tội trong những trường hợp sau đây: Vô ý phạm tội là phạm tội trong những trường hợp sau đây: Người phạm tội trong tình trạng mất khả năng nhận thức hoặc khả năng điều khiển hành vi của mình do dùng rượu, bia hoặc chất kích thích mạnh khác, thì vẫn phải chịu trách nhiệm hình sự.",
       "cross_references": [],
@@ -857,7 +860,7 @@
         "chapter": 3,
         "article": 15,
         "article_title": "Phạm tội chưa đạt",
-        "clause": 1
+        "clause": null
       },
       "content": "Phạm tội chưa đạt là cố ý thực hiện tội phạm nhưng không thực hiện được đến cùng vì những nguyên nhân ngoài ý muốn của người phạm tội. Người phạm tội chưa đạt phải chịu trách nhiệm hình sự về tội phạm chưa đạt.",
       "cross_references": [],
@@ -874,7 +877,7 @@
         "chapter": 3,
         "article": 16,
         "article_title": "Tự ý nửa chừng chấm dứt việc phạm tội",
-        "clause": 1
+        "clause": null
       },
       "content": "Tự ý nửa chừng chấm dứt việc phạm tội là tự mình không thực hiện tội phạm đến cùng, tuy không có gì ngăn cản. Người tự ý nửa chừng chấm dứt việc phạm tội được miễn trách nhiệm hình sự về tội định phạm; nếu hành vi thực tế đã thực hiện có đủ yếu tố cấu thành của một tội khác, thì người đó phải chịu trách nhiệm hình sự về tội này.",
       "cross_references": [],
@@ -1098,7 +1101,7 @@
         "chapter": 4,
         "article": 20,
         "article_title": "Sự kiện bất ngờ",
-        "clause": 1
+        "clause": null
       },
       "content": "Người thực hiện hành vi gây hậu quả nguy hại cho xã hội trong trường hợp không thể thấy trước hoặc không buộc phải thấy trước hậu quả của hành vi đó, thì không phải chịu trách nhiệm hình sự.",
       "cross_references": [],
@@ -1114,7 +1117,7 @@
         "chapter": 4,
         "article": 21,
         "article_title": "Tình trạng không có năng lực trách nhiệm hình sự",
-        "clause": 1
+        "clause": null
       },
       "content": "Người thực hiện hành vi nguy hiểm cho xã hội trong khi đang mắc bệnh tâm thần, một bệnh khác làm mất khả năng nhận thức hoặc khả năng điều khiển hành vi của mình, thì không phải chịu trách nhiệm hình sự.",
       "cross_references": [],
@@ -1226,7 +1229,7 @@
         "chapter": 4,
         "article": 25,
         "article_title": "Rủi ro trong nghiên cứu, thử nghiệm, áp dụng tiến bộ khoa học, kỹ thuật và công nghệ",
-        "clause": 1
+        "clause": null
       },
       "content": "Hành vi gây ra thiệt hại trong khi thực hiện việc nghiên cứu, thử nghiệm, áp dụng tiến bộ khoa học, kỹ thuật và công nghệ mới mặc dù đã tuân thủ đúng quy trình, quy phạm, áp dụng đầy đủ biện pháp phòng ngừa thì không phải là tội phạm. Người nào không áp dụng đúng quy trình, quy phạm, không áp dụng đầy đủ biện pháp phòng ngừa mà gây thiệt hại thì vẫn phải chịu trách nhiệm hình sự.",
       "cross_references": [],
@@ -1506,7 +1509,7 @@
         "chapter": 6,
         "article": 30,
         "article_title": "Khái niệm hình phạt",
-        "clause": 1
+        "clause": null
       },
       "content": "Hình phạt là biện pháp cưỡng chế nghiêm khắc nhất của Nhà nước được quy định trong Bộ luật này, do Tòa án quyết định áp dụng đối với người hoặc pháp nhân thương mại phạm tội nhằm tước bỏ hoặc hạn chế quyền, lợi ích của người, pháp nhân thương mại đó.",
       "cross_references": [],
@@ -1522,7 +1525,7 @@
         "chapter": 6,
         "article": 31,
         "article_title": "Mục đích của hình phạt",
-        "clause": 1
+        "clause": null
       },
       "content": "Hình phạt không chỉ nhằm trừng trị người, pháp nhân thương mại phạm tội mà còn giáo dục họ ý thức tuân theo pháp luật và các quy tắc của cuộc sống, ngăn ngừa họ phạm tội mới; giáo dục người, pháp nhân thương mại khác tôn trọng pháp luật, phòng ngừa và đấu tranh chống tội phạm.",
       "cross_references": [],
@@ -1638,7 +1641,7 @@
         "chapter": 6,
         "article": 34,
         "article_title": "Cảnh cáo",
-        "clause": 1
+        "clause": null
       },
       "content": "Cảnh cáo được áp dụng đối với người phạm tội ít nghiêm trọng và có nhiều tình tiết giảm nhẹ, nhưng chưa đến mức miễn hình phạt.",
       "cross_references": [],
@@ -1788,7 +1791,7 @@
         "chapter": 6,
         "article": 37,
         "article_title": "Trục xuất",
-        "clause": 1
+        "clause": null
       },
       "content": "Trục xuất là buộc người nước ngoài bị kết án phải rời khỏi lãnh thổ nước Cộng hòa xã hội chủ nghĩa Việt Nam. Trục xuất được Tòa án áp dụng là hình phạt chính hoặc hình phạt bổ sung trong từng trường hợp cụ thể.",
       "cross_references": [],
@@ -1836,7 +1839,7 @@
         "chapter": 6,
         "article": 39,
         "article_title": "Tù chung thân",
-        "clause": 1
+        "clause": null
       },
       "content": "Tù chung thân là hình phạt tù không thời hạn được áp dụng đối với người phạm tội đặc biệt nghiêm trọng, nhưng chưa đến mức bị xử phạt tử hình. Không áp dụng hình phạt tù chung thân đối với người dưới 18 tuổi phạm tội.",
       "cross_references": [],
@@ -1923,7 +1926,7 @@
         "chapter": 6,
         "article": 41,
         "article_title": "Cấm đảm nhiệm chức vụ, cấm hành nghề hoặc làm công việc nhất định",
-        "clause": 1
+        "clause": null
       },
       "content": "Cấm đảm nhiệm chức vụ, cấm hành nghề hoặc làm công việc nhất định được áp dụng khi xét thấy nếu để người bị kết án đảm nhiệm chức vụ, hành nghề hoặc làm công việc đó thì có thể gây nguy hại cho xã hội. Thời hạn cấm là từ 01 năm đến 05 năm, kể từ ngày chấp hành xong hình phạt tù hoặc từ ngày bản án có hiệu lực pháp luật nếu hình phạt chính là cảnh cáo, phạt tiền, cải tạo không giam giữ hoặc trong trường hợp người bị kết án được hưởng án treo.",
       "cross_references": [],
@@ -1939,7 +1942,7 @@
         "chapter": 6,
         "article": 42,
         "article_title": "Cấm cư trú",
-        "clause": 1
+        "clause": null
       },
       "content": "Cấm cư trú là buộc người bị kết án phạt tù không được tạm trú hoặc thường trú ở một số địa phương nhất định. Thời hạn cấm cư trú là từ 01 năm đến 05 năm, kể từ ngày chấp hành xong hình phạt tù.",
       "cross_references": [],
@@ -1955,7 +1958,7 @@
         "chapter": 6,
         "article": 43,
         "article_title": "Quản chế",
-        "clause": 1
+        "clause": null
       },
       "content": "Quản chế là buộc người bị kết án phạt tù phải cư trú, làm ăn sinh sống và cải tạo ở một địa phương nhất định dưới sự kiểm soát, giáo dục của chính quyền và nhân dân địa phương. Trong thời gian quản chế, người bị kết án không được tự ý ra khỏi nơi cư trú, bị tước một số quyền công dân theo quy định tại Điều 44 của Bộ luật này và bị cấm hành nghề hoặc làm công việc nhất định. Quản chế được áp dụng đối với người phạm tội xâm phạm an ninh quốc gia, người tái phạm nguy hiểm hoặc trong những trường hợp khác do Bộ luật này quy định. Thời hạn quản chế là từ 01 năm đến 05 năm, kể từ ngày chấp hành xong hình phạt tù.",
       "cross_references": [
@@ -2600,7 +2603,7 @@
         "chapter": 8,
         "article": 58,
         "article_title": "Quyết định hình phạt trong trường hợp đồng phạm",
-        "clause": 1
+        "clause": null
       },
       "content": "Khi xét xử cùng 01 lần một người phạm nhiều tội, Tòa án quyết định hình phạt đối với từng tội và tổng hợp hình phạt theo quy định sau đây: Khi quyết định hình phạt đối với những người đồng phạm, Tòa án phải xét đến tính chất của đồng phạm, tính chất và mức độ tham gia phạm tội của từng người đồng phạm. Các tình tiết giảm nhẹ, tăng nặng hoặc loại trừ trách nhiệm hình sự thuộc người đồng phạm nào, thì chỉ áp dụng đối với người đó.",
       "cross_references": [],
@@ -2753,7 +2756,7 @@
         "chapter": 9,
         "article": 61,
         "article_title": "Không áp dụng thời hiệu thi hành bản án",
-        "clause": 1
+        "clause": null
       },
       "content": "Không áp dụng thời hiệu thi hành bản án đối với các tội quy định tại Chương XIII, Chương XXVI, khoản 3 và khoản 4 Điều 353, khoản 3 và khoản 4 Điều 354 của Bộ luật này.",
       "cross_references": [
@@ -3018,7 +3021,7 @@
         "chapter": 9,
         "article": 64,
         "article_title": "Giảm thời hạn chấp hành hình phạt trong trường hợp đặc biệt",
-        "clause": 1
+        "clause": null
       },
       "content": "Người bị kết án có lý do đáng được khoan hồng thêm như đã lập công, đã quá già yếu hoặc mắc bệnh hiểm nghèo, thì Tòa án có thể xét giảm vào thời gian sớm hơn hoặc với mức cao hơn so với thời gian và mức quy định tại Điều 63 của Bộ luật này.",
       "cross_references": [
@@ -3556,7 +3559,7 @@
         "chapter": 10,
         "article": 72,
         "article_title": "Xóa án tích trong trường hợp đặc biệt",
-        "clause": 1
+        "clause": null
       },
       "content": "Trong trường hợp người bị kết án có những biểu hiện tiến bộ rõ rệt và đã lập công, được cơ quan, tổ chức nơi người đó công tác hoặc chính quyền địa phương nơi người đó cư trú đề nghị, thì Tòa án quyết định việc xóa án tích nếu người đó đã bảo đảm được ít nhất một phần ba thời hạn quy định tại khoản 2 Điều 70 và khoản 2 Điều 71 của Bộ luật này.",
       "cross_references": [
@@ -3681,7 +3684,7 @@
         "chapter": 11,
         "article": 74,
         "article_title": "Áp dụng quy định của Bộ luật Hình sự đối với pháp nhân thương mại phạm tội",
-        "clause": 1
+        "clause": null
       },
       "content": "Pháp nhân thương mại phạm tội phải chịu trách nhiệm hình sự theo những quy định của Chương này; theo quy định khác của Phần thứ nhất của Bộ luật này không trái với quy định của Chương này.",
       "cross_references": [],
@@ -3743,7 +3746,7 @@
         "chapter": 11,
         "article": 76,
         "article_title": "Phạm vi chịu trách nhiệm hình sự của pháp nhân thương mại",
-        "clause": 1
+        "clause": null
       },
       "content": "Pháp nhân thương mại phải chịu trách nhiệm hình sự về tội phạm quy định tại một trong các điều 188, 189, 190, 191, 192, 193, 194, 195, 196, 200, 203, 209, 210, 211, 213, 216, 217, 225, 226, 227, 232, 234, 235, 237, 238, 239, 242, 243, 244, 245, 246, 300 và 324 của Bộ luật này.",
       "cross_references": [
@@ -4200,7 +4203,7 @@
         "chapter": 11,
         "article": 83,
         "article_title": "Căn cứ quyết định hình phạt đối với pháp nhân thương mại phạm tội",
-        "clause": 1
+        "clause": null
       },
       "content": "Khi quyết định hình phạt, Tòa án căn cứ vào quy định của Bộ luật này, cân nhắc tính chất và mức độ nguy hiểm cho xã hội của hành vi phạm tội, việc chấp hành pháp luật của pháp nhân thương mại và các tình tiết giảm nhẹ và tăng nặng trách nhiệm hình sự áp dụng đối với pháp nhân thương mại.",
       "cross_references": [],
@@ -4406,7 +4409,7 @@
         "chapter": 11,
         "article": 88,
         "article_title": "Miễn hình phạt",
-        "clause": 1
+        "clause": null
       },
       "content": "Khi xét xử cùng 01 lần pháp nhân thương mại phạm nhiều tội, Tòa án quyết định hình phạt đối với từng tội và tổng hợp hình phạt theo quy định sau đây: Pháp nhân thương mại phạm tội có thể được miễn hình phạt khi đã khắc phục toàn bộ hậu quả và đã bồi thường toàn bộ thiệt hại do hành vi phạm tội gây ra.",
       "cross_references": [],
@@ -8909,7 +8912,7 @@
         "chapter": 17,
         "article": 181,
         "article_title": "Tội cưỡng ép kết hôn, ly hôn hoặc cản trở hôn nhân tự nguyện, tiến bộ, cản trở ly hôn tự nguyện",
-        "clause": 1
+        "clause": null
       },
       "content": "Người nào cưỡng ép người khác kết hôn trái với sự tự nguyện của họ, cản trở người khác kết hôn hoặc duy trì quan hệ hôn nhân tự nguyện, tiến bộ hoặc cưỡng ép hoặc cản trở người khác ly hôn bằng cách hành hạ, ngược đãi, uy hiếp tinh thần, yêu sách của cải hoặc bằng thủ đoạn khác, đã bị xử phạt vi phạm hành chính về hành vi này mà còn vi phạm, thì bị phạt cảnh cáo, phạt cải tạo không giam giữ đến 03 năm hoặc phạt tù từ 03 tháng đến 03 năm.",
       "cross_references": [],
@@ -8957,7 +8960,7 @@
         "chapter": 17,
         "article": 183,
         "article_title": "Tội tổ chức tảo hôn",
-        "clause": 1
+        "clause": null
       },
       "content": "Người nào tổ chức việc lấy vợ, lấy chồng cho những người chưa đến tuổi kết hôn, đã bị xử phạt vi phạm hành chính về hành vi này mà còn vi phạm, thì bị phạt tiền từ 10.000.000 đồng đến 30.000.000 đồng hoặc phạt cải tạo không giam giữ đến 02 năm.",
       "cross_references": [],
@@ -8973,7 +8976,7 @@
         "chapter": 17,
         "article": 184,
         "article_title": "Tội loạn luân",
-        "clause": 1
+        "clause": null
       },
       "content": "Người nào giao cấu với người mà biết rõ người đó cùng dòng máu về trực hệ, là anh chị em cùng cha mẹ, anh chị em cùng cha khác mẹ hoặc cùng mẹ khác cha, thì bị phạt tù từ 01 năm đến 05 năm.",
       "cross_references": [],
@@ -9021,7 +9024,7 @@
         "chapter": 17,
         "article": 186,
         "article_title": "Tội từ chối hoặc trốn tránh nghĩa vụ cấp dưỡng",
-        "clause": 1
+        "clause": null
       },
       "content": "Người nào có nghĩa vụ cấp dưỡng và có khả năng thực tế để thực hiện việc cấp dưỡng đối với người mà mình có nghĩa vụ cấp dưỡng theo quy định của pháp luật mà từ chối hoặc trốn tránh nghĩa vụ cấp dưỡng, làm cho người được cấp dưỡng lâm vào tình trạng nguy hiểm đến tính mạng, sức khỏe hoặc đã bị xử phạt vi phạm hành chính về một trong các hành vi quy định tại Điều này mà còn vi phạm, nếu không thuộc trường hợp quy định tại Điều 380 của Bộ luật này, thì bị phạt cảnh cáo, phạt cải tạo không giam giữ đến 02 năm hoặc phạt tù từ 03 tháng đến 02 năm.",
       "cross_references": [
@@ -21304,7 +21307,7 @@
         "chapter": 22,
         "article": 339,
         "article_title": "Tội giả mạo chức vụ, cấp bậc, vị trí công tác",
-        "clause": 1
+        "clause": null
       },
       "content": "Người nào giả mạo chức vụ, cấp bậc, vị trí công tác thực hiện hành vi trái pháp luật nhưng không nhằm mục đích chiếm đoạt tài sản, thì bị phạt cải tạo không giam giữ đến 02 năm hoặc phạt tù từ 03 tháng đến 02 năm.",
       "cross_references": [],
@@ -21640,7 +21643,7 @@
         "chapter": 22,
         "article": 347,
         "article_title": "Tội vi phạm quy định về xuất cảnh, nhập cảnh; tội ở lại Việt Nam trái phép",
-        "clause": 1
+        "clause": null
       },
       "content": "Người nào xuất cảnh, nhập cảnh trái phép hoặc ở lại Việt Nam trái phép, đã bị xử phạt vi phạm hành chính về hành vi này mà còn vi phạm, thì bị phạt tiền từ 5.000.000 đồng đến 50.000.000 đồng hoặc phạt tù từ 06 tháng đến 03 năm.",
       "cross_references": [],
@@ -23058,7 +23061,7 @@
         "chapter": 24,
         "article": 367,
         "article_title": "Khái niệm tội xâm phạm hoạt động tư pháp",
-        "clause": 1
+        "clause": null
       },
       "content": "Các tội xâm phạm hoạt động tư pháp là những hành vi xâm phạm sự đúng đắn của hoạt động tố tụng và thi hành án.",
       "cross_references": [],
@@ -26311,7 +26314,7 @@
         "chapter": 26,
         "article": 424,
         "article_title": "Tội tuyển mộ, huấn luyện hoặc sử dụng lính đánh thuê",
-        "clause": 1
+        "clause": null
       },
       "content": "Người nào tuyển mộ, huấn luyện hoặc sử dụng lính đánh thuê nhằm chống lại một quốc gia hoặc một vùng lãnh thổ độc lập, có chủ quyền, thì bị phạt tù từ 10 năm đến 20 năm hoặc tù chung thân.",
       "cross_references": [],
@@ -26327,7 +26330,7 @@
         "chapter": 26,
         "article": 425,
         "article_title": "Tội làm lính đánh thuê",
-        "clause": 1
+        "clause": null
       },
       "content": "Người nào làm lính đánh thuê nhằm chống một quốc gia hoặc một vùng lãnh thổ độc lập, có chủ quyền, thì bị phạt tù từ 05 năm đến 15 năm. Phần thứ ba ĐIỀU KHOẢN THI HÀNH",
       "cross_references": [],

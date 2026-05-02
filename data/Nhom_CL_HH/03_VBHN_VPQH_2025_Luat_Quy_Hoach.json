@@ -1,9 +1,12 @@
 {
   "law_info": {
     "law_id": "LQH_VBHN",
-    "law_name": "Luật Quy Hoạch",
-    "publisher": "VĂN PHÒNG QUỐC HỘI",
-    "status": "Luật Quy hoạch số 21/2017/QH14 ngày 24 tháng 11 năm 2017 của Quốc hội, có hiệu lực kể từ ngày 01 tháng 01 năm 2019, được sửa đổi, bổ sung bởi:",
+    "law_name": "Luật Quy hoạch 2017 (Văn bản hợp nhất 03/VBHN-VPQH)",
+    "publisher": "Văn phòng Quốc hội",
+    "document_number": "03/VBHN-VPQH",
+    "issue_date": "21/02/2025",
+    "effective_date": "01/01/2019",
+    "status": "Đang có hiệu lực",
     "executive_summary": "Luật Quy hoạch điều chỉnh việc lập, thẩm định, quyết định hoặc phê duyệt, công bố, thực hiện, đánh giá và điều chỉnh quy hoạch trong hệ thống quy hoạch quốc gia. Văn bản xác lập nguyên tắc tích hợp, thứ bậc và liên kết giữa các loại quy hoạch cấp quốc gia, vùng, tỉnh và quy hoạch có tính chất kỹ thuật, chuyên ngành. Luật đồng thời quy định trách nhiệm quản lý nhà nước, quyền và nghĩa vụ của cơ quan, tổ chức, cá nhân trong hoạt động quy hoạch nhằm bảo đảm phát triển bền vững."
   },
   "clauses": [
@@ -13,7 +16,7 @@
         "chapter": 1,
         "article": 1,
         "article_title": "Phạm vi điều chỉnh",
-        "clause": 1
+        "clause": null
       },
       "content": "Luật này quy định việc lập, thẩm định, quyết định hoặc phê duyệt, công bố, thực hiện, đánh giá, điều chỉnh quy hoạch trong hệ thống quy hoạch quốc gia; trách nhiệm quản lý nhà nước về quy hoạch.",
       "cross_references": [],
@@ -30,7 +33,7 @@
         "chapter": 1,
         "article": 2,
         "article_title": "Đối tượng áp dụng",
-        "clause": 1
+        "clause": null
       },
       "content": "Luật này áp dụng đối với cơ quan, tổ chức, cá nhân tham gia lập, thẩm định, quyết định hoặc phê duyệt, công bố, thực hiện, đánh giá, điều chỉnh quy hoạch trong hệ thống quy hoạch quốc gia và cơ quan, tổ chức, cá nhân khác có liên quan.",
       "cross_references": [],
@@ -2432,7 +2435,7 @@
         "chapter": 3,
         "article": 37,
         "article_title": "Nội dung quyết định hoặc phê duyệt quy hoạch",
-        "clause": 1
+        "clause": null
       },
       "content": "Nội dung thẩm định quy hoạch tập trung vào các vấn đề sau đây: Hồ sơ trình quyết định hoặc phê duyệt quy hoạch bao gồm các tài liệu chủ yếu sau đây: Nội dung quyết định hoặc phê duyệt quy hoạch bao gồm các nội dung chủ yếu quy định tại khoản 2 Điều 22, khoản 2 Điều 23, khoản 2 Điều 24, các khoản 3, 4, 5 và 6 Điều 25, khoản 2 Điều 26 và khoản 2 Điều 27 của Luật này tương ứng với từng loại quy hoạch. Mục 3. CÔNG BỐ VÀ CUNG CẤP THÔNG TIN QUY HOẠCH",
       "cross_references": [

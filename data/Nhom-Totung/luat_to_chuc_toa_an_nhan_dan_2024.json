@@ -16,7 +16,7 @@
         "chapter": 1,
         "article": 1,
         "article_title": "Phạm vi điều chỉnh",
-        "clause": 1
+        "clause": null
       },
       "content": "Luật này quy định về vị trí, chức năng, nhiệm vụ, quyền hạn và tổ chức bộ máy của Tòa án nhân dân; về Thẩm phán, Hội thẩm và các chức danh khác trong Tòa án nhân dân; về bảo đảm hoạt động của Tòa án nhân dân.",
       "cross_references": [],
@@ -303,7 +303,7 @@
         "chapter": 1,
         "article": 6,
         "article_title": "Độc lập theo thẩm quyền xét xử",
-        "clause": 1
+        "clause": null
       },
       "content": "Các Tòa án được tổ chức và hoạt động độc lập theo thẩm quyền xét xử.",
       "cross_references": [],
@@ -320,7 +320,7 @@
         "chapter": 1,
         "article": 7,
         "article_title": "Bảo đảm quyền bình đẳng trước pháp luật và Tòa án",
-        "clause": 1
+        "clause": null
       },
       "content": "Tòa án xét xử theo nguyên tắc mọi người đều bình đẳng trước pháp luật, không phân biệt dân tộc, tín ngưỡng, tôn giáo, giới tính, thành phần, địa vị xã hội; mọi cơ quan, tổ chức, cá nhân đều bình đẳng trước Tòa án.",
       "cross_references": [],
@@ -411,7 +411,7 @@
         "chapter": 1,
         "article": 10,
         "article_title": "Thực hiện chế độ xét xử sơ thẩm có Hội thẩm tham gia",
-        "clause": 1
+        "clause": null
       },
       "content": "Tòa án xét xử sơ thẩm các vụ án có Hội thẩm tham gia theo quy định của luật, trừ trường hợp xét xử theo thủ tục rút gọn.",
       "cross_references": [],
@@ -497,7 +497,7 @@
         "chapter": 1,
         "article": 12,
         "article_title": "Tòa án nhân dân xét xử tập thể và quyết định theo đa số",
-        "clause": 1
+        "clause": null
       },
       "content": "Tòa án nhân dân xét xử tập thể và quyết định theo đa số, trừ trường hợp xét xử theo thủ tục rút gọn. Thành phần Hội đồng xét xử theo quy định của luật.",
       "cross_references": [],
@@ -513,7 +513,7 @@
         "chapter": 1,
         "article": 13,
         "article_title": "Tranh tụng trong xét xử được bảo đảm",
-        "clause": 1
+        "clause": null
       },
       "content": "Nguyên tắc tranh tụng trong xét xử được bảo đảm. Tòa án có trách nhiệm bảo đảm cho người tiến hành tố tụng, người tham gia tố tụng thực hiện quyền tranh tụng theo quy định của luật.",
       "cross_references": [],
@@ -1141,7 +1141,7 @@
         "chapter": 2,
         "article": 28,
         "article_title": "Quyết định những vấn đề liên quan đến quyền con người, quyền và nghĩa vụ của cơ quan, tổ chức, cá nhân",
-        "clause": 1
+        "clause": null
       },
       "content": "Tòa án có thẩm quyền xem xét, quyết định những vấn đề liên quan đến quyền con người, quyền và nghĩa vụ của cơ quan, tổ chức, cá nhân theo quy định của luật.",
       "cross_references": [],
@@ -1223,7 +1223,7 @@
         "chapter": 2,
         "article": 31,
         "article_title": "Giải thích áp dụng pháp luật trong xét xử, giải quyết vụ án, vụ việc",
-        "clause": 1
+        "clause": null
       },
       "content": "Giải thích áp dụng pháp luật trong xét xử, giải quyết vụ án, vụ việc là việc Tòa án làm rõ trong quá trình xét xử, giải quyết vụ án, vụ việc và trong bản án, quyết định việc áp dụng quy định của pháp luật trong hoàn cảnh, tình huống cụ thể để xét xử, giải quyết vụ án, vụ việc theo thẩm quyền.",
       "cross_references": [],
@@ -1420,7 +1420,7 @@
         "chapter": 2,
         "article": 36,
         "article_title": "Nghiên cứu khoa học",
-        "clause": 1
+        "clause": null
       },
       "content": "Tòa án có nhiệm vụ nghiên cứu khoa học liên quan đến tổ chức và hoạt động của Tòa án; ứng dụng kết quả nghiên cứu khoa học để góp phần hoàn thiện tổ chức bộ máy, nâng cao chất lượng đội ngũ cán bộ, công chức, viên chức và hiệu quả hoạt động của Tòa án.",
       "cross_references": [],
@@ -1498,7 +1498,7 @@
         "chapter": 2,
         "article": 38,
         "article_title": "Hợp tác quốc tế",
-        "clause": 1
+        "clause": null
       },
       "content": "Tòa án thực hiện nhiệm vụ hợp tác quốc tế trong lĩnh vực xây dựng pháp luật; đào tạo, bồi dưỡng nguồn nhân lực; nghiên cứu khoa học; tăng cường năng lực Tòa án; trao đổi kinh nghiệm xét xử, giải quyết vụ án, vụ việc; đề xuất ký kết, gia nhập, thực hiện điều ước quốc tế; ký kết, thực hiện thỏa thuận quốc tế; tham gia định chế tư pháp quốc tế theo quy định của pháp luật.",
       "cross_references": [],
@@ -2023,7 +2023,7 @@
         "chapter": 3,
         "article": 45,
         "article_title": "Kinh phí hoạt động của Hội đồng tuyển chọn, giám sát Thẩm phán quốc gia",
-        "clause": 1
+        "clause": null
       },
       "content": "Kinh phí hoạt động của Hội đồng tuyển chọn, giám sát Thẩm phán quốc gia do ngân sách nhà nước bảo đảm; được bố trí trong kinh phí hoạt động của Tòa án nhân dân tối cao.",
       "cross_references": [],
@@ -3194,7 +3194,7 @@
         "chapter": 4,
         "article": 64,
         "article_title": "Nhiệm vụ, quyền hạn của Tòa án quân sự",
-        "clause": 1
+        "clause": null
       },
       "content": "Các Tòa án quân sự được tổ chức trong Quân đội nhân dân Việt Nam để xét xử những vụ án hình sự mà bị cáo là quân nhân tại ngũ và vụ án khác theo quy định của luật.",
       "cross_references": [],
@@ -4750,7 +4750,7 @@
         "chapter": 5,
         "article": 88,
         "article_title": "Thẩm phán",
-        "clause": 1
+        "clause": null
       },
       "content": "Thẩm phán là người có đủ tiêu chuẩn, điều kiện theo quy định của Luật này được Chủ tịch nước bổ nhiệm để thực hiện nhiệm vụ xét xử và các nhiệm vụ, quyền hạn khác theo quy định của Luật này và quy định khác của pháp luật có liên quan.",
       "cross_references": [],
@@ -5305,7 +5305,7 @@
         "chapter": 5,
         "article": 98,
         "article_title": "Thủ tục đề nghị bổ nhiệm, bổ nhiệm lại Thẩm phán Tòa án nhân dân",
-        "clause": 1
+        "clause": null
       },
       "content": "Chánh án Tòa án nhân dân tối cao quy định về thủ tục đề nghị bổ nhiệm, bổ nhiệm lại Thẩm phán Tòa án nhân dân.",
       "cross_references": [],
@@ -6232,7 +6232,7 @@
         "chapter": 5,
         "article": 111,
         "article_title": "Thẩm tra viên Tòa án",
-        "clause": 1
+        "clause": null
       },
       "content": "Thẩm tra viên Tòa án là người có đủ tiêu chuẩn, điều kiện theo quy định của Luật này được Chánh án Tòa án nhân dân tối cao bổ nhiệm để thực hiện nhiệm vụ thẩm tra hồ sơ vụ án, vụ việc và nhiệm vụ khác theo quy định của Luật này.",
       "cross_references": [],
@@ -6456,7 +6456,7 @@
         "chapter": 5,
         "article": 116,
         "article_title": "Thư ký Tòa án",
-        "clause": 1
+        "clause": null
       },
       "content": "Thư ký Tòa án là người có đủ tiêu chuẩn, điều kiện theo quy định của Luật này được Chánh án Tòa án nhân dân tối cao bổ nhiệm để thực hiện thủ tục tố tụng, nhiệm vụ hành chính, tư pháp và nhiệm vụ khác theo quy định của Luật này.",
       "cross_references": [],
@@ -7427,7 +7427,7 @@
         "chapter": 7,
         "article": 135,
         "article_title": "Lựa chọn ngẫu nhiên Thẩm phán, Hội thẩm tham gia xét xử",
-        "clause": 1
+        "clause": null
       },
       "content": "Chánh án Tòa án nơi Thẩm phán, Hội thẩm làm nhiệm vụ quyết định phân công Thẩm phán, Hội thẩm xét xử, giải quyết vụ án, vụ việc bảo đảm nguyên tắc vô tư, khách quan, ngẫu nhiên theo quy định của pháp luật và quy định của Tòa án nhân dân tối cao.",
       "cross_references": [],
@@ -8056,7 +8056,7 @@
         "chapter": 8,
         "article": 145,
         "article_title": "Chế độ, chính sách đối với công chức khác, viên chức và người lao động của Tòa án",
-        "clause": 1
+        "clause": null
       },
       "content": "Công chức khác, viên chức và người lao động của Tòa án được cấp trang phục và hưởng chế độ, chính sách theo quy định của pháp luật.",
       "cross_references": [],
@@ -8263,7 +8263,7 @@
         "chapter": 8,
         "article": 148,
         "article_title": "Xây dựng Tòa án điện tử",
-        "clause": 1
+        "clause": null
       },
       "content": "Tòa án có trách nhiệm xây dựng và triển khai Tòa án điện tử để nâng cao hiệu lực, hiệu quả hoạt động; tăng cường công khai, minh bạch hoạt động của Tòa án.",
       "cross_references": [],

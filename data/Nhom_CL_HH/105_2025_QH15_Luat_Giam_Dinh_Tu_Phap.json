@@ -1,9 +1,12 @@
 {
   "law_info": {
     "law_id": "LGDTP_2025",
-    "law_name": "Luật Giám Định Tư Pháp",
-    "publisher": "QUỐC HỘI",
-    "status": "Có hiệu lực",
+    "law_name": "Luật Giám định tư pháp 2025",
+    "publisher": "Quốc hội",
+    "document_number": "105/2025/QH15",
+    "issue_date": "05/12/2025",
+    "effective_date": "01/05/2026",
+    "status": "Đang có hiệu lực",
     "executive_summary": "Luật Giám định tư pháp quy định về chủ thể giám định, tổ chức giám định, trình tự, thủ tục giám định và việc sử dụng kết luận giám định trong hoạt động tố tụng. Văn bản điều chỉnh quyền, nghĩa vụ của người trưng cầu, người yêu cầu giám định và cơ quan, tổ chức, cá nhân có liên quan; đồng thời xác lập cơ chế chi phí, chính sách và điều kiện bảo đảm cho hoạt động giám định. Luật cũng quy định trách nhiệm quản lý nhà nước nhằm bảo đảm tính khách quan, chính xác, kịp thời của hoạt động giám định tư pháp."
   },
   "clauses": [
@@ -13,7 +16,7 @@
         "chapter": 1,
         "article": 1,
         "article_title": "Phạm vi điều chỉnh",
-        "clause": 1
+        "clause": null
       },
       "content": "Luật này quy định về người giám định tư pháp, tổ chức giám định tư pháp; trình tự, thủ tục giám định tư pháp; chi phí giám định tư pháp; chế độ, chính sách trong hoạt động giám định tư pháp; quản lý nhà nước về giám định tư pháp; trách nhiệm của cơ quan tiến hành tố tụng, tổ chức, cá nhân liên quan đến hoạt động giám định tư pháp.",
       "cross_references": [],
@@ -373,7 +376,7 @@
         "chapter": 1,
         "article": 6,
         "article_title": "Trách nhiệm của cơ quan, đơn vị, tổ chức, cá nhân đối với hoạt động giám định tư pháp",
-        "clause": 1
+        "clause": null
       },
       "content": "Trong Luật này, các từ ngữ dưới đây được hiểu như sau: Cơ quan, đơn vị, tổ chức, cá nhân có trách nhiệm phối hợp, tạo điều kiện để người giám định tư pháp thực hiện giám định theo quy định của Luật này và quy định khác của pháp luật có liên quan.",
       "cross_references": [],
@@ -3126,7 +3129,7 @@
         "chapter": 6,
         "article": 43,
         "article_title": "Sửa đổi, bổ sung khoản 1 Điều 136 của Bộ luật Tố tụng hình sự số 101/2015/QH13 đã được sửa đổi, bổ sung một số điều theo Luật số 02/2021/QH15, Luật số 34/2024/QH15, Luật số 59/2024/QH15, Luật số 99/2025/QH15 và Luật số 103/2025/QH15",
-        "clause": 1
+        "clause": null
       },
       "content": "Sửa đổi, bổ sung khoản 1 Điều 136 như sau: \"1. Chi phí quy định tại điểm a, chi phí định giá tài sản quy định tại điểm b và chi phí quy định tại điểm c khoản 4 Điều 135 của Bộ luật này do các cơ quan, người đã trưng cầu, yêu cầu, chỉ định chi trả; trường hợp Trung tâm trợ giúp pháp lý nhà nước cử người bào chữa thì do Trung tâm này chi trả. Chi phí giám định tư pháp thực hiện theo quy định của pháp luật về giám định tư pháp.\".",
       "cross_references": [

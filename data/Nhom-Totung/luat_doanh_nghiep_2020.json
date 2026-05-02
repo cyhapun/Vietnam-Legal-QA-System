@@ -16,7 +16,7 @@
         "chapter": 1,
         "article": 1,
         "article_title": "Phạm vi điều chỉnh",
-        "clause": 1
+        "clause": null
       },
       "content": "Luật này quy định về việc thành lập, tổ chức quản lý, tổ chức lại, giải thể và hoạt động có liên quan của doanh nghiệp, bao gồm công ty trách nhiệm hữu hạn, công ty cổ phần, công ty hợp danh và doanh nghiệp tư nhân; quy định về nhóm công ty.",
       "cross_references": [],
@@ -65,7 +65,7 @@
         "chapter": 1,
         "article": 3,
         "article_title": "Áp dụng Luật Doanh nghiệp và luật khác",
-        "clause": 1
+        "clause": null
       },
       "content": "Trường hợp luật khác có quy định đặc thù về việc thành lập, tổ chức quản lý, tổ chức lại, giải thể và hoạt động có liên quan của doanh nghiệp thì áp dụng quy định của luật đó.",
       "cross_references": [],
@@ -2974,7 +2974,7 @@
         "chapter": 2,
         "article": 42,
         "article_title": "Trụ sở chính của doanh nghiệp",
-        "clause": 1
+        "clause": null
       },
       "content": "Trụ sở chính của doanh nghiệp đặt trên lãnh thổ Việt Nam, là địa chỉ liên lạc của doanh nghiệp và được xác định theo địa giới đơn vị hành chính; có số điện thoại, số fax và thư điện tử (nếu có).",
       "cross_references": [],
@@ -4766,7 +4766,7 @@
         "chapter": 3,
         "article": 69,
         "article_title": "Điều kiện để chia lợi nhuận",
-        "clause": 1
+        "clause": null
       },
       "content": "Công ty chỉ được chia lợi nhuận cho các thành viên sau khi đã hoàn thành nghĩa vụ thuế và các nghĩa vụ tài chính khác theo quy định của pháp luật, bảo đảm thanh toán đủ các khoản nợ và nghĩa vụ tài sản khác đến hạn trả sau khi chia lợi nhuận.",
       "cross_references": [],
@@ -4780,7 +4780,7 @@
         "chapter": 3,
         "article": 70,
         "article_title": "Thu hồi phần vốn góp đã hoàn trả hoặc lợi nhuận đã chia",
-        "clause": 1
+        "clause": null
       },
       "content": "Trường hợp hoàn trả một phần vốn góp do giảm vốn điều lệ trái với quy định tại khoản 3 Điều 68 của Luật này hoặc chia lợi nhuận cho thành viên trái với quy định tại Điều 69 của Luật này thì các thành viên công ty phải hoàn trả cho công ty số tiền, tài sản khác đã nhận; phải cùng liên đới chịu trách nhiệm về các khoản nợ và nghĩa vụ tài sản khác của công ty tương ứng với số tiền, tài sản chưa hoàn trả đủ cho đến khi hoàn trả đủ số tiền, tài sản khác đã nhận.",
       "cross_references": [
@@ -4916,7 +4916,7 @@
         "chapter": 3,
         "article": 73,
         "article_title": "Công bố thông tin",
-        "clause": 1
+        "clause": null
       },
       "content": "Công ty trách nhiệm hữu hạn hai thành viên trở lên theo quy định tại điểm b khoản 1 Điều 88 của Luật này thực hiện công bố thông tin theo quy định tại các điểm a, c, đ, g khoản 1 Điều 109 và Điều 110 của Luật này. Mục 2. CÔNG TY TRÁCH NHIỆM HỮU HẠN MỘT THÀNH VIÊN",
       "cross_references": [
@@ -8988,7 +8988,7 @@
         "chapter": 5,
         "article": 131,
         "article_title": "Mua cổ phần, trái phiếu",
-        "clause": 1
+        "clause": null
       },
       "content": "Cổ phần, trái phiếu của công ty cổ phần có thể được mua bằng Đồng Việt Nam, ngoại tệ tự do chuyển đổi, vàng, quyền sử dụng đất, quyền sở hữu trí tuệ, công nghệ, bí quyết kỹ thuật, tài sản khác quy định tại Điều lệ công ty và phải được thanh toán đủ một lần.",
       "cross_references": [],
@@ -9273,7 +9273,7 @@
         "chapter": 5,
         "article": 136,
         "article_title": "Thu hồi tiền thanh toán cổ phần được mua lại hoặc cổ tức",
-        "clause": 1
+        "clause": null
       },
       "content": "Trường hợp việc thanh toán cổ phần được mua lại trái với quy định tại khoản 1 Điều 134 của Luật này hoặc trả cổ tức trái với quy định tại Điều 135 của Luật này, cổ đông phải hoàn trả cho công ty số tiền, tài sản khác đã nhận; trường hợp cổ đông không hoàn trả được cho công ty thì tất cả thành viên Hội đồng quản trị phải cùng liên đới chịu trách nhiệm về các khoản nợ và nghĩa vụ tài sản khác của công ty trong phạm vi giá trị số tiền, tài sản đã trả cho cổ đông mà chưa được hoàn lại.",
       "cross_references": [
@@ -12862,7 +12862,7 @@
         "chapter": 7,
         "article": 191,
         "article_title": "Cho thuê doanh nghiệp tư nhân",
-        "clause": 1
+        "clause": null
       },
       "content": "Chủ doanh nghiệp tư nhân có quyền cho thuê toàn bộ doanh nghiệp tư nhân của mình nhưng phải thông báo bằng văn bản kèm theo bản sao hợp đồng cho thuê có công chứng đến Cơ quan đăng ký kinh doanh, cơ quan thuế trong thời hạn 03 ngày làm việc kể từ ngày hợp đồng cho thuê có hiệu lực. Trong thời hạn cho thuê, chủ doanh nghiệp tư nhân vẫn phải chịu trách nhiệm trước pháp luật với tư cách là chủ sở hữu doanh nghiệp tư nhân. Quyền, nghĩa vụ và trách nhiệm của chủ sở hữu và người thuê đối với hoạt động kinh doanh của doanh nghiệp tư nhân được quy định trong hợp đồng cho thuê.",
       "cross_references": [],
@@ -14305,7 +14305,7 @@
         "chapter": 9,
         "article": 214,
         "article_title": "Phá sản doanh nghiệp",
-        "clause": 1
+        "clause": null
       },
       "content": "Việc phá sản doanh nghiệp được thực hiện theo quy định của pháp luật về phá sản.",
       "cross_references": [],
