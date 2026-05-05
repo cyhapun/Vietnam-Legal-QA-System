@@ -156,22 +156,6 @@ async def chat_endpoint(request: ChatRequest):
 
         execution_time = time.time() - start_time
 
-        # 6. Ghi dữ liệu ra file log (Phần này giữ nguyên code của bạn)
-        log_file_path = current_dir / "rag_history.log"
-        with open(log_file_path, "a", encoding="utf-8") as f:
-            f.write(f"\n{'='*80}\n")
-            f.write(f"THỜI GIAN  : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-            f.write(f"LĨNH VỰC   : {request.category}\n")
-            f.write(f"MÔ HÌNH    : {request.model}\n")
-            f.write(f"THỜI GIAN ĐÁP ỨNG: {execution_time:.2f} giây\n")
-            f.write(f"{'-'*80}\n")
-            f.write(f"PROMPT ĐÃ GỘP (FULL PAYLOAD GỬI CHO LLM):\n")
-            f.write(f"{final_formatted_prompt}\n")
-            f.write(f"{'-'*80}\n")
-            f.write(f"AI TRẢ LỜI:\n")
-            f.write(f"{output_text}\n")
-            f.write(f"{'='*80}\n")
-
         return {
             "text": output_text,
             "contextUsed": frontend_context
