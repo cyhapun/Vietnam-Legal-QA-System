@@ -1,18 +1,17 @@
+# === Core Web Framework ===
 fastapi
 uvicorn
 pydantic
 python-dotenv
 
+# === LangChain + LLM ===
 langchain
 langchain-core
 langchain-community
-langchain-openai
-langchain-google-genai
 langchain-huggingface
-langchain-text-splitters
 
+# === Vector Store ===
 faiss-cpu
 
+# === HuggingFace Hub ===
 huggingface_hub
-
-pypdf

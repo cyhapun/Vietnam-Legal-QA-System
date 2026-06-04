@@ -1,12 +1,9 @@
 import React from 'react';
 import { Plus, MessageSquare, Trash2, Gavel, PanelLeftClose } from 'lucide-react';
+import type { ChatSession } from '@/lib/types';
 
-export interface ChatSession {
-  id: string;
-  title: string;
-  lastMessage: string;
-  timestamp: number;
-}
+// Re-export for backward compatibility
+export type { ChatSession } from '@/lib/types';
 
 interface SidebarProps {
   sessions: ChatSession[];

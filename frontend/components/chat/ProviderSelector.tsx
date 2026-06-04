@@ -1,34 +1,21 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { Cpu, ChevronDown, Check } from 'lucide-react';
+import { useClickOutside } from '@/hooks/use-click-outside';
+import { AI_MODELS } from '@/lib/constants';
 
 interface ModelSelectorProps {
   model: string;
   setModel: (model: string) => void;
 }
 
-const MODELS = [
-  { id: 'Qwen/Qwen3.5-9B', name: 'Qwen 3.5', fullName: 'Qwen3.5 9B' },
-  { id: 'google/gemma-4-31B-it', name: 'Gemma 4', fullName: 'Gemma 4 31B' },
-  { id: 'meta-llama/Llama-3.1-8B-Instruct', name: 'Llama 3.1', fullName: 'Llama 3.1 8B' },
-  { id: 'deepseek-ai/DeepSeek-R1-Distill-Qwen-7B', name: 'DeepSeek R1', fullName: 'DeepSeek R1 7B' }
-];
-
 export function ProviderSelector({ model, setModel }: ModelSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const selectedModel = MODELS.find(m => m.id === model) || MODELS[0];
+  const selectedModel = AI_MODELS.find(m => m.id === model) || AI_MODELS[0];
 
-  // Xử lý đóng menu khi click ra ngoài
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  // Dùng hook tái sử dụng thay vì duplicate useEffect
+  useClickOutside(dropdownRef, useCallback(() => setIsOpen(false), []));
 
   return (
     <div className="relative flex items-center" ref={dropdownRef}>
@@ -50,7 +37,7 @@ export function ProviderSelector({ model, setModel }: ModelSelectorProps) {
           <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-gray-400 border-b border-gray-50 mb-1">
             Chọn mô hình AI
           </div>
-          {MODELS.map((m) => (
+          {AI_MODELS.map((m) => (
             <button
               key={m.id}
               onClick={() => {

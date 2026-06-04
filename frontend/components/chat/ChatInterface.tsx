@@ -1,19 +1,32 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Send, Scale, PanelLeft, LibraryBig, Gavel, Check, ChevronDown } from 'lucide-react'; 
 import { ProviderSelector } from './ProviderSelector';
-import { ChatMessage, Message } from './ChatMessage';
-import { Sidebar, ChatSession } from './Sidebar';
+import { ChatMessage } from './ChatMessage';
+import { Sidebar } from './Sidebar';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { useChatSessions } from '@/hooks/use-chat-sessions';
+import { useClickOutside } from '@/hooks/use-click-outside';
+import { LAW_CATEGORIES, DEFAULT_MODEL } from '@/lib/constants';
+import type { Message } from '@/lib/types';
 
 export function ChatInterface() {
-  const [sessions, setSessions] = useState<ChatSession[]>([]);
-  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
-  const [messagesBySession, setMessagesBySession] = useState<Record<string, Message[]>>({});
-  
+  const {
+    sessions,
+    currentSessionId,
+    currentMessages,
+    isMounted,
+    handleNewChat,
+    handleSelectSession,
+    handleDeleteSession,
+    addMessage,
+    updateSessionTitle,
+  } = useChatSessions();
+
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [model, setModel] = useState('google/gemma-4-31B-it');
+  const [model, setModel] = useState(DEFAULT_MODEL);
   
   // State cho danh mục Lĩnh vực (Custom Dropdown)
   const [lawCategory, setLawCategory] = useState('Chung');
@@ -21,16 +34,9 @@ export function ChatInterface() {
   const categoryRef = useRef<HTMLDivElement>(null);
   
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isMounted, setIsMounted] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  const categories = [
-    "Chung", "Kinh doanh", "Đất đai", "Bảo vệ môi trường", "Tố tụng dân sự", "Nhà ở"
-  ];
-
-  const currentMessages = currentSessionId ? messagesBySession[currentSessionId] || [] : [];
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -40,68 +46,14 @@ export function ChatInterface() {
     scrollToBottom();
   }, [currentMessages, isLoading]);
 
-  useEffect(() => {
-    setIsMounted(true);
-    const savedSessions = localStorage.getItem('vietlaw_sessions');
-    const savedMessages = localStorage.getItem('vietlaw_messages');
-
-    if (savedSessions && savedMessages) {
-      const parsedSessions = JSON.parse(savedSessions);
-      setSessions(parsedSessions);
-      setMessagesBySession(JSON.parse(savedMessages));
-      if (parsedSessions.length > 0) setCurrentSessionId(parsedSessions[0].id);
-      else handleNewChat();
-    } else {
-      handleNewChat();
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isMounted) {
-      localStorage.setItem('vietlaw_sessions', JSON.stringify(sessions));
-      localStorage.setItem('vietlaw_messages', JSON.stringify(messagesBySession));
-    }
-  }, [sessions, messagesBySession, isMounted]);
-
-  // Xử lý đóng Dropdown Lĩnh vực khi click ra ngoài
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (categoryRef.current && !categoryRef.current.contains(event.target as Node)) {
-        setIsCategoryOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  // Dùng hook tái sử dụng cho click outside
+  useClickOutside(categoryRef, useCallback(() => setIsCategoryOpen(false), []));
 
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 160)}px`;
-    }
-  };
-
-  const handleNewChat = () => {
-    const newId = Date.now().toString();
-    const newSession: ChatSession = { id: newId, title: 'Cuộc trò chuyện mới', lastMessage: '', timestamp: Date.now() };
-    setSessions(prev => [newSession, ...prev]);
-    setCurrentSessionId(newId);
-    setMessagesBySession(prev => ({ ...prev, [newId]: [] }));
-  };
-
-  const handleSelectSession = (id: string) => setCurrentSessionId(id);
-  const handleDeleteSession = (id: string) => {
-    setSessions(prev => prev.filter(s => s.id !== id));
-    setMessagesBySession(prev => {
-      const next = { ...prev };
-      delete next[id];
-      return next;
-    });
-    if (currentSessionId === id) {
-      const remaining = sessions.filter(s => s.id !== id);
-      if (remaining.length > 0) setCurrentSessionId(remaining[0].id);
-      else handleNewChat();
     }
   };
 
@@ -114,15 +66,10 @@ export function ChatInterface() {
     if (textareaRef.current) textareaRef.current.style.height = '52px';
 
     const userMessage: Message = { id: Date.now().toString(), role: 'user', content: userText };
-
-    setMessagesBySession(prev => ({
-      ...prev, [currentSessionId]: [...(prev[currentSessionId] || []), userMessage]
-    }));
+    addMessage(userMessage);
 
     if (currentMessages.length === 0) {
-      setSessions(prev => prev.map(s => 
-        s.id === currentSessionId ? { ...s, title: userText.substring(0, 30) + (userText.length > 30 ? '...' : '') } : s
-      ));
+      updateSessionTitle(userText);
     }
 
     setIsLoading(true);
@@ -146,16 +93,13 @@ export function ChatInterface() {
         contextUsed: data.contextUsed
       };
 
-      setMessagesBySession(prev => ({
-        ...prev, [currentSessionId]: [...(prev[currentSessionId] || []), assistantMessage]
-      }));
+      addMessage(assistantMessage);
     } catch (error) {
-      setMessagesBySession(prev => ({
-        ...prev, [currentSessionId]: [...(prev[currentSessionId] || []), {
-          id: (Date.now() + 1).toString(), role: 'assistant',
-          content: '⚠️ Xin lỗi, đã có lỗi kết nối đến máy chủ. Vui lòng kiểm tra lại Backend.'
-        }]
-      }));
+      addMessage({
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: '⚠️ Xin lỗi, đã có lỗi kết nối đến máy chủ. Vui lòng kiểm tra lại Backend.'
+      });
     } finally {
       setIsLoading(false);
     }
@@ -196,7 +140,7 @@ export function ChatInterface() {
           <div className="flex items-center gap-3">
             {!isSidebarOpen && (
                <button onClick={() => setIsSidebarOpen(true)} className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-colors" title="Mở sidebar">
-                  <PanelLeft className="w-5 h-5" />
+                 <PanelLeft className="w-5 h-5" />
                </button>
             )}
             <span className="text-sm font-bold text-gray-800 tracking-tight md:hidden">VietLaw AI</span>
@@ -222,20 +166,7 @@ export function ChatInterface() {
           ) : (
             <div className="pb-8">
               {currentMessages.map(msg => <ChatMessage key={msg.id} message={msg} />)}
-              {isLoading && (
-                <div className="py-6 px-4">
-                  <div className="max-w-4xl mx-auto flex space-x-4 items-center">
-                    <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center shadow-md border border-blue-800">
-                      <Scale className="w-4 h-4 text-white" />
-                    </div>
-                    <div className="flex space-x-1.5 items-center px-4 py-3">
-                      <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                      <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                      <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                    </div>
-                  </div>
-                </div>
-              )}
+              {isLoading && <LoadingSpinner />}
               <div ref={messagesEndRef} />
             </div>
           )}
@@ -269,7 +200,7 @@ export function ChatInterface() {
                       <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-gray-400 border-b border-gray-50 mb-1">
                         Tra cứu theo lĩnh vực
                       </div>
-                      {categories.map(cat => (
+                      {LAW_CATEGORIES.map(cat => (
                         <button
                           key={cat}
                           onClick={() => {

@@ -1,24 +1,10 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { User, Scale, BookOpen, ChevronRight } from 'lucide-react';
+import type { Message } from '@/lib/types';
 
-export interface DocumentChunk {
-  content: string;
-  metadata: {
-    source?: string;
-    dieu?: string;
-    khoan?: string;
-    diem?: string;
-    law?: string;
-  };
-}
-
-export interface Message {
-  id: string;
-  role: 'user' | 'assistant';
-  content: string;
-  contextUsed?: DocumentChunk[];
-}
+// Re-export types cho backward compatibility
+export type { Message, DocumentChunk } from '@/lib/types';
 
 export function ChatMessage({ message }: { message: Message }) {
   const isUser = message.role === 'user';
