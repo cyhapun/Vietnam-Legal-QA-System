@@ -4,14 +4,14 @@ File này chỉ chịu trách nhiệm:
   1. Tạo FastAPI app
   2. Đăng ký middleware
   3. Đăng ký routers
-  4. Khởi tạo vector DB khi startup
+  4. Khởi tạo RAG Pipeline khi startup
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import CORS_ORIGINS
 from app.api.chat import router as chat_router
-from app.services.vectorstore import init_vector_db
+from app.services.pipeline import init_pipeline
 from app.utils.logging import setup_logger
 
 logger = setup_logger("vietlaw.main")
@@ -36,12 +36,12 @@ def create_app() -> FastAPI:
     # --- Startup Event ---
     @application.on_event("startup")
     async def startup_event():
-        logger.info("Khởi tạo vector database...")
+        logger.info("Khởi tạo RAG Pipeline...")
         try:
-            init_vector_db()
-            logger.info("Vector database đã sẵn sàng!")
+            init_pipeline()
+            logger.info("RAG Pipeline đã sẵn sàng!")
         except Exception as e:
-            logger.error("Lỗi khởi tạo vector database: %s", str(e))
+            logger.error("Lỗi khởi tạo RAG Pipeline: %s", str(e))
 
     return application
 

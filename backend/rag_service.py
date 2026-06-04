@@ -1,13 +1,10 @@
 """
 Backward-compatible module.
 Logic thực tế đã được chuyển sang:
-  - app/services/vectorstore.py (FAISS, embedding, knowledge base)
-  - app/services/rag.py (retrieval, context building)
+  - app/services/knowledge_base.py (Knowledge Base, metadata)
+  - app/services/embedding/ (Embedding strategies)
+  - app/services/search/ (FAISS, BM25, Hybrid search)
+  - app/services/pipeline.py (RAG Pipeline orchestrator)
 File này tồn tại để tránh import lỗi từ code cũ.
 """
-from app.services.vectorstore import init_vector_db, get_vectorstore  # noqa: F401
-from app.services.rag import (  # noqa: F401
-    get_retriever,
-    build_nested_context,
-    format_docs_for_frontend,
-)
+from app.services.pipeline import init_pipeline, get_pipeline  # noqa: F401

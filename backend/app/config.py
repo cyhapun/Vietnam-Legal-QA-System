@@ -44,3 +44,35 @@ LLM_TIMEOUT = 300
 
 # --- CORS ---
 CORS_ORIGINS = ["*"]
+
+# ---------------------------------------------------------------------------
+# PIPELINE CONFIG — Thay đổi ở đây để chạy ablation study
+# ---------------------------------------------------------------------------
+# Mỗi key chọn strategy tương ứng. Xem danh sách strategy ở từng module.
+#
+# Ví dụ ablation experiments:
+#   Baseline:  search="faiss",  reranking="none"
+#   +Reranker: search="faiss",  reranking="cross_encoder"
+#   Hybrid:    search="hybrid", reranking="none"
+#   Full:      search="hybrid", reranking="cross_encoder"
+# ---------------------------------------------------------------------------
+PIPELINE_CONFIG = {
+    # Chunking: "clause" (mỗi khoản = 1 chunk)
+    "chunking": os.getenv("PIPELINE_CHUNKING", "clause"),
+
+    # Search: "faiss" | "bm25" | "hybrid"
+    "search": os.getenv("PIPELINE_SEARCH", "faiss"),
+
+    # Reranking: "none" | "cross_encoder"
+    "reranking": os.getenv("PIPELINE_RERANKING", "none"),
+
+    # Context builder: "nested"
+    "context_builder": os.getenv("PIPELINE_CONTEXT_BUILDER", "nested"),
+
+    # --- Hybrid search weights (chỉ dùng khi search="hybrid") ---
+    "hybrid_vector_weight": float(os.getenv("HYBRID_VECTOR_WEIGHT", "0.5")),
+    "hybrid_bm25_weight": float(os.getenv("HYBRID_BM25_WEIGHT", "0.5")),
+
+    # --- Reranker model (chỉ dùng khi reranking="cross_encoder") ---
+    "reranker_model": os.getenv("RERANKER_MODEL", "BAAI/bge-reranker-v2-m3"),
+}

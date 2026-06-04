@@ -8,7 +8,7 @@ import traceback
 from fastapi import APIRouter, HTTPException
 
 from app.models import ChatRequest
-from app.services.rag import get_retriever, build_nested_context, format_docs_for_frontend
+from app.services.pipeline import get_pipeline
 from app.services.llm import get_llm, CHAT_PROMPT, get_output_parser
 from app.utils.logging import setup_logger
 
@@ -32,20 +32,20 @@ async def chat_endpoint(request: ChatRequest):
 
         chat_history_str = "\n\n".join(history_lines) if history_lines else "(Không có lịch sử trò chuyện)"
 
-        # 3. Truy xuất tài liệu pháp lý liên quan
-        retriever = get_retriever(category=request.category)
-        retrieved_docs = await retriever.ainvoke(last_message)
-
-        # 4. Đóng gói dữ liệu (Context)
-        context_text = build_nested_context(retrieved_docs)
-        frontend_context = format_docs_for_frontend(retrieved_docs)
+        # 3. Truy xuất tài liệu pháp lý qua modular pipeline
+        pipeline = get_pipeline()
+        retrieved_docs, context_text = await pipeline.aretrieve(
+            query=last_message,
+            category=request.category,
+        )
+        frontend_context = pipeline.format_for_frontend(retrieved_docs)
 
         logger.info("=" * 60)
         logger.info("CHUẨN BỊ FEED DATA CHO LLM (CONTEXT)")
         logger.info("=" * 60)
         logger.info(context_text)
 
-        # 5. Gọi LLM để sinh câu trả lời và đo thời gian
+        # 4. Gọi LLM để sinh câu trả lời và đo thời gian
         start_time = time.time()
 
         llm = get_llm(request.model)
