@@ -48,7 +48,7 @@ class FAISSSearcher:
         """Tìm kiếm bằng MMR trên FAISS index."""
         search_kwargs = {
             "k": k,
-            "fetch_k": self._fetch_k,
+            "fetch_k": max(self._fetch_k, k),
             "lambda_mult": self._lambda_mult,
         }
 
@@ -70,7 +70,7 @@ class FAISSSearcher:
         """Async version — dùng trong FastAPI endpoint."""
         search_kwargs = {
             "k": k,
-            "fetch_k": self._fetch_k,
+            "fetch_k": max(self._fetch_k, k),
             "lambda_mult": self._lambda_mult,
         }
 

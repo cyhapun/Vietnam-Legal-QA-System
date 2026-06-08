@@ -20,7 +20,7 @@ from app.config import (
     FAISS_INDEX_PATH, JSON_DATA_PATH, TRACKING_FILE,
     EMBEDDING_BATCH_SIZE, EMBEDDING_MAX_RETRIES,
     EMBEDDING_SLEEP_BETWEEN_BATCHES, EMBEDDING_RETRY_BASE_WAIT,
-    PIPELINE_CONFIG,
+    PIPELINE_CONFIG, RETRIEVER_CANDIDATE_K, RETRIEVER_K,
 )
 from app.services.knowledge_base import load_knowledge_base
 from app.services.embedding import HuggingFaceEndpointEmbedding
@@ -61,7 +61,7 @@ class RAGPipeline:
     def retrieve(
         self,
         query: str,
-        k: int = 6,
+        k: int = RETRIEVER_CANDIDATE_K,
         rerank_top_k: Optional[int] = None,
         category: Optional[str] = None,
     ) -> Tuple[List[Document], str]:
@@ -69,14 +69,14 @@ class RAGPipeline:
 
         Args:
             query: Câu hỏi của người dùng.
-            k: Số lượng documents từ search step.
-            rerank_top_k: Số documents giữ lại sau reranking (default = k).
+            k: Number of candidate documents to retrieve before reranking.
+            rerank_top_k: Number of documents kept after reranking (default = RETRIEVER_K).
             category: Lọc theo lĩnh vực luật.
 
         Returns:
             Tuple (documents, context_string).
         """
-        final_k = rerank_top_k or k
+        final_k = rerank_top_k or RETRIEVER_K
 
         # Step 1: Search
         docs = self.searcher.search(query, k=k, category=category)
@@ -94,12 +94,12 @@ class RAGPipeline:
     async def aretrieve(
         self,
         query: str,
-        k: int = 6,
+        k: int = RETRIEVER_CANDIDATE_K,
         rerank_top_k: Optional[int] = None,
         category: Optional[str] = None,
     ) -> Tuple[List[Document], str]:
         """Async version của retrieve — dùng trong FastAPI endpoint."""
-        final_k = rerank_top_k or k
+        final_k = rerank_top_k or RETRIEVER_K
 
         # Step 1: Async Search
         docs = await self.searcher.asearch(query, k=k, category=category)
