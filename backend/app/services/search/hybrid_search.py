@@ -97,8 +97,9 @@ class HybridSearcher:
         k: int = RETRIEVER_K,
         category: Optional[str] = None,
     ) -> List[Document]:
-        """Hybrid search: gọi cả vector và BM25, rồi merge bằng RRF."""
-        # Lấy nhiều hơn k từ mỗi nguồn để RRF có nhiều dữ liệu hơn
+        """Hybrid search returns a candidate pool after RRF fusion."""
+        # Fetch more than the requested candidate pool from each source so RRF
+        # has enough overlap/diversity before downstream reranking trims results.
         fetch_k = k * 2
 
         vector_docs = self._vector_searcher.search(query, k=fetch_k, category=category)
@@ -112,7 +113,7 @@ class HybridSearcher:
         k: int = RETRIEVER_K,
         category: Optional[str] = None,
     ) -> List[Document]:
-        """Async hybrid search."""
+        """Async hybrid search returns a candidate pool after RRF fusion."""
         fetch_k = k * 2
 
         vector_docs = await self._vector_searcher.asearch(query, k=fetch_k, category=category)

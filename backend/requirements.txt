@@ -15,5 +15,3 @@ faiss-cpu
 
 # === HuggingFace Hub ===
 huggingface_hub
-
-rank_bm25
