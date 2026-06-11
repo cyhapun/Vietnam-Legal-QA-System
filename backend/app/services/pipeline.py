@@ -20,10 +20,15 @@ from app.config import (
     FAISS_INDEX_PATH, JSON_DATA_PATH, TRACKING_FILE,
     EMBEDDING_BATCH_SIZE, EMBEDDING_MAX_RETRIES,
     EMBEDDING_SLEEP_BETWEEN_BATCHES, EMBEDDING_RETRY_BASE_WAIT,
-    PIPELINE_CONFIG, RETRIEVER_CANDIDATE_K, RETRIEVER_K,
+    EMBEDDING_PROVIDER, PIPELINE_CONFIG,
+    RETRIEVER_CANDIDATE_K, RETRIEVER_K,
 )
 from app.services.knowledge_base import load_knowledge_base
-from app.services.embedding import HuggingFaceEndpointEmbedding
+from app.services.embedding import (
+    BaseEmbedding,
+    HuggingFaceEndpointEmbedding,
+    OllamaEmbedding,
+)
 from app.services.chunking import ClauseChunker
 from app.services.search import FAISSSearcher, BM25Searcher, HybridSearcher
 from app.services.reranking import NoReranker, CrossEncoderReranker
@@ -129,11 +134,18 @@ _pipeline: Optional[RAGPipeline] = None
 _faiss_vectorstore: Optional[FAISS] = None
 
 
-def _get_embedding() -> HuggingFaceEndpointEmbedding:
+def _get_embedding() -> BaseEmbedding:
     """Lazy init embedding model (singleton)."""
     global _embedding
     if _embedding is None:
-        _embedding = HuggingFaceEndpointEmbedding()
+        if EMBEDDING_PROVIDER == "huggingface":
+            _embedding = HuggingFaceEndpointEmbedding()
+        elif EMBEDDING_PROVIDER == "ollama":
+            _embedding = OllamaEmbedding()
+        else:
+            raise ValueError(
+                f"Unknown embedding provider: {EMBEDDING_PROVIDER}"
+            )
     return _embedding
 
 

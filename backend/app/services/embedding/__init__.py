@@ -6,9 +6,14 @@ Protocol:
 
 Implementations:
     - HuggingFaceEndpointEmbedding: Gọi HuggingFace Inference API (mặc định)
-    - (Future) LocalEmbedding: Chạy model trên máy local
+    - OllamaEmbedding: Chạy model local qua Ollama
 """
 from app.services.embedding.base import BaseEmbedding
 from app.services.embedding.hf_endpoint import HuggingFaceEndpointEmbedding
+from app.services.embedding.ollama import OllamaEmbedding
 
-__all__ = ["BaseEmbedding", "HuggingFaceEndpointEmbedding"]
+__all__ = [
+    "BaseEmbedding",
+    "HuggingFaceEndpointEmbedding",
+    "OllamaEmbedding",
+]

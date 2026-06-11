@@ -80,3 +80,9 @@ coverage/
 *.zip
 *.gz
 *.rar
+
+# =============================
+# Generated RAG Artifacts
+# =============================
+backend/embedded_files*.json
+backend/vietlaw_faiss_index*/
