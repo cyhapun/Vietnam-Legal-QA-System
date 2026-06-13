@@ -11,7 +11,7 @@ export function ChatMessage({ message }: { message: Message }) {
 
   return (
     <div className={`py-6 px-4 transition-all hover:bg-gray-50/50 ${isUser ? '' : ''}`}>
-      <div className={`max-w-4xl mx-auto flex gap-5 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
+      <div className={`max-w-4xl mx-auto flex ${isUser ? 'flex-row-reverse gap-2.5' : 'flex-row gap-5'}`}>
         
         {/* Avatar */}
         <div className="flex-shrink-0 mt-1">
