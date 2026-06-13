@@ -32,7 +32,7 @@ export function ChatInterface() {
   const [isLoading, setIsLoading] = useState(false);
   const [model, setModel] = useState(DEFAULT_MODEL);
   
-  // State cho nhóm pháp luật (Custom Dropdown)
+  // State cho phạm vi văn bản pháp luật (Custom Dropdown)
   const [lawCategory, setLawCategory] = useState(ALL_LAWS_CATEGORY);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const categoryRef = useRef<HTMLDivElement>(null);
@@ -187,7 +187,7 @@ export function ChatInterface() {
               {/* Toolbar: Lĩnh vực & Model (Nằm trên textarea) */}
               <div className="flex items-center gap-2 px-3 pt-3 pb-1 border-b border-gray-50 md:border-none">
                 
-                {/* Custom Dropdown: Bộ chọn nhóm pháp luật */}
+                {/* Custom Dropdown: Bộ chọn phạm vi văn bản pháp luật */}
                 <div className="relative flex items-center" ref={categoryRef}>
                   <button 
                     type="button"
@@ -204,15 +204,15 @@ export function ChatInterface() {
                     <ChevronDown className={`w-3 h-3 text-gray-400 ml-1.5 transition-transform duration-200 ${isCategoryOpen ? 'rotate-180' : ''}`} />
                   </button>
 
-                  {/* Menu nhóm pháp luật thả xuống */}
+                  {/* Menu văn bản pháp luật thả xuống */}
                   {isCategoryOpen && (
                     <div
                       className="absolute bottom-full left-0 z-50 mb-2 w-[320px] max-w-[calc(100vw-2rem)] animate-in rounded-2xl border border-gray-100 bg-white py-1 shadow-xl shadow-gray-200/50 fade-in slide-in-from-bottom-2 duration-200"
                       role="listbox"
-                      aria-label="Chọn nhóm pháp luật"
+                      aria-label="Chọn văn bản pháp luật"
                     >
                       <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-gray-400 border-b border-gray-50 mb-1">
-                        Tra cứu theo nhóm pháp luật
+                        Tra cứu theo văn bản pháp luật
                       </div>
                       {LAW_CATEGORIES.map(category => (
                         <button
@@ -221,7 +221,7 @@ export function ChatInterface() {
                             setLawCategory(category.id);
                             setIsCategoryOpen(false);
                           }}
-                          className={`flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left transition-colors ${
+                          className={`flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left text-[12px] font-bold transition-colors ${
                             lawCategory === category.id
                               ? 'text-indigo-700 bg-indigo-50/50' 
                               : 'text-gray-600 hover:bg-gray-50'
@@ -229,14 +229,7 @@ export function ChatInterface() {
                           role="option"
                           aria-selected={lawCategory === category.id}
                         >
-                          <span className="min-w-0">
-                            <span className="block text-[12px] font-bold">
-                              {category.label}
-                            </span>
-                            <span className="mt-0.5 block text-[10px] leading-4 text-gray-400">
-                              {category.description}
-                            </span>
-                          </span>
+                          <span className="truncate">{category.label}</span>
                           {lawCategory === category.id && (
                             <Check className="h-4 w-4 flex-shrink-0 text-indigo-600" />
                           )}

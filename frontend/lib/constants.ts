@@ -12,27 +12,47 @@ export interface LawCategory {
 
 export const ALL_LAWS_CATEGORY = 'all';
 
-// Các nhóm pháp luật dùng để giới hạn phạm vi truy xuất.
+// Các nhóm văn bản dùng để giới hạn phạm vi truy xuất.
 export const LAW_CATEGORIES = [
   {
     id: ALL_LAWS_CATEGORY,
-    label: 'Tất cả các luật',
-    description: 'Tra cứu trên toàn bộ kho dữ liệu pháp luật',
+    label: 'Tất cả văn bản',
+    description: 'Tra cứu trên toàn bộ kho văn bản pháp luật',
   },
   {
-    id: 'civil-family-personal',
-    label: 'Dân sự, Hôn nhân & Hộ tịch',
-    description: 'Quan hệ dân sự, gia đình và quyền nhân thân',
+    id: 'land',
+    label: 'Đất đai',
+    description: 'Quản lý, sử dụng và quyền đối với đất đai',
   },
   {
-    id: 'land-property-environment',
-    label: 'Đất đai, Nhà ở & Xây dựng',
-    description: 'Bất động sản, xây dựng, tài nguyên và môi trường',
+    id: 'housing-construction',
+    label: 'Nhà ở & Xây dựng',
+    description: 'Nhà ở, công trình và hoạt động xây dựng',
   },
   {
-    id: 'traffic-order-sanctions',
-    label: 'Giao thông & Vi phạm hành chính',
-    description: 'An toàn giao thông, trật tự và xử phạt',
+    id: 'real-estate-business',
+    label: 'Kinh doanh bất động sản',
+    description: 'Giao dịch, dự án và dịch vụ bất động sản',
+  },
+  {
+    id: 'environment',
+    label: 'Môi trường',
+    description: 'Bảo vệ môi trường và quản lý tác động môi trường',
+  },
+  {
+    id: 'notary',
+    label: 'Công chứng',
+    description: 'Tổ chức, hoạt động và thủ tục công chứng',
+  },
+  {
+    id: 'civil-procedure',
+    label: 'Tố tụng dân sự',
+    description: 'Trình tự, thủ tục giải quyết vụ việc dân sự',
+  },
+  {
+    id: 'criminal-mutual-assistance',
+    label: 'Tương trợ tư pháp hình sự',
+    description: 'Hợp tác và tương trợ tư pháp trong lĩnh vực hình sự',
   },
 ] as const satisfies readonly LawCategory[];
 

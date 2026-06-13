@@ -18,65 +18,62 @@ KNOWLEDGE_BASE: Dict[str, Any] = {}
 LAW_METADATA: Dict[str, Any] = {}
 
 ALL_LAWS_CATEGORY = "all"
-CIVIL_FAMILY_PERSONAL_CATEGORY = "civil-family-personal"
-LAND_PROPERTY_ENVIRONMENT_CATEGORY = "land-property-environment"
-TRAFFIC_ORDER_SANCTIONS_CATEGORY = "traffic-order-sanctions"
+LAND_CATEGORY = "land"
+HOUSING_CONSTRUCTION_CATEGORY = "housing-construction"
+REAL_ESTATE_BUSINESS_CATEGORY = "real-estate-business"
+ENVIRONMENT_CATEGORY = "environment"
+NOTARY_CATEGORY = "notary"
+CIVIL_PROCEDURE_CATEGORY = "civil-procedure"
+CRIMINAL_MUTUAL_ASSISTANCE_CATEGORY = "criminal-mutual-assistance"
+
+_CATEGORY_LAW_IDS = {
+    LAND_CATEGORY: {"LDD_2024"},
+    HOUSING_CONSTRUCTION_CATEGORY: {"LNO_2023", "LXD_2014"},
+    REAL_ESTATE_BUSINESS_CATEGORY: {"LKDBDS_2023"},
+    ENVIRONMENT_CATEGORY: {"LBVMT_2020"},
+    NOTARY_CATEGORY: {"LCC_2024"},
+    CIVIL_PROCEDURE_CATEGORY: {"BLTTDS_2015"},
+    CRIMINAL_MUTUAL_ASSISTANCE_CATEGORY: {"LTTPHS_2025"},
+}
 
 _LEGACY_CATEGORY_ALIASES = {
     "Chung": ALL_LAWS_CATEGORY,
-    "Kinh doanh": LAND_PROPERTY_ENVIRONMENT_CATEGORY,
-    "Đất đai": LAND_PROPERTY_ENVIRONMENT_CATEGORY,
-    "Bảo vệ môi trường": LAND_PROPERTY_ENVIRONMENT_CATEGORY,
-    "Tố tụng dân sự": CIVIL_FAMILY_PERSONAL_CATEGORY,
-    "Nhà ở": LAND_PROPERTY_ENVIRONMENT_CATEGORY,
+    "Tất cả các luật": ALL_LAWS_CATEGORY,
+    "Tất cả văn bản": ALL_LAWS_CATEGORY,
+    "Kinh doanh": REAL_ESTATE_BUSINESS_CATEGORY,
+    "Đất đai": LAND_CATEGORY,
+    "Bảo vệ môi trường": ENVIRONMENT_CATEGORY,
+    "Môi trường": ENVIRONMENT_CATEGORY,
+    "Tố tụng dân sự": CIVIL_PROCEDURE_CATEGORY,
+    "Nhà ở": HOUSING_CONSTRUCTION_CATEGORY,
+    "Nhà ở & Xây dựng": HOUSING_CONSTRUCTION_CATEGORY,
+    "Kinh doanh bất động sản": REAL_ESTATE_BUSINESS_CATEGORY,
+    "Công chứng": NOTARY_CATEGORY,
+    "Tương trợ tư pháp hình sự": CRIMINAL_MUTUAL_ASSISTANCE_CATEGORY,
+    "civil-family-personal": CIVIL_PROCEDURE_CATEGORY,
+    "land-property-environment": LAND_CATEGORY,
 }
 
 
 def determine_category(law_name: str) -> str:
-    """Phân loại văn bản vào một trong ba nhóm pháp luật của giao diện."""
+    """Phân loại văn bản theo các lựa chọn trên giao diện."""
     name_lower = law_name.lower()
 
-    if any(
-        keyword in name_lower
-        for keyword in [
-            "dân sự",
-            "hôn nhân",
-            "gia đình",
-            "hộ tịch",
-            "nhân thân",
-        ]
-    ):
-        return CIVIL_FAMILY_PERSONAL_CATEGORY
+    if "kinh doanh bất động sản" in name_lower:
+        return REAL_ESTATE_BUSINESS_CATEGORY
+    if "đất đai" in name_lower:
+        return LAND_CATEGORY
+    if "nhà ở" in name_lower or "xây dựng" in name_lower:
+        return HOUSING_CONSTRUCTION_CATEGORY
+    if "môi trường" in name_lower:
+        return ENVIRONMENT_CATEGORY
+    if "công chứng" in name_lower:
+        return NOTARY_CATEGORY
+    if "tố tụng dân sự" in name_lower:
+        return CIVIL_PROCEDURE_CATEGORY
+    if "tương trợ tư pháp" in name_lower and "hình sự" in name_lower:
+        return CRIMINAL_MUTUAL_ASSISTANCE_CATEGORY
 
-    if any(
-        keyword in name_lower
-        for keyword in [
-            "đất đai",
-            "bất động sản",
-            "nhà ở",
-            "xây dựng",
-            "môi trường",
-            "tài nguyên",
-        ]
-    ):
-        return LAND_PROPERTY_ENVIRONMENT_CATEGORY
-
-    if any(
-        keyword in name_lower
-        for keyword in [
-            "giao thông",
-            "đường bộ",
-            "đường sắt",
-            "hàng hải",
-            "hàng không",
-            "trật tự",
-            "vi phạm hành chính",
-            "xử phạt",
-        ]
-    ):
-        return TRAFFIC_ORDER_SANCTIONS_CATEGORY
-
-    # Luật chưa thuộc ba nhóm vẫn có thể được tìm qua "Tất cả các luật".
     return ALL_LAWS_CATEGORY
 
 
@@ -91,12 +88,16 @@ def document_matches_category(
     metadata: Dict[str, Any],
     category: Optional[str],
 ) -> bool:
-    """Kiểm tra document theo law_id, tương thích cả FAISS index cũ."""
+    """Kiểm tra document theo law_id, tương thích với FAISS index cũ."""
     normalized_category = normalize_category(category)
     if normalized_category == ALL_LAWS_CATEGORY:
         return True
 
     law_id = metadata.get("law_id")
+    allowed_law_ids = _CATEGORY_LAW_IDS.get(normalized_category)
+    if allowed_law_ids is not None:
+        return law_id in allowed_law_ids
+
     law_metadata = LAW_METADATA.get(law_id, {})
     document_category = law_metadata.get("category")
 
