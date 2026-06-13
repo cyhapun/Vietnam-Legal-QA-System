@@ -87,19 +87,6 @@ export function Sidebar({ sessions, currentSessionId, onNewChat, onSelectSession
           ))
         )}
       </div>
-
-      {/* Khu vực User Profile */}
-      <div className="p-3 mt-auto border-t border-gray-800/50">
-        <div className="flex items-center space-x-3 p-2 rounded-xl hover:bg-gray-900 transition-colors cursor-pointer">
-          <div className="w-8 h-8 bg-gradient-to-tr from-gray-700 to-gray-600 rounded-full flex items-center justify-center">
-            <span className="text-xs font-bold text-white">VL</span>
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-200 truncate">Luật sư / Cá nhân</p>
-            <p className="text-[11px] text-gray-500 truncate font-medium">Gói cơ bản</p>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

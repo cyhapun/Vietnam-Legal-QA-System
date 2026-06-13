@@ -8,6 +8,11 @@ from langchain_core.documents import Document
 from langchain_community.vectorstores import FAISS
 
 from app.config import RETRIEVER_K, RETRIEVER_FETCH_K, RETRIEVER_LAMBDA_MULT
+from app.services.knowledge_base import (
+    ALL_LAWS_CATEGORY,
+    document_matches_category,
+    normalize_category,
+)
 from app.utils.logging import setup_logger
 
 logger = setup_logger("vietlaw.search.faiss")
@@ -52,8 +57,14 @@ class FAISSSearcher:
             "lambda_mult": self._lambda_mult,
         }
 
-        if category and category != "Chung":
-            search_kwargs["filter"] = {"category": category}
+        normalized_category = normalize_category(category)
+        if normalized_category != ALL_LAWS_CATEGORY:
+            search_kwargs["filter"] = (
+                lambda metadata: document_matches_category(
+                    metadata,
+                    normalized_category,
+                )
+            )
 
         retriever = self._vectorstore.as_retriever(
             search_type="mmr",
@@ -74,8 +85,14 @@ class FAISSSearcher:
             "lambda_mult": self._lambda_mult,
         }
 
-        if category and category != "Chung":
-            search_kwargs["filter"] = {"category": category}
+        normalized_category = normalize_category(category)
+        if normalized_category != ALL_LAWS_CATEGORY:
+            search_kwargs["filter"] = (
+                lambda metadata: document_matches_category(
+                    metadata,
+                    normalized_category,
+                )
+            )
 
         retriever = self._vectorstore.as_retriever(
             search_type="mmr",

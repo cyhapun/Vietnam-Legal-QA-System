@@ -19,6 +19,7 @@ from app.config import (
     EMBEDDING_BATCH_SIZE, EMBEDDING_MAX_RETRIES,
     EMBEDDING_SLEEP_BETWEEN_BATCHES, EMBEDDING_RETRY_BASE_WAIT,
 )
+from app.services.knowledge_base import determine_category
 from app.utils.logging import setup_logger
 
 logger = setup_logger("vietlaw.vectorstore")
@@ -41,25 +42,6 @@ embeddings = HuggingFaceEndpointEmbeddings(
     task="feature-extraction",
     huggingfacehub_api_token=HUGGINGFACE_API_KEY,
 )
-
-
-def determine_category(law_name: str) -> str:
-    """Phân loại văn bản pháp luật dựa trên tên gọi để dễ dàng lọc (filter) sau này."""
-    name_lower = law_name.lower()
-
-    # Gom nhóm các từ khóa liên quan để code gọn hơn
-    if any(kw in name_lower for kw in ["kinh doanh", "doanh nghiệp", "thương mại"]):
-        return "Kinh doanh"
-    if "đất đai" in name_lower:
-        return "Đất đai"
-    if "môi trường" in name_lower:
-        return "Bảo vệ môi trường"
-    if "tố tụng" in name_lower:
-        return "Tố tụng dân sự"
-    if "nhà ở" in name_lower:
-        return "Nhà ở"
-
-    return "Khác"
 
 
 def load_knowledge_base_to_ram() -> None:

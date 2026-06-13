@@ -4,15 +4,48 @@
  */
 import type { AIModel } from './types';
 
-// Danh sách lĩnh vực pháp luật
+export interface LawCategory {
+  id: string;
+  label: string;
+}
+
+export const ALL_LAWS_CATEGORY = 'all';
+
+// Các lĩnh vực pháp luật được tách từ ba nhóm nghiệp vụ.
 export const LAW_CATEGORIES = [
-  "Chung",
-  "Kinh doanh",
-  "Đất đai",
-  "Bảo vệ môi trường",
-  "Tố tụng dân sự",
-  "Nhà ở",
-] as const;
+  {
+    id: ALL_LAWS_CATEGORY,
+    label: 'Tất cả các luật',
+  },
+  {
+    id: 'civil',
+    label: 'Dân sự',
+  },
+  {
+    id: 'family-personal',
+    label: 'Gia đình & Nhân thân',
+  },
+  {
+    id: 'land',
+    label: 'Đất đai',
+  },
+  {
+    id: 'real-estate',
+    label: 'Bất động sản',
+  },
+  {
+    id: 'construction-environment',
+    label: 'Xây dựng & Môi trường',
+  },
+  {
+    id: 'traffic',
+    label: 'Giao thông',
+  },
+  {
+    id: 'public-order-sanctions',
+    label: 'Trật tự & Xử phạt',
+  },
+] as const satisfies readonly LawCategory[];
 
 // Danh sách model AI hỗ trợ
 export const AI_MODELS: AIModel[] = [

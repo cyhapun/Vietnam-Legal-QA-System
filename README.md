@@ -297,9 +297,18 @@ Tính năng nổi bật — xây dựng **context đệ quy** giúp LLM hiểu l
 ### 6. Category-based Filtering
 
 Lọc kết quả truy xuất theo **lĩnh vực pháp luật** để tăng độ chính xác:
-- Kinh doanh, Đất đai, Bảo vệ môi trường, Tố tụng dân sự, Nhà ở
-- Metadata `category` được gắn vào mỗi document khi embedding
-- FAISS filter theo category trước khi tìm kiếm
+
+- Tất cả các luật
+- Dân sự
+- Gia đình & Nhân thân
+- Đất đai
+- Bất động sản
+- Xây dựng & Môi trường
+- Giao thông
+- Trật tự & Xử phạt
+
+Metadata `law_id` và `category` được dùng để lọc document trước khi tìm kiếm.
+Mỗi lựa chọn trên giao diện có thêm mô tả ngắn về phạm vi pháp luật tương ứng.
 
 ### 7. Prompt Engineering
 

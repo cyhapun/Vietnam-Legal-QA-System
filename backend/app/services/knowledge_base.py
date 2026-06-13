@@ -17,24 +17,96 @@ logger = setup_logger("vietlaw.knowledge_base")
 KNOWLEDGE_BASE: Dict[str, Any] = {}
 LAW_METADATA: Dict[str, Any] = {}
 
+ALL_LAWS_CATEGORY = "all"
+CIVIL_CATEGORY = "civil"
+FAMILY_PERSONAL_CATEGORY = "family-personal"
+LAND_CATEGORY = "land"
+REAL_ESTATE_CATEGORY = "real-estate"
+CONSTRUCTION_ENVIRONMENT_CATEGORY = "construction-environment"
+TRAFFIC_CATEGORY = "traffic"
+PUBLIC_ORDER_SANCTIONS_CATEGORY = "public-order-sanctions"
+
+_CATEGORY_LAW_IDS = {
+    CIVIL_CATEGORY: {"BLTTDS_2015"},
+    FAMILY_PERSONAL_CATEGORY: set(),
+    LAND_CATEGORY: {"LDD_2024"},
+    REAL_ESTATE_CATEGORY: {"LKDBDS_2023", "LNO_2023"},
+    CONSTRUCTION_ENVIRONMENT_CATEGORY: {"LXD_2014", "LBVMT_2020"},
+    TRAFFIC_CATEGORY: set(),
+    PUBLIC_ORDER_SANCTIONS_CATEGORY: set(),
+}
+
+_LEGACY_CATEGORY_ALIASES = {
+    "Chung": ALL_LAWS_CATEGORY,
+    "Tất cả các luật": ALL_LAWS_CATEGORY,
+    "Tất cả văn bản": ALL_LAWS_CATEGORY,
+    "Dân sự": CIVIL_CATEGORY,
+    "Gia đình & Nhân thân": FAMILY_PERSONAL_CATEGORY,
+    "Đất đai": LAND_CATEGORY,
+    "Bất động sản": REAL_ESTATE_CATEGORY,
+    "Xây dựng & Môi trường": CONSTRUCTION_ENVIRONMENT_CATEGORY,
+    "Giao thông": TRAFFIC_CATEGORY,
+    "Trật tự & Xử phạt": PUBLIC_ORDER_SANCTIONS_CATEGORY,
+    "Kinh doanh": REAL_ESTATE_CATEGORY,
+    "Bảo vệ môi trường": CONSTRUCTION_ENVIRONMENT_CATEGORY,
+    "Môi trường": CONSTRUCTION_ENVIRONMENT_CATEGORY,
+    "Tố tụng dân sự": CIVIL_CATEGORY,
+    "Nhà ở": REAL_ESTATE_CATEGORY,
+    "Nhà ở & Xây dựng": REAL_ESTATE_CATEGORY,
+    "Kinh doanh bất động sản": REAL_ESTATE_CATEGORY,
+    "civil-family-personal": CIVIL_CATEGORY,
+    "land-property-environment": LAND_CATEGORY,
+    "housing-construction": REAL_ESTATE_CATEGORY,
+    "real-estate-business": REAL_ESTATE_CATEGORY,
+    "environment": CONSTRUCTION_ENVIRONMENT_CATEGORY,
+    "civil-procedure": CIVIL_CATEGORY,
+}
+
 
 def determine_category(law_name: str) -> str:
-    """Phân loại văn bản pháp luật dựa trên tên gọi để dễ dàng lọc (filter) sau này."""
+    """Phân loại văn bản theo các lựa chọn trên giao diện."""
     name_lower = law_name.lower()
 
-    # Gom nhóm các từ khóa liên quan để code gọn hơn
-    if any(kw in name_lower for kw in ["kinh doanh", "doanh nghiệp", "thương mại"]):
-        return "Kinh doanh"
+    if "tố tụng dân sự" in name_lower:
+        return CIVIL_CATEGORY
     if "đất đai" in name_lower:
-        return "Đất đai"
-    if "môi trường" in name_lower:
-        return "Bảo vệ môi trường"
-    if "tố tụng" in name_lower:
-        return "Tố tụng dân sự"
-    if "nhà ở" in name_lower:
-        return "Nhà ở"
+        return LAND_CATEGORY
+    if "kinh doanh bất động sản" in name_lower or "nhà ở" in name_lower:
+        return REAL_ESTATE_CATEGORY
+    if "xây dựng" in name_lower or "môi trường" in name_lower:
+        return CONSTRUCTION_ENVIRONMENT_CATEGORY
 
-    return "Khác"
+    return ALL_LAWS_CATEGORY
+
+
+def normalize_category(category: Optional[str]) -> str:
+    """Chuẩn hóa category mới và các giá trị cũ còn được client gửi lên."""
+    if not category:
+        return ALL_LAWS_CATEGORY
+    return _LEGACY_CATEGORY_ALIASES.get(category, category)
+
+
+def document_matches_category(
+    metadata: Dict[str, Any],
+    category: Optional[str],
+) -> bool:
+    """Kiểm tra document theo law_id, tương thích với FAISS index cũ."""
+    normalized_category = normalize_category(category)
+    if normalized_category == ALL_LAWS_CATEGORY:
+        return True
+
+    law_id = metadata.get("law_id")
+    allowed_law_ids = _CATEGORY_LAW_IDS.get(normalized_category)
+    if allowed_law_ids is not None:
+        return law_id in allowed_law_ids
+
+    law_metadata = LAW_METADATA.get(law_id, {})
+    document_category = law_metadata.get("category")
+
+    if not document_category:
+        document_category = normalize_category(metadata.get("category"))
+
+    return document_category == normalized_category
 
 
 def load_knowledge_base() -> None:

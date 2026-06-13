@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
-import { User, Scale, BookOpen, ChevronRight } from 'lucide-react';
+import { User, Scale, BookOpen, ChevronDown } from 'lucide-react';
 import type { Message } from '@/lib/types';
 
 // Re-export types cho backward compatibility
@@ -11,7 +11,7 @@ export function ChatMessage({ message }: { message: Message }) {
 
   return (
     <div className={`py-6 px-4 transition-all hover:bg-gray-50/50 ${isUser ? '' : ''}`}>
-      <div className={`max-w-4xl mx-auto flex gap-5 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
+      <div className={`max-w-4xl mx-auto flex ${isUser ? 'flex-row-reverse gap-2.5' : 'flex-row gap-5'}`}>
         
         {/* Avatar */}
         <div className="flex-shrink-0 mt-1">
@@ -44,32 +44,46 @@ export function ChatMessage({ message }: { message: Message }) {
           
           {/* RAG Context Display (Căn cứ pháp lý) */}
           {!isUser && message.contextUsed && message.contextUsed.length > 0 && (
-            <div className="mt-4 w-full max-w-3xl">
-              <div className="flex items-center text-gray-500 mb-2 gap-1.5">
-                <BookOpen className="w-4 h-4 text-indigo-500" />
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-indigo-500">
-                  Căn cứ pháp lý áp dụng
+            <div className="group/sources relative mt-3">
+              <button
+                type="button"
+                className="flex items-center gap-1.5 rounded-lg border border-indigo-100 bg-indigo-50/60 px-2.5 py-1.5 text-[11px] font-semibold text-indigo-700 transition-colors hover:border-indigo-200 hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                aria-label={`Hiển thị ${message.contextUsed.length} căn cứ pháp lý`}
+              >
+                <BookOpen className="h-3.5 w-3.5" />
+                <span>Căn cứ pháp lý</span>
+                <span className="rounded-full bg-white px-1.5 py-0.5 text-[10px] text-indigo-600 shadow-sm">
+                  {message.contextUsed.length}
                 </span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {message.contextUsed.map((ctx: any, idx) => {
-                  const { source, dieu, khoan, diem } = ctx.metadata || {};
-                  let displayText = source || 'Tài liệu pháp lý';
-                  if (dieu) displayText += ` - Điều ${dieu}`;
-                  if (khoan) displayText += ` (Khoản ${khoan})`;
-                  if (diem) displayText += ` Điểm ${diem}`;
+                <ChevronDown className="h-3 w-3 transition-transform group-hover/sources:rotate-180 group-focus-within/sources:rotate-180" />
+              </button>
 
-                  return (
-                    <div 
-                      key={idx} 
-                      className="group flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[13px] font-medium bg-indigo-50/50 text-indigo-800 border border-indigo-100/50 hover:bg-indigo-100 hover:border-indigo-300 cursor-help transition-colors"
-                      title={ctx.content}
-                    >
-                      <ChevronRight className="w-3 h-3 text-indigo-400" />
-                      <span className="truncate max-w-[280px]">{displayText}</span>
-                    </div>
-                  );
-                })}
+              <div className="pointer-events-none invisible absolute left-0 top-full z-30 w-[min(520px,calc(100vw-3rem))] pt-2 opacity-0 transition-all duration-150 group-hover/sources:pointer-events-auto group-hover/sources:visible group-hover/sources:opacity-100 group-focus-within/sources:pointer-events-auto group-focus-within/sources:visible group-focus-within/sources:opacity-100">
+                <div className="max-h-80 overflow-y-auto rounded-xl border border-gray-200 bg-white p-2 shadow-xl shadow-gray-200/60 custom-scrollbar">
+                  <div className="border-b border-gray-100 px-2 pb-2 pt-1 text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                    Căn cứ pháp lý áp dụng
+                  </div>
+                  <div className="divide-y divide-gray-100">
+                    {message.contextUsed.map((ctx, idx) => {
+                      const { source, dieu, khoan, diem } = ctx.metadata || {};
+                      let displayText = source || 'Tài liệu pháp lý';
+                      if (dieu) displayText += ` - Điều ${dieu}`;
+                      if (khoan) displayText += ` (Khoản ${khoan})`;
+                      if (diem) displayText += ` Điểm ${diem}`;
+
+                      return (
+                        <div key={idx} className="px-2 py-2.5">
+                          <p className="text-[12px] font-semibold text-indigo-800">
+                            {displayText}
+                          </p>
+                          <p className="mt-1 line-clamp-3 text-[11px] leading-4 text-gray-500">
+                            {ctx.content}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
             </div>
           )}

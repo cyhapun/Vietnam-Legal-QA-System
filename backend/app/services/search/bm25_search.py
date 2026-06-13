@@ -8,6 +8,7 @@ from typing import List, Optional
 from langchain_core.documents import Document
 
 from app.config import RETRIEVER_K
+from app.services.knowledge_base import document_matches_category
 from app.utils.logging import setup_logger
 
 logger = setup_logger("vietlaw.search.bm25")
@@ -123,9 +124,8 @@ class BM25Searcher:
             doc = self._documents[idx]
 
             # Lọc theo category nếu có
-            if category and category != "Chung":
-                if doc.metadata.get("category") != category:
-                    continue
+            if not document_matches_category(doc.metadata, category):
+                continue
 
             score = self._score_document(query_tokens, idx)
             if score > 0:
