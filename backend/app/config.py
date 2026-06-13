@@ -17,22 +17,43 @@ if _env_path.exists():
 
 # --- ĐƯỜNG DẪN DỮ LIỆU ---
 # Sử dụng đường dẫn tuyệt đối tính từ thư mục backend/
-FAISS_INDEX_PATH = str(_backend_dir / "vietlaw_faiss_index")
+EMBEDDING_PROVIDER = os.getenv("EMBEDDING_PROVIDER", "huggingface").strip().lower()
+_embedding_artifact_suffix = (
+    "" if EMBEDDING_PROVIDER == "huggingface" else f"_{EMBEDDING_PROVIDER}"
+)
+
+FAISS_INDEX_PATH = os.getenv(
+    "FAISS_INDEX_PATH",
+    str(_backend_dir / f"vietlaw_faiss_index{_embedding_artifact_suffix}"),
+)
 JSON_DATA_PATH = str(_backend_dir / "data" / "processed")
-TRACKING_FILE = str(_backend_dir / "embedded_files.json")
+TRACKING_FILE = os.getenv(
+    "EMBEDDED_FILES_PATH",
+    str(_backend_dir / f"embedded_files{_embedding_artifact_suffix}.json"),
+)
 
 # --- API KEYS ---
 HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY", "")
 
 # --- THÔNG SỐ EMBEDDING ---
-EMBEDDING_MODEL = "BAAI/bge-m3"
-EMBEDDING_BATCH_SIZE = 32
-EMBEDDING_MAX_RETRIES = 3
-EMBEDDING_SLEEP_BETWEEN_BATCHES = 5  # seconds
-EMBEDDING_RETRY_BASE_WAIT = 15  # seconds
+EMBEDDING_MODEL = os.getenv("HUGGINGFACE_EMBEDDING_MODEL", "BAAI/bge-m3")
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+OLLAMA_EMBEDDING_MODEL = os.getenv("OLLAMA_EMBEDDING_MODEL", "bge-m3")
+OLLAMA_EMBEDDING_TIMEOUT = float(os.getenv("OLLAMA_EMBEDDING_TIMEOUT", "300"))
+EMBEDDING_BATCH_SIZE = int(os.getenv("EMBEDDING_BATCH_SIZE", "32"))
+EMBEDDING_MAX_RETRIES = int(os.getenv("EMBEDDING_MAX_RETRIES", "3"))
+EMBEDDING_SLEEP_BETWEEN_BATCHES = float(os.getenv(
+    "EMBEDDING_SLEEP_BETWEEN_BATCHES",
+    "0" if EMBEDDING_PROVIDER == "ollama" else "5",
+))
+EMBEDDING_RETRY_BASE_WAIT = float(os.getenv(
+    "EMBEDDING_RETRY_BASE_WAIT",
+    "2" if EMBEDDING_PROVIDER == "ollama" else "15",
+))
 
 # --- THÔNG SỐ RETRIEVAL ---
 RETRIEVER_K = 6
+RETRIEVER_CANDIDATE_K = int(os.getenv("RETRIEVER_CANDIDATE_K", "30"))
 RETRIEVER_FETCH_K = 20
 RETRIEVER_LAMBDA_MULT = 0.8
 
