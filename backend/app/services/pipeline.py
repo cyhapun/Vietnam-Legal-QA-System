@@ -298,16 +298,20 @@ def _create_searcher(embedding) -> Any:
 
 def _build_bm25_index(bm25_searcher: BM25Searcher) -> None:
     """Xây dựng BM25 index từ tất cả documents trong FAISS."""
-    from app.services.knowledge_base import KNOWLEDGE_BASE
+    from app.services.knowledge_base import KNOWLEDGE_BASE, LAW_METADATA
 
     documents = []
     for clause_id, clause_data in KNOWLEDGE_BASE.items():
+        law_id = clause_data.get("law_id")
         doc = Document(
             page_content=clause_data.get("content", ""),
             metadata={
                 "id": clause_id,
-                "law_id": clause_data.get("law_id"),
-                "category": "",  # Will be filled if needed
+                "law_id": law_id,
+                "category": LAW_METADATA.get(law_id, {}).get(
+                    "category",
+                    "all",
+                ),
             }
         )
         documents.append(doc)

@@ -17,24 +17,93 @@ logger = setup_logger("vietlaw.knowledge_base")
 KNOWLEDGE_BASE: Dict[str, Any] = {}
 LAW_METADATA: Dict[str, Any] = {}
 
+ALL_LAWS_CATEGORY = "all"
+CIVIL_FAMILY_PERSONAL_CATEGORY = "civil-family-personal"
+LAND_PROPERTY_ENVIRONMENT_CATEGORY = "land-property-environment"
+TRAFFIC_ORDER_SANCTIONS_CATEGORY = "traffic-order-sanctions"
+
+_LEGACY_CATEGORY_ALIASES = {
+    "Chung": ALL_LAWS_CATEGORY,
+    "Kinh doanh": LAND_PROPERTY_ENVIRONMENT_CATEGORY,
+    "Đất đai": LAND_PROPERTY_ENVIRONMENT_CATEGORY,
+    "Bảo vệ môi trường": LAND_PROPERTY_ENVIRONMENT_CATEGORY,
+    "Tố tụng dân sự": CIVIL_FAMILY_PERSONAL_CATEGORY,
+    "Nhà ở": LAND_PROPERTY_ENVIRONMENT_CATEGORY,
+}
+
 
 def determine_category(law_name: str) -> str:
-    """Phân loại văn bản pháp luật dựa trên tên gọi để dễ dàng lọc (filter) sau này."""
+    """Phân loại văn bản vào một trong ba nhóm pháp luật của giao diện."""
     name_lower = law_name.lower()
 
-    # Gom nhóm các từ khóa liên quan để code gọn hơn
-    if any(kw in name_lower for kw in ["kinh doanh", "doanh nghiệp", "thương mại"]):
-        return "Kinh doanh"
-    if "đất đai" in name_lower:
-        return "Đất đai"
-    if "môi trường" in name_lower:
-        return "Bảo vệ môi trường"
-    if "tố tụng" in name_lower:
-        return "Tố tụng dân sự"
-    if "nhà ở" in name_lower:
-        return "Nhà ở"
+    if any(
+        keyword in name_lower
+        for keyword in [
+            "dân sự",
+            "hôn nhân",
+            "gia đình",
+            "hộ tịch",
+            "nhân thân",
+        ]
+    ):
+        return CIVIL_FAMILY_PERSONAL_CATEGORY
 
-    return "Khác"
+    if any(
+        keyword in name_lower
+        for keyword in [
+            "đất đai",
+            "bất động sản",
+            "nhà ở",
+            "xây dựng",
+            "môi trường",
+            "tài nguyên",
+        ]
+    ):
+        return LAND_PROPERTY_ENVIRONMENT_CATEGORY
+
+    if any(
+        keyword in name_lower
+        for keyword in [
+            "giao thông",
+            "đường bộ",
+            "đường sắt",
+            "hàng hải",
+            "hàng không",
+            "trật tự",
+            "vi phạm hành chính",
+            "xử phạt",
+        ]
+    ):
+        return TRAFFIC_ORDER_SANCTIONS_CATEGORY
+
+    # Luật chưa thuộc ba nhóm vẫn có thể được tìm qua "Tất cả các luật".
+    return ALL_LAWS_CATEGORY
+
+
+def normalize_category(category: Optional[str]) -> str:
+    """Chuẩn hóa category mới và các giá trị cũ còn được client gửi lên."""
+    if not category:
+        return ALL_LAWS_CATEGORY
+    return _LEGACY_CATEGORY_ALIASES.get(category, category)
+
+
+def document_matches_category(
+    metadata: Dict[str, Any],
+    category: Optional[str],
+) -> bool:
+    """Kiểm tra document theo law_id, tương thích cả FAISS index cũ."""
+    normalized_category = normalize_category(category)
+    if normalized_category == ALL_LAWS_CATEGORY:
+        return True
+
+    law_id = metadata.get("law_id")
+    law_metadata = LAW_METADATA.get(law_id, {})
+    document_category = law_metadata.get("category")
+
+    if not document_category:
+        document_category = normalize_category(metadata.get("category"))
+
+    return document_category == normalized_category
 
 
 def load_knowledge_base() -> None:

@@ -8,7 +8,11 @@ import { Sidebar } from './Sidebar';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { useChatSessions } from '@/hooks/use-chat-sessions';
 import { useClickOutside } from '@/hooks/use-click-outside';
-import { LAW_CATEGORIES, DEFAULT_MODEL } from '@/lib/constants';
+import {
+  ALL_LAWS_CATEGORY,
+  LAW_CATEGORIES,
+  DEFAULT_MODEL,
+} from '@/lib/constants';
 import type { Message } from '@/lib/types';
 
 export function ChatInterface() {
@@ -28,10 +32,13 @@ export function ChatInterface() {
   const [isLoading, setIsLoading] = useState(false);
   const [model, setModel] = useState(DEFAULT_MODEL);
   
-  // State cho danh mục Lĩnh vực (Custom Dropdown)
-  const [lawCategory, setLawCategory] = useState('Chung');
+  // State cho nhóm pháp luật (Custom Dropdown)
+  const [lawCategory, setLawCategory] = useState(ALL_LAWS_CATEGORY);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const categoryRef = useRef<HTMLDivElement>(null);
+  const selectedLawCategory =
+    LAW_CATEGORIES.find(category => category.id === lawCategory) ??
+    LAW_CATEGORIES[0];
   
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   
@@ -180,41 +187,59 @@ export function ChatInterface() {
               {/* Toolbar: Lĩnh vực & Model (Nằm trên textarea) */}
               <div className="flex items-center gap-2 px-3 pt-3 pb-1 border-b border-gray-50 md:border-none">
                 
-                {/* Custom Dropdown: Bộ chọn Lĩnh vực */}
+                {/* Custom Dropdown: Bộ chọn nhóm pháp luật */}
                 <div className="relative flex items-center" ref={categoryRef}>
                   <button 
                     type="button"
                     onClick={() => setIsCategoryOpen(!isCategoryOpen)}
-                    className="flex items-center bg-gray-50 hover:bg-gray-100 rounded-xl px-3 py-1.5 transition-colors border border-gray-100 active:bg-gray-200"
+                    className="flex max-w-[230px] items-center rounded-xl border border-gray-100 bg-gray-50 px-3 py-1.5 transition-colors hover:bg-gray-100 active:bg-gray-200 md:max-w-[320px]"
+                    aria-haspopup="listbox"
+                    aria-expanded={isCategoryOpen}
+                    title={selectedLawCategory.description}
                   >
                     <LibraryBig className="w-3.5 h-3.5 text-indigo-600 mr-2" />
-                    <span className="text-[12px] font-bold text-gray-700">
-                      {lawCategory === "Chung" ? "Tất cả lĩnh vực" : `Luật ${lawCategory}`}
+                    <span className="truncate text-[12px] font-bold text-gray-700">
+                      {selectedLawCategory.label}
                     </span>
                     <ChevronDown className={`w-3 h-3 text-gray-400 ml-1.5 transition-transform duration-200 ${isCategoryOpen ? 'rotate-180' : ''}`} />
                   </button>
 
-                  {/* Menu Lĩnh Vực thả xuống */}
+                  {/* Menu nhóm pháp luật thả xuống */}
                   {isCategoryOpen && (
-                    <div className="absolute bottom-full mb-2 left-0 w-48 bg-white border border-gray-100 shadow-xl shadow-gray-200/50 rounded-xl py-1 z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
+                    <div
+                      className="absolute bottom-full left-0 z-50 mb-2 w-[320px] max-w-[calc(100vw-2rem)] animate-in rounded-2xl border border-gray-100 bg-white py-1 shadow-xl shadow-gray-200/50 fade-in slide-in-from-bottom-2 duration-200"
+                      role="listbox"
+                      aria-label="Chọn nhóm pháp luật"
+                    >
                       <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-gray-400 border-b border-gray-50 mb-1">
-                        Tra cứu theo lĩnh vực
+                        Tra cứu theo nhóm pháp luật
                       </div>
-                      {LAW_CATEGORIES.map(cat => (
+                      {LAW_CATEGORIES.map(category => (
                         <button
-                          key={cat}
+                          key={category.id}
                           onClick={() => {
-                            setLawCategory(cat);
+                            setLawCategory(category.id);
                             setIsCategoryOpen(false);
                           }}
-                          className={`w-full text-left px-3 py-2.5 text-[12px] font-medium flex items-center justify-between transition-colors ${
-                            lawCategory === cat 
+                          className={`flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left transition-colors ${
+                            lawCategory === category.id
                               ? 'text-indigo-700 bg-indigo-50/50' 
                               : 'text-gray-600 hover:bg-gray-50'
                           }`}
+                          role="option"
+                          aria-selected={lawCategory === category.id}
                         >
-                          {cat === "Chung" ? "Tất cả lĩnh vực" : `Luật ${cat}`}
-                          {lawCategory === cat && <Check className="w-3.5 h-3.5 text-indigo-600" />}
+                          <span className="min-w-0">
+                            <span className="block text-[12px] font-bold">
+                              {category.label}
+                            </span>
+                            <span className="mt-0.5 block text-[10px] leading-4 text-gray-400">
+                              {category.description}
+                            </span>
+                          </span>
+                          {lawCategory === category.id && (
+                            <Check className="h-4 w-4 flex-shrink-0 text-indigo-600" />
+                          )}
                         </button>
                       ))}
                     </div>

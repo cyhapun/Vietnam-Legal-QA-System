@@ -11,6 +11,11 @@ from app.services.vectorstore import (
     get_vectorstore,
     KNOWLEDGE_BASE, LAW_METADATA,
 )
+from app.services.knowledge_base import (
+    ALL_LAWS_CATEGORY,
+    document_matches_category,
+    normalize_category,
+)
 
 
 def resolve_reference_data(target_id: str) -> List[Dict[str, Any]]:
@@ -26,7 +31,7 @@ def resolve_reference_data(target_id: str) -> List[Dict[str, Any]]:
     return results
 
 
-def get_retriever(category: str = "Chung") -> Any:
+def get_retriever(category: str = ALL_LAWS_CATEGORY) -> Any:
     """Tạo retriever để tìm kiếm các đoạn văn bản pháp luật liên quan."""
     vectorstore = get_vectorstore()
 
@@ -37,8 +42,14 @@ def get_retriever(category: str = "Chung") -> Any:
     }
 
     # Lọc theo chuyên ngành luật nếu có yêu cầu
-    if category and category != "Chung":
-        search_kwargs["filter"] = {"category": category}
+    normalized_category = normalize_category(category)
+    if normalized_category != ALL_LAWS_CATEGORY:
+        search_kwargs["filter"] = (
+            lambda metadata: document_matches_category(
+                metadata,
+                normalized_category,
+            )
+        )
 
     return vectorstore.as_retriever(
         search_type="mmr",

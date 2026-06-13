@@ -4,15 +4,37 @@
  */
 import type { AIModel } from './types';
 
-// Danh sách lĩnh vực pháp luật
+export interface LawCategory {
+  id: string;
+  label: string;
+  description: string;
+}
+
+export const ALL_LAWS_CATEGORY = 'all';
+
+// Các nhóm pháp luật dùng để giới hạn phạm vi truy xuất.
 export const LAW_CATEGORIES = [
-  "Chung",
-  "Kinh doanh",
-  "Đất đai",
-  "Bảo vệ môi trường",
-  "Tố tụng dân sự",
-  "Nhà ở",
-] as const;
+  {
+    id: ALL_LAWS_CATEGORY,
+    label: 'Tất cả các luật',
+    description: 'Tra cứu trên toàn bộ kho dữ liệu pháp luật',
+  },
+  {
+    id: 'civil-family-personal',
+    label: 'Dân sự, Hôn nhân & Hộ tịch',
+    description: 'Quan hệ dân sự, gia đình và quyền nhân thân',
+  },
+  {
+    id: 'land-property-environment',
+    label: 'Đất đai, Nhà ở & Xây dựng',
+    description: 'Bất động sản, xây dựng, tài nguyên và môi trường',
+  },
+  {
+    id: 'traffic-order-sanctions',
+    label: 'Giao thông & Vi phạm hành chính',
+    description: 'An toàn giao thông, trật tự và xử phạt',
+  },
+] as const satisfies readonly LawCategory[];
 
 // Danh sách model AI hỗ trợ
 export const AI_MODELS: AIModel[] = [
