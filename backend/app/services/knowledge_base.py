@@ -18,40 +18,48 @@ KNOWLEDGE_BASE: Dict[str, Any] = {}
 LAW_METADATA: Dict[str, Any] = {}
 
 ALL_LAWS_CATEGORY = "all"
+CIVIL_CATEGORY = "civil"
+FAMILY_PERSONAL_CATEGORY = "family-personal"
 LAND_CATEGORY = "land"
-HOUSING_CONSTRUCTION_CATEGORY = "housing-construction"
-REAL_ESTATE_BUSINESS_CATEGORY = "real-estate-business"
-ENVIRONMENT_CATEGORY = "environment"
-NOTARY_CATEGORY = "notary"
-CIVIL_PROCEDURE_CATEGORY = "civil-procedure"
-CRIMINAL_MUTUAL_ASSISTANCE_CATEGORY = "criminal-mutual-assistance"
+REAL_ESTATE_CATEGORY = "real-estate"
+CONSTRUCTION_ENVIRONMENT_CATEGORY = "construction-environment"
+TRAFFIC_CATEGORY = "traffic"
+PUBLIC_ORDER_SANCTIONS_CATEGORY = "public-order-sanctions"
 
 _CATEGORY_LAW_IDS = {
+    CIVIL_CATEGORY: {"BLTTDS_2015"},
+    FAMILY_PERSONAL_CATEGORY: set(),
     LAND_CATEGORY: {"LDD_2024"},
-    HOUSING_CONSTRUCTION_CATEGORY: {"LNO_2023", "LXD_2014"},
-    REAL_ESTATE_BUSINESS_CATEGORY: {"LKDBDS_2023"},
-    ENVIRONMENT_CATEGORY: {"LBVMT_2020"},
-    NOTARY_CATEGORY: {"LCC_2024"},
-    CIVIL_PROCEDURE_CATEGORY: {"BLTTDS_2015"},
-    CRIMINAL_MUTUAL_ASSISTANCE_CATEGORY: {"LTTPHS_2025"},
+    REAL_ESTATE_CATEGORY: {"LKDBDS_2023", "LNO_2023"},
+    CONSTRUCTION_ENVIRONMENT_CATEGORY: {"LXD_2014", "LBVMT_2020"},
+    TRAFFIC_CATEGORY: set(),
+    PUBLIC_ORDER_SANCTIONS_CATEGORY: set(),
 }
 
 _LEGACY_CATEGORY_ALIASES = {
     "Chung": ALL_LAWS_CATEGORY,
     "Tất cả các luật": ALL_LAWS_CATEGORY,
     "Tất cả văn bản": ALL_LAWS_CATEGORY,
-    "Kinh doanh": REAL_ESTATE_BUSINESS_CATEGORY,
+    "Dân sự": CIVIL_CATEGORY,
+    "Gia đình & Nhân thân": FAMILY_PERSONAL_CATEGORY,
     "Đất đai": LAND_CATEGORY,
-    "Bảo vệ môi trường": ENVIRONMENT_CATEGORY,
-    "Môi trường": ENVIRONMENT_CATEGORY,
-    "Tố tụng dân sự": CIVIL_PROCEDURE_CATEGORY,
-    "Nhà ở": HOUSING_CONSTRUCTION_CATEGORY,
-    "Nhà ở & Xây dựng": HOUSING_CONSTRUCTION_CATEGORY,
-    "Kinh doanh bất động sản": REAL_ESTATE_BUSINESS_CATEGORY,
-    "Công chứng": NOTARY_CATEGORY,
-    "Tương trợ tư pháp hình sự": CRIMINAL_MUTUAL_ASSISTANCE_CATEGORY,
-    "civil-family-personal": CIVIL_PROCEDURE_CATEGORY,
+    "Bất động sản": REAL_ESTATE_CATEGORY,
+    "Xây dựng & Môi trường": CONSTRUCTION_ENVIRONMENT_CATEGORY,
+    "Giao thông": TRAFFIC_CATEGORY,
+    "Trật tự & Xử phạt": PUBLIC_ORDER_SANCTIONS_CATEGORY,
+    "Kinh doanh": REAL_ESTATE_CATEGORY,
+    "Bảo vệ môi trường": CONSTRUCTION_ENVIRONMENT_CATEGORY,
+    "Môi trường": CONSTRUCTION_ENVIRONMENT_CATEGORY,
+    "Tố tụng dân sự": CIVIL_CATEGORY,
+    "Nhà ở": REAL_ESTATE_CATEGORY,
+    "Nhà ở & Xây dựng": REAL_ESTATE_CATEGORY,
+    "Kinh doanh bất động sản": REAL_ESTATE_CATEGORY,
+    "civil-family-personal": CIVIL_CATEGORY,
     "land-property-environment": LAND_CATEGORY,
+    "housing-construction": REAL_ESTATE_CATEGORY,
+    "real-estate-business": REAL_ESTATE_CATEGORY,
+    "environment": CONSTRUCTION_ENVIRONMENT_CATEGORY,
+    "civil-procedure": CIVIL_CATEGORY,
 }
 
 
@@ -59,20 +67,14 @@ def determine_category(law_name: str) -> str:
     """Phân loại văn bản theo các lựa chọn trên giao diện."""
     name_lower = law_name.lower()
 
-    if "kinh doanh bất động sản" in name_lower:
-        return REAL_ESTATE_BUSINESS_CATEGORY
+    if "tố tụng dân sự" in name_lower:
+        return CIVIL_CATEGORY
     if "đất đai" in name_lower:
         return LAND_CATEGORY
-    if "nhà ở" in name_lower or "xây dựng" in name_lower:
-        return HOUSING_CONSTRUCTION_CATEGORY
-    if "môi trường" in name_lower:
-        return ENVIRONMENT_CATEGORY
-    if "công chứng" in name_lower:
-        return NOTARY_CATEGORY
-    if "tố tụng dân sự" in name_lower:
-        return CIVIL_PROCEDURE_CATEGORY
-    if "tương trợ tư pháp" in name_lower and "hình sự" in name_lower:
-        return CRIMINAL_MUTUAL_ASSISTANCE_CATEGORY
+    if "kinh doanh bất động sản" in name_lower or "nhà ở" in name_lower:
+        return REAL_ESTATE_CATEGORY
+    if "xây dựng" in name_lower or "môi trường" in name_lower:
+        return CONSTRUCTION_ENVIRONMENT_CATEGORY
 
     return ALL_LAWS_CATEGORY
 

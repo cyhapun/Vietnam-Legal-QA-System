@@ -32,7 +32,7 @@ export function ChatInterface() {
   const [isLoading, setIsLoading] = useState(false);
   const [model, setModel] = useState(DEFAULT_MODEL);
   
-  // State cho phạm vi văn bản pháp luật (Custom Dropdown)
+  // State cho lĩnh vực pháp luật (Custom Dropdown)
   const [lawCategory, setLawCategory] = useState(ALL_LAWS_CATEGORY);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const categoryRef = useRef<HTMLDivElement>(null);
@@ -187,7 +187,7 @@ export function ChatInterface() {
               {/* Toolbar: Lĩnh vực & Model (Nằm trên textarea) */}
               <div className="flex items-center gap-2 px-3 pt-3 pb-1 border-b border-gray-50 md:border-none">
                 
-                {/* Custom Dropdown: Bộ chọn phạm vi văn bản pháp luật */}
+                {/* Custom Dropdown: Bộ chọn lĩnh vực pháp luật */}
                 <div className="relative flex items-center" ref={categoryRef}>
                   <button 
                     type="button"
@@ -195,7 +195,6 @@ export function ChatInterface() {
                     className="flex max-w-[230px] items-center rounded-xl border border-gray-100 bg-gray-50 px-3 py-1.5 transition-colors hover:bg-gray-100 active:bg-gray-200 md:max-w-[320px]"
                     aria-haspopup="listbox"
                     aria-expanded={isCategoryOpen}
-                    title={selectedLawCategory.description}
                   >
                     <LibraryBig className="w-3.5 h-3.5 text-indigo-600 mr-2" />
                     <span className="truncate text-[12px] font-bold text-gray-700">
@@ -204,15 +203,15 @@ export function ChatInterface() {
                     <ChevronDown className={`w-3 h-3 text-gray-400 ml-1.5 transition-transform duration-200 ${isCategoryOpen ? 'rotate-180' : ''}`} />
                   </button>
 
-                  {/* Menu văn bản pháp luật thả xuống */}
+                  {/* Menu lĩnh vực pháp luật thả xuống */}
                   {isCategoryOpen && (
                     <div
                       className="absolute bottom-full left-0 z-50 mb-2 w-[320px] max-w-[calc(100vw-2rem)] animate-in rounded-2xl border border-gray-100 bg-white py-1 shadow-xl shadow-gray-200/50 fade-in slide-in-from-bottom-2 duration-200"
                       role="listbox"
-                      aria-label="Chọn văn bản pháp luật"
+                      aria-label="Chọn lĩnh vực pháp luật"
                     >
                       <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-gray-400 border-b border-gray-50 mb-1">
-                        Tra cứu theo văn bản pháp luật
+                        Tra cứu theo lĩnh vực
                       </div>
                       {LAW_CATEGORIES.map(category => (
                         <button

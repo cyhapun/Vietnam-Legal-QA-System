@@ -296,16 +296,16 @@ Tính năng nổi bật — xây dựng **context đệ quy** giúp LLM hiểu l
 
 ### 6. Category-based Filtering
 
-Lọc kết quả truy xuất theo **nhóm văn bản pháp luật** để tăng độ chính xác:
+Lọc kết quả truy xuất theo **lĩnh vực pháp luật** để tăng độ chính xác:
 
-- Tất cả văn bản
+- Tất cả các luật
+- Dân sự
+- Gia đình & Nhân thân
 - Đất đai
-- Nhà ở & Xây dựng
-- Kinh doanh bất động sản
-- Môi trường
-- Công chứng
-- Tố tụng dân sự
-- Tương trợ tư pháp hình sự
+- Bất động sản
+- Xây dựng & Môi trường
+- Giao thông
+- Trật tự & Xử phạt
 
 Metadata `law_id` và `category` được dùng để lọc document trước khi tìm kiếm.
 Mỗi lựa chọn trên giao diện có thêm mô tả ngắn về phạm vi pháp luật tương ứng.

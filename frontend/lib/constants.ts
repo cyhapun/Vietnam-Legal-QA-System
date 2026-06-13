@@ -7,52 +7,43 @@ import type { AIModel } from './types';
 export interface LawCategory {
   id: string;
   label: string;
-  description: string;
 }
 
 export const ALL_LAWS_CATEGORY = 'all';
 
-// Các nhóm văn bản dùng để giới hạn phạm vi truy xuất.
+// Các lĩnh vực pháp luật được tách từ ba nhóm nghiệp vụ.
 export const LAW_CATEGORIES = [
   {
     id: ALL_LAWS_CATEGORY,
-    label: 'Tất cả văn bản',
-    description: 'Tra cứu trên toàn bộ kho văn bản pháp luật',
+    label: 'Tất cả các luật',
+  },
+  {
+    id: 'civil',
+    label: 'Dân sự',
+  },
+  {
+    id: 'family-personal',
+    label: 'Gia đình & Nhân thân',
   },
   {
     id: 'land',
     label: 'Đất đai',
-    description: 'Quản lý, sử dụng và quyền đối với đất đai',
   },
   {
-    id: 'housing-construction',
-    label: 'Nhà ở & Xây dựng',
-    description: 'Nhà ở, công trình và hoạt động xây dựng',
+    id: 'real-estate',
+    label: 'Bất động sản',
   },
   {
-    id: 'real-estate-business',
-    label: 'Kinh doanh bất động sản',
-    description: 'Giao dịch, dự án và dịch vụ bất động sản',
+    id: 'construction-environment',
+    label: 'Xây dựng & Môi trường',
   },
   {
-    id: 'environment',
-    label: 'Môi trường',
-    description: 'Bảo vệ môi trường và quản lý tác động môi trường',
+    id: 'traffic',
+    label: 'Giao thông',
   },
   {
-    id: 'notary',
-    label: 'Công chứng',
-    description: 'Tổ chức, hoạt động và thủ tục công chứng',
-  },
-  {
-    id: 'civil-procedure',
-    label: 'Tố tụng dân sự',
-    description: 'Trình tự, thủ tục giải quyết vụ việc dân sự',
-  },
-  {
-    id: 'criminal-mutual-assistance',
-    label: 'Tương trợ tư pháp hình sự',
-    description: 'Hợp tác và tương trợ tư pháp trong lĩnh vực hình sự',
+    id: 'public-order-sanctions',
+    label: 'Trật tự & Xử phạt',
   },
 ] as const satisfies readonly LawCategory[];
 

@@ -16,7 +16,7 @@ class ChatRequest(BaseModel):
     """Dữ liệu gửi lên từ Frontend khi user đặt câu hỏi."""
     messages: List[Message]
     model: str
-    category: str = "all"  # Phạm vi văn bản pháp luật để lọc tài liệu
+    category: str = "all"  # Lĩnh vực pháp luật để lọc tài liệu
 
 
 class ChatResponse(BaseModel):
