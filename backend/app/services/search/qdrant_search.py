@@ -93,16 +93,40 @@ class QdrantSearcher:
             return []
 
         try:
+            from qdrant_client.http import models as qdrant_models
+        except ImportError:  # pragma: no cover - runtime dependency check
+            logger.warning("qdrant_client models import failed")
+            if self._fallback_searcher is not None:
+                return self._fallback_searcher.search(query, k=k, category=category)
+            return []
+
+        try:
             client = self._get_client()
             query_filter = self._build_filter(category)
 
-            results = client.search(
+            # Use query_points API for newer qdrant-client versions
+            results = client.query_points(
                 collection_name=self._collection_name,
-                query_vector=query_vector,
+                query=query_vector,
                 limit=k,
                 query_filter=query_filter,
                 with_payload=True,
-            )
+            ).points
+        except AttributeError:
+            # Fallback for older qdrant-client versions that have search() method
+            try:
+                results = client.search(
+                    collection_name=self._collection_name,
+                    query_vector=query_vector,
+                    limit=k,
+                    query_filter=query_filter,
+                    with_payload=True,
+                )
+            except Exception as exc:
+                logger.warning("Both search methods failed for Qdrant: %s", exc)
+                if self._fallback_searcher is not None:
+                    return self._fallback_searcher.search(query, k=k, category=category)
+                return []
         except Exception as exc:
             logger.warning("Qdrant search failed, falling back to FAISS: %s", exc)
             if self._fallback_searcher is not None:
