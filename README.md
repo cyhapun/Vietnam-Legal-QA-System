@@ -190,6 +190,10 @@ cp .env.example .env
 
 # Mở .env và điền API key của bạn
 # HUGGINGFACE_API_KEY=hf_your_actual_key_here
+# Nếu dùng Docker cho PostgreSQL + Qdrant, hãy giữ:
+# STORAGE_BACKEND=qdrant_postgres
+# POSTGRES_DSN=postgresql://postgres:postgres@localhost:5432/vietlaw
+# QDRANT_URL=http://localhost:6333
 ```
 
 ### Bước 2: Chạy Backend (Terminal 1)
