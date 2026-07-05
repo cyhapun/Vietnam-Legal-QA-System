@@ -211,6 +211,22 @@ python main.py
 # ✅ Server chạy tại: http://localhost:8000
 ```
 
+### Bước 2a: Chạy với PostgreSQL + Qdrant (tùy chọn)
+
+```bash
+# Từ thư mục root project
+docker compose up -d postgres qdrant
+
+# Trong backend, dùng storage backend database-backed
+# .env
+# STORAGE_BACKEND=qdrant_postgres
+
+# Sau đó chạy ingestion một lần
+python scripts/ingest_to_storage.py
+```
+
+> Nếu dịch vụ database chưa sẵn sàng, backend vẫn sẽ khởi động bằng fallback FAISS và ghi log cảnh báo.
+
 > ⚠️ **Lưu ý quan trọng:** Phải chạy từ **thư mục `backend/`**, không phải từ thư mục root!
 
 ### Bước 3: Chạy Frontend (Terminal 2)
@@ -242,6 +258,7 @@ docker-compose up --build
 - **Backend phải chạy TRƯỚC Frontend** — Frontend proxy request đến Backend
 - **FAISS index đã có sẵn** trong repo (22.5 MB) — không cần re-embed dữ liệu
 - **Lần đầu khởi động** Backend sẽ nạp 8 file JSON vào RAM + tải FAISS index (~5-10 giây)
+- Khi bật `STORAGE_BACKEND=qdrant_postgres`, backend sẽ tạo schema PostgreSQL và collection Qdrant tại startup, rồi thử ingest dữ liệu ban đầu
 - Nếu muốn **re-embed dữ liệu**, xóa file `embedded_files.json` rồi restart server
 
 ---
