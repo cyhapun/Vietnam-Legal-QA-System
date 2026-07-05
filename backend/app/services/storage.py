@@ -7,7 +7,7 @@ preserving backward compatibility with the existing FAISS-based flow.
 from __future__ import annotations
 
 import json
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from app.config import (
     EMBEDDING_PROVIDER,
@@ -29,6 +29,62 @@ class StorageInitializationError(RuntimeError):
 def is_database_backend_enabled() -> bool:
     """Return True when the runtime is configured to use the database-backed storage layer."""
     return STORAGE_BACKEND.lower() in {"qdrant_postgres", "postgres", "postgresql", "qdrant"}
+
+
+def _start_indexing_run(source: str, details: Optional[Dict[str, Any]] = None) -> Optional[int]:
+    """Create a new indexing run record and return its id when PostgreSQL is available."""
+    try:
+        import psycopg
+    except ImportError:  # pragma: no cover - runtime dependency check
+        return None
+
+    try:
+        with psycopg.connect(POSTGRES_DSN, autocommit=True) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    """
+                    INSERT INTO indexing_runs (source, status, details)
+                    VALUES (%s, %s, %s)
+                    RETURNING id
+                    """,
+                    (source, "running", json.dumps(details or {})),
+                )
+                row = cursor.fetchone()
+                return int(row[0]) if row else None
+    except Exception as exc:  # pragma: no cover - runtime dependency path
+        logger.warning("Unable to create indexing run record for %s: %s", source, exc)
+        return None
+
+
+def _finish_indexing_run(
+    run_id: Optional[int],
+    status: str,
+    details: Optional[Dict[str, Any]] = None,
+) -> None:
+    """Update an existing indexing run record with a final status."""
+    if run_id is None:
+        return
+
+    try:
+        import psycopg
+    except ImportError:  # pragma: no cover - runtime dependency check
+        return
+
+    try:
+        with psycopg.connect(POSTGRES_DSN, autocommit=True) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    """
+                    UPDATE indexing_runs
+                    SET status = %s,
+                        finished_at = NOW(),
+                        details = %s
+                    WHERE id = %s
+                    """,
+                    (status, json.dumps(details or {}), run_id),
+                )
+    except Exception as exc:  # pragma: no cover - runtime dependency path
+        logger.warning("Unable to update indexing run record %s: %s", run_id, exc)
 
 
 def initialize_storage() -> Dict[str, Any]:
@@ -91,9 +147,12 @@ def initialize_storage() -> Dict[str, Any]:
         vectors_config=qdrant_models.VectorParams(size=1024, distance=qdrant_models.Distance.COSINE),
     )
 
+    run_id = _start_indexing_run("startup", {"backend": STORAGE_BACKEND, "collection": QDRANT_COLLECTION})
     try:
         ingest_json_documents()
+        _finish_indexing_run(run_id, "completed", {"backend": STORAGE_BACKEND, "collection": QDRANT_COLLECTION})
     except Exception as exc:  # pragma: no cover - runtime fallback path
+        _finish_indexing_run(run_id, "failed", {"backend": STORAGE_BACKEND, "error": str(exc)})
         logger.warning("Initial document ingestion skipped: %s", exc)
 
     logger.info("Database-backed storage initialized: postgres=%s qdrant=%s", POSTGRES_DSN, QDRANT_COLLECTION)
@@ -189,66 +248,73 @@ def ingest_documents(records: List[Dict[str, Any]]) -> int:
         ) from exc
 
     qdrant_client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY or None)
+    run_id = _start_indexing_run("ingest_documents", {"record_count": len(records), "backend": STORAGE_BACKEND})
 
-    with psycopg.connect(POSTGRES_DSN, autocommit=True) as conn:
-        with conn.cursor() as cursor:
-            for record in records:
-                law_id = record["law_id"]
-                law_name = record.get("law_name", "")
-                summary = record.get("summary", "")
-                category = record.get("category", "all")
-                metadata = record.get("metadata", {})
+    try:
+        with psycopg.connect(POSTGRES_DSN, autocommit=True) as conn:
+            with conn.cursor() as cursor:
+                for record in records:
+                    law_id = record["law_id"]
+                    law_name = record.get("law_name", "")
+                    summary = record.get("summary", "")
+                    category = record.get("category", "all")
+                    metadata = record.get("metadata", {})
 
-                cursor.execute(
-                    """
-                    INSERT INTO laws (law_id, law_name, summary, category, metadata)
-                    VALUES (%s, %s, %s, %s, %s)
-                    ON CONFLICT (law_id) DO UPDATE SET
-                        law_name = EXCLUDED.law_name,
-                        summary = EXCLUDED.summary,
-                        category = EXCLUDED.category,
-                        metadata = EXCLUDED.metadata
-                    """,
-                    (law_id, law_name, summary, category, json.dumps(metadata)),
-                )
-
-                for clause in record.get("clauses", []):
-                    clause_id = clause["id"]
                     cursor.execute(
                         """
-                        INSERT INTO clauses (id, law_id, content, position, cross_references)
+                        INSERT INTO laws (law_id, law_name, summary, category, metadata)
                         VALUES (%s, %s, %s, %s, %s)
-                        ON CONFLICT (id) DO UPDATE SET
-                            law_id = EXCLUDED.law_id,
-                            content = EXCLUDED.content,
-                            position = EXCLUDED.position,
-                            cross_references = EXCLUDED.cross_references
+                        ON CONFLICT (law_id) DO UPDATE SET
+                            law_name = EXCLUDED.law_name,
+                            summary = EXCLUDED.summary,
+                            category = EXCLUDED.category,
+                            metadata = EXCLUDED.metadata
                         """,
-                        (
-                            clause_id,
-                            law_id,
-                            clause.get("content", ""),
-                            json.dumps(clause.get("position", {})),
-                            json.dumps(clause.get("cross_references", [])),
-                        ),
+                        (law_id, law_name, summary, category, json.dumps(metadata)),
                     )
 
-                    embedding = clause.get("embedding")
-                    if embedding:
-                        qdrant_client.upsert(
-                            collection_name=QDRANT_COLLECTION,
-                            points=[
-                                qdrant_models.PointStruct(
-                                    id=clause_id,
-                                    vector=embedding,
-                                    payload={
-                                        "law_id": law_id,
-                                        "content": clause.get("content", ""),
-                                        "category": category,
-                                    },
-                                )
-                            ],
+                    for clause in record.get("clauses", []):
+                        clause_id = clause["id"]
+                        cursor.execute(
+                            """
+                            INSERT INTO clauses (id, law_id, content, position, cross_references)
+                            VALUES (%s, %s, %s, %s, %s)
+                            ON CONFLICT (id) DO UPDATE SET
+                                law_id = EXCLUDED.law_id,
+                                content = EXCLUDED.content,
+                                position = EXCLUDED.position,
+                                cross_references = EXCLUDED.cross_references
+                            """,
+                            (
+                                clause_id,
+                                law_id,
+                                clause.get("content", ""),
+                                json.dumps(clause.get("position", {})),
+                                json.dumps(clause.get("cross_references", [])),
+                            ),
                         )
+
+                        embedding = clause.get("embedding")
+                        if embedding:
+                            qdrant_client.upsert(
+                                collection_name=QDRANT_COLLECTION,
+                                points=[
+                                    qdrant_models.PointStruct(
+                                        id=clause_id,
+                                        vector=embedding,
+                                        payload={
+                                            "law_id": law_id,
+                                            "content": clause.get("content", ""),
+                                            "category": category,
+                                        },
+                                    )
+                                ],
+                            )
+
+        _finish_indexing_run(run_id, "completed", {"record_count": len(records), "backend": STORAGE_BACKEND})
+    except Exception as exc:
+        _finish_indexing_run(run_id, "failed", {"record_count": len(records), "backend": STORAGE_BACKEND, "error": str(exc)})
+        raise
 
     logger.info("Ingested %d document record(s) into database-backed storage.", len(records))
     return len(records)
