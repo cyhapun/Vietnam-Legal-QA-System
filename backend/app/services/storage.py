@@ -137,7 +137,10 @@ def _finish_indexing_run(
 
 
 def initialize_storage() -> Dict[str, Any]:
-    """Initialize PostgreSQL schema and Qdrant collection if the DB backend is enabled."""
+    """Initialize PostgreSQL schema and Qdrant collection if the DB backend is enabled.
+    
+    Skips re-ingestion if data already exists to avoid expensive re-embedding on every startup.
+    """
     if not is_database_backend_enabled():
         logger.info("Storage backend %s requested; skipping DB initialization.", STORAGE_BACKEND)
         return {"backend": STORAGE_BACKEND, "postgres": "skipped", "qdrant": "skipped"}
@@ -158,17 +161,50 @@ def initialize_storage() -> Dict[str, Any]:
         ) from exc
 
     _ensure_schema()
+    
+    # Check if data already exists
+    try:
+        with psycopg.connect(POSTGRES_DSN, autocommit=True) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute("SELECT COUNT(*) FROM clauses")
+                existing_clause_count = cursor.fetchone()[0]
+                if existing_clause_count > 0:
+                    logger.info("Database already contains %d clauses; skipping re-ingestion", existing_clause_count)
+                    return {
+                        "backend": STORAGE_BACKEND,
+                        "postgres": "ready",
+                        "qdrant_collection": QDRANT_COLLECTION,
+                        "existing_clauses": existing_clause_count,
+                    }
+    except Exception as exc:
+        logger.warning("Could not check existing clause count: %s", exc)
+        # Continue with initialization if check fails
 
     qdrant_client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY or None)
-    qdrant_client.recreate_collection(
-        collection_name=QDRANT_COLLECTION,
-        vectors_config=qdrant_models.VectorParams(size=1024, distance=qdrant_models.Distance.COSINE),
-    )
+    
+    # Check if Qdrant collection exists before recreating
+    try:
+        collection_info = qdrant_client.get_collection(QDRANT_COLLECTION)
+        logger.info("Qdrant collection '%s' already exists with %d points", 
+                    QDRANT_COLLECTION, collection_info.points_count)
+        logger.info("Skipping collection recreation to preserve existing vectors")
+    except Exception:
+        # Collection doesn't exist or is inaccessible - create it
+        logger.info("Creating new Qdrant collection '%s'", QDRANT_COLLECTION)
+        qdrant_client.recreate_collection(
+            collection_name=QDRANT_COLLECTION,
+            vectors_config=qdrant_models.VectorParams(size=1024, distance=qdrant_models.Distance.COSINE),
+        )
 
     run_id = _start_indexing_run("startup", {"backend": STORAGE_BACKEND, "collection": QDRANT_COLLECTION})
     try:
-        ingest_json_documents()
-        _finish_indexing_run(run_id, "completed", {"backend": STORAGE_BACKEND, "collection": QDRANT_COLLECTION})
+        ingested = ingest_json_documents()
+        if ingested == 0:
+            logger.info("No documents were ingested (either data exists or ingestion was skipped)")
+            _finish_indexing_run(run_id, "skipped", {"backend": STORAGE_BACKEND, "reason": "data_exists"})
+        else:
+            _finish_indexing_run(run_id, "completed", {"backend": STORAGE_BACKEND, "collection": QDRANT_COLLECTION, "ingested": ingested})
+            logger.info("Ingested %d documents on startup", ingested)
     except Exception as exc:  # pragma: no cover - runtime fallback path
         _finish_indexing_run(run_id, "failed", {"backend": STORAGE_BACKEND, "error": str(exc)})
         logger.warning("Initial document ingestion skipped: %s", exc)
@@ -182,7 +218,11 @@ def initialize_storage() -> Dict[str, Any]:
 
 
 def ingest_json_documents() -> int:
-    """Ingest processed legal JSON documents into PostgreSQL and Qdrant using the configured embedding backend."""
+    """Ingest processed legal JSON documents into PostgreSQL and Qdrant using the configured embedding backend.
+    
+    Returns 0 if data already exists to avoid re-ingesting on every startup.
+    Returns the number of records ingested (>0) if new data was added.
+    """
     from app.services.knowledge_base import KNOWLEDGE_BASE, LAW_METADATA, load_knowledge_base
 
     load_knowledge_base()
@@ -216,6 +256,20 @@ def ingest_json_documents() -> int:
     records = list(grouped.values())
     if not records:
         return 0
+
+    # Check if clauses already exist before embedding
+    try:
+        import psycopg
+        with psycopg.connect(POSTGRES_DSN, autocommit=True) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute("SELECT COUNT(*) FROM clauses")
+                existing_count = cursor.fetchone()[0]
+                total_expected = sum(len(r.get("clauses", [])) for r in records)
+                if existing_count >= total_expected:
+                    logger.info("All %d clauses already exist in database; skipping re-ingestion", existing_count)
+                    return 0
+    except Exception as exc:
+        logger.warning("Could not check existing clauses: %s; proceeding with ingestion", exc)
 
     try:
         if EMBEDDING_PROVIDER == "ollama":

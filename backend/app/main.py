@@ -54,7 +54,10 @@ def create_app() -> FastAPI:
     # --- Startup Event ---
     @application.on_event("startup")
     async def startup_event():
+        """Schedule initialization as non-blocking background task, don't wait for it."""
+        # Schedule background task but don't await - server binds to port immediately
         asyncio.create_task(_initialize_runtime_components())
+        logger.info("Initialization scheduled as background task, server ready to receive requests")
 
     return application
 
