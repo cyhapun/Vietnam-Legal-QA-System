@@ -225,7 +225,7 @@ docker compose up -d postgres qdrant
 python scripts/ingest_to_storage.py
 ```
 
-> Nếu dịch vụ database chưa sẵn sàng, backend vẫn sẽ khởi động bằng fallback FAISS và ghi log cảnh báo.
+> Nếu dịch vụ database chưa sẵn sàng, backend vẫn sẽ khởi động bằng fallback FAISS và ghi log cảnh báo. Nếu Docker Desktop hoặc Docker Engine chưa chạy, lệnh `docker compose up -d postgres qdrant` sẽ thất bại trước khi backend có thể dùng PostgreSQL/Qdrant.
 
 > ⚠️ **Lưu ý quan trọng:** Phải chạy từ **thư mục `backend/`**, không phải từ thư mục root!
 

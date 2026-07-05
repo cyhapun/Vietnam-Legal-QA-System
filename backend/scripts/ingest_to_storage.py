@@ -44,14 +44,19 @@ def main() -> int:
     parser.add_argument("--records", action="store_true", help="Print the generated record count and exit")
     args = parser.parse_args()
 
-    records = build_records()
-    if args.records:
-        print(f"Prepared {len(records)} record(s)")
-        return 0
+    try:
+        records = build_records()
+        if args.records:
+            print(f"Prepared {len(records)} record(s)")
+            return 0
 
-    count = ingest_documents(records)
-    print(f"Ingested {count} record(s)")
-    return 0
+        count = ingest_documents(records)
+        print(f"Ingested {count} record(s)")
+        return 0
+    except Exception as exc:
+        print(f"Storage ingestion failed: {exc}", file=sys.stderr)
+        print("Verify that PostgreSQL and Qdrant are running and that your storage configuration is correct.", file=sys.stderr)
+        return 1
 
 
 if __name__ == "__main__":
