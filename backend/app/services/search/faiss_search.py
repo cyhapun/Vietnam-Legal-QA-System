@@ -51,6 +51,10 @@ class FAISSSearcher:
         category: Optional[str] = None,
     ) -> List[Document]:
         """Tìm kiếm bằng MMR trên FAISS index."""
+        if self._vectorstore is None:
+            logger.warning("FAISS vectorstore is not initialized; returning empty results")
+            return []
+
         search_kwargs = {
             "k": k,
             "fetch_k": max(self._fetch_k, k),
@@ -79,6 +83,10 @@ class FAISSSearcher:
         category: Optional[str] = None,
     ) -> List[Document]:
         """Async version — dùng trong FastAPI endpoint."""
+        if self._vectorstore is None:
+            logger.warning("FAISS vectorstore is not initialized; returning empty results")
+            return []
+
         search_kwargs = {
             "k": k,
             "fetch_k": max(self._fetch_k, k),
