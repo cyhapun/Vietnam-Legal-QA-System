@@ -1,0 +1,189 @@
+# Project Context for OpenSpec
+
+## 1. Overview
+
+VietLaw AI is a Vietnamese legal QA system built as a client-server application with a RAG pipeline. The system retrieves relevant legal clauses from a local legal corpus, builds context, and sends the result to an LLM for answer generation.
+
+The project is currently focused on:
+- legal question answering
+- citation-oriented responses grounded in legal documents
+- Vietnamese UI and user chat sessions
+- retrieval and reranking over a local processed legal corpus
+
+## 2. Tech stack
+
+### Backend
+- Python 3.10+
+- FastAPI
+- Uvicorn
+- Pydantic
+- LangChain / LangChain Core / LangChain Community
+- Hugging Face integrations for embeddings and LLMs
+- FAISS via faiss-cpu
+- python-dotenv
+
+### Frontend
+- Next.js 15
+- React 19
+- TypeScript
+- Tailwind CSS
+- Lucide React
+- React Markdown
+- Motion
+
+### Infra / data
+- Docker Compose support
+- Local JSON-based legal dataset under backend/data/processed
+- FAISS index stored locally under backend/vietlaw_faiss_index
+- Environment variables loaded from a root .env file
+
+## 3. Repository structure
+
+- backend/: FastAPI backend and RAG services
+  - app/api/: API routers
+  - app/services/: domain logic for pipeline, search, reranking, LLM, chunking, embedding, knowledge base
+  - app/models.py: Pydantic request/response models
+  - app/config.py: centralized configuration and environment variables
+  - data/processed/: processed legal JSON documents
+  - data/raw/: raw data folder
+- frontend/: Next.js app router frontend
+  - app/api/chat/route.ts: proxy route to backend
+  - components/chat/: chat UI components
+  - hooks/: reusable React hooks
+  - lib/: shared constants, types, and utilities
+- openspec/: OpenSpec workspace for change proposals and specs
+- embedding/, reranking/, fine-tuning/: experiment and training assets
+
+## 4. Architecture and module responsibilities
+
+### Backend flow
+1. Frontend sends a chat request to /api/chat.
+2. Backend route extracts the latest user message and chat history.
+3. The RAG pipeline performs retrieval, reranking, and context construction.
+4. The LLM is invoked with the assembled context and a legal-answering system prompt.
+5. The response is returned as plain text plus contextUsed metadata.
+
+### Main backend modules
+- app/api/chat.py: HTTP endpoint handling
+- app/services/pipeline.py: orchestrates retrieval → reranking → context building
+- app/services/knowledge_base.py: loads legal data into memory and provides metadata lookup
+- app/services/llm.py: LLM client setup and prompt templates
+- app/services/search/: retrieval strategies such as FAISS, BM25, and hybrid search
+- app/services/reranking/: reranker implementations
+- app/services/context_builder/: builds legal context for answer generation
+- app/services/chunking/: document chunking logic
+- app/services/embedding/: embedding provider abstraction
+
+### Frontend modules
+- components/chat/ChatInterface.tsx: main chat experience and input handling
+- hooks/use-chat-sessions.ts: session state and persistence in localStorage
+- lib/types.ts: shared TypeScript interfaces
+- lib/constants.ts: categories, models, and storage keys
+
+## 5. Coding conventions
+
+### Python conventions
+- Follow a modular service-oriented structure.
+- Keep API routes thin; avoid putting business logic directly into route handlers.
+- Prefer single-responsibility modules.
+- Use snake_case for Python functions and variables.
+- Use Pydantic models for request/response validation.
+- Keep configuration in app/config.py rather than hardcoding values.
+- Use the existing logger setup from app/utils/logging.py.
+- Add Vietnamese comments where the codebase already uses them.
+
+### TypeScript / React conventions
+- Use functional components and hooks.
+- Keep UI components presentational where possible.
+- Move session/state logic into hooks rather than keeping it inside large components.
+- Use shared types under lib/types.ts and shared constants under lib/constants.ts.
+- Keep UI copy in Vietnamese to match the product language.
+
+## 6. API conventions
+
+### Backend API
+- Primary endpoint: POST /chat
+- Request body shape:
+  - messages: array of { role, content }
+  - model: selected model identifier
+  - category: legal category filter, default "all"
+- Response shape:
+  - text: generated answer
+  - contextUsed: list of retrieved legal context items
+
+### Frontend proxy API
+- The Next.js route at frontend/app/api/chat/route.ts forwards requests to the backend.
+- Frontend client calls /api/chat and expects the same response format.
+- Error responses should carry a clear error and details payload.
+
+## 7. Development, build, and test workflow
+
+### Backend
+- Run from backend/ directory
+- Start dev server:
+  - python main.py
+  - or uvicorn app.main:app --reload
+- Install dependencies:
+  - pip install -r requirements.txt
+
+### Frontend
+- Install dependencies:
+  - npm install
+- Start dev server:
+  - npm run dev
+- Build:
+  - npm run build
+- Lint:
+  - npm run lint
+
+### Docker
+- From repository root:
+  - docker-compose up --build
+
+### Testing status
+- No dedicated automated test suite is currently visible in the repository.
+- Future feature work should add tests explicitly rather than relying on manual verification only.
+
+## 8. Data model and storage
+
+### Current data storage approach
+- No relational database is currently used.
+- Legal content is stored as JSON files in backend/data/processed.
+- A FAISS index is used for vector retrieval.
+- In-memory knowledge base data is loaded at startup from the processed JSON files.
+
+### Current data shape (inferred)
+- Each processed legal document contains law metadata and clauses.
+- Clause entries include identifiers, content, and cross-reference data.
+- The knowledge base stores clause-level content and metadata for retrieval.
+
+### Important note
+- The current pipeline assumes local files and a local FAISS index. Introducing a new database should be justified by a clear product need.
+
+## 9. Authentication and permissions
+
+- No authentication system is currently implemented.
+- No role-based permission model is present.
+- The application is effectively open and local-session based for now.
+- Any future auth feature should be introduced explicitly and documented as a new capability.
+
+## 10. Existing product behavior and UI conventions
+
+- The UI is a single-page chat experience with a sidebar for chat sessions.
+- Chat sessions persist in localStorage in the browser.
+- Users can select a legal category and an LLM provider/model.
+- Responses may include legal context references.
+- The UI is Vietnamese-first and should remain consistent with that language.
+
+## 11. Implementation notes for future features
+
+When implementing a new feature, keep the following in mind:
+- Prefer extending the existing modular service architecture rather than adding logic directly to the route layer.
+- Preserve the existing request/response format unless a breaking change is intentionally planned.
+- Keep new configuration values in app/config.py and support them through environment variables.
+- For new backend capabilities, add or update Pydantic models and keep route handlers thin.
+- For new frontend features, keep state and persistence in hooks where possible.
+- Avoid introducing a database or auth layer unless the feature genuinely requires it.
+- If the feature changes retrieval behavior, validate that the pipeline still returns usable context and citations.
+- If the feature changes UI behavior, preserve the current chat-first experience and local-session workflow unless explicitly redesigning it.
+- Add documentation and tests for any new behavior because the project currently lacks an obvious automated test baseline.
