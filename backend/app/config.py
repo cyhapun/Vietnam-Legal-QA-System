@@ -35,6 +35,13 @@ TRACKING_FILE = os.getenv(
 # --- API KEYS ---
 HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY", "")
 
+# --- STORAGE BACKEND ---
+STORAGE_BACKEND = os.getenv("STORAGE_BACKEND", "faiss").strip().lower()
+POSTGRES_DSN = os.getenv("POSTGRES_DSN", "postgresql://postgres:postgres@localhost:5432/vietlaw")
+QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
+QDRANT_API_KEY = os.getenv("QDRANT_API_KEY", "")
+QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION", "vietlaw_clauses")
+
 # --- THÔNG SỐ EMBEDDING ---
 EMBEDDING_MODEL = os.getenv("HUGGINGFACE_EMBEDDING_MODEL", "BAAI/bge-m3")
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")

@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import CORS_ORIGINS
 from app.api.chat import router as chat_router
 from app.services.pipeline import init_pipeline
+from app.services.storage import initialize_storage
 from app.utils.logging import setup_logger
 
 logger = setup_logger("vietlaw.main")
@@ -36,6 +37,12 @@ def create_app() -> FastAPI:
     # --- Startup Event ---
     @application.on_event("startup")
     async def startup_event():
+        logger.info("Khởi tạo storage layer...")
+        try:
+            initialize_storage()
+        except Exception as e:
+            logger.warning("Không thể khởi tạo storage layer DB-backed: %s", str(e))
+
         logger.info("Khởi tạo RAG Pipeline...")
         try:
             init_pipeline()

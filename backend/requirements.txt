@@ -12,6 +12,10 @@ langchain-huggingface
 
 # === Vector Store ===
 faiss-cpu
+qdrant-client
+
+# === Database ===
+psycopg[binary]
 
 # === HuggingFace Hub ===
 huggingface_hub
