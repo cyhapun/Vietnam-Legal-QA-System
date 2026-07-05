@@ -138,14 +138,18 @@ def _get_embedding() -> BaseEmbedding:
     """Lazy init embedding model (singleton)."""
     global _embedding
     if _embedding is None:
-        if EMBEDDING_PROVIDER == "huggingface":
-            _embedding = HuggingFaceEndpointEmbedding()
-        elif EMBEDDING_PROVIDER == "ollama":
-            _embedding = OllamaEmbedding()
-        else:
-            raise ValueError(
-                f"Unknown embedding provider: {EMBEDDING_PROVIDER}"
-            )
+        try:
+            if EMBEDDING_PROVIDER == "huggingface":
+                _embedding = HuggingFaceEndpointEmbedding()
+            elif EMBEDDING_PROVIDER == "ollama":
+                _embedding = OllamaEmbedding()
+            else:
+                raise ValueError(
+                    f"Unknown embedding provider: {EMBEDDING_PROVIDER}"
+                )
+        except Exception as exc:
+            logger.warning("Embedding backend unavailable during pipeline init: %s", exc)
+            _embedding = None
     return _embedding
 
 
@@ -360,33 +364,51 @@ def init_pipeline() -> None:
     logger.info("Config: %s", PIPELINE_CONFIG)
     logger.info("=" * 60)
 
-    # 1. Nạp dữ liệu vào RAM
-    load_knowledge_base()
+    try:
+        # 1. Nạp dữ liệu vào RAM
+        load_knowledge_base()
 
-    # 2. Khởi tạo embedding + FAISS index
-    embedding = _get_embedding()
-    _init_faiss_index(embedding)
+        # 2. Khởi tạo embedding + FAISS index (chỉ khi cần cho FAISS-based backend)
+        embedding = None
+        if STORAGE_BACKEND.lower() not in {"qdrant_postgres", "qdrant", "postgres", "postgresql"}:
+            embedding = _get_embedding()
+            if embedding is not None:
+                _init_faiss_index(embedding)
+            else:
+                logger.warning("Embedding backend unavailable; pipeline sẽ dùng fallback retrieval cơ bản.")
+        else:
+            logger.info("Storage backend %s dùng Qdrant/PostgreSQL; bỏ qua khởi tạo FAISS index để tăng tốc startup.", STORAGE_BACKEND)
 
-    # 3. Tạo các components từ config
-    searcher = _create_searcher(embedding)
-    reranker = _create_reranker()
-    context_builder = _create_context_builder()
+        # 3. Tạo các components từ config
+        searcher = _create_searcher(embedding)
+        reranker = _create_reranker()
+        context_builder = _create_context_builder()
 
-    # 4. Assemble pipeline
-    _pipeline = RAGPipeline(
-        searcher=searcher,
-        reranker=reranker,
-        context_builder=context_builder,
-    )
+        # 4. Assemble pipeline
+        _pipeline = RAGPipeline(
+            searcher=searcher,
+            reranker=reranker,
+            context_builder=context_builder,
+        )
 
-    logger.info("RAG Pipeline đã sẵn sàng!")
+        logger.info("RAG Pipeline đã sẵn sàng!")
+    except Exception as exc:
+        logger.error("Không thể khởi tạo pipeline đầy đủ: %s", exc)
+        logger.warning("Sẽ giữ pipeline ở trạng thái không sẵn sàng cho đến khi request được xử lý.")
+        _pipeline = None
 
 
 def get_pipeline() -> RAGPipeline:
-    """Trả về pipeline hiện tại. Raise nếu chưa init."""
+    """Trả về pipeline hiện tại, tự động khởi tạo nếu cần."""
+    global _pipeline
+
+    if _pipeline is None:
+        logger.warning("Pipeline chưa sẵn sàng, đang tự động khởi tạo trên request đầu tiên...")
+        init_pipeline()
+
     if _pipeline is None:
         raise RuntimeError(
             "RAG Pipeline chưa được khởi tạo. "
-            "Hãy gọi init_pipeline() trong startup event."
+            "Hãy kiểm tra cấu hình embedding/storage và log startup."
         )
     return _pipeline

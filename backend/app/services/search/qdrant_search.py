@@ -83,18 +83,31 @@ class QdrantSearcher:
         )
 
     def _search_qdrant(self, query: str, k: int, category: Optional[str]) -> List[Document]:
-        embedding_backend = self._get_embedding_backend()
-        query_vector = embedding_backend.embed_query(query)
-        client = self._get_client()
-        query_filter = self._build_filter(category)
+        try:
+            embedding_backend = self._get_embedding_backend()
+            query_vector = embedding_backend.embed_query(query)
+        except Exception as exc:
+            logger.warning("Unable to embed query for Qdrant search: %s", exc)
+            if self._fallback_searcher is not None:
+                return self._fallback_searcher.search(query, k=k, category=category)
+            return []
 
-        results = client.search(
-            collection_name=self._collection_name,
-            query_vector=query_vector,
-            limit=k,
-            query_filter=query_filter,
-            with_payload=True,
-        )
+        try:
+            client = self._get_client()
+            query_filter = self._build_filter(category)
+
+            results = client.search(
+                collection_name=self._collection_name,
+                query_vector=query_vector,
+                limit=k,
+                query_filter=query_filter,
+                with_payload=True,
+            )
+        except Exception as exc:
+            logger.warning("Qdrant search failed, falling back to FAISS: %s", exc)
+            if self._fallback_searcher is not None:
+                return self._fallback_searcher.search(query, k=k, category=category)
+            return []
 
         documents: List[Document] = []
         for point in results:

@@ -6,6 +6,8 @@ File này chỉ chịu trách nhiệm:
   3. Đăng ký routers
   4. Khởi tạo RAG Pipeline khi startup
 """
+import asyncio
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -34,9 +36,7 @@ def create_app() -> FastAPI:
     # --- Đăng ký Routers ---
     application.include_router(chat_router)
 
-    # --- Startup Event ---
-    @application.on_event("startup")
-    async def startup_event():
+    async def _initialize_runtime_components() -> None:
         logger.info("Khởi tạo storage layer...")
         try:
             initialize_storage()
@@ -49,6 +49,12 @@ def create_app() -> FastAPI:
             logger.info("RAG Pipeline đã sẵn sàng!")
         except Exception as e:
             logger.error("Lỗi khởi tạo RAG Pipeline: %s", str(e))
+            logger.warning("Backend sẽ tiếp tục chạy ở chế độ degraded; API có thể dùng fallback retrieval.")
+
+    # --- Startup Event ---
+    @application.on_event("startup")
+    async def startup_event():
+        asyncio.create_task(_initialize_runtime_components())
 
     return application
 

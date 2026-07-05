@@ -40,38 +40,43 @@ def _ensure_schema() -> None:
             "psycopg is required for database-backed storage. Install backend requirements first."
         ) from exc
 
-    schema_sql = """
-    CREATE TABLE IF NOT EXISTS laws (
-        law_id TEXT PRIMARY KEY,
-        law_name TEXT NOT NULL,
-        summary TEXT,
-        category TEXT,
-        metadata JSONB DEFAULT '{}'::jsonb,
-        created_at TIMESTAMPTZ DEFAULT NOW()
-    );
-
-    CREATE TABLE IF NOT EXISTS clauses (
-        id TEXT PRIMARY KEY,
-        law_id TEXT NOT NULL REFERENCES laws(law_id) ON DELETE CASCADE,
-        content TEXT NOT NULL,
-        position JSONB DEFAULT '{}'::jsonb,
-        cross_references JSONB DEFAULT '[]'::jsonb,
-        created_at TIMESTAMPTZ DEFAULT NOW()
-    );
-
-    CREATE TABLE IF NOT EXISTS indexing_runs (
-        id SERIAL PRIMARY KEY,
-        source TEXT NOT NULL,
-        status TEXT NOT NULL DEFAULT 'pending',
-        started_at TIMESTAMPTZ DEFAULT NOW(),
-        finished_at TIMESTAMPTZ,
-        details JSONB DEFAULT '{}'::jsonb
-    );
-    """
+    schema_statements = [
+        """
+        CREATE TABLE IF NOT EXISTS laws (
+            law_id TEXT PRIMARY KEY,
+            law_name TEXT NOT NULL,
+            summary TEXT,
+            category TEXT,
+            metadata JSONB DEFAULT '{}'::jsonb,
+            created_at TIMESTAMPTZ DEFAULT NOW()
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS clauses (
+            id TEXT PRIMARY KEY,
+            law_id TEXT NOT NULL REFERENCES laws(law_id) ON DELETE CASCADE,
+            content TEXT NOT NULL,
+            position JSONB DEFAULT '{}'::jsonb,
+            cross_references JSONB DEFAULT '[]'::jsonb,
+            created_at TIMESTAMPTZ DEFAULT NOW()
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS indexing_runs (
+            id SERIAL PRIMARY KEY,
+            source TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT 'pending',
+            started_at TIMESTAMPTZ DEFAULT NOW(),
+            finished_at TIMESTAMPTZ,
+            details JSONB DEFAULT '{}'::jsonb
+        )
+        """,
+    ]
 
     with psycopg.connect(POSTGRES_DSN, autocommit=True) as conn:
         with conn.cursor() as cursor:
-            cursor.execute(schema_sql)
+            for statement in schema_statements:
+                cursor.execute(statement)
 
 
 def _start_indexing_run(source: str, details: Optional[Dict[str, Any]] = None) -> Optional[int]:
@@ -232,6 +237,7 @@ def ingest_json_documents() -> int:
                     clause["embedding"] = embedding_backend.embed_query(content)
                 except Exception as exc:  # pragma: no cover - runtime dependency path
                     logger.warning("Embedding failed for clause %s: %s", clause["id"], exc)
+                    clause["embedding"] = None
 
     return ingest_documents(records)
 

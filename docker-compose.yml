@@ -30,6 +30,8 @@ services:
       STORAGE_BACKEND: qdrant_postgres
       POSTGRES_DSN: postgresql://postgres:postgres@postgres:5432/vietlaw
       QDRANT_URL: http://qdrant:6333
+      HUGGINGFACE_API_KEY: ${HUGGINGFACE_API_KEY:-}
+      EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-huggingface}
     volumes:
       - ./backend/data:/app/data
       - ./backend/vietlaw_faiss_index:/app/vietlaw_faiss_index
@@ -43,7 +45,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - BACKEND_URL=http://backend:8000
+      BACKEND_URL: http://backend:8000
     depends_on:
       - backend
 
