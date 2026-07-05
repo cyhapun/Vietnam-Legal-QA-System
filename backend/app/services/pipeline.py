@@ -21,7 +21,7 @@ from app.config import (
     EMBEDDING_BATCH_SIZE, EMBEDDING_MAX_RETRIES,
     EMBEDDING_SLEEP_BETWEEN_BATCHES, EMBEDDING_RETRY_BASE_WAIT,
     EMBEDDING_PROVIDER, PIPELINE_CONFIG,
-    RETRIEVER_CANDIDATE_K, RETRIEVER_K,
+    RETRIEVER_CANDIDATE_K, RETRIEVER_K, STORAGE_BACKEND,
 )
 from app.services.knowledge_base import load_knowledge_base
 from app.services.embedding import (
@@ -30,7 +30,7 @@ from app.services.embedding import (
     OllamaEmbedding,
 )
 from app.services.chunking import ClauseChunker
-from app.services.search import FAISSSearcher, BM25Searcher, HybridSearcher
+from app.services.search import FAISSSearcher, BM25Searcher, HybridSearcher, QdrantSearcher
 from app.services.reranking import NoReranker, CrossEncoderReranker
 from app.services.context_builder import NestedContextBuilder
 from app.utils.logging import setup_logger
@@ -267,6 +267,10 @@ def _create_searcher(embedding) -> Any:
     global _faiss_vectorstore
 
     strategy = PIPELINE_CONFIG.get("search", "faiss")
+
+    if STORAGE_BACKEND.lower() in {"qdrant_postgres", "qdrant"}:
+        faiss_searcher = FAISSSearcher(vectorstore=_faiss_vectorstore)
+        return QdrantSearcher(vectorstore=_faiss_vectorstore, fallback_searcher=faiss_searcher)
 
     # FAISS searcher luôn cần (dùng cho cả hybrid)
     if _faiss_vectorstore is None:

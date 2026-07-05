@@ -13,5 +13,6 @@ from app.services.search.base import BaseSearcher
 from app.services.search.faiss_search import FAISSSearcher
 from app.services.search.bm25_search import BM25Searcher
 from app.services.search.hybrid_search import HybridSearcher
+from app.services.search.qdrant_search import QdrantSearcher
 
-__all__ = ["BaseSearcher", "FAISSSearcher", "BM25Searcher", "HybridSearcher"]
+__all__ = ["BaseSearcher", "FAISSSearcher", "BM25Searcher", "HybridSearcher", "QdrantSearcher"]

@@ -1,15 +1,16 @@
 """
 Storage bootstrap for Qdrant + PostgreSQL-backed legal corpus persistence.
 
-This module provides an initial abstraction for the new storage backend while
+This module introduces a storage abstraction for the new backend while
 preserving backward compatibility with the existing FAISS-based flow.
 """
 from __future__ import annotations
 
 import json
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from app.config import (
+    EMBEDDING_PROVIDER,
     POSTGRES_DSN,
     QDRANT_API_KEY,
     QDRANT_COLLECTION,
@@ -25,13 +26,14 @@ class StorageInitializationError(RuntimeError):
     """Raised when the database-backed storage layer cannot be initialized."""
 
 
-def _is_db_backend_enabled() -> bool:
+def is_database_backend_enabled() -> bool:
+    """Return True when the runtime is configured to use the database-backed storage layer."""
     return STORAGE_BACKEND.lower() in {"qdrant_postgres", "postgres", "postgresql", "qdrant"}
 
 
 def initialize_storage() -> Dict[str, Any]:
     """Initialize PostgreSQL schema and Qdrant collection if the DB backend is enabled."""
-    if not _is_db_backend_enabled():
+    if not is_database_backend_enabled():
         logger.info("Storage backend %s requested; skipping DB initialization.", STORAGE_BACKEND)
         return {"backend": STORAGE_BACKEND, "postgres": "skipped", "qdrant": "skipped"}
 
@@ -89,6 +91,11 @@ def initialize_storage() -> Dict[str, Any]:
         vectors_config=qdrant_models.VectorParams(size=1024, distance=qdrant_models.Distance.COSINE),
     )
 
+    try:
+        ingest_json_documents()
+    except Exception as exc:  # pragma: no cover - runtime fallback path
+        logger.warning("Initial document ingestion skipped: %s", exc)
+
     logger.info("Database-backed storage initialized: postgres=%s qdrant=%s", POSTGRES_DSN, QDRANT_COLLECTION)
     return {
         "backend": STORAGE_BACKEND,
@@ -97,12 +104,72 @@ def initialize_storage() -> Dict[str, Any]:
     }
 
 
+def ingest_json_documents() -> int:
+    """Ingest processed legal JSON documents into PostgreSQL and Qdrant using the configured embedding backend."""
+    from app.services.knowledge_base import KNOWLEDGE_BASE, LAW_METADATA, load_knowledge_base
+
+    load_knowledge_base()
+
+    records: List[Dict[str, Any]] = []
+    grouped: Dict[str, Dict[str, Any]] = {}
+
+    for clause_id, clause_data in KNOWLEDGE_BASE.items():
+        law_id = clause_data.get("law_id")
+        law_meta = LAW_METADATA.get(law_id, {})
+        record = grouped.setdefault(
+            law_id,
+            {
+                "law_id": law_id,
+                "law_name": law_meta.get("law_name", ""),
+                "summary": law_meta.get("summary", ""),
+                "category": law_meta.get("category", "all"),
+                "metadata": {"law_name": law_meta.get("law_name", "")},
+                "clauses": [],
+            },
+        )
+        record["clauses"].append(
+            {
+                "id": clause_id,
+                "content": clause_data.get("content", ""),
+                "position": clause_data.get("position", {}),
+                "cross_references": clause_data.get("cross_references", []),
+            }
+        )
+
+    records = list(grouped.values())
+    if not records:
+        return 0
+
+    try:
+        if EMBEDDING_PROVIDER == "ollama":
+            from app.services.embedding.ollama import OllamaEmbedding
+            embedding_backend = OllamaEmbedding()
+        else:
+            from app.services.embedding.hf_endpoint import HuggingFaceEndpointEmbedding
+            embedding_backend = HuggingFaceEndpointEmbedding()
+    except Exception as exc:  # pragma: no cover - runtime dependency path
+        logger.warning("Embedding backend unavailable during ingestion: %s", exc)
+        embedding_backend = None
+
+    for record in records:
+        clauses = record.get("clauses", [])
+        for clause in clauses:
+            content = clause.get("content", "")
+            if embedding_backend and content:
+                try:
+                    clause["embedding"] = embedding_backend.embed_query(content)
+                except Exception as exc:  # pragma: no cover - runtime dependency path
+                    logger.warning("Embedding failed for clause %s: %s", clause["id"], exc)
+
+    return ingest_documents(records)
+
+
 def ingest_documents(records: List[Dict[str, Any]]) -> int:
     """Persist legal document records into PostgreSQL and upsert vectors into Qdrant."""
     if not records:
         return 0
 
-    if not _is_db_backend_enabled():
+    if not is_database_backend_enabled():
         logger.info("Skipping ingestion because storage backend %s is not database-backed.", STORAGE_BACKEND)
         return 0
 
