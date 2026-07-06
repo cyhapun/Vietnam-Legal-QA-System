@@ -162,20 +162,13 @@ def initialize_storage() -> Dict[str, Any]:
 
     _ensure_schema()
     
-    # Check if data already exists
     try:
         with psycopg.connect(POSTGRES_DSN, autocommit=True) as conn:
             with conn.cursor() as cursor:
                 cursor.execute("SELECT COUNT(*) FROM clauses")
                 existing_clause_count = cursor.fetchone()[0]
                 if existing_clause_count > 0:
-                    logger.info("Database already contains %d clauses; skipping re-ingestion", existing_clause_count)
-                    return {
-                        "backend": STORAGE_BACKEND,
-                        "postgres": "ready",
-                        "qdrant_collection": QDRANT_COLLECTION,
-                        "existing_clauses": existing_clause_count,
-                    }
+                    logger.info("Database already contains %d clauses; checking Qdrant schema...", existing_clause_count)
     except Exception as exc:
         logger.warning("Could not check existing clause count: %s", exc)
         # Continue with initialization if check fails
@@ -199,6 +192,7 @@ def initialize_storage() -> Dict[str, Any]:
         qdrant_client.recreate_collection(
             collection_name=QDRANT_COLLECTION,
             vectors_config={
+                "": qdrant_models.VectorParams(size=1, distance=qdrant_models.Distance.COSINE), # Dummy default vector to bypass Qdrant FusionQuery validation bug
                 "text-dense": qdrant_models.VectorParams(size=1024, distance=qdrant_models.Distance.COSINE),
             },
             sparse_vectors_config={

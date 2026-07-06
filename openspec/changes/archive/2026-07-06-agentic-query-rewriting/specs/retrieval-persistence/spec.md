@@ -1,9 +1,4 @@
-# Capability: Retrieval Persistence
-
-## Purpose
-TBD
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Retrieve legal context from persistent storage
 The system MUST support legal retrieval through the new persistent storage layer utilizing Qdrant's native Hybrid Search (RRF) mechanism across both dense and sparse vectors, supporting multi-query execution.
