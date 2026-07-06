@@ -6,11 +6,11 @@ TBD
 ## Requirements
 
 ### Requirement: Retrieve legal context from persistent storage
-The system MUST support legal retrieval through the new persistent storage layer without changing the external chat API contract.
+The system MUST support legal retrieval through the new persistent storage layer utilizing Qdrant's native Hybrid Search (RRF) mechanism across both dense and sparse vectors.
 
-#### Scenario: Successful retrieval
+#### Scenario: Successful hybrid retrieval
 - **WHEN** a user submits a legal question through the existing chat endpoint
-- **THEN** the system MUST retrieve relevant clauses from the persistent storage layer and return context to the LLM pipeline
+- **THEN** the system MUST execute a `query_points` request with dual prefetch (dense and sparse) and return RRF-fused context to the LLM pipeline
 
 #### Scenario: Fallback behavior
 - **WHEN** the persistent storage services are unavailable
