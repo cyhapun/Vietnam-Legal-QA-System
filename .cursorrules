@@ -1,3 +1,0 @@
-# Quy tắc làm việc của Agent
-
-- **Quản lý Branch**: Luôn luôn kiểm tra và tạo/chuyển sang nhánh mới (ví dụ: `feature/tên-chức-năng`) trước khi thực hiện bất kỳ thay đổi mã nguồn (code) hay tạo đề xuất thay đổi (proposal/spec) nào. Tuyệt đối không làm việc trực tiếp trên branch `main` hoặc các branch không liên quan.
