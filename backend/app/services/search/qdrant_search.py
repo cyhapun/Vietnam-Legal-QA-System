@@ -149,6 +149,7 @@ class QdrantSearcher:
                     collection_name=self._collection_name,
                     prefetch=prefetch,
                     query=qdrant_models.FusionQuery(fusion=qdrant_models.Fusion.RRF),
+                    using="text-dense",  # Qdrant workaround: required even for FusionQuery if no default vector exists
                     limit=k,
                     with_payload=True,
                 ).points
