@@ -369,13 +369,16 @@ def ingest_documents(records: List[Dict[str, Any]]) -> int:
 
                         embedding = clause.get("embedding")
                         if embedding:
+                            import uuid
+                            qdrant_id = str(uuid.uuid5(uuid.NAMESPACE_URL, clause_id))
                             qdrant_client.upsert(
                                 collection_name=QDRANT_COLLECTION,
                                 points=[
                                     qdrant_models.PointStruct(
-                                        id=clause_id,
+                                        id=qdrant_id,
                                         vector=embedding,
                                         payload={
+                                            "id": clause_id,
                                             "law_id": law_id,
                                             "content": clause.get("content", ""),
                                             "category": category,
