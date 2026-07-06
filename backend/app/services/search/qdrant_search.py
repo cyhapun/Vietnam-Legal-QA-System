@@ -73,6 +73,16 @@ class QdrantSearcher:
         except ImportError:  # pragma: no cover - runtime dependency check
             return None
 
+        if normalized_category.upper() in ["LKDBDS_2023", "LTTPHS_2025", "LNO_2023", "LBVMT_2020", "LXD_2014", "LDD_2024", "LCC_2024", "BLTTDS_2015"]:
+            return qdrant_models.Filter(
+                must=[
+                    qdrant_models.FieldCondition(
+                        key="law_id",
+                        match=qdrant_models.MatchValue(value=normalized_category.upper()),
+                    )
+                ]
+            )
+
         return qdrant_models.Filter(
             must=[
                 qdrant_models.FieldCondition(
