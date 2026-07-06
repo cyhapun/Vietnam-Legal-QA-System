@@ -166,11 +166,6 @@ def init_vector_db() -> None:
     # 1. Nạp dữ liệu vào RAM trước để sẵn sàng phục vụ
     load_knowledge_base_to_ram()
 
-    # 2. Tìm các file JSON chưa được xử lý
-    processed_files = get_processed_files()
-    all_json_files = glob.glob(os.path.join(JSON_DATA_PATH, "*.json"))
-    pending_files = [f for f in all_json_files if os.path.basename(f) not in processed_files]
-
     # Tải index cũ nếu đã có
     if os.path.exists(FAISS_INDEX_PATH):
         logger.info("Đang tải FAISS Index từ ổ cứng...")
@@ -179,19 +174,11 @@ def init_vector_db() -> None:
             embeddings,
             allow_dangerous_deserialization=True
         )
-
-    if not pending_files:
-        logger.info("TẤT CẢ CÁC FILE ĐÃ ĐƯỢC EMBEDDING! Hệ thống sẵn sàng.")
-        return
-
-    # 3. Tiến hành nhúng TỪNG FILE MỘT để tránh quá tải
-    logger.info("Còn %d file chưa được nhúng.", len(pending_files))
-    _embed_single_file(pending_files[0])
-
-    if len(pending_files) > 1:
-        logger.info(
-            "Còn %d file. Restart server để nhúng file tiếp theo.",
-            len(pending_files) - 1
+    else:
+        logger.warning(
+            "Không tìm thấy FAISS Index tại %s. "
+            "Nếu bạn dùng FAISS làm bộ nhớ chính, vui lòng chạy script ingest (nhúng tài liệu) riêng rẽ để tạo index.",
+            FAISS_INDEX_PATH
         )
 
 

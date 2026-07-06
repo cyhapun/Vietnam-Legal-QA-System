@@ -224,37 +224,31 @@ def _embed_single_file(file_path: str, chunker, embedding) -> None:
 
 
 def _init_faiss_index(embedding) -> None:
-    """Khởi tạo và cập nhật FAISS index."""
+    """Khởi tạo FAISS index từ ổ cứng. Không tự động embed tài liệu mới."""
     global _faiss_vectorstore
 
-    chunker = _create_chunker()
     lc_embeddings = embedding.langchain_embeddings
-
-    processed_files = _get_processed_files()
-    all_json_files = glob.glob(os.path.join(JSON_DATA_PATH, "*.json"))
-    pending_files = [f for f in all_json_files if os.path.basename(f) not in processed_files]
 
     # Tải index cũ nếu đã có
     if os.path.exists(FAISS_INDEX_PATH):
         logger.info("Đang tải FAISS Index từ ổ cứng...")
-        _faiss_vectorstore = FAISS.load_local(
-            FAISS_INDEX_PATH,
-            lc_embeddings,
-            allow_dangerous_deserialization=True
+        try:
+            _faiss_vectorstore = FAISS.load_local(
+                FAISS_INDEX_PATH,
+                lc_embeddings,
+                allow_dangerous_deserialization=True
+            )
+            logger.info("FAISS Index đã sẵn sàng.")
+        except Exception as e:
+            logger.error("Lỗi khi tải FAISS Index: %s", str(e))
+            _faiss_vectorstore = None
+    else:
+        logger.warning(
+            "Không tìm thấy FAISS Index tại %s. "
+            "Nếu bạn dùng FAISS làm bộ nhớ chính, vui lòng chạy script ingest (nhúng tài liệu) riêng rẽ để tạo index.",
+            FAISS_INDEX_PATH
         )
-
-    if not pending_files:
-        logger.info("TẤT CẢ CÁC FILE ĐÃ ĐƯỢC EMBEDDING! Hệ thống sẵn sàng.")
-        return
-
-    logger.info("Còn %d file chưa được nhúng.", len(pending_files))
-    _embed_single_file(pending_files[0], chunker, embedding)
-
-    if len(pending_files) > 1:
-        logger.info(
-            "Còn %d file. Restart server để nhúng file tiếp theo.",
-            len(pending_files) - 1
-        )
+        _faiss_vectorstore = None
 
 
 def _create_chunker():

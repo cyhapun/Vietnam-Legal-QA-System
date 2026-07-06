@@ -262,8 +262,9 @@ docker-compose up --build
 - **Backend phải chạy TRƯỚC Frontend** — Frontend proxy request đến Backend
 - **FAISS index đã có sẵn** trong repo (22.5 MB) — không cần re-embed dữ liệu
 - **Lần đầu khởi động** Backend sẽ nạp 8 file JSON vào RAM + tải FAISS index (~5-10 giây)
-- Khi bật `STORAGE_BACKEND=qdrant_postgres`, backend sẽ tạo schema PostgreSQL và collection Qdrant tại startup, rồi thử ingest dữ liệu ban đầu
-- Nếu muốn **re-embed dữ liệu**, xóa file `embedded_files.json` rồi restart server
+- Khi bật `STORAGE_BACKEND=qdrant_postgres`, backend sẽ tạo schema PostgreSQL và collection Qdrant tại startup.
+- Dữ liệu sẽ **không tự động được nhúng (embed)** khi khởi động backend để tăng tốc độ.
+- Để **nạp dữ liệu ban đầu hoặc nạp lại (re-embed) dữ liệu mới**, bạn PHẢI chạy script thủ công: `python scripts/ingest_to_storage.py`
 
 ---
 

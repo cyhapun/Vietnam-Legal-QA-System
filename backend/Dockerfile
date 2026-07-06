@@ -3,7 +3,8 @@ FROM python:3.11-slim
 WORKDIR /app
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    HF_INFERENCE_ENDPOINT="https://router.huggingface.co/hf-inference"
 
 COPY requirements.txt ./
 RUN pip install uv && uv pip install --system --no-cache-dir -r requirements.txt
