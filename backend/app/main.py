@@ -36,7 +36,7 @@ def create_app() -> FastAPI:
     # --- Đăng ký Routers ---
     application.include_router(chat_router)
 
-    async def _initialize_runtime_components() -> None:
+    def _initialize_runtime_components_sync() -> None:
         logger.info("Khởi tạo storage layer...")
         try:
             initialize_storage()
@@ -54,9 +54,8 @@ def create_app() -> FastAPI:
     # --- Startup Event ---
     @application.on_event("startup")
     async def startup_event():
-        """Schedule initialization as non-blocking background task, don't wait for it."""
-        # Schedule background task but don't await - server binds to port immediately
-        asyncio.create_task(_initialize_runtime_components())
+        """Schedule initialization as non-blocking background task in a separate thread."""
+        asyncio.create_task(asyncio.to_thread(_initialize_runtime_components_sync))
         logger.info("Initialization scheduled as background task, server ready to receive requests")
 
     return application
