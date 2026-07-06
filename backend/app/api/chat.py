@@ -52,8 +52,15 @@ async def chat_endpoint(request: ChatRequest):
         from app.services.pipeline import _get_embedding
         from app.services.semantic_cache import check_cache, update_cache
         
+        # Lịch sử ngắn gọn cho rewriter (sliding window: 2 turns = 4 messages)
+        recent_history_lines = []
+        for msg in request.messages[-5:-1]: # Lấy tối đa 4 tin nhắn gần nhất
+            role_name = "USER" if msg.role == "user" else "AI"
+            recent_history_lines.append(f"{role_name}: {msg.content}")
+        recent_history_str = "\n".join(recent_history_lines) if recent_history_lines else ""
+        
         # Gọi rewriter trước để lấy rewritten query
-        domain, queries = await asyncio.to_thread(pipeline.rewriter.rewrite, last_message)
+        domain, queries = await asyncio.to_thread(pipeline.rewriter.rewrite, last_message, recent_history_str)
         logger.info("Rewriter domain: %s, queries: %s", domain, queries)
         
         query_vector = None
