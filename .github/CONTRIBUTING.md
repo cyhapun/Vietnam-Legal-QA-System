@@ -47,3 +47,4 @@ This includes:
 - Prefer small, reviewable commits.
 - Update documentation when behavior or setup changes.
 - Use English for commit messages, PR titles, and documentation.
+- Always checkout to a feature branch (e.g. `feature/...`) before making any code changes or generating proposals. Never work directly on `main`.

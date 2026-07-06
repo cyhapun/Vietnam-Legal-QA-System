@@ -2,6 +2,7 @@
 API Router cho endpoint /chat.
 Tách từ main.py gốc — chỉ chứa logic xử lý request/response.
 """
+import re
 import time
 import traceback
 
@@ -40,10 +41,8 @@ async def chat_endpoint(request: ChatRequest):
         )
         frontend_context = pipeline.format_for_frontend(retrieved_docs)
 
-        logger.info("=" * 60)
-        logger.info("CHUẨN BỊ FEED DATA CHO LLM (CONTEXT)")
-        logger.info("=" * 60)
-        logger.info(context_text)
+        logger.info("Đã chuẩn bị %d ký tự context (từ %d tài liệu) cho LLM", len(context_text), len(retrieved_docs))
+        logger.debug("CONTEXT TEXT:\n%s", context_text)
 
         # 4. Gọi LLM để sinh câu trả lời và đo thời gian
         start_time = time.time()
@@ -66,6 +65,19 @@ async def chat_endpoint(request: ChatRequest):
 
         execution_time = time.time() - start_time
         logger.info("LLM trả lời trong %.2fs", execution_time)
+
+        # 5. Lọc context theo các ID được trích dẫn (Strict Citation Mechanism)
+        cited_ids = set(re.findall(r'<cite\s+id=["\']([^"\']+)["\']>', output_text))
+        if cited_ids:
+            filtered_context = [ctx for ctx in frontend_context if ctx.get("metadata", {}).get("id") in cited_ids]
+            frontend_context = filtered_context
+        else:
+            # Nếu LLM không trích dẫn gì, có thể xóa context rác
+            # Để an toàn cho các trường hợp LLM fallback (lỗi), ta có thể giữ nguyên tất cả hoặc làm rỗng.
+            # Ở đây chọn làm rỗng khi gọi LLM thành công nhưng không có trích dẫn,
+            # Nếu có lỗi (ở phần except), ta vẫn giữ nguyên frontend_context.
+            if "Hiện tại hệ thống chưa thể gọi mô hình" not in output_text:
+                frontend_context = []
 
         return {
             "text": output_text,

@@ -84,7 +84,7 @@ def build_nested_context(retrieved_docs: List[Document]) -> str:
         article_str = f"Điều {article_val} ({article_title})" if article_title else f"Điều {article_val}"
 
         # [0] CĂN CỨ CHÍNH
-        block = f"[CĂN CỨ #{i+1}]\n"
+        block = f"[CĂN CỨ ID: {clause_id}]\n"
         block += f"- Nguồn: {law_name} | {chapter_str} | {article_str} | Khoản {clause_val}\n"
         block += f"- Nội dung: \"{clause_data['content']}\"\n"
 
@@ -163,6 +163,7 @@ def format_docs_for_frontend(docs: List[Document]) -> List[Dict[str, Any]]:
         formatted.append({
             "content": data.get("content", ""),
             "metadata": {
+                "id": c_id,
                 "source": law_name,
                 "dieu": pos.get("article"),
                 "khoan": pos.get("clause"),

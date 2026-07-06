@@ -7,6 +7,7 @@
 export interface DocumentChunk {
   content: string;
   metadata: {
+    id?: string;
     source?: string;
     dieu?: string;
     khoan?: string;
