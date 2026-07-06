@@ -11,11 +11,11 @@ from typing import List, Dict, Any, Optional
 from langchain_core.documents import Document
 from langchain_community.vectorstores import FAISS
 from langchain_community.vectorstores.utils import DistanceStrategy
-from langchain_huggingface import HuggingFaceEndpointEmbeddings
+from langchain_huggingface import HuggingFaceEndpointEmbeddings, HuggingFaceEmbeddings
 
 from app.config import (
     FAISS_INDEX_PATH, JSON_DATA_PATH, TRACKING_FILE,
-    HUGGINGFACE_API_KEY, EMBEDDING_MODEL,
+    HUGGINGFACE_API_KEY, EMBEDDING_MODEL, HUGGINGFACE_EMBEDDING_MODE,
     EMBEDDING_BATCH_SIZE, EMBEDDING_MAX_RETRIES,
     EMBEDDING_SLEEP_BETWEEN_BATCHES, EMBEDDING_RETRY_BASE_WAIT,
 )
@@ -30,18 +30,26 @@ KNOWLEDGE_BASE: Dict[str, Any] = {}
 LAW_METADATA: Dict[str, Any] = {}
 
 # --- KHỞI TẠO EMBEDDING MODEL ---
-if not HUGGINGFACE_API_KEY:
-    raise ValueError(
-        "Không tìm thấy HUGGINGFACE_API_KEY. "
-        "Vui lòng kiểm tra lại file .env của bạn nhé."
-    )
+if HUGGINGFACE_EMBEDDING_MODE == "api":
+    if not HUGGINGFACE_API_KEY:
+        raise ValueError(
+            "Không tìm thấy HUGGINGFACE_API_KEY. "
+            "Vui lòng kiểm tra lại file .env của bạn nhé."
+        )
 
-logger.info("Đang kết nối mô hình %s qua Hugging Face API...", EMBEDDING_MODEL)
-embeddings = HuggingFaceEndpointEmbeddings(
-    model=EMBEDDING_MODEL,
-    task="feature-extraction",
-    huggingfacehub_api_token=HUGGINGFACE_API_KEY,
-)
+    logger.info("Đang kết nối mô hình %s qua Hugging Face API...", EMBEDDING_MODEL)
+    embeddings = HuggingFaceEndpointEmbeddings(
+        model=EMBEDDING_MODEL,
+        task="feature-extraction",
+        huggingfacehub_api_token=HUGGINGFACE_API_KEY,
+    )
+else:
+    logger.info("Đang tải mô hình %s chạy TRỰC TIẾP (Local) qua sentence-transformers...", EMBEDDING_MODEL)
+    embeddings = HuggingFaceEmbeddings(
+        model_name=EMBEDDING_MODEL,
+        model_kwargs={'device': 'cpu'},
+        encode_kwargs={'normalize_embeddings': True}
+    )
 
 
 def load_knowledge_base_to_ram() -> None:

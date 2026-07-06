@@ -190,6 +190,10 @@ cp .env.example .env
 
 # Mở .env và điền API key của bạn
 # HUGGINGFACE_API_KEY=hf_your_actual_key_here
+#
+# # Tùy chọn chế độ chạy Embedding (local hoặc api):
+# # Mặc định là "local" để tránh lỗi "Model not supported" của Hugging Face
+# HUGGINGFACE_EMBEDDING_MODE=local
 # Nếu dùng Docker cho PostgreSQL + Qdrant, hãy giữ:
 # STORAGE_BACKEND=qdrant_postgres
 # POSTGRES_DSN=postgresql://postgres:postgres@localhost:5432/vietlaw
