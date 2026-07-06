@@ -87,7 +87,7 @@ class RAGPipeline:
 
         # Step 0: Rewrite & Route
         domain, queries = self.rewriter.rewrite(query)
-        logger.info("Rewriter domain: %s, queries: %s", domain, queries)
+        logger.debug("Rewriter domain: %s, queries: %s", domain, queries)
         
         if domain == "chitchat":
             logger.info("Query routed as chitchat, bypassing retrieval.")
@@ -98,7 +98,7 @@ class RAGPipeline:
 
         # Step 1: Search
         docs = self.searcher.search(queries, k=k, category=category)
-        logger.info("Search: %d documents retrieved before deduplication", len(docs))
+        retrieved_count = len(docs)
         
         # Deduplicate
         seen = set()
@@ -110,11 +110,16 @@ class RAGPipeline:
                 unique_docs.append(doc)
                 
         docs = unique_docs
-        logger.info("Search: %d unique documents after deduplication", len(docs))
+        dedup_count = len(docs)
 
         # Step 2: Rerank (using original query)
         docs = self.reranker.rerank(query, docs, top_k=final_k)
-        logger.info("Rerank: %d documents after reranking", len(docs))
+        final_count = len(docs)
+        
+        logger.info(
+            "Pipeline retrieve (Sync) [domain=%s, rewritten=%d] -> Search: %d docs -> Dedup: %d docs -> Rerank: %d docs", 
+            domain, len(queries), retrieved_count, dedup_count, final_count
+        )
 
         # Step 3: Build context
         context = self.context_builder.build(docs)
@@ -134,7 +139,7 @@ class RAGPipeline:
         # Step 0: Async Rewrite & Route
         import asyncio
         domain, queries = await asyncio.to_thread(self.rewriter.rewrite, query)
-        logger.info("Rewriter domain: %s, queries: %s", domain, queries)
+        logger.debug("Rewriter domain: %s, queries: %s", domain, queries)
         
         if domain == "chitchat":
             logger.info("Query routed as chitchat, bypassing retrieval.")
@@ -145,7 +150,7 @@ class RAGPipeline:
 
         # Step 1: Async Search
         docs = await self.searcher.asearch(queries, k=k, category=category)
-        logger.info("Search: %d documents retrieved before deduplication", len(docs))
+        retrieved_count = len(docs)
         
         # Deduplicate
         seen = set()
@@ -157,11 +162,16 @@ class RAGPipeline:
                 unique_docs.append(doc)
                 
         docs = unique_docs
-        logger.info("Search: %d unique documents after deduplication", len(docs))
+        dedup_count = len(docs)
 
         # Step 2: Rerank (sync — thường nhanh)
         docs = self.reranker.rerank(query, docs, top_k=final_k)
-        logger.info("Rerank: %d documents after reranking", len(docs))
+        final_count = len(docs)
+        
+        logger.info(
+            "Pipeline retrieve (Async) [domain=%s, rewritten=%d] -> Search: %d docs -> Dedup: %d docs -> Rerank: %d docs", 
+            domain, len(queries), retrieved_count, dedup_count, final_count
+        )
 
         # Step 3: Build context
         context = self.context_builder.build(docs)

@@ -41,10 +41,8 @@ async def chat_endpoint(request: ChatRequest):
         )
         frontend_context = pipeline.format_for_frontend(retrieved_docs)
 
-        logger.info("=" * 60)
-        logger.info("CHUẨN BỊ FEED DATA CHO LLM (CONTEXT)")
-        logger.info("=" * 60)
-        logger.info(context_text)
+        logger.info("Đã chuẩn bị %d ký tự context (từ %d tài liệu) cho LLM", len(context_text), len(retrieved_docs))
+        logger.debug("CONTEXT TEXT:\n%s", context_text)
 
         # 4. Gọi LLM để sinh câu trả lời và đo thời gian
         start_time = time.time()
