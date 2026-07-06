@@ -1,9 +1,4 @@
-# Capability: Vector Storage
-
-## Purpose
-TBD
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Store embeddings in Qdrant
 The system MUST store generated clause embeddings in Qdrant with payload data that supports metadata-based filtering, utilizing a Named Vectors schema to store both dense and sparse vectors.

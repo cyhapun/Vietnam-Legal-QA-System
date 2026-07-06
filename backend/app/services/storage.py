@@ -185,15 +185,25 @@ def initialize_storage() -> Dict[str, Any]:
     # Check if Qdrant collection exists before recreating
     try:
         collection_info = qdrant_client.get_collection(QDRANT_COLLECTION)
-        logger.info("Qdrant collection '%s' already exists with %d points", 
+        
+        # Enforce recreation if the collection uses the old single-vector schema
+        if not collection_info.config.params.sparse_vectors or "text-sparse" not in collection_info.config.params.sparse_vectors:
+            logger.info("Qdrant collection '%s' exists but lacks named/sparse vectors. Forcing recreation.", QDRANT_COLLECTION)
+            raise ValueError("Schema mismatch, recreate collection")
+            
+        logger.info("Qdrant collection '%s' already exists with %d points and proper schema.", 
                     QDRANT_COLLECTION, collection_info.points_count)
-        logger.info("Skipping collection recreation to preserve existing vectors")
     except Exception:
-        # Collection doesn't exist or is inaccessible - create it
-        logger.info("Creating new Qdrant collection '%s'", QDRANT_COLLECTION)
+        # Collection doesn't exist or schema mismatch - create it
+        logger.info("Creating new Qdrant collection '%s' with Named Vectors (text-dense and text-sparse)", QDRANT_COLLECTION)
         qdrant_client.recreate_collection(
             collection_name=QDRANT_COLLECTION,
-            vectors_config=qdrant_models.VectorParams(size=1024, distance=qdrant_models.Distance.COSINE),
+            vectors_config={
+                "text-dense": qdrant_models.VectorParams(size=1024, distance=qdrant_models.Distance.COSINE),
+            },
+            sparse_vectors_config={
+                "text-sparse": qdrant_models.SparseVectorParams(),
+            }
         )
 
     run_id = _start_indexing_run("startup", {"backend": STORAGE_BACKEND, "collection": QDRANT_COLLECTION})
@@ -287,6 +297,13 @@ def ingest_json_documents() -> int:
         logger.warning("Embedding backend unavailable during ingestion: %s", exc)
         embedding_backend = None
 
+    try:
+        from app.services.sparse_vector import SparseVectorGenerator
+        sparse_generator = SparseVectorGenerator()
+    except Exception as exc:
+        logger.warning("SparseVectorGenerator unavailable: %s", exc)
+        sparse_generator = None
+
     all_clauses = [clause for record in records for clause in record.get("clauses", []) if clause.get("content")]
 
     try:
@@ -297,12 +314,20 @@ def ingest_json_documents() -> int:
 
     for clause in iterator:
         content = clause.get("content", "")
-        if embedding_backend and content:
-            try:
-                clause["embedding"] = embedding_backend.embed_query(content)
-            except Exception as exc:  # pragma: no cover - runtime dependency path
-                logger.warning("Embedding failed for clause %s: %s", clause["id"], exc)
-                clause["embedding"] = None
+        if content:
+            if embedding_backend:
+                try:
+                    clause["embedding"] = embedding_backend.embed_query(content)
+                except Exception as exc:  # pragma: no cover - runtime dependency path
+                    logger.warning("Embedding failed for clause %s: %s", clause["id"], exc)
+                    clause["embedding"] = None
+                    
+            if sparse_generator:
+                try:
+                    clause["sparse_embedding"] = sparse_generator.generate_sparse_vector(content)
+                except Exception as exc:
+                    logger.warning("Sparse embedding failed for clause %s: %s", clause["id"], exc)
+                    clause["sparse_embedding"] = None
 
     return ingest_documents(records)
 
@@ -379,15 +404,25 @@ def ingest_documents(records: List[Dict[str, Any]]) -> int:
                         )
 
                         embedding = clause.get("embedding")
+                        sparse_embedding = clause.get("sparse_embedding")
+                        
                         if embedding:
                             import uuid
                             qdrant_id = str(uuid.uuid5(uuid.NAMESPACE_URL, clause_id))
+                            
+                            vector_dict = {"text-dense": embedding}
+                            if sparse_embedding:
+                                vector_dict["text-sparse"] = qdrant_models.SparseVector(
+                                    indices=sparse_embedding["indices"],
+                                    values=sparse_embedding["values"]
+                                )
+                                
                             qdrant_client.upsert(
                                 collection_name=QDRANT_COLLECTION,
                                 points=[
                                     qdrant_models.PointStruct(
                                         id=qdrant_id,
-                                        vector=embedding,
+                                        vector=vector_dict,
                                         payload={
                                             "id": clause_id,
                                             "law_id": law_id,

@@ -94,7 +94,15 @@ class QdrantSearcher:
 
     def _search_qdrant(self, query: str, k: int, category: Optional[str]) -> List[Document]:
         embedding_backend = self._get_embedding_backend()
-        query_vector = embedding_backend.embed_query(query)
+        query_dense_vector = embedding_backend.embed_query(query)
+
+        try:
+            from app.services.sparse_vector import SparseVectorGenerator
+            sparse_generator = SparseVectorGenerator()
+            query_sparse_dict = sparse_generator.generate_sparse_vector(query)
+        except Exception as exc:
+            logger.warning("Sparse vector generation failed: %s", exc)
+            query_sparse_dict = None
 
         try:
             from qdrant_client.http import models as qdrant_models
@@ -104,21 +112,53 @@ class QdrantSearcher:
 
         client = self._get_client()
         query_filter = self._build_filter(category)
+        
+        prefetch = [
+            qdrant_models.Prefetch(
+                query=query_dense_vector,
+                using="text-dense",
+                limit=k * 2,
+                filter=query_filter,
+            )
+        ]
+        
+        if query_sparse_dict and query_sparse_dict.get("indices"):
+            prefetch.append(
+                qdrant_models.Prefetch(
+                    query=qdrant_models.SparseVector(
+                        indices=query_sparse_dict["indices"],
+                        values=query_sparse_dict["values"]
+                    ),
+                    using="text-sparse",
+                    limit=k * 2,
+                    filter=query_filter,
+                )
+            )
 
         try:
-            # Use query_points API for newer qdrant-client versions
-            results = client.query_points(
-                collection_name=self._collection_name,
-                query=query_vector,
-                limit=k,
-                query_filter=query_filter,
-                with_payload=True,
-            ).points
+            # Use query_points API with RRF fusion if multiple prefetches
+            if len(prefetch) > 1:
+                results = client.query_points(
+                    collection_name=self._collection_name,
+                    prefetch=prefetch,
+                    query=qdrant_models.FusionQuery(fusion=qdrant_models.Fusion.RRF),
+                    limit=k,
+                    with_payload=True,
+                ).points
+            else:
+                results = client.query_points(
+                    collection_name=self._collection_name,
+                    query=query_dense_vector,
+                    using="text-dense",
+                    limit=k,
+                    query_filter=query_filter,
+                    with_payload=True,
+                ).points
         except AttributeError:
-            # Fallback for older qdrant-client versions that have search() method
+            # Fallback for older qdrant-client versions
             results = client.search(
                 collection_name=self._collection_name,
-                query_vector=query_vector,
+                query_vector=("text-dense", query_dense_vector),
                 limit=k,
                 query_filter=query_filter,
                 with_payload=True,

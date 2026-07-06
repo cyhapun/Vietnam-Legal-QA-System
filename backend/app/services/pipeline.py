@@ -30,7 +30,7 @@ from app.services.embedding import (
     OllamaEmbedding,
 )
 from app.services.chunking import ClauseChunker
-from app.services.search import FAISSSearcher, BM25Searcher, HybridSearcher, QdrantSearcher
+from app.services.search import FAISSSearcher, QdrantSearcher
 from app.services.reranking import NoReranker, CrossEncoderReranker
 from app.services.context_builder import NestedContextBuilder
 from app.utils.logging import setup_logger
@@ -279,46 +279,8 @@ def _create_searcher(embedding) -> Any:
     if strategy == "faiss":
         return faiss_searcher
 
-    elif strategy == "bm25":
-        bm25_searcher = BM25Searcher()
-        _build_bm25_index(bm25_searcher)
-        return bm25_searcher
-
-    elif strategy == "hybrid":
-        bm25_searcher = BM25Searcher()
-        _build_bm25_index(bm25_searcher)
-        return HybridSearcher(
-            vector_searcher=faiss_searcher,
-            bm25_searcher=bm25_searcher,
-            vector_weight=PIPELINE_CONFIG.get("hybrid_vector_weight", 0.5),
-            bm25_weight=PIPELINE_CONFIG.get("hybrid_bm25_weight", 0.5),
-        )
-
     else:
-        raise ValueError(f"Unknown search strategy: {strategy}")
-
-
-def _build_bm25_index(bm25_searcher: BM25Searcher) -> None:
-    """Xây dựng BM25 index từ tất cả documents trong FAISS."""
-    from app.services.knowledge_base import KNOWLEDGE_BASE, LAW_METADATA
-
-    documents = []
-    for clause_id, clause_data in KNOWLEDGE_BASE.items():
-        law_id = clause_data.get("law_id")
-        doc = Document(
-            page_content=clause_data.get("content", ""),
-            metadata={
-                "id": clause_id,
-                "law_id": law_id,
-                "category": LAW_METADATA.get(law_id, {}).get(
-                    "category",
-                    "all",
-                ),
-            }
-        )
-        documents.append(doc)
-
-    bm25_searcher.build_index(documents)
+        raise ValueError(f"Unknown search strategy: {strategy} (only 'faiss' or Qdrant supported now)")
 
 
 def _create_reranker():
