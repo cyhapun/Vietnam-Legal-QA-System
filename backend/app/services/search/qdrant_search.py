@@ -6,7 +6,7 @@ FAISS-based retriever if the database-backed service is unavailable.
 """
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from langchain_core.documents import Document
 
@@ -92,17 +92,14 @@ class QdrantSearcher:
             ]
         )
 
-    def _search_qdrant(self, query: str, k: int, category: Optional[str]) -> List[Document]:
+    def _search_qdrant(self, query: Union[str, List[str]], k: int, category: Optional[str]) -> List[Document]:
         embedding_backend = self._get_embedding_backend()
-        query_dense_vector = embedding_backend.embed_query(query)
-
+        
         try:
             from app.services.sparse_vector import SparseVectorGenerator
             sparse_generator = SparseVectorGenerator()
-            query_sparse_dict = sparse_generator.generate_sparse_vector(query)
-        except Exception as exc:
-            logger.warning("Sparse vector generation failed: %s", exc)
-            query_sparse_dict = None
+        except ImportError:
+            sparse_generator = None
 
         try:
             from qdrant_client.http import models as qdrant_models
@@ -113,27 +110,37 @@ class QdrantSearcher:
         client = self._get_client()
         query_filter = self._build_filter(category)
         
-        prefetch = [
-            qdrant_models.Prefetch(
-                query=query_dense_vector,
-                using="text-dense",
-                limit=k * 2,
-                filter=query_filter,
-            )
-        ]
+        queries = [query] if isinstance(query, str) else query
         
-        if query_sparse_dict and query_sparse_dict.get("indices"):
+        prefetch = []
+        for q in queries:
+            query_dense_vector = embedding_backend.embed_query(q)
             prefetch.append(
                 qdrant_models.Prefetch(
-                    query=qdrant_models.SparseVector(
-                        indices=query_sparse_dict["indices"],
-                        values=query_sparse_dict["values"]
-                    ),
-                    using="text-sparse",
+                    query=query_dense_vector,
+                    using="text-dense",
                     limit=k * 2,
                     filter=query_filter,
                 )
             )
+            
+            if sparse_generator:
+                try:
+                    query_sparse_dict = sparse_generator.generate_sparse_vector(q)
+                    if query_sparse_dict and query_sparse_dict.get("indices"):
+                        prefetch.append(
+                            qdrant_models.Prefetch(
+                                query=qdrant_models.SparseVector(
+                                    indices=query_sparse_dict["indices"],
+                                    values=query_sparse_dict["values"]
+                                ),
+                                using="text-sparse",
+                                limit=k * 2,
+                                filter=query_filter,
+                            )
+                        )
+                except Exception as exc:
+                    logger.warning("Sparse vector generation failed for query '%s': %s", q, exc)
 
         try:
             # Use query_points API with RRF fusion if multiple prefetches
@@ -145,17 +152,22 @@ class QdrantSearcher:
                     limit=k,
                     with_payload=True,
                 ).points
-            else:
+            elif len(prefetch) == 1:
                 results = client.query_points(
                     collection_name=self._collection_name,
-                    query=query_dense_vector,
-                    using="text-dense",
+                    query=prefetch[0].query,
+                    using=prefetch[0].using,
                     limit=k,
                     query_filter=query_filter,
                     with_payload=True,
                 ).points
+            else:
+                return []
         except AttributeError:
             # Fallback for older qdrant-client versions
+            if not isinstance(query, str):
+                query = query[0] if query else ""
+            query_dense_vector = embedding_backend.embed_query(query)
             results = client.search(
                 collection_name=self._collection_name,
                 query_vector=("text-dense", query_dense_vector),
@@ -179,7 +191,7 @@ class QdrantSearcher:
 
     def search(
         self,
-        query: str,
+        query: Union[str, List[str]],
         k: int = RETRIEVER_K,
         category: Optional[str] = None,
     ) -> List[Document]:
@@ -193,7 +205,7 @@ class QdrantSearcher:
 
     async def asearch(
         self,
-        query: str,
+        query: Union[str, List[str]],
         k: int = RETRIEVER_K,
         category: Optional[str] = None,
     ) -> List[Document]:

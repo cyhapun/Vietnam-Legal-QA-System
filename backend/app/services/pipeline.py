@@ -51,13 +51,15 @@ class RAGPipeline:
         pipeline = RAGPipeline(searcher=faiss, reranker=cross_encoder, context_builder=nested)
     """
 
-    def __init__(self, searcher, reranker, context_builder):
+    def __init__(self, rewriter, searcher, reranker, context_builder):
+        self.rewriter = rewriter
         self.searcher = searcher
         self.reranker = reranker
         self.context_builder = context_builder
 
         logger.info(
-            "RAGPipeline initialized: search=%s, reranker=%s, context=%s",
+            "RAGPipeline initialized: rewriter=%s, search=%s, reranker=%s, context=%s",
+            rewriter.__class__.__name__,
             searcher.strategy_name,
             reranker.strategy_name,
             context_builder.strategy_name,
@@ -83,11 +85,34 @@ class RAGPipeline:
         """
         final_k = rerank_top_k or RETRIEVER_K
 
-        # Step 1: Search
-        docs = self.searcher.search(query, k=k, category=category)
-        logger.info("Search: %d documents retrieved", len(docs))
+        # Step 0: Rewrite & Route
+        domain, queries = self.rewriter.rewrite(query)
+        logger.info("Rewriter domain: %s, queries: %s", domain, queries)
+        
+        if domain == "chitchat":
+            logger.info("Query routed as chitchat, bypassing retrieval.")
+            return [], ""
+            
+        if not queries:
+            queries = [query]
 
-        # Step 2: Rerank
+        # Step 1: Search
+        docs = self.searcher.search(queries, k=k, category=category)
+        logger.info("Search: %d documents retrieved before deduplication", len(docs))
+        
+        # Deduplicate
+        seen = set()
+        unique_docs = []
+        for doc in docs:
+            doc_id = doc.metadata.get("id")
+            if doc_id not in seen:
+                seen.add(doc_id)
+                unique_docs.append(doc)
+                
+        docs = unique_docs
+        logger.info("Search: %d unique documents after deduplication", len(docs))
+
+        # Step 2: Rerank (using original query)
         docs = self.reranker.rerank(query, docs, top_k=final_k)
         logger.info("Rerank: %d documents after reranking", len(docs))
 
@@ -106,9 +131,33 @@ class RAGPipeline:
         """Async version của retrieve — dùng trong FastAPI endpoint."""
         final_k = rerank_top_k or RETRIEVER_K
 
+        # Step 0: Async Rewrite & Route
+        import asyncio
+        domain, queries = await asyncio.to_thread(self.rewriter.rewrite, query)
+        logger.info("Rewriter domain: %s, queries: %s", domain, queries)
+        
+        if domain == "chitchat":
+            logger.info("Query routed as chitchat, bypassing retrieval.")
+            return [], ""
+            
+        if not queries:
+            queries = [query]
+
         # Step 1: Async Search
-        docs = await self.searcher.asearch(query, k=k, category=category)
-        logger.info("Search: %d documents retrieved", len(docs))
+        docs = await self.searcher.asearch(queries, k=k, category=category)
+        logger.info("Search: %d documents retrieved before deduplication", len(docs))
+        
+        # Deduplicate
+        seen = set()
+        unique_docs = []
+        for doc in docs:
+            doc_id = doc.metadata.get("id")
+            if doc_id not in seen:
+                seen.add(doc_id)
+                unique_docs.append(doc)
+                
+        docs = unique_docs
+        logger.info("Search: %d unique documents after deduplication", len(docs))
 
         # Step 2: Rerank (sync — thường nhanh)
         docs = self.reranker.rerank(query, docs, top_k=final_k)
@@ -303,6 +352,18 @@ def _create_context_builder():
     else:
         raise ValueError(f"Unknown context_builder strategy: {strategy}")
 
+def _create_rewriter():
+    """Tạo rewriter dựa trên config."""
+    strategy = PIPELINE_CONFIG.get("rewriter", "none")
+    if strategy == "none":
+        from app.services.rewriting.no_rewriter import NoOpRewriter
+        return NoOpRewriter()
+    elif strategy == "llm":
+        from app.services.rewriting.llm_rewriter import LLMRewriter
+        return LLMRewriter()
+    else:
+        raise ValueError(f"Unknown rewriter strategy: {strategy}")
+
 
 # Cần import Any cho type hint
 from typing import Any
@@ -339,9 +400,11 @@ def init_pipeline() -> None:
         searcher = _create_searcher(embedding)
         reranker = _create_reranker()
         context_builder = _create_context_builder()
+        rewriter = _create_rewriter()
 
         # 4. Assemble pipeline
         _pipeline = RAGPipeline(
+            rewriter=rewriter,
             searcher=searcher,
             reranker=reranker,
             context_builder=context_builder,

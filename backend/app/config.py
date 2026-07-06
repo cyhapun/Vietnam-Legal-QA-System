@@ -106,4 +106,9 @@ PIPELINE_CONFIG = {
 
     # --- Reranker model (chỉ dùng khi reranking="cross_encoder") ---
     "reranker_model": os.getenv("RERANKER_MODEL", "BAAI/bge-reranker-v2-m3"),
+
+    # --- Query Rewriter ---
+    "rewriter": os.getenv("PIPELINE_REWRITER", "none"),
+    "rewriter_model_provider": os.getenv("REWRITER_MODEL_PROVIDER", "ollama"),
+    "rewriter_model_name": os.getenv("REWRITER_MODEL_NAME", "qwen2.5:1.5b"),
 }
