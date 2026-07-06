@@ -36,6 +36,8 @@ services:
       - ./backend/data:/app/data
       - ./backend/vietlaw_faiss_index:/app/vietlaw_faiss_index
       - ./backend/embedded_files.json:/app/embedded_files.json
+      # Ánh xạ thư mục cache của HuggingFace ra ngoài để không phải tải lại model
+      - hf_cache:/root/.cache/huggingface
     depends_on:
       - postgres
       - qdrant
@@ -52,3 +54,4 @@ services:
 volumes:
   postgres_data:
   qdrant_data:
+  hf_cache:
