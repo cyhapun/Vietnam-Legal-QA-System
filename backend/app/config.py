@@ -112,3 +112,7 @@ PIPELINE_CONFIG = {
     "rewriter_model_provider": os.getenv("REWRITER_MODEL_PROVIDER", "ollama"),
     "rewriter_model_name": os.getenv("REWRITER_MODEL_NAME", "qwen2.5:1.5b"),
 }
+
+# --- SEMANTIC CACHE ---
+ENABLE_SEMANTIC_CACHE = os.getenv("ENABLE_SEMANTIC_CACHE", "true").strip().lower() == "true"
+SEMANTIC_CACHE_THRESHOLD = float(os.getenv("SEMANTIC_CACHE_THRESHOLD", "0.95"))
