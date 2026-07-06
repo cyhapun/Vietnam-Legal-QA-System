@@ -71,6 +71,8 @@ class RAGPipeline:
         k: int = RETRIEVER_CANDIDATE_K,
         rerank_top_k: Optional[int] = None,
         category: Optional[str] = None,
+        domain: Optional[str] = None,
+        queries: Optional[List[str]] = None,
     ) -> Tuple[List[Document], str]:
         """Thực hiện full retrieval pipeline: Search → Rerank → Context Build.
 
@@ -86,8 +88,9 @@ class RAGPipeline:
         final_k = rerank_top_k or RETRIEVER_K
 
         # Step 0: Rewrite & Route
-        domain, queries = self.rewriter.rewrite(query)
-        logger.debug("Rewriter domain: %s, queries: %s", domain, queries)
+        if domain is None or queries is None:
+            domain, queries = self.rewriter.rewrite(query)
+            logger.debug("Rewriter domain: %s, queries: %s", domain, queries)
         
         if domain == "chitchat":
             logger.info("Query routed as chitchat, bypassing retrieval.")
@@ -132,14 +135,17 @@ class RAGPipeline:
         k: int = RETRIEVER_CANDIDATE_K,
         rerank_top_k: Optional[int] = None,
         category: Optional[str] = None,
+        domain: Optional[str] = None,
+        queries: Optional[List[str]] = None,
     ) -> Tuple[List[Document], str]:
         """Async version của retrieve — dùng trong FastAPI endpoint."""
         final_k = rerank_top_k or RETRIEVER_K
 
         # Step 0: Async Rewrite & Route
         import asyncio
-        domain, queries = await asyncio.to_thread(self.rewriter.rewrite, query)
-        logger.debug("Rewriter domain: %s, queries: %s", domain, queries)
+        if domain is None or queries is None:
+            domain, queries = await asyncio.to_thread(self.rewriter.rewrite, query)
+            logger.debug("Rewriter domain: %s, queries: %s", domain, queries)
         
         if domain == "chitchat":
             logger.info("Query routed as chitchat, bypassing retrieval.")

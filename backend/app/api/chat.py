@@ -35,9 +35,40 @@ async def chat_endpoint(request: ChatRequest):
 
         # 3. Truy xuất tài liệu pháp lý qua modular pipeline
         pipeline = get_pipeline()
+        
+        import asyncio
+        from app.services.pipeline import _get_embedding
+        from app.services.semantic_cache import check_cache, update_cache
+        
+        # Gọi rewriter trước để lấy rewritten query
+        domain, queries = await asyncio.to_thread(pipeline.rewriter.rewrite, last_message)
+        logger.info("Rewriter domain: %s, queries: %s", domain, queries)
+        
+        query_vector = None
+        if domain != "chitchat":
+            rewritten_query = queries[0] if queries else last_message
+            embedding = _get_embedding()
+            if embedding:
+                try:
+                    # Sinh embedding cho câu hỏi đã được viết lại
+                    query_vector = await asyncio.to_thread(embedding.embed_query, rewritten_query)
+                    
+                    # Kiểm tra cache
+                    cached_response = await asyncio.to_thread(check_cache, query_vector)
+                    if cached_response:
+                        logger.info("Phản hồi được lấy từ Semantic Cache.")
+                        return {
+                            "text": cached_response.get("response_text", ""),
+                            "contextUsed": cached_response.get("context_used", [])
+                        }
+                except Exception as e:
+                    logger.warning("Cache check failed: %s", e)
+
         retrieved_docs, context_text = await pipeline.aretrieve(
             query=last_message,
             category=request.category,
+            domain=domain,
+            queries=queries
         )
         frontend_context = pipeline.format_for_frontend(retrieved_docs)
 
@@ -78,6 +109,18 @@ async def chat_endpoint(request: ChatRequest):
             # Nếu có lỗi (ở phần except), ta vẫn giữ nguyên frontend_context.
             if "Hiện tại hệ thống chưa thể gọi mô hình" not in output_text:
                 frontend_context = []
+
+        if query_vector and domain != "chitchat" and "Hiện tại hệ thống chưa thể gọi mô hình" not in output_text:
+            try:
+                await asyncio.to_thread(
+                    update_cache,
+                    query_vector=query_vector,
+                    original_query=last_message,
+                    response_text=output_text,
+                    context_used=frontend_context
+                )
+            except Exception as e:
+                logger.warning("Failed to update cache: %s", e)
 
         return {
             "text": output_text,
