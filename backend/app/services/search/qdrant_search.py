@@ -143,24 +143,20 @@ class QdrantSearcher:
                     logger.warning("Sparse vector generation failed for query '%s': %s", q, exc)
 
         try:
-            # Bypass Qdrant 1.10 query_points Fusion bug by using search_batch and manual RRF
+            # Bypass Qdrant 1.10 query_points Fusion bug by using query_batch_points and manual RRF
             if len(prefetch) > 1:
                 requests = []
                 for p in prefetch:
-                    if p.using == "text-dense":
-                        vector = qdrant_models.NamedVector(name=p.using, vector=p.query)
-                    else:
-                        vector = qdrant_models.NamedSparseVector(name=p.using, vector=p.query)
-                        
-                    req = qdrant_models.SearchRequest(
-                        vector=vector,
+                    req = qdrant_models.QueryRequest(
+                        query=p.query,
+                        using=p.using,
                         filter=p.filter,
                         limit=p.limit,
                         with_payload=True
                     )
                     requests.append(req)
                     
-                batch_results = client.search_batch(
+                batch_results = client.query_batch_points(
                     collection_name=self._collection_name,
                     requests=requests
                 )
@@ -168,8 +164,8 @@ class QdrantSearcher:
                 # Manual RRF Fusion
                 rrf_scores = {}
                 doc_map = {}
-                for results_list in batch_results:
-                    for rank, point in enumerate(results_list):
+                for response in batch_results:
+                    for rank, point in enumerate(response.points):
                         doc_map[point.id] = point
                         rrf_scores[point.id] = rrf_scores.get(point.id, 0.0) + 1.0 / (60 + rank + 1)
                         
@@ -179,18 +175,14 @@ class QdrantSearcher:
                 
             elif len(prefetch) == 1:
                 p = prefetch[0]
-                if p.using == "text-dense":
-                    vector = qdrant_models.NamedVector(name=p.using, vector=p.query)
-                else:
-                    vector = qdrant_models.NamedSparseVector(name=p.using, vector=p.query)
-                    
-                results = client.search(
+                results = client.query_points(
                     collection_name=self._collection_name,
-                    query_vector=vector,
+                    query=p.query,
+                    using=p.using,
                     query_filter=p.filter,
-                    limit=k,
+                    limit=p.limit,
                     with_payload=True
-                )
+                ).points
             else:
                 return []
         except AttributeError:

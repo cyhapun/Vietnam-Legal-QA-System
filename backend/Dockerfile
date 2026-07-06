@@ -7,7 +7,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     HF_INFERENCE_ENDPOINT="https://router.huggingface.co/hf-inference"
 
 COPY requirements.txt ./
-RUN pip install uv && uv pip install --system --no-cache-dir -r requirements.txt
+RUN pip install uv && \
+    uv pip install --system --no-cache-dir -r requirements.txt && \
+    uv pip install --system --no-cache-dir sentence-transformers>=3.0.0 faiss-cpu tqdm>=4.66.0
 
 COPY . .
 
