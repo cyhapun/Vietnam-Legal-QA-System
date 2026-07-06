@@ -11,6 +11,7 @@ RUN pip install uv && \
     uv pip install --system --no-cache-dir -r requirements.txt && \
     uv pip install --system --no-cache-dir sentence-transformers>=3.0.0 faiss-cpu tqdm>=4.66.0
 
+RUN echo "bust cache 2"
 COPY . .
 
 EXPOSE 8000
