@@ -143,25 +143,54 @@ class QdrantSearcher:
                     logger.warning("Sparse vector generation failed for query '%s': %s", q, exc)
 
         try:
-            # Use query_points API with RRF fusion if multiple prefetches
+            # Bypass Qdrant 1.10 query_points Fusion bug by using search_batch and manual RRF
             if len(prefetch) > 1:
-                results = client.query_points(
+                requests = []
+                for p in prefetch:
+                    if p.using == "text-dense":
+                        vector = qdrant_models.NamedVector(name=p.using, vector=p.query)
+                    else:
+                        vector = qdrant_models.NamedSparseVector(name=p.using, vector=p.query)
+                        
+                    req = qdrant_models.SearchRequest(
+                        vector=vector,
+                        filter=p.filter,
+                        limit=p.limit,
+                        with_payload=True
+                    )
+                    requests.append(req)
+                    
+                batch_results = client.search_batch(
                     collection_name=self._collection_name,
-                    prefetch=prefetch,
-                    query=qdrant_models.FusionQuery(fusion=qdrant_models.Fusion.RRF),
-                    using="text-dense",  # Qdrant workaround: required even for FusionQuery if no default vector exists
-                    limit=k,
-                    with_payload=True,
-                ).points
+                    requests=requests
+                )
+                
+                # Manual RRF Fusion
+                rrf_scores = {}
+                doc_map = {}
+                for results_list in batch_results:
+                    for rank, point in enumerate(results_list):
+                        doc_map[point.id] = point
+                        rrf_scores[point.id] = rrf_scores.get(point.id, 0.0) + 1.0 / (60 + rank + 1)
+                        
+                # Sort by score descending and take top k
+                sorted_ids = sorted(rrf_scores.keys(), key=lambda x: rrf_scores[x], reverse=True)[:k]
+                results = [doc_map[doc_id] for doc_id in sorted_ids]
+                
             elif len(prefetch) == 1:
-                results = client.query_points(
+                p = prefetch[0]
+                if p.using == "text-dense":
+                    vector = qdrant_models.NamedVector(name=p.using, vector=p.query)
+                else:
+                    vector = qdrant_models.NamedSparseVector(name=p.using, vector=p.query)
+                    
+                results = client.search(
                     collection_name=self._collection_name,
-                    query=prefetch[0].query,
-                    using=prefetch[0].using,
+                    query_vector=vector,
+                    query_filter=p.filter,
                     limit=k,
-                    query_filter=query_filter,
-                    with_payload=True,
-                ).points
+                    with_payload=True
+                )
             else:
                 return []
         except AttributeError:
