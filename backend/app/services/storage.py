@@ -200,6 +200,19 @@ def initialize_storage() -> Dict[str, Any]:
             }
         )
 
+    from app.config import ENABLE_SEMANTIC_CACHE
+    if ENABLE_SEMANTIC_CACHE:
+        cache_collection = "semantic_cache"
+        try:
+            qdrant_client.get_collection(cache_collection)
+            logger.info("Qdrant collection '%s' already exists.", cache_collection)
+        except Exception:
+            logger.info("Creating new Qdrant collection '%s'", cache_collection)
+            qdrant_client.create_collection(
+                collection_name=cache_collection,
+                vectors_config=qdrant_models.VectorParams(size=1024, distance=qdrant_models.Distance.COSINE),
+            )
+
     run_id = _start_indexing_run("startup", {"backend": STORAGE_BACKEND, "collection": QDRANT_COLLECTION})
     try:
         from app.config import DISABLE_AUTO_INGEST
