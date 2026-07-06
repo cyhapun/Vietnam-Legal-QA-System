@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Send, PanelLeft, LibraryBig, Gavel, Check, ChevronDown, Square, ArrowDown } from 'lucide-react';
+import { Send, PanelLeft, LibraryBig, Scale, Check, ChevronDown, Square, ArrowDown, X } from 'lucide-react';
 import { ProviderSelector } from './ProviderSelector';
 import { ChatMessage } from './ChatMessage';
 import { Sidebar } from './Sidebar';
@@ -60,6 +60,22 @@ export function ChatInterface() {
   const [activeMessageId, setActiveMessageId] = useState<string | null>(null);
   const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
 
+  const [drawerContext, setDrawerContext] = useState<DocumentChunk[] | null>(null);
+
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+
+  const handleTouchStart = (e: React.TouchEvent) => setTouchStart(e.targetTouches[0].clientX);
+  const handleTouchMove = (e: React.TouchEvent) => setTouchEnd(e.targetTouches[0].clientX);
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    if (distance > 50 && isSidebarOpen) setIsSidebarOpen(false); // Swipe left
+    if (distance < -50 && !isSidebarOpen) setIsSidebarOpen(true); // Swipe right
+    setTouchStart(0);
+    setTouchEnd(0);
+  };
+
   const userMessages = currentMessages.filter(m => m.role === 'user');
 
   useEffect(() => {
@@ -67,11 +83,19 @@ export function ChatInterface() {
     
     const observer = new IntersectionObserver(
       (entries) => {
-        // Find the most visible intersecting entry
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             const id = entry.target.id.replace('message-', '');
-            setActiveMessageId(id);
+            const idx = currentMessages.findIndex(m => m.id === id);
+            if (idx !== -1) {
+              // Find the closest preceding user message
+              for (let i = idx; i >= 0; i--) {
+                if (currentMessages[i].role === 'user') {
+                  setActiveMessageId(currentMessages[i].id);
+                  break;
+                }
+              }
+            }
           }
         });
       },
@@ -81,20 +105,46 @@ export function ChatInterface() {
       }
     );
 
-    userMessages.forEach(msg => {
+    currentMessages.forEach(msg => {
       const el = document.getElementById(`message-${msg.id}`);
       if (el) observer.observe(el);
     });
 
     return () => observer.disconnect();
-  }, [userMessages.length, currentMessages]);
+  }, [currentMessages]);
 
   const handleScroll = () => {
     if (scrollContainerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
       setIsAtBottom(scrollHeight - scrollTop - clientHeight < 50);
+
+      if (scrollTop < 20 && userMessages.length > 0) {
+        setActiveMessageId(userMessages[0].id);
+      }
     }
   };
+
+  // Auto-sync Drawer Context when activeMessageId changes (if Drawer is open)
+  useEffect(() => {
+    if (activeMessageId) {
+      const userIndex = currentMessages.findIndex(m => m.id === activeMessageId);
+      if (userIndex !== -1 && userIndex + 1 < currentMessages.length) {
+        const nextMsg = currentMessages[userIndex + 1];
+        if (nextMsg.role === 'assistant') {
+          setDrawerContext(prev => {
+            if (prev !== null) {
+              if (nextMsg.contextUsed && nextMsg.contextUsed.length > 0) {
+                return prev !== nextMsg.contextUsed ? nextMsg.contextUsed : prev;
+              } else {
+                return []; // Open but empty context
+              }
+            }
+            return prev;
+          });
+        }
+      }
+    }
+  }, [activeMessageId, currentMessages]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -280,7 +330,12 @@ export function ChatInterface() {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden font-sans relative selection:bg-indigo-100" style={{ background: '#F8FAFC' }}>
+    <div 
+      className="flex h-screen overflow-hidden font-sans relative selection:bg-indigo-100 transition-colors bg-slate-50 dark:bg-slate-950" 
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       <div className={`flex-shrink-0 transition-all duration-300 ease-in-out overflow-hidden h-full z-20 ${isSidebarOpen ? 'w-64 opacity-100' : 'w-0 opacity-0'}`}>
         <div className="w-64 h-full">
           <Sidebar
@@ -295,7 +350,7 @@ export function ChatInterface() {
       </div>
 
       <div className="flex-1 flex flex-col min-w-0 relative h-full">
-        <div className="flex items-center justify-between bg-white/80 backdrop-blur-md z-10 absolute top-0 left-0 right-0 px-4 py-3 border-b border-gray-200/60">
+        <div className="flex items-center justify-between bg-white/80 dark:bg-slate-950/80 backdrop-blur-md z-10 absolute top-0 left-0 right-0 px-4 py-3 border-b border-gray-200/60 dark:border-slate-800/60 transition-colors">
           <div className="flex items-center gap-3">
             {!isSidebarOpen && (
               <button onClick={() => setIsSidebarOpen(true)} className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-colors" title="Mở sidebar">
@@ -304,7 +359,7 @@ export function ChatInterface() {
             )}
             <span className="text-sm font-bold text-gray-800 tracking-tight md:hidden">VietLaw AI</span>
           </div>
-          <div className="text-[10.5px] font-bold text-indigo-600 uppercase tracking-widest px-3 py-1 rounded-full md:block hidden" style={{ background: 'linear-gradient(90deg, #EEF2FF, #E0E7FF)' }}>
+          <div className="text-[10.5px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest px-3 py-1 rounded-full md:block hidden bg-indigo-50 dark:bg-indigo-500/10">
             Hệ thống tra cứu pháp luật thông minh
           </div>
         </div>
@@ -367,11 +422,11 @@ export function ChatInterface() {
         >
           {currentMessages.length === 0 && !streamingMessage ? (
             <div className="h-full flex flex-col items-center justify-center text-center px-4">
-              <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-6 shadow-lg" style={{ background: 'linear-gradient(135deg, #4F46E5, #2563EB)' }}>
-                <Gavel className="w-10 h-10 text-white" />
+              <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-6 shadow-lg shadow-indigo-500/20" style={{ background: 'linear-gradient(135deg, #4F46E5, #2563EB)' }}>
+                <Scale className="w-10 h-10 text-white" />
               </div>
-              <h2 className="text-3xl font-bold text-gray-800 mb-2 tracking-tight">VietLaw AI</h2>
-              <p className="text-gray-400 max-w-sm text-base mb-10 leading-relaxed">
+              <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2 tracking-tight">VietLaw AI</h2>
+              <p className="text-gray-400 dark:text-gray-500 max-w-sm text-base mb-10 leading-relaxed">
                 Trợ lý pháp lý thông minh, sẵn sàng giải đáp mọi thắc mắc về pháp luật Việt Nam.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 max-w-2xl w-full">
@@ -379,9 +434,9 @@ export function ChatInterface() {
                   <button
                     key={i}
                     onClick={() => handleSubmit(undefined, s.prompt)}
-                    className="prompt-starter text-left px-4 py-3 rounded-2xl border border-gray-200 bg-white hover:border-indigo-300 hover:bg-indigo-50/50 hover:shadow-sm transition-all duration-200 group"
+                    className="prompt-starter text-left px-4 py-3 rounded-2xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-indigo-300 dark:hover:border-indigo-500/50 hover:bg-indigo-50/50 dark:hover:bg-indigo-500/10 hover:shadow-sm transition-all duration-200 group"
                   >
-                    <span className="text-[12.5px] font-semibold text-gray-700 group-hover:text-indigo-700 transition-colors leading-snug block">
+                    <span className="text-[12.5px] font-semibold text-gray-700 dark:text-gray-300 group-hover:text-indigo-700 dark:group-hover:text-indigo-400 transition-colors leading-snug block">
                       {s.label}
                     </span>
                   </button>
@@ -394,7 +449,8 @@ export function ChatInterface() {
                 <ChatMessage
                   key={msg.id}
                   message={msg}
-                  onRefine={msg.role === 'assistant' ? (prompt) => handleSubmit(undefined, prompt) : undefined}
+                  onRefine={(prompt) => handleSubmit(undefined, prompt)}
+                  onOpenContext={setDrawerContext}
                 />
               ))}
               {/* Streaming message realtime */}
@@ -403,6 +459,7 @@ export function ChatInterface() {
                   key="streaming"
                   message={streamingMessage}
                   isStreaming={true}
+                  onOpenContext={setDrawerContext}
                 />
               )}
               {/* Skeleton chi hien khi chua co text nao */}
@@ -412,14 +469,14 @@ export function ChatInterface() {
           )}
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 pt-10 pb-4 px-4" style={{ background: 'linear-gradient(to top, #F8FAFC 70%, transparent)' }}>
+        <div className="absolute bottom-0 left-0 right-0 pt-10 pb-4 px-4 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent dark:from-slate-950 dark:via-slate-950">
           <div className="max-w-3xl mx-auto relative">
             {/* Scroll to bottom button */}
             {!isAtBottom && currentMessages.length > 0 && (
               <div className="absolute -top-14 left-1/2 -translate-x-1/2 z-20 fade-in slide-in-from-bottom-2 duration-200">
                 <button
                   onClick={scrollToBottom}
-                  className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-[0_2px_10px_rgba(0,0,0,0.1)] border border-gray-100 text-gray-600 hover:text-gray-900 transition-all hover:shadow-[0_4px_14px_rgba(0,0,0,0.12)] active:scale-95"
+                  className="w-10 h-10 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center shadow-[0_2px_10px_rgba(0,0,0,0.1)] dark:shadow-none border border-gray-100 dark:border-slate-700 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-all hover:shadow-[0_4px_14px_rgba(0,0,0,0.12)] active:scale-95"
                   title="Cuộn xuống"
                 >
                   <ArrowDown className="w-5 h-5" />
@@ -427,28 +484,28 @@ export function ChatInterface() {
               </div>
             )}
 
-            <div className="relative rounded-3xl bg-white border border-gray-200/80 shadow-xl shadow-indigo-100/30 input-glow transition-all duration-300">
+            <div className="relative rounded-3xl bg-white dark:bg-slate-900 border border-gray-200/80 dark:border-slate-800 shadow-xl shadow-indigo-100/30 dark:shadow-none input-glow transition-all duration-300">
               <div className="flex items-center gap-2 px-3 pt-3 pb-1">
                 <div className="relative flex items-center" ref={categoryRef}>
                   <button
                     type="button"
                     onClick={() => setIsCategoryOpen(!isCategoryOpen)}
-                    className="flex max-w-[230px] items-center rounded-xl border border-gray-100 bg-gray-50 px-3 py-1.5 transition-colors hover:bg-gray-100 active:bg-gray-200 md:max-w-[320px]"
+                    className="flex max-w-[230px] items-center rounded-xl border border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800 px-3 py-1.5 transition-colors hover:bg-gray-100 dark:hover:bg-slate-700 active:bg-gray-200 dark:active:bg-slate-600 md:max-w-[320px]"
                     aria-haspopup="listbox"
                     aria-expanded={isCategoryOpen}
                   >
                     <LibraryBig className="w-3.5 h-3.5 text-indigo-600 mr-2" />
-                    <span className="truncate text-[12px] font-bold text-gray-700">{selectedLawCategory.label}</span>
-                    <ChevronDown className={`w-3 h-3 text-gray-400 ml-1.5 transition-transform duration-200 ${isCategoryOpen ? 'rotate-180' : ''}`} />
+                    <span className="truncate text-[12px] font-bold text-gray-700 dark:text-gray-300">{selectedLawCategory.label}</span>
+                    <ChevronDown className={`w-3 h-3 text-gray-400 dark:text-gray-500 ml-1.5 transition-transform duration-200 ${isCategoryOpen ? 'rotate-180' : ''}`} />
                   </button>
                   {isCategoryOpen && (
-                    <div className="absolute bottom-full left-0 z-50 mb-2 w-[320px] max-w-[calc(100vw-2rem)] animate-in rounded-2xl border border-gray-100 bg-white py-1 shadow-xl shadow-gray-200/50 fade-in slide-in-from-bottom-2 duration-200" role="listbox">
-                      <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-gray-400 border-b border-gray-50 mb-1">Tra cứu theo lĩnh vực</div>
+                    <div className="absolute bottom-full left-0 z-50 mb-2 w-[320px] max-w-[calc(100vw-2rem)] animate-in rounded-2xl border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 py-1 shadow-xl shadow-gray-200/50 dark:shadow-none fade-in slide-in-from-bottom-2 duration-200" role="listbox">
+                      <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 border-b border-gray-50 dark:border-slate-800 mb-1">Tra cứu theo lĩnh vực</div>
                       {LAW_CATEGORIES.map(category => (
                         <button
                           key={category.id}
                           onClick={() => { setLawCategory(category.id); setIsCategoryOpen(false); }}
-                          className={`flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left text-[12px] font-bold transition-colors ${lawCategory === category.id ? 'text-indigo-700 bg-indigo-50/50' : 'text-gray-600 hover:bg-gray-50'}`}
+                          className={`flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left text-[12px] font-bold transition-colors ${lawCategory === category.id ? 'text-indigo-700 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-500/10' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800'}`}
                           role="option"
                           aria-selected={lawCategory === category.id}
                         >
@@ -473,7 +530,7 @@ export function ChatInterface() {
                   }
                 }}
                 placeholder={isLoading ? 'Nhấn Enter để dừng...' : 'Nhập câu hỏi pháp lý... (Shift + Enter xuống dòng)'}
-                className="w-full resize-none bg-transparent pl-5 pr-14 py-3 focus:outline-none text-gray-700 leading-relaxed rounded-b-3xl text-[15px] custom-scrollbar"
+                className="w-full resize-none bg-transparent pl-5 pr-14 py-3 focus:outline-none text-gray-700 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 leading-relaxed rounded-b-3xl text-[15px] custom-scrollbar"
                 rows={1}
                 style={{ minHeight: '52px', maxHeight: '160px' }}
               />
@@ -504,6 +561,55 @@ export function ChatInterface() {
             </p>
           </div>
         </div>
+      </div>
+
+      {/* Context Drawer */}
+      <div 
+        className={`absolute md:relative top-0 right-0 h-full bg-white dark:bg-slate-900 shadow-[0_0_40px_rgba(0,0,0,0.1)] dark:shadow-none transition-all duration-300 z-50 border-l border-gray-200/60 dark:border-slate-800 flex-shrink-0 overflow-hidden
+          ${drawerContext ? 'translate-x-0 md:w-[400px] w-full' : 'translate-x-full md:translate-x-0 md:w-0 w-full'}`}
+      >
+        {drawerContext && (
+          <div className="flex flex-col h-full">
+            <div className="h-14 flex items-center justify-between px-4 border-b border-gray-100 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-900/50 flex-shrink-0 transition-colors">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-indigo-700 dark:text-indigo-400">
+                Văn bản pháp lý áp dụng
+              </span>
+              <button 
+                onClick={() => setDrawerContext(null)}
+                className="p-1.5 rounded-lg text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-800 transition-colors"
+                title="Đóng"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+              <div className="space-y-3">
+                {drawerContext.length === 0 ? (
+                  <p className="text-gray-500 dark:text-gray-400 text-[13px] text-center mt-10 italic">
+                    Không có văn bản pháp lý trích dẫn cho đoạn chat này.
+                  </p>
+                ) : (
+                  drawerContext.map((ctx, idx) => {
+                    const { source, dieu, khoan, diem } = ctx.metadata || {};
+                    let displayText = source || 'Tài liệu pháp lý';
+                    if (dieu) displayText += ` — Điều ${dieu}`;
+                    if (khoan) displayText += ` (Khoản ${khoan})`;
+                    if (diem) displayText += ` Điểm ${diem}`;
+
+                    return (
+                      <div key={idx} className="p-3.5 rounded-xl border border-indigo-100/50 dark:border-indigo-500/20 bg-indigo-50/30 dark:bg-slate-800/50 hover:bg-indigo-50/60 dark:hover:bg-slate-800 transition-colors">
+                        <p className="text-[13px] font-bold text-indigo-800 dark:text-indigo-400 mb-2 leading-snug">{displayText}</p>
+                        <p className="text-[12.5px] leading-relaxed text-gray-600 dark:text-gray-300 whitespace-pre-wrap">
+                          {ctx.content}
+                        </p>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
