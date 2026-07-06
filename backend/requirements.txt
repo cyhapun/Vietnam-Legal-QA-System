@@ -19,3 +19,5 @@ psycopg[binary]
 
 # === HuggingFace Hub ===
 huggingface_hub>=0.24.0
+
+sentence-transformers>=3.0.0
