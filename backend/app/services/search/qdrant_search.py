@@ -83,27 +83,19 @@ class QdrantSearcher:
         )
 
     def _search_qdrant(self, query: str, k: int, category: Optional[str]) -> List[Document]:
-        try:
-            embedding_backend = self._get_embedding_backend()
-            query_vector = embedding_backend.embed_query(query)
-        except Exception as exc:
-            logger.warning("Unable to embed query for Qdrant search: %s", exc)
-            if self._fallback_searcher is not None:
-                return self._fallback_searcher.search(query, k=k, category=category)
-            return []
+        embedding_backend = self._get_embedding_backend()
+        query_vector = embedding_backend.embed_query(query)
 
         try:
             from qdrant_client.http import models as qdrant_models
         except ImportError:  # pragma: no cover - runtime dependency check
             logger.warning("qdrant_client models import failed")
-            if self._fallback_searcher is not None:
-                return self._fallback_searcher.search(query, k=k, category=category)
-            return []
+            raise
+
+        client = self._get_client()
+        query_filter = self._build_filter(category)
 
         try:
-            client = self._get_client()
-            query_filter = self._build_filter(category)
-
             # Use query_points API for newer qdrant-client versions
             results = client.query_points(
                 collection_name=self._collection_name,
@@ -114,24 +106,13 @@ class QdrantSearcher:
             ).points
         except AttributeError:
             # Fallback for older qdrant-client versions that have search() method
-            try:
-                results = client.search(
-                    collection_name=self._collection_name,
-                    query_vector=query_vector,
-                    limit=k,
-                    query_filter=query_filter,
-                    with_payload=True,
-                )
-            except Exception as exc:
-                logger.warning("Both search methods failed for Qdrant: %s", exc)
-                if self._fallback_searcher is not None:
-                    return self._fallback_searcher.search(query, k=k, category=category)
-                return []
-        except Exception as exc:
-            logger.warning("Qdrant search failed, falling back to FAISS: %s", exc)
-            if self._fallback_searcher is not None:
-                return self._fallback_searcher.search(query, k=k, category=category)
-            return []
+            results = client.search(
+                collection_name=self._collection_name,
+                query_vector=query_vector,
+                limit=k,
+                query_filter=query_filter,
+                with_payload=True,
+            )
 
         documents: List[Document] = []
         for point in results:
@@ -166,4 +147,13 @@ class QdrantSearcher:
         k: int = RETRIEVER_K,
         category: Optional[str] = None,
     ) -> List[Document]:
-        return self.search(query, k=k, category=category)
+        import asyncio
+        try:
+            return await asyncio.to_thread(self._search_qdrant, query, k, category)
+        except Exception as exc:
+            logger.warning("Qdrant async retrieval failed, falling back to fallback searcher: %s", exc)
+            if self._fallback_searcher is not None:
+                if hasattr(self._fallback_searcher, "asearch"):
+                    return await self._fallback_searcher.asearch(query, k=k, category=category)
+                return self._fallback_searcher.search(query, k=k, category=category)
+            return []
