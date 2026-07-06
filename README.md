@@ -5,6 +5,16 @@ Hệ thống truy xuất các điều khoản pháp luật liên quan từ cơ s
 
 > **Project môn học:** Introduction to Machine Learning
 
+## 👥 Danh sách thành viên
+
+| Mã số sinh viên | Họ tên |
+|---|---|
+|  |  |
+|  |  |
+|  |  |
+|  |  |
+|  |  |
+
 ---
 
 ## 📑 Mục lục
@@ -65,7 +75,7 @@ Hệ thống theo mô hình **Client-Server** với 2 thành phần chính giao 
 
 1. **User** nhập câu hỏi pháp lý → Frontend gửi `POST /api/chat`
 2. **Next.js API Route** (proxy) chuyển tiếp request đến Backend FastAPI
-3. **Backend** dùng FAISS retriever (MMR, k=6) tìm các điều khoản liên quan
+3. **Backend** dùng Qdrant Hybrid Search (Dense Vector + Sparse Vector BM25) với RRF để tìm các điều khoản liên quan
 4. Hàm `build_nested_context()` xây dựng **context 2 cấp** (dẫn chiếu đệ quy giữa các điều luật)
 5. Context + lịch sử chat + câu hỏi → **System Prompt** → gọi LLM qua HuggingFace API
 6. LLM sinh câu trả lời → trả về `{text, contextUsed}` → Frontend render Markdown + hiển thị căn cứ pháp lý
@@ -99,12 +109,14 @@ Vietnam-Legal-QA-System/
 │   │   │
 │   │   ├── services/            # ⚙️ Business Logic Layer
 │   │   │   ├── pipeline.py      # Orchestrator kết nối các module (Ablation study)
-│   │   │   ├── knowledge_base.py# In-memory KB (tách từ vectorstore.py)
+│   │   │   ├── storage.py       # Quản lý Database (PostgreSQL + Qdrant)
+│   │   │   ├── knowledge_base.py# In-memory KB fallback
 │   │   │   ├── llm.py           # Kết nối LLM (HuggingFace) + System Prompt
-│   │   │   ├── search/          # Search modules: FAISS, BM25, Hybrid
+│   │   │   ├── search/          # Search modules: Qdrant, FAISS fallback
 │   │   │   ├── reranking/       # Reranking modules: NoRerank, CrossEncoder
 │   │   │   ├── context_builder/ # Context building (Nested 2-level)
 │   │   │   ├── chunking/        # Document chunking (Clause-based)
+│   │   │   ├── sparse_vector.py # Sinh Sparse Vectors cho BM25 (TF) tiếng Việt
 │   │   │   └── embedding/       # Text Embedding (HuggingFace API)
 │   │   │
 │   │   └── utils/               # 🔧 Utilities
@@ -284,13 +296,13 @@ Câu hỏi → [Retriever] → Điều khoản liên quan → [LLM] → Câu tr�
 
 **Tại sao dùng RAG?** LLM đơn thuần có thể "bịa" thông tin pháp lý. RAG buộc LLM chỉ trả lời dựa trên dữ liệu thực tế được cung cấp, đảm bảo tính chính xác.
 
-### 2. Modular Search (FAISS + BM25 + Hybrid)
+### 2. Qdrant Hybrid Search (Native Sparse Vectors)
 
-Hệ thống hỗ trợ 3 chiến lược tìm kiếm có thể hoán đổi qua cấu hình (Ablation Study):
-- **FAISS Vector Search**: Semantic search qua model đa ngôn ngữ `BAAI/bge-m3` (1024 chiều).
-- **BM25 Lexical Search**: Tìm kiếm từ khóa chính xác (Exact Keyword Match).
-- **Hybrid Search**: Kết hợp FAISS và BM25 thông qua thuật toán **Reciprocal Rank Fusion (RRF)**.
-- **Chunking**: Mỗi điều khoản pháp luật = 1 chunk (ClauseChunker).
+Hệ thống sử dụng cơ sở dữ liệu vector tiên tiến (Qdrant) để thực hiện tìm kiếm kết hợp:
+- **Dense Vector Search**: Semantic search qua model đa ngôn ngữ `BAAI/bge-m3` (1024 chiều).
+- **Sparse Vector Search (BM25)**: Tìm kiếm từ khóa chính xác (Exact Keyword Match) thông qua thuật toán sinh vector thưa tự xây dựng cho tiếng Việt.
+- **Reciprocal Rank Fusion (RRF)**: Trộn 2 kết quả trực tiếp bên trong engine của Qdrant qua hàm `query_points` với nhiều khối `prefetch`, tối đa hóa tốc độ truy xuất và giải phóng hoàn toàn RAM.
+- *(Dự phòng: Vẫn hỗ trợ FAISS cục bộ cho hệ thống không có Qdrant)*
 
 ### 3. Cross-Encoder Reranking
 
@@ -344,9 +356,12 @@ System prompt được thiết kế với **4 quy tắc bắt buộc** cho LLM:
 3. **Không suy đoán:** Chỉ trả lời dựa trên dữ liệu được cung cấp
 4. **Ngôn ngữ:** Trả lời bằng tiếng Việt chuyên nghiệp, khách quan
 
-### 8. Knowledge Base In-Memory
+### 8. Cơ sở dữ liệu Persistent (Qdrant & PostgreSQL)
 
-Toàn bộ 5.756 điều khoản được nạp vào **RAM** khi server khởi động → truy xuất dẫn chiếu chéo **không cần gọi API hay truy vấn DB**, đảm bảo tốc độ tối đa.
+Thay vì tải toàn bộ index vào RAM, phiên bản mới nhất sử dụng kiến trúc lưu trữ vĩnh viễn:
+- **PostgreSQL**: Lưu trữ metadata và nội dung nguyên bản của văn bản pháp luật, trạng thái ingest.
+- **Qdrant**: Lưu trữ Named Vectors (`text-dense`, `text-sparse`) cho Hybrid Search hiệu suất cao.
+Đảm bảo hệ thống có thể mở rộng lên hàng triệu điều luật mà không gây tràn bộ nhớ (OOM). Khởi động siêu tốc vì bỏ qua việc rebuild BM25 Index.
 
 ---
 
@@ -438,7 +453,8 @@ Mỗi file JSON trong `data/processed/` có cấu trúc:
 | **Styling** | TailwindCSS 4.1, tw-animate-css | Responsive |
 | **UI** | lucide-react, react-markdown, motion | Icons + Markdown + Animation |
 | **Backend** | FastAPI, Uvicorn, Python | Async API |
+| **Database** | PostgreSQL, Qdrant | Persistent Storage |
 | **LLM Framework** | LangChain (core, community, huggingface) | Orchestration |
 | **Embedding** | BAAI/bge-m3 qua HuggingFace API | Multilingual, 1024 dims |
-| **Vector DB** | FAISS (faiss-cpu) | In-memory, Cosine distance |
+| **Vector DB** | Qdrant (Native Hybrid Search) | Cấu hình Named Vectors |
 | **LLM Models** | Gemma4-31B, Qwen3.5-9B, Llama3.1-8B, DeepSeek-R1-7B | HF Inference API |
