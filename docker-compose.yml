@@ -33,6 +33,7 @@ services:
       HUGGINGFACE_API_KEY: ${HUGGINGFACE_API_KEY:-}
       HF_TOKEN: ${HUGGINGFACE_API_KEY:-}
       EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-huggingface}
+      DISABLE_AUTO_INGEST: "true"
     volumes:
       - ./backend/data:/app/data
       - ./backend/vietlaw_faiss_index:/app/vietlaw_faiss_index
@@ -51,6 +52,29 @@ services:
       BACKEND_URL: http://backend:8000
     depends_on:
       - backend
+
+  ingest:
+    build: ./backend
+    command: python scripts/ingest_to_storage.py
+    profiles: ["tools"]
+    env_file:
+      - .env
+    environment:
+      STORAGE_BACKEND: qdrant_postgres
+      POSTGRES_DSN: postgresql://postgres:postgres@postgres:5432/vietlaw
+      QDRANT_URL: http://qdrant:6333
+      HUGGINGFACE_API_KEY: ${HUGGINGFACE_API_KEY:-}
+      HF_TOKEN: ${HUGGINGFACE_API_KEY:-}
+      EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-huggingface}
+      DISABLE_AUTO_INGEST: "false"
+    volumes:
+      - ./backend/data:/app/data
+      - ./backend/vietlaw_faiss_index:/app/vietlaw_faiss_index
+      - ./backend/embedded_files.json:/app/embedded_files.json
+      - hf_cache:/root/.cache/huggingface
+    depends_on:
+      - postgres
+      - qdrant
 
 volumes:
   postgres_data:

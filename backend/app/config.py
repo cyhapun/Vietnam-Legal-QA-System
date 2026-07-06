@@ -41,6 +41,7 @@ POSTGRES_DSN = os.getenv("POSTGRES_DSN", "postgresql://postgres:postgres@localho
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY", "")
 QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION", "vietlaw_clauses")
+DISABLE_AUTO_INGEST = os.getenv("DISABLE_AUTO_INGEST", "false").strip().lower() == "true"
 
 # --- THÔNG SỐ EMBEDDING ---
 EMBEDDING_MODEL = os.getenv("HUGGINGFACE_EMBEDDING_MODEL", "BAAI/bge-m3")

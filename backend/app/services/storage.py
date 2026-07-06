@@ -198,13 +198,18 @@ def initialize_storage() -> Dict[str, Any]:
 
     run_id = _start_indexing_run("startup", {"backend": STORAGE_BACKEND, "collection": QDRANT_COLLECTION})
     try:
-        ingested = ingest_json_documents()
-        if ingested == 0:
-            logger.info("No documents were ingested (either data exists or ingestion was skipped)")
-            _finish_indexing_run(run_id, "skipped", {"backend": STORAGE_BACKEND, "reason": "data_exists"})
+        from app.config import DISABLE_AUTO_INGEST
+        if DISABLE_AUTO_INGEST:
+            logger.info("Auto ingestion on startup is disabled via DISABLE_AUTO_INGEST.")
+            _finish_indexing_run(run_id, "skipped", {"backend": STORAGE_BACKEND, "reason": "auto_ingest_disabled"})
         else:
-            _finish_indexing_run(run_id, "completed", {"backend": STORAGE_BACKEND, "collection": QDRANT_COLLECTION, "ingested": ingested})
-            logger.info("Ingested %d documents on startup", ingested)
+            ingested = ingest_json_documents()
+            if ingested == 0:
+                logger.info("No documents were ingested (either data exists or ingestion was skipped)")
+                _finish_indexing_run(run_id, "skipped", {"backend": STORAGE_BACKEND, "reason": "data_exists"})
+            else:
+                _finish_indexing_run(run_id, "completed", {"backend": STORAGE_BACKEND, "collection": QDRANT_COLLECTION, "ingested": ingested})
+                logger.info("Ingested %d documents on startup", ingested)
     except Exception as exc:  # pragma: no cover - runtime fallback path
         _finish_indexing_run(run_id, "failed", {"backend": STORAGE_BACKEND, "error": str(exc)})
         logger.warning("Initial document ingestion skipped: %s", exc)
@@ -282,16 +287,22 @@ def ingest_json_documents() -> int:
         logger.warning("Embedding backend unavailable during ingestion: %s", exc)
         embedding_backend = None
 
-    for record in records:
-        clauses = record.get("clauses", [])
-        for clause in clauses:
-            content = clause.get("content", "")
-            if embedding_backend and content:
-                try:
-                    clause["embedding"] = embedding_backend.embed_query(content)
-                except Exception as exc:  # pragma: no cover - runtime dependency path
-                    logger.warning("Embedding failed for clause %s: %s", clause["id"], exc)
-                    clause["embedding"] = None
+    all_clauses = [clause for record in records for clause in record.get("clauses", []) if clause.get("content")]
+
+    try:
+        from tqdm import tqdm
+        iterator = tqdm(all_clauses, desc="Embedding clauses", unit="clause")
+    except ImportError:
+        iterator = all_clauses
+
+    for clause in iterator:
+        content = clause.get("content", "")
+        if embedding_backend and content:
+            try:
+                clause["embedding"] = embedding_backend.embed_query(content)
+            except Exception as exc:  # pragma: no cover - runtime dependency path
+                logger.warning("Embedding failed for clause %s: %s", clause["id"], exc)
+                clause["embedding"] = None
 
     return ingest_documents(records)
 
