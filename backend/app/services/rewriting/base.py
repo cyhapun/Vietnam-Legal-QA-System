@@ -11,12 +11,13 @@ class BaseRewriter(ABC):
     Abstract base class for Query Rewriters.
     """
     @abstractmethod
-    def rewrite(self, query: str) -> Tuple[str, List[str]]:
+    def rewrite(self, query: str, history: str = None) -> Tuple[str, List[str]]:
         """
         Rewrite the query and return the domain and a list of queries.
         
         Args:
             query (str): The original user query.
+            history (str, optional): Recent conversation history for context resolution.
             
         Returns:
             Tuple[str, List[str]]: A tuple containing the domain ("legal" or "chitchat") and a list of rewritten queries.
