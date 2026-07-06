@@ -4,7 +4,7 @@
  */
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import type { ChatSession, Message } from '@/lib/types';
 import { STORAGE_KEYS } from '@/lib/constants';
 
@@ -14,12 +14,24 @@ export function useChatSessions() {
   const [messagesBySession, setMessagesBySession] = useState<Record<string, Message[]>>({});
   const [isMounted, setIsMounted] = useState(false);
 
+  const stateRef = useRef({ sessions, currentSessionId, messagesBySession });
+  useEffect(() => {
+    stateRef.current = { sessions, currentSessionId, messagesBySession };
+  }, [sessions, currentSessionId, messagesBySession]);
+
   const currentMessages = currentSessionId
     ? messagesBySession[currentSessionId] || []
     : [];
 
   // --- Tạo session mới ---
   const handleNewChat = useCallback(() => {
+    const { currentSessionId, messagesBySession, sessions } = stateRef.current;
+    
+    // Nếu đang ở session rỗng rồi thì không tạo thêm
+    if (currentSessionId && (!messagesBySession[currentSessionId] || messagesBySession[currentSessionId].length === 0)) {
+      return;
+    }
+
     const newId = Date.now().toString();
     const newSession: ChatSession = {
       id: newId,
@@ -27,18 +39,28 @@ export function useChatSessions() {
       lastMessage: '',
       timestamp: Date.now(),
     };
-    setSessions(prev => [newSession, ...prev]);
+
+    // Lọc bỏ các session rỗng cũ
+    const validSessions = sessions.filter(s => messagesBySession[s.id] && messagesBySession[s.id].length > 0);
+
+    setSessions([newSession, ...validSessions]);
     setCurrentSessionId(newId);
     setMessagesBySession(prev => ({ ...prev, [newId]: [] }));
   }, []);
 
   // --- Chọn session ---
   const handleSelectSession = useCallback((id: string) => {
+    const { currentSessionId, messagesBySession } = stateRef.current;
+    if (id === currentSessionId) return;
+
+    // Khi chuyển sang session khác, lọc bỏ các session rỗng cũ
+    setSessions(prev => prev.filter(s => s.id === id || (messagesBySession[s.id] && messagesBySession[s.id].length > 0)));
     setCurrentSessionId(id);
   }, []);
 
   // --- Xóa session ---
   const handleDeleteSession = useCallback((id: string) => {
+    const { currentSessionId } = stateRef.current;
     setSessions(prev => {
       const remaining = prev.filter(s => s.id !== id);
       // Nếu đang xóa session hiện tại, chuyển sang session khác
@@ -113,7 +135,8 @@ export function useChatSessions() {
   // --- Lưu vào localStorage khi thay đổi ---
   useEffect(() => {
     if (isMounted) {
-      localStorage.setItem(STORAGE_KEYS.sessions, JSON.stringify(sessions));
+      const validSessions = sessions.filter(s => messagesBySession[s.id] && messagesBySession[s.id].length > 0);
+      localStorage.setItem(STORAGE_KEYS.sessions, JSON.stringify(validSessions));
       localStorage.setItem(STORAGE_KEYS.messages, JSON.stringify(messagesBySession));
     }
   }, [sessions, messagesBySession, isMounted]);

@@ -1,57 +1,49 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
+
+function getBackendUrl(reqUrl: string): string {
+  let base = process.env.BACKEND_URL || 'http://localhost:8000';
+  if (base.startsWith('/')) {
+    const { origin } = new URL(reqUrl);
+    base = `${origin}${base}`;
+  }
+  return base.replace(/\/+$/, '');
+}
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+    const backendBase = getBackendUrl(req.url);
+    const streamUrl = `${backendBase}/chat/stream`;
+    console.log(`[Proxy Stream] -> ${streamUrl}`);
 
-    // ấy Base URL từ biến môi trường
-    let backendBaseUrl = process.env.BACKEND_URL || 'http://localhost:8000';
-
-    if (backendBaseUrl.startsWith('/')) {
-      const { origin } = new URL(req.url); 
-      backendBaseUrl = `${origin}${backendBaseUrl}`;
-    }
-
-    // Làm sạch URL: đảm bảo không có 2 dấu gạch chéo dư thừa (ví dụ: //chat)
-    const finalUrl = `${backendBaseUrl}/chat`.replace(/([^:]\/)\/+/g, "$1");
-
-    console.log(`[Proxy] Đang gọi backend tại: ${finalUrl}`);
-
-    // 3. Gọi Backend Python
-    const response = await fetch(finalUrl, {
+    const backendRes = await fetch(streamUrl, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        // Bạn có thể thêm các headers bảo mật khác ở đây nếu cần
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
 
-    // 4. Xử lý phản hồi từ Backend
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
+    if (!backendRes.ok) {
+      const err = await backendRes.json().catch(() => ({}));
       return NextResponse.json(
-        { 
-          error: 'Backend trả về lỗi', 
-          details: errorData.detail || `Status: ${response.status}` 
-        }, 
-        { status: response.status }
+        { error: 'Backend loi', details: err.detail || `Status: ${backendRes.status}` },
+        { status: backendRes.status }
       );
     }
 
-    const data = await response.json();
-    
-    // Trả dữ liệu về cho Frontend
-    return NextResponse.json(data);
+    return new NextResponse(backendRes.body, {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'X-Accel-Buffering': 'no',
+        'Connection': 'keep-alive',
+      },
+    });
 
   } catch (error: any) {
-    console.error('Frontend API Proxy Error:', error);
-    
+    console.error('[Proxy Stream Error]', error);
     return NextResponse.json(
-      { 
-        error: 'Lỗi kết nối Backend', 
-        details: error.message 
-      }, 
+      { error: 'Loi ket noi Backend', details: error.message },
       { status: 500 }
     );
   }
