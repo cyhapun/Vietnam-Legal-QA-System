@@ -190,6 +190,14 @@ cp .env.example .env
 
 # Mở .env và điền API key của bạn
 # HUGGINGFACE_API_KEY=hf_your_actual_key_here
+#
+# # Tùy chọn chế độ chạy Embedding (local hoặc api):
+# # Mặc định là "local" để tránh lỗi "Model not supported" của Hugging Face
+# HUGGINGFACE_EMBEDDING_MODE=local
+# Nếu dùng Docker cho PostgreSQL + Qdrant, hãy giữ:
+# STORAGE_BACKEND=qdrant_postgres
+# POSTGRES_DSN=postgresql://postgres:postgres@localhost:5432/vietlaw
+# QDRANT_URL=http://localhost:6333
 ```
 
 ### Bước 2: Chạy Backend (Terminal 1)
@@ -210,6 +218,22 @@ pip install -r requirements.txt
 python main.py
 # ✅ Server chạy tại: http://localhost:8000
 ```
+
+### Bước 2a: Chạy với PostgreSQL + Qdrant (tùy chọn)
+
+```bash
+# Từ thư mục root project
+docker compose up -d postgres qdrant
+
+# Trong backend, dùng storage backend database-backed
+# .env
+# STORAGE_BACKEND=qdrant_postgres
+
+# Sau đó chạy ingestion một lần
+python scripts/ingest_to_storage.py
+```
+
+> Nếu dịch vụ database chưa sẵn sàng, backend vẫn sẽ khởi động bằng fallback FAISS và ghi log cảnh báo. Nếu Docker Desktop hoặc Docker Engine chưa chạy, lệnh `docker compose up -d postgres qdrant` sẽ thất bại trước khi backend có thể dùng PostgreSQL/Qdrant.
 
 > ⚠️ **Lưu ý quan trọng:** Phải chạy từ **thư mục `backend/`**, không phải từ thư mục root!
 
@@ -242,7 +266,9 @@ docker-compose up --build
 - **Backend phải chạy TRƯỚC Frontend** — Frontend proxy request đến Backend
 - **FAISS index đã có sẵn** trong repo (22.5 MB) — không cần re-embed dữ liệu
 - **Lần đầu khởi động** Backend sẽ nạp 8 file JSON vào RAM + tải FAISS index (~5-10 giây)
-- Nếu muốn **re-embed dữ liệu**, xóa file `embedded_files.json` rồi restart server
+- Khi bật `STORAGE_BACKEND=qdrant_postgres`, backend sẽ tạo schema PostgreSQL và collection Qdrant tại startup.
+- Dữ liệu sẽ **không tự động được nhúng (embed)** khi khởi động backend để tăng tốc độ.
+- Để **nạp dữ liệu ban đầu hoặc nạp lại (re-embed) dữ liệu mới**, bạn PHẢI chạy script thủ công: `python scripts/ingest_to_storage.py`
 
 ---
 

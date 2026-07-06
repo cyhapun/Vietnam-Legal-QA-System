@@ -24,6 +24,7 @@ def setup_logger(name: str = "vietlaw") -> logging.Logger:
     )
     handler.setFormatter(formatter)
     logger.addHandler(handler)
+    logger.propagate = False
 
     return logger
 

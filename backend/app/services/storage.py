@@ -1,0 +1,407 @@
+"""
+Storage bootstrap for Qdrant + PostgreSQL-backed legal corpus persistence.
+
+This module introduces a storage abstraction for the new backend while
+preserving backward compatibility with the existing FAISS-based flow.
+"""
+from __future__ import annotations
+
+import json
+from typing import Any, Dict, List, Optional
+
+from app.config import (
+    EMBEDDING_PROVIDER,
+    POSTGRES_DSN,
+    QDRANT_API_KEY,
+    QDRANT_COLLECTION,
+    QDRANT_URL,
+    STORAGE_BACKEND,
+)
+from app.utils.logging import setup_logger
+
+logger = setup_logger("vietlaw.storage")
+
+
+class StorageInitializationError(RuntimeError):
+    """Raised when the database-backed storage layer cannot be initialized."""
+
+
+def is_database_backend_enabled() -> bool:
+    """Return True when the runtime is configured to use the database-backed storage layer."""
+    return STORAGE_BACKEND.lower() in {"qdrant_postgres", "postgres", "postgresql", "qdrant"}
+
+
+def _ensure_schema() -> None:
+    """Create the PostgreSQL schema used by the storage backend if it does not already exist."""
+    try:
+        import psycopg
+    except ImportError as exc:  # pragma: no cover - runtime dependency check
+        raise StorageInitializationError(
+            "psycopg is required for database-backed storage. Install backend requirements first."
+        ) from exc
+
+    schema_statements = [
+        """
+        CREATE TABLE IF NOT EXISTS laws (
+            law_id TEXT PRIMARY KEY,
+            law_name TEXT NOT NULL,
+            summary TEXT,
+            category TEXT,
+            metadata JSONB DEFAULT '{}'::jsonb,
+            created_at TIMESTAMPTZ DEFAULT NOW()
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS clauses (
+            id TEXT PRIMARY KEY,
+            law_id TEXT NOT NULL REFERENCES laws(law_id) ON DELETE CASCADE,
+            content TEXT NOT NULL,
+            position JSONB DEFAULT '{}'::jsonb,
+            cross_references JSONB DEFAULT '[]'::jsonb,
+            created_at TIMESTAMPTZ DEFAULT NOW()
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS indexing_runs (
+            id SERIAL PRIMARY KEY,
+            source TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT 'pending',
+            started_at TIMESTAMPTZ DEFAULT NOW(),
+            finished_at TIMESTAMPTZ,
+            details JSONB DEFAULT '{}'::jsonb
+        )
+        """,
+    ]
+
+    with psycopg.connect(POSTGRES_DSN, autocommit=True) as conn:
+        with conn.cursor() as cursor:
+            for statement in schema_statements:
+                cursor.execute(statement)
+
+
+def _start_indexing_run(source: str, details: Optional[Dict[str, Any]] = None) -> Optional[int]:
+    """Create a new indexing run record and return its id when PostgreSQL is available."""
+    try:
+        _ensure_schema()
+        import psycopg
+    except ImportError:  # pragma: no cover - runtime dependency check
+        return None
+
+    try:
+        with psycopg.connect(POSTGRES_DSN, autocommit=True) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    """
+                    INSERT INTO indexing_runs (source, status, details)
+                    VALUES (%s, %s, %s)
+                    RETURNING id
+                    """,
+                    (source, "running", json.dumps(details or {})),
+                )
+                row = cursor.fetchone()
+                return int(row[0]) if row else None
+    except Exception as exc:  # pragma: no cover - runtime dependency path
+        logger.warning("Unable to create indexing run record for %s: %s", source, exc)
+        return None
+
+
+def _finish_indexing_run(
+    run_id: Optional[int],
+    status: str,
+    details: Optional[Dict[str, Any]] = None,
+) -> None:
+    """Update an existing indexing run record with a final status."""
+    if run_id is None:
+        return
+
+    try:
+        import psycopg
+    except ImportError:  # pragma: no cover - runtime dependency check
+        return
+
+    try:
+        with psycopg.connect(POSTGRES_DSN, autocommit=True) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    """
+                    UPDATE indexing_runs
+                    SET status = %s,
+                        finished_at = NOW(),
+                        details = %s
+                    WHERE id = %s
+                    """,
+                    (status, json.dumps(details or {}), run_id),
+                )
+    except Exception as exc:  # pragma: no cover - runtime dependency path
+        logger.warning("Unable to update indexing run record %s: %s", run_id, exc)
+
+
+def initialize_storage() -> Dict[str, Any]:
+    """Initialize PostgreSQL schema and Qdrant collection if the DB backend is enabled.
+    
+    Skips re-ingestion if data already exists to avoid expensive re-embedding on every startup.
+    """
+    if not is_database_backend_enabled():
+        logger.info("Storage backend %s requested; skipping DB initialization.", STORAGE_BACKEND)
+        return {"backend": STORAGE_BACKEND, "postgres": "skipped", "qdrant": "skipped"}
+
+    try:
+        import psycopg
+    except ImportError as exc:  # pragma: no cover - runtime dependency check
+        raise StorageInitializationError(
+            "psycopg is required for database-backed storage. Install backend requirements first."
+        ) from exc
+
+    try:
+        from qdrant_client import QdrantClient
+        from qdrant_client.http import models as qdrant_models
+    except ImportError as exc:  # pragma: no cover - runtime dependency check
+        raise StorageInitializationError(
+            "qdrant-client is required for vector storage. Install backend requirements first."
+        ) from exc
+
+    _ensure_schema()
+    
+    # Check if data already exists
+    try:
+        with psycopg.connect(POSTGRES_DSN, autocommit=True) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute("SELECT COUNT(*) FROM clauses")
+                existing_clause_count = cursor.fetchone()[0]
+                if existing_clause_count > 0:
+                    logger.info("Database already contains %d clauses; skipping re-ingestion", existing_clause_count)
+                    return {
+                        "backend": STORAGE_BACKEND,
+                        "postgres": "ready",
+                        "qdrant_collection": QDRANT_COLLECTION,
+                        "existing_clauses": existing_clause_count,
+                    }
+    except Exception as exc:
+        logger.warning("Could not check existing clause count: %s", exc)
+        # Continue with initialization if check fails
+
+    qdrant_client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY or None)
+    
+    # Check if Qdrant collection exists before recreating
+    try:
+        collection_info = qdrant_client.get_collection(QDRANT_COLLECTION)
+        logger.info("Qdrant collection '%s' already exists with %d points", 
+                    QDRANT_COLLECTION, collection_info.points_count)
+        logger.info("Skipping collection recreation to preserve existing vectors")
+    except Exception:
+        # Collection doesn't exist or is inaccessible - create it
+        logger.info("Creating new Qdrant collection '%s'", QDRANT_COLLECTION)
+        qdrant_client.recreate_collection(
+            collection_name=QDRANT_COLLECTION,
+            vectors_config=qdrant_models.VectorParams(size=1024, distance=qdrant_models.Distance.COSINE),
+        )
+
+    run_id = _start_indexing_run("startup", {"backend": STORAGE_BACKEND, "collection": QDRANT_COLLECTION})
+    try:
+        from app.config import DISABLE_AUTO_INGEST
+        if DISABLE_AUTO_INGEST:
+            logger.info("Auto ingestion on startup is disabled via DISABLE_AUTO_INGEST.")
+            _finish_indexing_run(run_id, "skipped", {"backend": STORAGE_BACKEND, "reason": "auto_ingest_disabled"})
+        else:
+            ingested = ingest_json_documents()
+            if ingested == 0:
+                logger.info("No documents were ingested (either data exists or ingestion was skipped)")
+                _finish_indexing_run(run_id, "skipped", {"backend": STORAGE_BACKEND, "reason": "data_exists"})
+            else:
+                _finish_indexing_run(run_id, "completed", {"backend": STORAGE_BACKEND, "collection": QDRANT_COLLECTION, "ingested": ingested})
+                logger.info("Ingested %d documents on startup", ingested)
+    except Exception as exc:  # pragma: no cover - runtime fallback path
+        _finish_indexing_run(run_id, "failed", {"backend": STORAGE_BACKEND, "error": str(exc)})
+        logger.warning("Initial document ingestion skipped: %s", exc)
+
+    logger.info("Database-backed storage initialized: postgres=%s qdrant=%s", POSTGRES_DSN, QDRANT_COLLECTION)
+    return {
+        "backend": STORAGE_BACKEND,
+        "postgres": "ready",
+        "qdrant_collection": QDRANT_COLLECTION,
+    }
+
+
+def ingest_json_documents() -> int:
+    """Ingest processed legal JSON documents into PostgreSQL and Qdrant using the configured embedding backend.
+    
+    Returns 0 if data already exists to avoid re-ingesting on every startup.
+    Returns the number of records ingested (>0) if new data was added.
+    """
+    from app.services.knowledge_base import KNOWLEDGE_BASE, LAW_METADATA, load_knowledge_base
+
+    load_knowledge_base()
+
+    records: List[Dict[str, Any]] = []
+    grouped: Dict[str, Dict[str, Any]] = {}
+
+    for clause_id, clause_data in KNOWLEDGE_BASE.items():
+        law_id = clause_data.get("law_id")
+        law_meta = LAW_METADATA.get(law_id, {})
+        record = grouped.setdefault(
+            law_id,
+            {
+                "law_id": law_id,
+                "law_name": law_meta.get("law_name", ""),
+                "summary": law_meta.get("summary", ""),
+                "category": law_meta.get("category", "all"),
+                "metadata": {"law_name": law_meta.get("law_name", "")},
+                "clauses": [],
+            },
+        )
+        record["clauses"].append(
+            {
+                "id": clause_id,
+                "content": clause_data.get("content", ""),
+                "position": clause_data.get("position", {}),
+                "cross_references": clause_data.get("cross_references", []),
+            }
+        )
+
+    records = list(grouped.values())
+    if not records:
+        return 0
+
+    # Check if clauses already exist before embedding
+    try:
+        import psycopg
+        with psycopg.connect(POSTGRES_DSN, autocommit=True) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute("SELECT COUNT(*) FROM clauses")
+                existing_count = cursor.fetchone()[0]
+                total_expected = sum(len(r.get("clauses", [])) for r in records)
+                if existing_count >= total_expected:
+                    logger.info("All %d clauses already exist in database; skipping re-ingestion", existing_count)
+                    return 0
+    except Exception as exc:
+        logger.warning("Could not check existing clauses: %s; proceeding with ingestion", exc)
+
+    try:
+        if EMBEDDING_PROVIDER == "ollama":
+            from app.services.embedding.ollama import OllamaEmbedding
+            embedding_backend = OllamaEmbedding()
+        else:
+            from app.services.embedding.hf_endpoint import HuggingFaceEndpointEmbedding
+            embedding_backend = HuggingFaceEndpointEmbedding()
+    except Exception as exc:  # pragma: no cover - runtime dependency path
+        logger.warning("Embedding backend unavailable during ingestion: %s", exc)
+        embedding_backend = None
+
+    all_clauses = [clause for record in records for clause in record.get("clauses", []) if clause.get("content")]
+
+    try:
+        from tqdm import tqdm
+        iterator = tqdm(all_clauses, desc="Embedding clauses", unit="clause")
+    except ImportError:
+        iterator = all_clauses
+
+    for clause in iterator:
+        content = clause.get("content", "")
+        if embedding_backend and content:
+            try:
+                clause["embedding"] = embedding_backend.embed_query(content)
+            except Exception as exc:  # pragma: no cover - runtime dependency path
+                logger.warning("Embedding failed for clause %s: %s", clause["id"], exc)
+                clause["embedding"] = None
+
+    return ingest_documents(records)
+
+
+def ingest_documents(records: List[Dict[str, Any]]) -> int:
+    """Persist legal document records into PostgreSQL and upsert vectors into Qdrant."""
+    if not records:
+        return 0
+
+    if not is_database_backend_enabled():
+        logger.info("Skipping ingestion because storage backend %s is not database-backed.", STORAGE_BACKEND)
+        return 0
+
+    try:
+        import psycopg
+    except ImportError as exc:  # pragma: no cover - runtime dependency check
+        raise StorageInitializationError(
+            "psycopg is required for database-backed storage. Install backend requirements first."
+        ) from exc
+
+    try:
+        from qdrant_client import QdrantClient
+        from qdrant_client.http import models as qdrant_models
+    except ImportError as exc:  # pragma: no cover - runtime dependency check
+        raise StorageInitializationError(
+            "qdrant-client is required for vector storage. Install backend requirements first."
+        ) from exc
+
+    qdrant_client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY or None)
+    run_id = _start_indexing_run("ingest_documents", {"record_count": len(records), "backend": STORAGE_BACKEND})
+
+    try:
+        with psycopg.connect(POSTGRES_DSN, autocommit=True) as conn:
+            with conn.cursor() as cursor:
+                for record in records:
+                    law_id = record["law_id"]
+                    law_name = record.get("law_name", "")
+                    summary = record.get("summary", "")
+                    category = record.get("category", "all")
+                    metadata = record.get("metadata", {})
+
+                    cursor.execute(
+                        """
+                        INSERT INTO laws (law_id, law_name, summary, category, metadata)
+                        VALUES (%s, %s, %s, %s, %s)
+                        ON CONFLICT (law_id) DO UPDATE SET
+                            law_name = EXCLUDED.law_name,
+                            summary = EXCLUDED.summary,
+                            category = EXCLUDED.category,
+                            metadata = EXCLUDED.metadata
+                        """,
+                        (law_id, law_name, summary, category, json.dumps(metadata)),
+                    )
+
+                    for clause in record.get("clauses", []):
+                        clause_id = clause["id"]
+                        cursor.execute(
+                            """
+                            INSERT INTO clauses (id, law_id, content, position, cross_references)
+                            VALUES (%s, %s, %s, %s, %s)
+                            ON CONFLICT (id) DO UPDATE SET
+                                law_id = EXCLUDED.law_id,
+                                content = EXCLUDED.content,
+                                position = EXCLUDED.position,
+                                cross_references = EXCLUDED.cross_references
+                            """,
+                            (
+                                clause_id,
+                                law_id,
+                                clause.get("content", ""),
+                                json.dumps(clause.get("position", {})),
+                                json.dumps(clause.get("cross_references", [])),
+                            ),
+                        )
+
+                        embedding = clause.get("embedding")
+                        if embedding:
+                            import uuid
+                            qdrant_id = str(uuid.uuid5(uuid.NAMESPACE_URL, clause_id))
+                            qdrant_client.upsert(
+                                collection_name=QDRANT_COLLECTION,
+                                points=[
+                                    qdrant_models.PointStruct(
+                                        id=qdrant_id,
+                                        vector=embedding,
+                                        payload={
+                                            "id": clause_id,
+                                            "law_id": law_id,
+                                            "content": clause.get("content", ""),
+                                            "category": category,
+                                        },
+                                    )
+                                ],
+                            )
+
+        _finish_indexing_run(run_id, "completed", {"record_count": len(records), "backend": STORAGE_BACKEND})
+    except Exception as exc:
+        _finish_indexing_run(run_id, "failed", {"record_count": len(records), "backend": STORAGE_BACKEND, "error": str(exc)})
+        raise
+
+    logger.info("Ingested %d document record(s) into database-backed storage.", len(records))
+    return len(records)

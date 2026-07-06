@@ -5,9 +5,9 @@ từ langchain_huggingface nhưng tuân thủ BaseEmbedding protocol.
 """
 from typing import List
 
-from langchain_huggingface import HuggingFaceEndpointEmbeddings
+from langchain_huggingface import HuggingFaceEndpointEmbeddings, HuggingFaceEmbeddings
 
-from app.config import HUGGINGFACE_API_KEY, EMBEDDING_MODEL
+from app.config import HUGGINGFACE_API_KEY, EMBEDDING_MODEL, HUGGINGFACE_EMBEDDING_MODE
 from app.utils.logging import setup_logger
 
 logger = setup_logger("vietlaw.embedding.hf_endpoint")
@@ -24,28 +24,38 @@ class HuggingFaceEndpointEmbedding:
         self,
         model: str = EMBEDDING_MODEL,
         api_key: str = HUGGINGFACE_API_KEY,
+        mode: str = HUGGINGFACE_EMBEDDING_MODE,
     ):
-        if not api_key:
-            raise ValueError(
-                "Không tìm thấy HUGGINGFACE_API_KEY. "
-                "Vui lòng kiểm tra lại file .env của bạn nhé."
-            )
-
         self._model_name = model
-        logger.info("Đang kết nối mô hình %s qua Hugging Face API...", model)
-
-        self._engine = HuggingFaceEndpointEmbeddings(
-            model=model,
-            task="feature-extraction",
-            huggingfacehub_api_token=api_key,
-        )
+        self._mode = mode
+        
+        if mode == "api":
+            if not api_key:
+                raise ValueError(
+                    "Không tìm thấy HUGGINGFACE_API_KEY. "
+                    "Vui lòng kiểm tra lại file .env của bạn nhé."
+                )
+            logger.info("Đang kết nối mô hình %s qua Hugging Face API...", model)
+            self._engine = HuggingFaceEndpointEmbeddings(
+                model=model,
+                task="feature-extraction",
+                huggingfacehub_api_token=api_key,
+            )
+        else:
+            logger.info("Đang tải mô hình %s chạy TRỰC TIẾP (Local) qua sentence-transformers...", model)
+            self._engine = HuggingFaceEmbeddings(
+                model_name=model,
+                # Tự động dùng GPU nếu có, nếu không thì CPU
+                model_kwargs={'device': 'cpu'},
+                encode_kwargs={'normalize_embeddings': True}
+            )
 
     @property
     def model_name(self) -> str:
         return self._model_name
 
     @property
-    def langchain_embeddings(self) -> HuggingFaceEndpointEmbeddings:
+    def langchain_embeddings(self):
         """Trả về object langchain gốc — cần thiết cho FAISS compatibility."""
         return self._engine
 

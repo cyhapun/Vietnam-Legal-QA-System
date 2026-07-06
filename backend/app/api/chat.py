@@ -48,14 +48,21 @@ async def chat_endpoint(request: ChatRequest):
         # 4. Gọi LLM để sinh câu trả lời và đo thời gian
         start_time = time.time()
 
-        llm = get_llm(request.model)
-        rag_chain = CHAT_PROMPT | llm | get_output_parser()
+        try:
+            llm = get_llm(request.model)
+            rag_chain = CHAT_PROMPT | llm | get_output_parser()
 
-        output_text = await rag_chain.ainvoke({
-            "context": context_text,
-            "chat_history_str": chat_history_str,
-            "question": last_message
-        })
+            output_text = await rag_chain.ainvoke({
+                "context": context_text,
+                "chat_history_str": chat_history_str,
+                "question": last_message
+            })
+        except Exception as llm_exc:
+            logger.warning("LLM unavailable, falling back to retrieved context: %s", llm_exc)
+            output_text = (
+                "Hiện tại hệ thống chưa thể gọi mô hình sinh câu trả lời, "
+                "nhưng đã tìm thấy tài liệu liên quan. Vui lòng xem contextUsed để tham khảo."
+            )
 
         execution_time = time.time() - start_time
         logger.info("LLM trả lời trong %.2fs", execution_time)
