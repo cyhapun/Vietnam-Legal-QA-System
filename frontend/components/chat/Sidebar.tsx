@@ -1,8 +1,7 @@
 import React from 'react';
-import { Plus, MessageSquare, Trash2, Gavel, PanelLeftClose } from 'lucide-react';
+import { Plus, MessageSquare, Trash2, Scale, PanelLeftClose } from 'lucide-react';
 import type { ChatSession } from '@/lib/types';
 
-// Re-export for backward compatibility
 export type { ChatSession } from '@/lib/types';
 
 interface SidebarProps {
@@ -14,79 +13,108 @@ interface SidebarProps {
   onCloseSidebar: () => void;
 }
 
-export function Sidebar({ sessions, currentSessionId, onNewChat, onSelectSession, onDeleteSession, onCloseSidebar }: SidebarProps) {
+export function Sidebar({
+  sessions,
+  currentSessionId,
+  onNewChat,
+  onSelectSession,
+  onDeleteSession,
+  onCloseSidebar,
+}: SidebarProps) {
   return (
-    <div className="w-64 bg-gray-950 h-screen flex flex-col text-gray-300 font-sans border-r border-gray-900 shadow-xl">
-      
-      {/* Thanh Header */}
-      <div className="h-14 flex items-center justify-between px-4 mt-2">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center">
-            <Gavel className="w-4 h-4 text-white" />
+    <div className="w-64 h-screen flex flex-col font-sans border-r border-white/5"
+      style={{ background: 'linear-gradient(180deg, #0B0F19 0%, #0E1320 100%)' }}>
+
+      {/* Header with glassmorphism */}
+      <div className="h-14 flex items-center justify-between px-4 mt-1 flex-shrink-0">
+        <div className="flex items-center gap-2.5">
+          <div
+            className="w-8 h-8 rounded-xl flex items-center justify-center shadow-lg"
+            style={{ background: 'linear-gradient(135deg, #4F46E5, #2563EB)' }}
+          >
+            <Scale className="w-4 h-4 text-white" />
           </div>
-          <span className="text-sm font-bold text-white tracking-wide">VietLaw AI</span>
+          <div>
+            <span className="text-sm font-bold text-white tracking-tight">VietLaw AI</span>
+            <span className="block text-[9px] font-medium text-indigo-400 uppercase tracking-widest leading-none mt-0.5">Legal Assistant</span>
+          </div>
         </div>
         <button
           onClick={onCloseSidebar}
-          className="p-1.5 rounded-md hover:bg-gray-800 text-gray-400 hover:text-gray-200 transition-colors"
+          className="p-1.5 rounded-lg text-gray-500 hover:text-gray-200 hover:bg-white/8 transition-all"
           title="Đóng sidebar"
         >
           <PanelLeftClose className="w-4 h-4" />
         </button>
       </div>
 
-      {/* Nút Tạo Chat Mới */}
-      <div className="px-3 py-3">
+      {/* New Chat Button */}
+      <div className="px-3 py-2 flex-shrink-0">
         <button
           onClick={onNewChat}
-          className="w-full flex items-center justify-center gap-2 bg-gray-800/80 hover:bg-gray-800 border border-gray-700/50 rounded-xl py-2.5 px-3 transition-all duration-200 shadow-sm"
+          className="w-full flex items-center justify-center gap-2 rounded-xl py-2.5 px-3 transition-all duration-200 border border-indigo-500/25 text-indigo-300 hover:text-indigo-100 hover:border-indigo-400/50 hover:bg-indigo-500/10 active:scale-98"
+          style={{ background: 'rgba(79,70,229,0.07)' }}
         >
-          <Plus className="w-4 h-4 text-indigo-400" />
-          <span className="text-sm font-medium text-gray-200">Đoạn chat mới</span>
+          <Plus className="w-4 h-4" />
+          <span className="text-[13px] font-semibold">Đoạn chat mới</span>
         </button>
       </div>
 
-      {/* Danh sách Lịch sử Chat */}
-      <div className="flex-1 overflow-y-auto px-3 py-2 space-y-1 custom-scrollbar">
-        <div className="px-2 pt-1 pb-2 text-[11px] font-bold uppercase tracking-wider text-gray-500">
+      {/* Divider */}
+      <div className="mx-4 my-1 border-t border-white/5 flex-shrink-0" />
+
+      {/* Session list */}
+      <div className="flex-1 overflow-y-auto px-2 py-2 space-y-0.5 custom-scrollbar">
+        <div className="px-2 pt-1 pb-2 text-[10px] font-bold uppercase tracking-widest text-gray-600">
           Lịch sử tra cứu
         </div>
-        
+
         {sessions.length === 0 ? (
-          <div className="px-2 text-sm text-gray-600 italic text-center mt-4">Chưa có hội thoại nào</div>
+          <div className="px-3 py-6 text-[12px] text-gray-600 text-center italic leading-relaxed">
+            Chưa có hội thoại nào.<br />
+            <span className="not-italic text-gray-500">Bắt đầu một câu hỏi mới!</span>
+          </div>
         ) : (
-          sessions.map((session) => (
-            <div
-              key={session.id}
-              className={`group relative flex items-center px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-200 ${
-                currentSessionId === session.id 
-                  ? 'bg-gray-800/80 text-white shadow-sm' 
-                  : 'hover:bg-gray-900 text-gray-400 hover:text-gray-200'
-              }`}
-              onClick={() => onSelectSession(session.id)}
-            >
-              <MessageSquare className={`w-4 h-4 mr-3 flex-shrink-0 ${currentSessionId === session.id ? 'text-indigo-400' : 'text-gray-500 group-hover:text-gray-400'}`} />
-              
-              <div className="flex-1 truncate pr-6">
-                <span className="text-[13px] font-medium block truncate">{session.title}</span>
-              </div>
-              
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDeleteSession(session.id);
-                }}
-                className={`absolute right-2 p-1.5 rounded-lg hover:bg-red-500/10 hover:text-red-400 transition-all opacity-0 group-hover:opacity-100 ${
-                  currentSessionId === session.id ? 'opacity-100 text-gray-400' : ''
+          sessions.map((session) => {
+            const isActive = currentSessionId === session.id;
+            return (
+              <div
+                key={session.id}
+                className={`group relative flex items-center px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-200 ${
+                  isActive ? 'sidebar-item-active' : 'hover:bg-white/5 text-gray-400 hover:text-gray-200'
                 }`}
-                title="Xóa đoạn chat này"
+                onClick={() => onSelectSession(session.id)}
               >
-                <Trash2 className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          ))
+                <MessageSquare
+                  className={`w-3.5 h-3.5 mr-2.5 flex-shrink-0 transition-colors ${
+                    isActive ? 'text-indigo-400' : 'text-gray-600 group-hover:text-gray-400'
+                  }`}
+                />
+                <div className="flex-1 truncate pr-6">
+                  <span className={`text-[12.5px] font-medium block truncate ${isActive ? 'text-white' : ''}`}>
+                    {session.title}
+                  </span>
+                </div>
+                <button
+                  onClick={(e) => { e.stopPropagation(); onDeleteSession(session.id); }}
+                  className="absolute right-2 p-1.5 rounded-lg text-gray-600 hover:text-red-400 hover:bg-red-400/10 transition-all opacity-0 group-hover:opacity-100"
+                  title="Xóa đoạn chat"
+                >
+                  <Trash2 className="w-3 h-3" />
+                </button>
+              </div>
+            );
+          })
         )}
+      </div>
+
+      {/* Footer */}
+      <div className="px-4 py-3 border-t border-white/5 flex-shrink-0">
+        <p className="text-[10px] text-gray-600 text-center leading-relaxed">
+          Phiên bản thử nghiệm · Dữ liệu luật VN
+        </p>
       </div>
     </div>
   );
 }
+
