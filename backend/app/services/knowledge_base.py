@@ -96,6 +96,10 @@ def document_matches_category(
         return True
 
     law_id = metadata.get("law_id")
+    
+    if normalized_category.upper() in ["LKDBDS_2023", "LTTPHS_2025", "LNO_2023", "LBVMT_2020", "LXD_2014", "LDD_2024", "LCC_2024", "BLTTDS_2015"]:
+        return law_id == normalized_category.upper()
+        
     allowed_law_ids = _CATEGORY_LAW_IDS.get(normalized_category)
     if allowed_law_ids is not None:
         return law_id in allowed_law_ids

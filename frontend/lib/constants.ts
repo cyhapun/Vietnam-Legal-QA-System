@@ -18,32 +18,36 @@ export const LAW_CATEGORIES = [
     label: 'Tất cả các luật',
   },
   {
-    id: 'civil',
-    label: 'Dân sự',
+    id: 'LKDBDS_2023',
+    label: 'Luật Kinh doanh bất động sản 2023',
   },
   {
-    id: 'family-personal',
-    label: 'Gia đình & Nhân thân',
+    id: 'LTTPHS_2025',
+    label: 'Luật Tương trợ tư pháp về hình sự 2025',
   },
   {
-    id: 'land',
-    label: 'Đất đai',
+    id: 'LNO_2023',
+    label: 'Luật Nhà ở 2023',
   },
   {
-    id: 'real-estate',
-    label: 'Bất động sản',
+    id: 'LBVMT_2020',
+    label: 'Luật Bảo vệ môi trường 2020',
   },
   {
-    id: 'construction-environment',
-    label: 'Xây dựng & Môi trường',
+    id: 'LXD_2014',
+    label: 'Luật Xây dựng 2014',
   },
   {
-    id: 'traffic',
-    label: 'Giao thông',
+    id: 'LDD_2024',
+    label: 'Luật Đất đai 2024',
   },
   {
-    id: 'public-order-sanctions',
-    label: 'Trật tự & Xử phạt',
+    id: 'LCC_2024',
+    label: 'Luật Công chứng 2024',
+  },
+  {
+    id: 'BLTTDS_2015',
+    label: 'Bộ luật Tố tụng dân sự 2015',
   },
 ] as const satisfies readonly LawCategory[];
 

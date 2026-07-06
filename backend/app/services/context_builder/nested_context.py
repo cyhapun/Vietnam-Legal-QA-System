@@ -56,7 +56,7 @@ class NestedContextBuilder:
             article_str = f"Điều {article_val} ({article_title})" if article_title else f"Điều {article_val}"
 
             # [0] CĂN CỨ CHÍNH
-            block = f"[CĂN CỨ #{i+1}]\n"
+            block = f"[CĂN CỨ ID: {clause_id}]\n"
             block += f"- Nguồn: {law_name} | {chapter_str} | {article_str} | Khoản {clause_val}\n"
             block += f"- Nội dung: \"{clause_data['content']}\"\n"
 
@@ -134,6 +134,7 @@ class NestedContextBuilder:
             formatted.append({
                 "content": data.get("content", ""),
                 "metadata": {
+                    "id": c_id,
                     "source": law_name,
                     "dieu": pos.get("article"),
                     "khoan": pos.get("clause"),

@@ -1,6 +1,6 @@
-﻿"""
-API Router cho endpoint /chat va /chat/stream.
-Tach tu main.py goc - chi chua logic xu ly request/response.
+"""
+API Router cho endpoint /chat và /chat/stream.
+Tách từ main.py gốc — chỉ chứa logic xử lý request/response.
 """
 import re
 import json
@@ -53,27 +53,48 @@ async def chat_endpoint(request: ChatRequest):
         )
         frontend_context = pipeline.format_for_frontend(retrieved_docs)
 
-        logger.info("=" * 60)
-        logger.info("CHUAN BI FEED DATA CHO LLM (CONTEXT)")
-        logger.info("=" * 60)
-        logger.info(context_text)
+        logger.info("Đã chuẩn bị %d ký tự context (từ %d tài liệu) cho LLM", len(context_text), len(retrieved_docs))
+        logger.debug("CONTEXT TEXT:\n%s", context_text)
 
         start_time = time.time()
-        llm = get_llm(request.model)
-        rag_chain = CHAT_PROMPT | llm | get_output_parser()
+        try:
+            llm = get_llm(request.model)
+            rag_chain = CHAT_PROMPT | llm | get_output_parser()
 
-        output_text = await rag_chain.ainvoke({
-            "context": context_text,
-            "chat_history_str": chat_history_str,
-            "question": last_message
-        })
+            output_text = await rag_chain.ainvoke({
+                "context": context_text,
+                "chat_history_str": chat_history_str,
+                "question": last_message
+            })
+        except Exception as llm_exc:
+            logger.warning("LLM unavailable, falling back to retrieved context: %s", llm_exc)
+            output_text = (
+                "Hiện tại hệ thống chưa thể gọi mô hình sinh câu trả lời, "
+                "nhưng đã tìm thấy tài liệu liên quan. Vui lòng xem contextUsed để tham khảo."
+            )
 
         execution_time = time.time() - start_time
         logger.info("LLM tra loi trong %.2fs", execution_time)
 
         output_text = _clean_chunk(output_text)
 
-        return {"text": output_text, "contextUsed": frontend_context}
+        # 5. Lọc context theo các ID được trích dẫn (Strict Citation Mechanism)
+        cited_ids = set(re.findall(r'<cite\s+id=["\']([^"\']+)["\']>', output_text))
+        if cited_ids:
+            filtered_context = [ctx for ctx in frontend_context if ctx.get("metadata", {}).get("id") in cited_ids]
+            frontend_context = filtered_context
+        else:
+            # Nếu LLM không trích dẫn gì, có thể xóa context rác
+            # Để an toàn cho các trường hợp LLM fallback (lỗi), ta có thể giữ nguyên tất cả hoặc làm rỗng.
+            # Ở đây chọn làm rỗng khi gọi LLM thành công nhưng không có trích dẫn,
+            # Nếu có lỗi (ở phần except), ta vẫn giữ nguyên frontend_context.
+            if "Hiện tại hệ thống chưa thể gọi mô hình" not in output_text:
+                frontend_context = []
+
+        return {
+            "text": output_text,
+            "contextUsed": frontend_context
+        }
 
     except Exception as e:
         logger.error("Loi xu ly chat: %s", str(e))

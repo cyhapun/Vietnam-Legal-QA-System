@@ -35,8 +35,18 @@ TRACKING_FILE = os.getenv(
 # --- API KEYS ---
 HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY", "")
 
+# --- STORAGE BACKEND ---
+STORAGE_BACKEND = os.getenv("STORAGE_BACKEND", "faiss").strip().lower()
+POSTGRES_DSN = os.getenv("POSTGRES_DSN", "postgresql://postgres:postgres@localhost:5432/vietlaw")
+QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
+QDRANT_API_KEY = os.getenv("QDRANT_API_KEY", "")
+QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION", "vietlaw_clauses")
+DISABLE_AUTO_INGEST = os.getenv("DISABLE_AUTO_INGEST", "false").strip().lower() == "true"
+
 # --- THÔNG SỐ EMBEDDING ---
 EMBEDDING_MODEL = os.getenv("HUGGINGFACE_EMBEDDING_MODEL", "BAAI/bge-m3")
+# Hỗ trợ "api" hoặc "local"
+HUGGINGFACE_EMBEDDING_MODE = os.getenv("HUGGINGFACE_EMBEDDING_MODE", "local").strip().lower()
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 OLLAMA_EMBEDDING_MODEL = os.getenv("OLLAMA_EMBEDDING_MODEL", "bge-m3")
 OLLAMA_EMBEDDING_TIMEOUT = float(os.getenv("OLLAMA_EMBEDDING_TIMEOUT", "300"))
@@ -52,8 +62,8 @@ EMBEDDING_RETRY_BASE_WAIT = float(os.getenv(
 ))
 
 # --- THÔNG SỐ RETRIEVAL ---
-RETRIEVER_K = 6
-RETRIEVER_CANDIDATE_K = int(os.getenv("RETRIEVER_CANDIDATE_K", "30"))
+RETRIEVER_K = 20
+RETRIEVER_CANDIDATE_K = int(os.getenv("RETRIEVER_CANDIDATE_K", "60"))
 RETRIEVER_FETCH_K = 20
 RETRIEVER_LAMBDA_MULT = 0.8
 
@@ -96,4 +106,9 @@ PIPELINE_CONFIG = {
 
     # --- Reranker model (chỉ dùng khi reranking="cross_encoder") ---
     "reranker_model": os.getenv("RERANKER_MODEL", "BAAI/bge-reranker-v2-m3"),
+
+    # --- Query Rewriter ---
+    "rewriter": os.getenv("PIPELINE_REWRITER", "none"),
+    "rewriter_model_provider": os.getenv("REWRITER_MODEL_PROVIDER", "ollama"),
+    "rewriter_model_name": os.getenv("REWRITER_MODEL_NAME", "qwen2.5:1.5b"),
 }

@@ -18,12 +18,19 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
   const isUser = message.role === 'user';
   const [copied, setCopied] = useState(false);
   const [feedback, setFeedback] = useState<'up' | 'down' | null>(null);
+  const [selectedCitation, setSelectedCitation] = useState<any>(null);
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(message.content);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  // Parse <cite id="...">...</cite> into markdown link format
+  const processedContent = message.content?.replace(
+    /<cite\s+id=["']([^"']+)["']>([^<]+)<\/cite>/gi, 
+    '[$2](#cite-$1)'
+  ) || '';
 
   return (
     <div id={`message-${message.id}`} className={`group py-5 px-4 message-animate ${isUser ? '' : 'hover:bg-slate-50/60 dark:hover:bg-slate-800/50 transition-colors duration-200'}`}>
@@ -61,7 +68,33 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
                 ? 'prose-p:text-white prose-strong:text-white prose-a:text-white prose-headings:text-white prose-code:text-white prose-li:text-white'
                 : 'prose-p:text-gray-800 dark:prose-p:text-gray-200 prose-headings:text-gray-900 dark:prose-headings:text-gray-100 prose-strong:text-gray-900 dark:prose-strong:text-gray-100'
             }`}>
-              <ReactMarkdown>{message.content}</ReactMarkdown>
+              <ReactMarkdown
+                components={{
+                  a: ({ node, ...props }) => {
+                    const href = props.href || '';
+                    if (href.startsWith('#cite-')) {
+                      const citeId = href.replace('#cite-', '');
+                      return (
+                        <a 
+                          {...props} 
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            const citedContext = message.contextUsed?.find(c => c.metadata?.id === citeId);
+                            if (citedContext) setSelectedCitation(citedContext);
+                          }}
+                          className="text-blue-600 hover:text-blue-800 font-medium underline decoration-blue-300 decoration-dashed underline-offset-4 cursor-pointer transition-colors"
+                        >
+                          {props.children}
+                        </a>
+                      );
+                    }
+                    return <a {...props} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer" />;
+                  }
+                }}
+              >
+                {processedContent}
+              </ReactMarkdown>
             </div>
           </div>
 
@@ -160,6 +193,62 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
           )}
         </div>
       </div>
+
+      {/* Citation Modal */}
+      {selectedCitation && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-gray-900/40 backdrop-blur-sm transition-opacity" 
+          onClick={() => setSelectedCitation(null)}
+        >
+          <div 
+            className="bg-white rounded-xl shadow-2xl w-[90%] max-w-2xl overflow-hidden transform transition-all scale-100" 
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/80">
+              <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-blue-600" />
+                Trích dẫn pháp lý
+              </h3>
+              <button 
+                onClick={() => setSelectedCitation(null)} 
+                className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-full hover:bg-gray-200"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+            
+            <div className="p-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
+              <div className="mb-4">
+                <div className="inline-block px-3 py-1 bg-blue-50 text-blue-700 border border-blue-100 rounded-full text-xs font-semibold mb-3">
+                  {selectedCitation.metadata?.source || 'Tài liệu pháp lý'}
+                </div>
+                {(selectedCitation.metadata?.dieu || selectedCitation.metadata?.khoan) && (
+                  <h4 className="text-md font-semibold text-gray-800 mb-2">
+                    {selectedCitation.metadata?.dieu ? `Điều ${selectedCitation.metadata.dieu}` : ''}
+                    {selectedCitation.metadata?.dieu && selectedCitation.metadata?.khoan ? ' - ' : ''}
+                    {selectedCitation.metadata?.khoan ? `Khoản ${selectedCitation.metadata.khoan}` : ''}
+                  </h4>
+                )}
+              </div>
+              
+              <div className="text-gray-600 leading-relaxed text-sm whitespace-pre-wrap bg-gray-50/50 p-4 rounded-lg border border-gray-100">
+                {selectedCitation.content}
+              </div>
+            </div>
+            
+            <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end">
+              <button 
+                onClick={() => setSelectedCitation(null)} 
+                className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm"
+              >
+                Đóng
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
