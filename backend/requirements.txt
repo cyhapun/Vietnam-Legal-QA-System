@@ -11,7 +11,7 @@ langchain-community>=0.2.0
 langchain-huggingface>=1.2.0
 
 # === Vector Store ===
-faiss-cpu
+# faiss-cpu # (Ẩn khi deploy Vercel: Chỉ cần nếu dùng FAISS local fallback)
 qdrant-client>=0.11.0
 
 # === Database ===
@@ -20,7 +20,8 @@ psycopg[binary]
 # === HuggingFace Hub ===
 huggingface_hub>=0.24.0
 
-sentence-transformers>=3.0.0
-tqdm>=4.66.0
+# === Ingestion & Local Models (Ẩn khi deploy Vercel để giảm dung lượng) ===
+# sentence-transformers>=3.0.0  # Rất nặng (kèm PyTorch), chỉ dùng cho ingest/local embedding/reranking
+# tqdm>=4.66.0                  # Chỉ dùng cho thanh tiến trình (progress bar) lúc ingest
 
 
