@@ -9,11 +9,11 @@ Hệ thống truy xuất các điều khoản pháp luật liên quan từ cơ s
 
 | Mã số sinh viên | Họ tên |
 |---|---|
-|  |  |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
+| 23120283 | Phạm Quốc Khánh |
+| 23120301 | Phạm Thành Nam |
+| 23120318 | Trương Quang Phát |
+| 23120329 | Châu Huỳnh Phúc |
+| 23120334 | Huỳnh Tấn Phước |
 
 ---
 
