@@ -136,7 +136,8 @@ async def chat_endpoint(request: ChatRequest):
                     query_vector=query_vector,
                     original_query=last_message,
                     response_text=output_text,
-                    context_used=frontend_context
+                    context_used=frontend_context,
+                    retrieved_doc_ids=[doc.metadata.get("id") for doc in retrieved_docs if doc.metadata.get("id")]
                 )
             except Exception as e:
                 logger.warning("Failed to update cache: %s", e)
@@ -240,7 +241,8 @@ async def chat_stream_endpoint(request: ChatRequest):
                         query_vector=query_vector,
                         original_query=last_message,
                         response_text=accumulated_text,
-                        context_used=frontend_context
+                        context_used=frontend_context,
+                        retrieved_doc_ids=[doc.metadata.get("id") for doc in retrieved_docs if doc.metadata.get("id")]
                     )
                 except Exception as e:
                     logger.warning("Stream Failed to update cache: %s", e)
