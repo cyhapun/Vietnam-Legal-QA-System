@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Send, PanelLeft, LibraryBig, Scale, Check, ChevronDown, Square, ArrowDown, X } from 'lucide-react';
 import { ProviderSelector } from './ProviderSelector';
+import { AdvancedSettings, AdvancedConfig } from './AdvancedSettings';
 import { ChatMessage } from './ChatMessage';
 import { Sidebar } from './Sidebar';
 import { useChatSessions } from '@/hooks/use-chat-sessions';
@@ -39,6 +40,11 @@ export function ChatInterface() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [model, setModel] = useState(DEFAULT_MODEL);
+  const [advancedConfig, setAdvancedConfig] = useState<AdvancedConfig>({
+    temperature: 0.3,
+    maxTokens: 1024,
+    topK: 5,
+  });
   const [lawCategory, setLawCategory] = useState(ALL_LAWS_CATEGORY);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const categoryRef = useRef<HTMLDivElement>(null);
@@ -210,7 +216,14 @@ export function ChatInterface() {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: apiMessages, model, category: lawCategory }),
+        body: JSON.stringify({ 
+          messages: apiMessages, 
+          model, 
+          category: lawCategory,
+          temperature: advancedConfig.temperature,
+          maxTokens: advancedConfig.maxTokens,
+          topK: advancedConfig.topK
+        }),
         signal: controller.signal,
       });
 
@@ -528,7 +541,10 @@ export function ChatInterface() {
                     </div>
                   )}
                 </div>
-                <ProviderSelector model={model} setModel={setModel} />
+                <div className="flex items-center gap-2">
+                  <AdvancedSettings config={advancedConfig} setConfig={setAdvancedConfig} />
+                  <ProviderSelector model={model} setModel={setModel} />
+                </div>
               </div>
 
               <textarea

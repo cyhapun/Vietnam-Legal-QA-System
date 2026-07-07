@@ -43,6 +43,9 @@ export interface ChatApiRequest {
   messages: { role: string; content: string }[];
   model: string;
   category: string;
+  temperature?: number;
+  maxTokens?: number;
+  topK?: number;
 }
 
 export interface ChatApiResponse {

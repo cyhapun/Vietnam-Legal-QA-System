@@ -23,6 +23,9 @@ def get_llm(model_name: str):
     if not HUGGINGFACE_API_KEY:
         logger.warning("Không tìm thấy HUGGINGFACE_API_KEY. Remote LLM sẽ không hoạt động.")
 
+    final_temperature = temperature if temperature is not None else LLM_TEMPERATURE
+    final_max_tokens = max_tokens if max_tokens is not None else LLM_MAX_NEW_TOKENS
+
     # Nếu Frontend truyền "gemma", tự động map sang model đầy đủ
     if model_name.lower() == "gemma":
         actual_model = "google/gemma-4-31B-it:novita" 
@@ -36,8 +39,8 @@ def get_llm(model_name: str):
         model=actual_model,
         api_key=HUGGINGFACE_API_KEY or "dummy_key",
         base_url="https://router.huggingface.co/v1",
-        temperature=LLM_TEMPERATURE,
-        max_tokens=LLM_MAX_NEW_TOKENS,
+        temperature=final_temperature,
+        max_tokens=final_max_tokens,
         timeout=LLM_TIMEOUT,
     )
 

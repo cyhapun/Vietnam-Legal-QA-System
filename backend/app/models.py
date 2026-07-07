@@ -17,6 +17,9 @@ class ChatRequest(BaseModel):
     messages: List[Message]
     model: str
     category: str = "all"  # Lĩnh vực pháp luật để lọc tài liệu
+    temperature: Optional[float] = None
+    maxTokens: Optional[int] = None
+    topK: Optional[int] = None
 
 
 class ChatResponse(BaseModel):
