@@ -28,10 +28,11 @@ from app.services.embedding import (
     BaseEmbedding,
     HuggingFaceEndpointEmbedding,
     OllamaEmbedding,
+    FallbackEmbedding,
 )
 from app.services.chunking import ClauseChunker
 from app.services.search import FAISSSearcher, QdrantSearcher
-from app.services.reranking import NoReranker, CrossEncoderReranker
+from app.services.reranking import NoReranker, CrossEncoderReranker, FallbackReranker
 from app.services.context_builder import NestedContextBuilder
 from app.utils.logging import setup_logger
 
@@ -200,18 +201,18 @@ _faiss_vectorstore: Optional[FAISS] = None
 
 
 def _get_embedding() -> BaseEmbedding:
-    """Lazy init embedding model (singleton)."""
+    """Lazy init embedding model (singleton) with Fallback."""
     global _embedding
     if _embedding is None:
         try:
-            if EMBEDDING_PROVIDER == "huggingface":
-                _embedding = HuggingFaceEndpointEmbedding()
-            elif EMBEDDING_PROVIDER == "ollama":
-                _embedding = OllamaEmbedding()
+            from app.config import INFERENCE_STRATEGY
+            hf_emb = HuggingFaceEndpointEmbedding()
+            ollama_emb = OllamaEmbedding()
+            
+            if INFERENCE_STRATEGY == "local_first":
+                _embedding = FallbackEmbedding(primary=ollama_emb, secondary=hf_emb)
             else:
-                raise ValueError(
-                    f"Unknown embedding provider: {EMBEDDING_PROVIDER}"
-                )
+                _embedding = FallbackEmbedding(primary=hf_emb, secondary=ollama_emb)
         except Exception as exc:
             logger.warning("Embedding backend unavailable during pipeline init: %s", exc)
             _embedding = None
@@ -349,13 +350,15 @@ def _create_searcher(embedding) -> Any:
 
 
 def _create_reranker():
-    """Tạo reranker dựa trên config."""
+    """Tạo reranker dựa trên config, tích hợp Fallback."""
     strategy = PIPELINE_CONFIG.get("reranking", "none")
     if strategy == "none":
         return NoReranker()
     elif strategy == "cross_encoder":
         model = PIPELINE_CONFIG.get("reranker_model", "BAAI/bge-reranker-v2-m3")
-        return CrossEncoderReranker(model=model)
+        primary_reranker = CrossEncoderReranker(model=model)
+        fallback_reranker = NoReranker()
+        return FallbackReranker(primary=primary_reranker, secondary=fallback_reranker)
     else:
         raise ValueError(f"Unknown reranking strategy: {strategy}")
 
