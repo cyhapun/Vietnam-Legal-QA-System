@@ -4,7 +4,7 @@ Tách từ main.py gốc — chỉ chứa logic liên quan đến LLM.
 """
 import os
 
-from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace
+from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
@@ -15,25 +15,29 @@ from app.config import (
 )
 
 
-def get_llm(model_name: str) -> ChatHuggingFace:
-    """Khởi tạo kết nối với mô hình ngôn ngữ lớn (LLM) qua HuggingFace."""
+def get_llm(model_name: str):
+    """Khởi tạo kết nối với mô hình ngôn ngữ lớn (LLM) qua HuggingFace Router (OpenAI compatible)."""
     if not HUGGINGFACE_API_KEY:
         raise ValueError(
             "Không tìm thấy HUGGINGFACE_API_KEY. "
             "Vui lòng cấu hình trong file .env"
         )
 
-    llm = HuggingFaceEndpoint(
-        repo_id=model_name,
-        task="text-generation",
-        max_new_tokens=LLM_MAX_NEW_TOKENS,
+    # Nếu Frontend truyền "gemma", tự động map sang model đầy đủ
+    if model_name.lower() == "gemma":
+        actual_model = "google/gemma-4-31B-it:novita" # or "google/gemma-7b-it" based on what user requested, actually the user snippet specifically says "google/gemma-4-31B-it:novita"
+    else:
+        actual_model = model_name
+
+    llm = ChatOpenAI(
+        model=actual_model,
+        api_key=HUGGINGFACE_API_KEY,
+        base_url="https://router.huggingface.co/v1",
         temperature=LLM_TEMPERATURE,
-        huggingfacehub_api_token=HUGGINGFACE_API_KEY,
-        do_sample=True,
-        repetition_penalty=LLM_REPETITION_PENALTY,
+        max_tokens=LLM_MAX_NEW_TOKENS,
         timeout=LLM_TIMEOUT,
     )
-    return ChatHuggingFace(llm=llm)
+    return llm
 
 
 # --- CẤU TRÚC SYSTEM PROMPT ---
