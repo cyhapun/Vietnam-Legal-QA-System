@@ -21,6 +21,7 @@ export interface Message {
   role: 'user' | 'assistant';
   content: string;
   contextUsed?: DocumentChunk[];
+  feedback?: 1 | -1;
 }
 
 // --- Chat Session ---

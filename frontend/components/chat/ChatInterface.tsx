@@ -34,6 +34,7 @@ export function ChatInterface() {
     handleSelectSession,
     handleDeleteSession,
     addMessage,
+    updateMessage,
     updateSessionTitle,
   } = useChatSessions();
 
@@ -188,6 +189,10 @@ export function ChatInterface() {
         break;
       }
     }
+    
+    // Save locally immediately
+    updateMessage(currentSessionId, messageId, { feedback: type });
+
     try {
       await fetch('/api/feedback', {
         method: 'POST',

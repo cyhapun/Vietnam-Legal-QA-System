@@ -18,11 +18,17 @@ interface ChatMessageProps {
 export function ChatMessage({ message, isStreaming = false, onRefine, onOpenContext, onFeedbackSubmit }: ChatMessageProps) {
   const isUser = message.role === 'user';
   const [copied, setCopied] = useState(false);
-  const [feedback, setFeedback] = useState<'up' | 'down' | null>(null);
+  const [feedback, setFeedback] = useState<'up' | 'down' | null>(
+    message.feedback === 1 ? 'up' : message.feedback === -1 ? 'down' : null
+  );
   const [showNegativeForm, setShowNegativeForm] = useState(false);
   const [reason, setReason] = useState('Sai luật');
   const [comment, setComment] = useState('');
   const [selectedCitation, setSelectedCitation] = useState<any>(null);
+
+  React.useEffect(() => {
+    setFeedback(message.feedback === 1 ? 'up' : message.feedback === -1 ? 'down' : null);
+  }, [message.feedback]);
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(message.content);
