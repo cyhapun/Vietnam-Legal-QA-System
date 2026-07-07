@@ -71,6 +71,21 @@ def _ensure_schema() -> None:
             details JSONB DEFAULT '{}'::jsonb
         )
         """,
+        """
+        CREATE TABLE IF NOT EXISTS chat_feedbacks (
+            id SERIAL PRIMARY KEY,
+            message_id TEXT UNIQUE NOT NULL,
+            session_id TEXT NOT NULL,
+            user_query TEXT,
+            ai_response TEXT,
+            context_used JSONB,
+            feedback_type SMALLINT NOT NULL,
+            reason TEXT,
+            comment TEXT,
+            model_used TEXT,
+            created_at TIMESTAMPTZ DEFAULT NOW()
+        )
+        """,
     ]
 
     with psycopg.connect(POSTGRES_DSN, autocommit=True) as conn:

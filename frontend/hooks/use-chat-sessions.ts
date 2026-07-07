@@ -100,6 +100,18 @@ export function useChatSessions() {
     }));
   }, [currentSessionId]);
 
+  // --- Cập nhật message ---
+  const updateMessage = useCallback((sessionId: string, messageId: string, updates: Partial<Message>) => {
+    setMessagesBySession(prev => {
+      const sessionMessages = prev[sessionId];
+      if (!sessionMessages) return prev;
+      return {
+        ...prev,
+        [sessionId]: sessionMessages.map(m => m.id === messageId ? { ...m, ...updates } : m)
+      };
+    });
+  }, []);
+
   // --- Cập nhật title session ---
   const updateSessionTitle = useCallback((title: string) => {
     if (!currentSessionId) return;
@@ -150,6 +162,7 @@ export function useChatSessions() {
     handleSelectSession,
     handleDeleteSession,
     addMessage,
+    updateMessage,
     updateSessionTitle,
   };
 }

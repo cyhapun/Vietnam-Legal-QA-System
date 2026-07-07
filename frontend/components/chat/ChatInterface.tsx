@@ -34,6 +34,7 @@ export function ChatInterface() {
     handleSelectSession,
     handleDeleteSession,
     addMessage,
+    updateMessage,
     updateSessionTitle,
   } = useChatSessions();
 
@@ -158,7 +159,7 @@ export function ChatInterface() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [currentMessages, streamingText, isLoading]);
+  }, [currentMessages.length, streamingText, isLoading]);
 
   useClickOutside(categoryRef, useCallback(() => setIsCategoryOpen(false), []));
 
@@ -170,10 +171,45 @@ export function ChatInterface() {
     }
   };
 
-  // Huy stream
   const handleAbort = () => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
+    }
+  };
+
+  const handleFeedbackSubmit = async (messageId: string, type: 1 | -1, reason?: string, comment?: string) => {
+    if (!currentSessionId) return;
+    const msgIndex = currentMessages.findIndex(m => m.id === messageId);
+    if (msgIndex < 0) return;
+    const aiMsg = currentMessages[msgIndex];
+    let userQuery = '';
+    for (let i = msgIndex - 1; i >= 0; i--) {
+      if (currentMessages[i].role === 'user') {
+        userQuery = currentMessages[i].content;
+        break;
+      }
+    }
+    
+    // Save locally immediately
+    updateMessage(currentSessionId, messageId, { feedback: type });
+
+    try {
+      await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message_id: messageId,
+          session_id: currentSessionId,
+          user_query: userQuery,
+          ai_response: aiMsg.content,
+          context_used: aiMsg.contextUsed,
+          feedback_type: type,
+          reason,
+          comment,
+        }),
+      });
+    } catch (e) {
+      console.error('Feedback error:', e);
     }
   };
 
@@ -476,6 +512,7 @@ export function ChatInterface() {
                   message={msg}
                   onRefine={(prompt) => handleSubmit(undefined, prompt)}
                   onOpenContext={setDrawerContext}
+                  onFeedbackSubmit={handleFeedbackSubmit}
                 />
               ))}
               {/* Streaming message realtime */}
