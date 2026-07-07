@@ -15,13 +15,16 @@ from app.config import (
 )
 
 
-def get_llm(model_name: str):
+def get_llm(model_name: str, temperature: float = None, max_tokens: int = None) -> ChatOpenAI:
     """Khởi tạo kết nối với mô hình ngôn ngữ lớn (LLM) qua HuggingFace Router (OpenAI compatible)."""
     if not HUGGINGFACE_API_KEY:
         raise ValueError(
             "Không tìm thấy HUGGINGFACE_API_KEY. "
             "Vui lòng cấu hình trong file .env"
         )
+
+    final_temperature = temperature if temperature is not None else LLM_TEMPERATURE
+    final_max_tokens = max_tokens if max_tokens is not None else LLM_MAX_NEW_TOKENS
 
     # Nếu Frontend truyền "gemma", tự động map sang model đầy đủ
     if model_name.lower() == "gemma":
@@ -33,8 +36,8 @@ def get_llm(model_name: str):
         model=actual_model,
         api_key=HUGGINGFACE_API_KEY,
         base_url="https://router.huggingface.co/v1",
-        temperature=LLM_TEMPERATURE,
-        max_tokens=LLM_MAX_NEW_TOKENS,
+        temperature=final_temperature,
+        max_tokens=final_max_tokens,
         timeout=LLM_TIMEOUT,
     )
     return llm

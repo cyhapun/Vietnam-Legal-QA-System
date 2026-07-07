@@ -1,0 +1,30 @@
+{
+  "law_info": {
+    "law_id": "DOC_1783411443",
+    "law_name": "sample_law_test.txt",
+    "executive_summary": "Tài liệu tải lên từ người dùng",
+    "category": "uploaded"
+  },
+  "clauses": [
+    {
+      "id": "DOC_1783411443_0",
+      "content": "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc\n-------------------------\n\nLUẬT GIẢ ĐỊNH VỀ TRÍ TUỆ NHÂN TẠO TRONG LĨNH VỰC PHÁP LÝ (BẢN NHÁP)\n\nChương I: QUY ĐỊNH CHUNG\n\nĐiều 1. Phạm vi điều chỉnh\nLuật này quy định về việc phát triển, triển khai và sử dụng Trí tuệ Nhân tạo (AI) trong các hoạt động liên quan đến tra cứu, tư vấn và hỗ trợ pháp lý tại Việt Nam.\n\nĐiều 2. Đối tượng áp dụng\nLuật này áp dụng đối với các cơ quan, tổ chức, cá nhân tham gia nghiên cứu, phát triển, cung cấp dịch vụ và sử dụng hệ thống AI pháp lý trên lãnh thổ Việt Nam.\n\nĐiều 3. Nguyên tắc phát triển và sử dụng AI pháp lý\n1. Bảo đảm tính minh bạch, rõ ràng trong các luồng suy luận của AI.\n2. Tôn trọng và bảo vệ quyền riêng tư, dữ liệu cá nhân của người dùng.\n3. Chịu sự giám sát của con người. Mọi quyết định pháp lý cuối cùng phải do con người (chuyên gia pháp lý, luật sư, thẩm phán) đưa ra.\n\nChương II: TRÁCH NHIỆM CỦA ĐƠN VỊ CUNG CẤP DỊCH VỤ",
+      "position": {
+        "chapter": "",
+        "section": "",
+        "clause": "0"
+      },
+      "cross_references": []
+    },
+    {
+      "id": "DOC_1783411443_1",
+      "content": "Chương II: TRÁCH NHIỆM CỦA ĐƠN VỊ CUNG CẤP DỊCH VỤ\n\nĐiều 4. Yêu cầu về độ chính xác\n1. Các hệ thống AI pháp lý phải sử dụng nguồn dữ liệu pháp luật chính thống, được cập nhật thường xuyên từ cơ sở dữ liệu quốc gia về pháp luật.\n2. Đơn vị cung cấp phải có cơ chế cảnh báo người dùng về giới hạn của AI (hallucination) và khuyến nghị tham khảo ý kiến luật sư.\n\nĐiều 5. Lưu trữ và xử lý dữ liệu\n1. Dữ liệu hội thoại giữa người dùng và AI phải được mã hóa và bảo mật.\n2. Không được sử dụng dữ liệu hội thoại chứa thông tin cá nhân nhạy cảm để huấn luyện mô hình nếu không có sự đồng ý rõ ràng bằng văn bản của người dùng.\n\nChương III: ĐIỀU KHOẢN THI HÀNH\n\nĐiều 6. Hiệu lực thi hành\nLuật này có hiệu lực kể từ ngày 01 tháng 01 năm 2030.\n\nĐiều 7. Trách nhiệm thi hành\nBộ Tư pháp phối hợp với Bộ Thông tin và Truyền thông chịu trách nhiệm hướng dẫn thi hành Luật này.",
+      "position": {
+        "chapter": "",
+        "section": "",
+        "clause": "1"
+      },
+      "cross_references": []
+    }
+  ]
+}

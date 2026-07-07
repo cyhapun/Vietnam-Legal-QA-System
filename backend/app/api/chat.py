@@ -51,6 +51,7 @@ async def chat_endpoint(request: ChatRequest):
         import asyncio
         from app.services.pipeline import _get_embedding
         from app.services.semantic_cache import check_cache, update_cache
+        from app.services.chat_logger import log_interaction
         
         # Lịch sử ngắn gọn cho rewriter (sliding window: 2 turns = 4 messages)
         recent_history_lines = []
@@ -86,6 +87,7 @@ async def chat_endpoint(request: ChatRequest):
         retrieved_docs, context_text = await pipeline.aretrieve(
             query=last_message,
             category=request.category,
+            rerank_top_k=request.topK,
             domain=domain,
             queries=queries
         )
@@ -96,7 +98,11 @@ async def chat_endpoint(request: ChatRequest):
 
         start_time = time.time()
         try:
-            llm = get_llm(request.model)
+            llm = get_llm(
+                model_name=request.model, 
+                temperature=request.temperature, 
+                max_tokens=request.maxTokens
+            )
             rag_chain = CHAT_PROMPT | llm | get_output_parser()
 
             output_text = await rag_chain.ainvoke({
@@ -142,6 +148,11 @@ async def chat_endpoint(request: ChatRequest):
             except Exception as e:
                 logger.warning("Failed to update cache: %s", e)
 
+        # Log interaction asynchronously
+        asyncio.create_task(
+            asyncio.to_thread(log_interaction, "unknown", last_message, output_text)
+        )
+
         return {
             "text": output_text,
             "contextUsed": frontend_context
@@ -175,6 +186,7 @@ async def chat_stream_endpoint(request: ChatRequest):
             import asyncio
             from app.services.pipeline import _get_embedding
             from app.services.semantic_cache import check_cache, update_cache
+            from app.services.chat_logger import log_interaction
             
             recent_history_lines = []
             for msg in request.messages[-5:-1]:
@@ -212,6 +224,7 @@ async def chat_stream_endpoint(request: ChatRequest):
             retrieved_docs, context_text = await pipeline.aretrieve(
                 query=last_message,
                 category=request.category,
+                rerank_top_k=request.topK,
                 domain=domain,
                 queries=queries
             )
@@ -219,7 +232,11 @@ async def chat_stream_endpoint(request: ChatRequest):
 
             yield _sse({"type": "context", "data": frontend_context})
 
-            llm = get_llm(request.model)
+            llm = get_llm(
+                model_name=request.model, 
+                temperature=request.temperature, 
+                max_tokens=request.maxTokens
+            )
             rag_chain = CHAT_PROMPT | llm | get_output_parser()
 
             accumulated_text = ""
@@ -246,6 +263,11 @@ async def chat_stream_endpoint(request: ChatRequest):
                     )
                 except Exception as e:
                     logger.warning("Stream Failed to update cache: %s", e)
+
+            # Log interaction asynchronously
+            asyncio.create_task(
+                asyncio.to_thread(log_interaction, "unknown", last_message, accumulated_text)
+            )
 
             yield _sse({"type": "done"})
 
