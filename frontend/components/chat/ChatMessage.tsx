@@ -198,7 +198,7 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
                 >
                   <ThumbsUp className="w-3.5 h-3.5" />
                 </button>
-                <div className="relative">
+                <div className={`relative ${showNegativeForm ? 'z-50' : ''}`}>
                   <button
                     onClick={() => handleFeedbackClick('down')}
                     title="Câu trả lời chưa tốt"
@@ -209,7 +209,7 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
                   
                   {/* Negative Feedback Form */}
                   {showNegativeForm && (
-                    <div className="absolute top-full mt-2 left-0 w-64 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-xl z-10 p-3">
+                    <div className="absolute top-full mt-2 left-0 w-64 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-2xl z-[100] p-3">
                       <h4 className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Vấn đề bạn gặp phải?</h4>
                       <select 
                         value={reason} 
