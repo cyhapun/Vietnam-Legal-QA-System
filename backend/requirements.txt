@@ -25,7 +25,3 @@ huggingface_hub>=0.24.0
 # sentence-transformers>=3.0.0  # Rất nặng (kèm PyTorch), chỉ dùng cho ingest/local embedding/reranking
 # tqdm>=4.66.0                  # Chỉ dùng cho thanh tiến trình (progress bar) lúc ingest
 
-# === Evaluation ===
-ragas
-datasets
-pandas
