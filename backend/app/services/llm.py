@@ -4,6 +4,7 @@ Tách từ main.py gốc — chỉ chứa logic liên quan đến LLM.
 """
 import os
 
+import logging
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -12,35 +13,55 @@ from app.config import (
     HUGGINGFACE_API_KEY,
     LLM_MAX_NEW_TOKENS, LLM_TEMPERATURE,
     LLM_REPETITION_PENALTY, LLM_TIMEOUT,
+    INFERENCE_STRATEGY, OLLAMA_BASE_URL
 )
 
+logger = logging.getLogger(__name__)
 
-def get_llm(model_name: str, temperature: float = None, max_tokens: int = None) -> ChatOpenAI:
-    """Khởi tạo kết nối với mô hình ngôn ngữ lớn (LLM) qua HuggingFace Router (OpenAI compatible)."""
+def get_llm(model_name: str):
+    """Khởi tạo kết nối với mô hình ngôn ngữ lớn (LLM) với cơ chế Hybrid Inference Fallback."""
     if not HUGGINGFACE_API_KEY:
-        raise ValueError(
-            "Không tìm thấy HUGGINGFACE_API_KEY. "
-            "Vui lòng cấu hình trong file .env"
-        )
+        logger.warning("Không tìm thấy HUGGINGFACE_API_KEY. Remote LLM sẽ không hoạt động.")
 
     final_temperature = temperature if temperature is not None else LLM_TEMPERATURE
     final_max_tokens = max_tokens if max_tokens is not None else LLM_MAX_NEW_TOKENS
 
     # Nếu Frontend truyền "gemma", tự động map sang model đầy đủ
     if model_name.lower() == "gemma":
-        actual_model = "google/gemma-4-31B-it:novita" # or "google/gemma-7b-it" based on what user requested, actually the user snippet specifically says "google/gemma-4-31B-it:novita"
+        actual_model = "google/gemma-4-31B-it:novita" 
+        local_model_name = "gemma2:9b" # Map cho local Ollama
     else:
         actual_model = model_name
+        local_model_name = model_name
 
-    llm = ChatOpenAI(
+    # 1. Khởi tạo Remote LLM
+    remote_llm = ChatOpenAI(
         model=actual_model,
-        api_key=HUGGINGFACE_API_KEY,
+        api_key=HUGGINGFACE_API_KEY or "dummy_key",
         base_url="https://router.huggingface.co/v1",
         temperature=final_temperature,
         max_tokens=final_max_tokens,
         timeout=LLM_TIMEOUT,
     )
-    return llm
+
+    # 2. Khởi tạo Local LLM (thông qua Ollama OpenAI API compatible endpoint)
+    local_llm = ChatOpenAI(
+        model=local_model_name,
+        api_key="ollama",
+        base_url=f"{OLLAMA_BASE_URL.rstrip('/')}/v1",
+        temperature=LLM_TEMPERATURE,
+        max_tokens=LLM_MAX_NEW_TOKENS,
+        timeout=LLM_TIMEOUT,
+    )
+
+    # 3. Wrapping with Fallbacks
+    if INFERENCE_STRATEGY == "local_first":
+        logger.info(f"LLM Strategy: local_first ({local_model_name} -> {actual_model})")
+        return local_llm.with_fallbacks([remote_llm])
+    else:
+        # Default: remote_first
+        logger.info(f"LLM Strategy: remote_first ({actual_model} -> {local_model_name})")
+        return remote_llm.with_fallbacks([local_llm])
 
 
 # --- CẤU TRÚC SYSTEM PROMPT ---

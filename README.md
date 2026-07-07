@@ -206,6 +206,10 @@ cp .env.example .env
 # # Tùy chọn chế độ chạy Embedding (local hoặc api):
 # # Mặc định là "local" để tránh lỗi "Model not supported" của Hugging Face
 # HUGGINGFACE_EMBEDDING_MODE=local
+#
+# # Tính năng Fallback chống lỗi (Ollama <-> HuggingFace API)
+# INFERENCE_STRATEGY=remote_first  # hoặc local_first
+#
 # Nếu dùng Docker cho PostgreSQL + Qdrant, hãy giữ:
 # STORAGE_BACKEND=qdrant_postgres
 # POSTGRES_DSN=postgresql://postgres:postgres@localhost:5432/vietlaw
@@ -362,6 +366,15 @@ Thay vì tải toàn bộ index vào RAM, phiên bản mới nhất sử dụng 
 - **Qdrant**: Lưu trữ Named Vectors (`text-dense`, `text-sparse`) cho Hybrid Search hiệu suất cao.
 
 Đảm bảo hệ thống có thể mở rộng lên hàng triệu điều luật mà không gây tràn bộ nhớ (OOM). Khởi động siêu tốc vì bỏ qua việc rebuild BM25 Index.
+
+### 9. Hybrid Inference Fallback (Chống lỗi Single Point of Failure)
+
+Hệ thống được trang bị cơ chế tự động chuyển đổi mô hình (fallback) giữa các nhà cung cấp **Local** (Ollama) và **Remote** (HuggingFace API). Áp dụng cho cả 3 lớp:
+- **LLM Layer**: Tự động chuyển qua lại giữa API HuggingFace và Ollama cục bộ.
+- **Embedding Layer**: Chuyển đổi giữa `bge-m3` API và `bge-m3` local.
+- **Reranking Layer**: Tự động fallback về `NoReranker` nếu CrossEncoder chạy cục bộ gặp sự cố tràn RAM (OOM) hoặc timeout.
+
+Hành vi được điều khiển bởi biến môi trường `INFERENCE_STRATEGY` (`remote_first` hoặc `local_first`), đảm bảo hệ thống luôn phản hồi người dùng kể cả khi đứt cáp mạng hoặc server quá tải.
 
 ---
 

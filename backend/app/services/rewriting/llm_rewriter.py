@@ -44,21 +44,9 @@ Do not output any other text or markdown block outside the JSON."""),
         self.chain = self.prompt | self.llm | self.parser
 
     def _init_llm(self, provider: str, model_name: str):
-        if provider == "huggingface":
-            from app.services.llm import get_llm
-            return get_llm(model_name)
-        elif provider == "ollama":
-            try:
-                from langchain_community.chat_models import ChatOllama
-                from app.config import OLLAMA_BASE_URL
-                return ChatOllama(model=model_name, base_url=OLLAMA_BASE_URL, temperature=0.1)
-            except ImportError:
-                logger.warning("Could not import ChatOllama, falling back to HuggingFace")
-                from app.services.llm import get_llm
-                return get_llm(model_name)
-        else:
-            from app.services.llm import get_llm
-            return get_llm(model_name)
+        from app.services.llm import get_llm
+        # get_llm now automatically supports Hybrid Fallback (Local <-> Remote)
+        return get_llm(model_name)
 
     def rewrite(self, query: str, history: str = None) -> Tuple[str, List[str]]:
         try:

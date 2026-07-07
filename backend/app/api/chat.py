@@ -111,11 +111,8 @@ async def chat_endpoint(request: ChatRequest):
                 "question": last_message
             })
         except Exception as llm_exc:
-            logger.warning("LLM unavailable, falling back to retrieved context: %s", llm_exc)
-            output_text = (
-                "Hiện tại hệ thống chưa thể gọi mô hình sinh câu trả lời, "
-                "nhưng đã tìm thấy tài liệu liên quan. Vui lòng xem contextUsed để tham khảo."
-            )
+            logger.error("All LLM providers failed: %s", llm_exc)
+            raise HTTPException(status_code=503, detail="Tất cả các dịch vụ suy luận (LLM) đều không khả dụng. Vui lòng thử lại sau.")
 
         execution_time = time.time() - start_time
         logger.info("LLM tra loi trong %.2fs", execution_time)
@@ -274,7 +271,7 @@ async def chat_stream_endpoint(request: ChatRequest):
         except Exception as e:
             logger.error("Loi streaming chat: %s", str(e))
             traceback.print_exc()
-            yield _sse({"type": "error", "message": str(e)})
+            yield _sse({"type": "error", "message": "Dịch vụ suy luận gặp sự cố: " + str(e)})
 
     return StreamingResponse(
         event_generator(),
