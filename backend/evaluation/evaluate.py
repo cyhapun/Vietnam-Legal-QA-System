@@ -29,7 +29,7 @@ except ImportError as e:
 # Ensure environment has OpenAI API Key for Ragas
 if "OPENAI_API_KEY" not in os.environ:
     from dotenv import load_dotenv
-    load_dotenv(Path(__file__).resolve().parents[1] / ".env")
+    load_dotenv(Path(__file__).resolve().parents[2] / ".env")
 
 API_URL = "http://localhost:8000/chat"
 
@@ -60,7 +60,7 @@ def run_evaluation(limit=10):
         try:
             payload = {
                 "messages": [{"role": "user", "content": question}],
-                "model": "gemma-4-31b",
+                "model": "gemma",
                 "category": "all"
             }
             response = requests.post(API_URL, json=payload, timeout=60)
@@ -122,4 +122,4 @@ def run_evaluation(limit=10):
 
 if __name__ == "__main__":
     # You can change limit to None to run on the full dataset
-    run_evaluation(limit=10)
+    run_evaluation(limit=20)
