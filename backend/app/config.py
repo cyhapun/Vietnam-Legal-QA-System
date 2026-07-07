@@ -116,3 +116,6 @@ PIPELINE_CONFIG = {
 # --- SEMANTIC CACHE ---
 ENABLE_SEMANTIC_CACHE = os.getenv("ENABLE_SEMANTIC_CACHE", "true").strip().lower() == "true"
 SEMANTIC_CACHE_THRESHOLD = float(os.getenv("SEMANTIC_CACHE_THRESHOLD", "0.95"))
+
+# --- FALLBACK STRATEGY ---
+INFERENCE_STRATEGY = os.getenv("INFERENCE_STRATEGY", "remote_first").strip().lower()
