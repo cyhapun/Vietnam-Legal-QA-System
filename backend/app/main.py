@@ -15,6 +15,7 @@ from app.config import CORS_ORIGINS
 from app.api.chat import router as chat_router
 from app.api.documents import router as documents_router
 from app.api.admin import router as admin_router
+from app.api.feedback import router as feedback_router
 from app.services.pipeline import init_pipeline
 from app.services.storage import initialize_storage
 from app.utils.logging import setup_logger
@@ -39,6 +40,7 @@ def create_app() -> FastAPI:
     application.include_router(chat_router)
     application.include_router(documents_router, prefix="/api/documents", tags=["Documents"])
     application.include_router(admin_router, prefix="/api/admin", tags=["Admin"])
+    application.include_router(feedback_router, prefix="/api/feedback", tags=["Feedback"])
 
     def _initialize_runtime_components_sync() -> None:
         logger.info("Khởi tạo storage layer...")
