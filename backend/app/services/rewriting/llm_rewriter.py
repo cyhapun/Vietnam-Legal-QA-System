@@ -27,17 +27,18 @@ class LLMRewriter(BaseRewriter):
             ("system", """You are a Vietnamese legal query analyzer.
 Your task is to analyze user queries and format them for a legal vector search engine.
 1. Determine if the query is 'legal' (asking about laws, procedures, penalties) or 'chitchat' (greetings, off-topic).
-2. If 'legal', rewrite the query by translating informal terms/slang (e.g., "sổ đỏ" -> "giấy chứng nhận quyền sử dụng đất", "làm giấy tờ xe" -> "đăng ký xe") into formal Vietnamese legal terminology.
-3. Provide the original query, the formal translation, and optionally 1-2 decomposed sub-queries if the question is complex.
+2. Read the Conversation History (if provided) to understand the context. Then rewrite the Current User Query into a standalone, formal Vietnamese legal query. Resolve any pronouns or implicit references using the history.
+3. Translate informal terms/slang into formal legal terminology.
+4. Provide the formal standalone translation, and optionally 1-2 decomposed sub-queries if the question is complex.
 
 You MUST respond strictly in the following JSON format:
 {{
   "domain": "legal" or "chitchat",
-  "queries": ["original query", "formal translation", "sub-query (optional)"]
+  "queries": ["formal standalone translation", "sub-query (optional)"]
 }}
 
 Do not output any other text or markdown block outside the JSON."""),
-            ("human", "User Query: {query}")
+            ("human", "Conversation History (for context):\n{history}\n\nCurrent User Query: {query}")
         ])
         
         self.chain = self.prompt | self.llm | self.parser
@@ -59,9 +60,12 @@ Do not output any other text or markdown block outside the JSON."""),
             from app.services.llm import get_llm
             return get_llm(model_name)
 
-    def rewrite(self, query: str) -> Tuple[str, List[str]]:
+    def rewrite(self, query: str, history: str = None) -> Tuple[str, List[str]]:
         try:
-            result = self.chain.invoke({"query": query})
+            result = self.chain.invoke({
+                "query": query,
+                "history": history if history else "No previous history."
+            })
             domain = result.get("domain", "legal").lower()
             queries = result.get("queries", [])
             
