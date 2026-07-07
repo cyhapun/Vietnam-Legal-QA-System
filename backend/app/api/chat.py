@@ -40,11 +40,24 @@ async def chat_endpoint(request: ChatRequest):
     try:
         last_message = request.messages[-1].content
 
+        last_message = request.messages[-1].content
+        session_id = request.sessionId
+
+        from app.services.storage import get_session_summary
+        from app.services.memory_manager import summarize_session
+
+        session_data = get_session_summary(session_id) if session_id != "unknown" else None
+        summary = session_data.get("summary", "") if session_data else ""
+
         history_lines = []
-        for msg in request.messages[:-1]:
+        if summary:
+            history_lines.append(f"=== BỐI CẢNH TRƯỚC ĐÓ ===\n{summary}\n\n=== HỘI THOẠI GẦN NHẤT ===")
+            
+        for msg in request.messages[-5:-1]: # Chỉ lấy 4 tin nhắn gần nhất
             role_name = "USER" if msg.role == "user" else "AI"
             history_lines.append(f"{role_name}: {msg.content}")
-        chat_history_str = "\n\n".join(history_lines) if history_lines else "(Khong co lich su tro chuyen)"
+            
+        chat_history_str = "\n".join(history_lines) if history_lines else "(Khong co lich su tro chuyen)"
 
         pipeline = get_pipeline()
         
@@ -149,6 +162,10 @@ async def chat_endpoint(request: ChatRequest):
         asyncio.create_task(
             asyncio.to_thread(log_interaction, "unknown", last_message, output_text)
         )
+        
+        # Summarize memory asynchronously
+        if session_id != "unknown":
+            asyncio.create_task(summarize_session(session_id, last_message, output_text))
 
         return {
             "text": output_text,
@@ -169,12 +186,25 @@ async def chat_stream_endpoint(request: ChatRequest):
         try:
             last_message = request.messages[-1].content
 
+            last_message = request.messages[-1].content
+            session_id = request.sessionId
+            
+            from app.services.storage import get_session_summary
+            from app.services.memory_manager import summarize_session
+
+            session_data = get_session_summary(session_id) if session_id != "unknown" else None
+            summary = session_data.get("summary", "") if session_data else ""
+
             history_lines = []
-            for msg in request.messages[:-1]:
+            if summary:
+                history_lines.append(f"=== BỐI CẢNH TRƯỚC ĐÓ ===\n{summary}\n\n=== HỘI THOẠI GẦN NHẤT ===")
+                
+            for msg in request.messages[-5:-1]:
                 role_name = "USER" if msg.role == "user" else "AI"
                 history_lines.append(f"{role_name}: {msg.content}")
+                
             chat_history_str = (
-                "\n\n".join(history_lines) if history_lines
+                "\n".join(history_lines) if history_lines
                 else "(Khong co lich su tro chuyen)"
             )
 
@@ -265,6 +295,10 @@ async def chat_stream_endpoint(request: ChatRequest):
             asyncio.create_task(
                 asyncio.to_thread(log_interaction, "unknown", last_message, accumulated_text)
             )
+
+            # Summarize memory asynchronously
+            if session_id != "unknown":
+                asyncio.create_task(summarize_session(session_id, last_message, accumulated_text))
 
             yield _sse({"type": "done"})
 

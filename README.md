@@ -77,8 +77,9 @@ Hệ thống theo mô hình **Client-Server** với 2 thành phần chính giao 
 2. **Next.js API Route** (proxy) chuyển tiếp request đến Backend FastAPI
 3. **Backend** dùng Qdrant Hybrid Search (Dense Vector + Sparse Vector BM25) với RRF để tìm các điều khoản liên quan
 4. Hàm `build_nested_context()` xây dựng **context 2 cấp** (dẫn chiếu đệ quy giữa các điều luật)
-5. Context + lịch sử chat + câu hỏi → **System Prompt** → gọi LLM qua HuggingFace API
+5. Context + **Tóm tắt bối cảnh cũ** (từ Memory Manager) + lịch sử chat ngắn + câu hỏi → **System Prompt** → gọi LLM qua HuggingFace API
 6. LLM sinh câu trả lời → trả về `{text, contextUsed}` → Frontend render Markdown + hiển thị căn cứ pháp lý
+7. **Background Task** kích hoạt ngầm tóm tắt lại lượt hội thoại vừa xong và lưu vào PostgreSQL.
 
 ---
 
@@ -375,6 +376,13 @@ Hệ thống được trang bị cơ chế tự động chuyển đổi mô hìn
 - **Reranking Layer**: Tự động fallback về `NoReranker` nếu CrossEncoder chạy cục bộ gặp sự cố tràn RAM (OOM) hoặc timeout.
 
 Hành vi được điều khiển bởi biến môi trường `INFERENCE_STRATEGY` (`remote_first` hoặc `local_first`), đảm bảo hệ thống luôn phản hồi người dùng kể cả khi đứt cáp mạng hoặc server quá tải.
+
+### 10. Conversational Memory Manager (Trí nhớ hội thoại lai)
+
+Để tránh hiện tượng tràn ngữ cảnh (Context Bloat) và suy giảm độ tập trung của LLM khi cuộc hội thoại kéo dài:
+- **Tóm tắt tịnh tiến (Incremental Summarization):** Chạy ngầm một model nhẹ (ví dụ `qwen2.5:1.5b`) thông qua `asyncio.create_task` ngay sau khi trả lời xong để nén các lượt chat cũ thành một đoạn tóm tắt ngắn gọn.
+- **Trí nhớ lai (Sliding Window Context):** Khi tạo Prompt cho LLM sinh câu trả lời, hệ thống kết hợp `[Tóm tắt bối cảnh từ PostgreSQL]` + `[4 tin nhắn nguyên bản gần nhất]`.
+Kỹ thuật này giúp tiết kiệm lượng lớn token API, giảm thiểu độ trễ (latency) mà người dùng vẫn cảm nhận mạch hội thoại được duy trì trơn tru.
 
 ---
 
