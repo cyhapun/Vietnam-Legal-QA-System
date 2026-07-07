@@ -206,6 +206,10 @@ cp .env.example .env
 # # Tùy chọn chế độ chạy Embedding (local hoặc api):
 # # Mặc định là "local" để tránh lỗi "Model not supported" của Hugging Face
 # HUGGINGFACE_EMBEDDING_MODE=local
+#
+# # Tính năng Fallback chống lỗi (Ollama <-> HuggingFace API)
+# INFERENCE_STRATEGY=remote_first  # hoặc local_first
+#
 # Nếu dùng Docker cho PostgreSQL + Qdrant, hãy giữ:
 # STORAGE_BACKEND=qdrant_postgres
 # POSTGRES_DSN=postgresql://postgres:postgres@localhost:5432/vietlaw
