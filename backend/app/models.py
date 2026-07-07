@@ -16,6 +16,7 @@ class ChatRequest(BaseModel):
     """Dữ liệu gửi lên từ Frontend khi user đặt câu hỏi."""
     messages: List[Message]
     model: str
+    sessionId: Optional[str] = "unknown"
     category: str = "all"  # Lĩnh vực pháp luật để lọc tài liệu
     temperature: Optional[float] = None
     maxTokens: Optional[int] = None

@@ -255,6 +255,7 @@ export function ChatInterface() {
         body: JSON.stringify({ 
           messages: apiMessages, 
           model, 
+          sessionId: sessionId || 'unknown',
           category: lawCategory,
           temperature: advancedConfig.temperature,
           maxTokens: advancedConfig.maxTokens,
