@@ -12,18 +12,47 @@ interface ChatMessageProps {
   isStreaming?: boolean;
   onRefine?: (prompt: string) => void;
   onOpenContext?: (context: DocumentChunk[]) => void;
+  onFeedbackSubmit?: (messageId: string, type: 1 | -1, reason?: string, comment?: string) => void;
 }
 
-export function ChatMessage({ message, isStreaming = false, onRefine, onOpenContext }: ChatMessageProps) {
+export function ChatMessage({ message, isStreaming = false, onRefine, onOpenContext, onFeedbackSubmit }: ChatMessageProps) {
   const isUser = message.role === 'user';
   const [copied, setCopied] = useState(false);
   const [feedback, setFeedback] = useState<'up' | 'down' | null>(null);
+  const [showNegativeForm, setShowNegativeForm] = useState(false);
+  const [reason, setReason] = useState('Sai luật');
+  const [comment, setComment] = useState('');
   const [selectedCitation, setSelectedCitation] = useState<any>(null);
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(message.content);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleFeedbackClick = (type: 'up' | 'down') => {
+    if (type === 'up') {
+      setFeedback(feedback === 'up' ? null : 'up');
+      setShowNegativeForm(false);
+      if (feedback !== 'up' && onFeedbackSubmit) {
+        onFeedbackSubmit(message.id, 1);
+      }
+    } else {
+      if (feedback === 'down') {
+        setFeedback(null);
+        setShowNegativeForm(false);
+      } else {
+        setFeedback('down');
+        setShowNegativeForm(true);
+      }
+    }
+  };
+
+  const submitNegativeFeedback = () => {
+    if (onFeedbackSubmit) {
+      onFeedbackSubmit(message.id, -1, reason, comment);
+    }
+    setShowNegativeForm(false);
   };
 
   // Parse <cite id="...">...</cite> into markdown link format
@@ -157,19 +186,58 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
                 <div className="w-px h-3.5 bg-gray-200 mx-1" />
 
                 <button
-                  onClick={() => setFeedback(feedback === 'up' ? null : 'up')}
+                  onClick={() => handleFeedbackClick('up')}
                   title="Câu trả lời hữu ích"
                   className={`quick-action-btn p-1.5 rounded-lg ${feedback === 'up' ? 'text-emerald-500' : 'text-gray-400'}`}
                 >
                   <ThumbsUp className="w-3.5 h-3.5" />
                 </button>
-                <button
-                  onClick={() => setFeedback(feedback === 'down' ? null : 'down')}
-                  title="Câu trả lời chưa tốt"
-                  className={`quick-action-btn p-1.5 rounded-lg ${feedback === 'down' ? 'text-red-400' : 'text-gray-400'}`}
-                >
-                  <ThumbsDown className="w-3.5 h-3.5" />
-                </button>
+                <div className="relative">
+                  <button
+                    onClick={() => handleFeedbackClick('down')}
+                    title="Câu trả lời chưa tốt"
+                    className={`quick-action-btn p-1.5 rounded-lg ${feedback === 'down' ? 'text-red-400' : 'text-gray-400'}`}
+                  >
+                    <ThumbsDown className="w-3.5 h-3.5" />
+                  </button>
+                  
+                  {/* Negative Feedback Form */}
+                  {showNegativeForm && (
+                    <div className="absolute top-full mt-2 left-0 w-64 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-xl z-10 p-3">
+                      <h4 className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Vấn đề bạn gặp phải?</h4>
+                      <select 
+                        value={reason} 
+                        onChange={(e) => setReason(e.target.value)}
+                        className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-lg text-xs p-2 mb-2 text-gray-700 dark:text-gray-300 outline-none focus:border-indigo-500"
+                      >
+                        <option value="Sai luật">Sai luật</option>
+                        <option value="Trích dẫn sai">Trích dẫn sai</option>
+                        <option value="Không liên quan">Không liên quan</option>
+                        <option value="Khác">Khác</option>
+                      </select>
+                      <textarea 
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        placeholder="Góp ý thêm (không bắt buộc)..."
+                        className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-lg text-xs p-2 mb-2 min-h-[60px] text-gray-700 dark:text-gray-300 outline-none focus:border-indigo-500 resize-none custom-scrollbar"
+                      />
+                      <div className="flex justify-end gap-2">
+                        <button 
+                          onClick={() => setShowNegativeForm(false)}
+                          className="px-3 py-1.5 text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                        >
+                          Hủy
+                        </button>
+                        <button 
+                          onClick={submitNegativeFeedback}
+                          className="px-3 py-1.5 text-xs bg-indigo-600 hover:bg-indigo-700 text-white rounded-md font-medium"
+                        >
+                          Gửi
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Context Citations */}

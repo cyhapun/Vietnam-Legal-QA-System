@@ -52,3 +52,16 @@ export interface ChatApiResponse {
   text: string;
   contextUsed: DocumentChunk[];
 }
+
+// --- Feedback ---
+export interface FeedbackPayload {
+  message_id: string;
+  session_id: string;
+  user_query?: string;
+  ai_response?: string;
+  context_used?: DocumentChunk[];
+  feedback_type: 1 | -1;
+  reason?: string;
+  comment?: string;
+  model_used?: string;
+}
