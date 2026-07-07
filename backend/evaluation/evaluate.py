@@ -122,4 +122,4 @@ def run_evaluation(limit=10):
 
 if __name__ == "__main__":
     # You can change limit to None to run on the full dataset
-    run_evaluation(limit=20)
+    run_evaluation(limit=10)
