@@ -50,6 +50,7 @@ async def chat_endpoint(request: ChatRequest):
         retrieved_docs, context_text = await pipeline.aretrieve(
             query=last_message,
             category=request.category,
+            rerank_top_k=request.topK
         )
         frontend_context = pipeline.format_for_frontend(retrieved_docs)
 
@@ -58,7 +59,11 @@ async def chat_endpoint(request: ChatRequest):
 
         start_time = time.time()
         try:
-            llm = get_llm(request.model)
+            llm = get_llm(
+                model_name=request.model, 
+                temperature=request.temperature, 
+                max_tokens=request.maxTokens
+            )
             rag_chain = CHAT_PROMPT | llm | get_output_parser()
 
             output_text = await rag_chain.ainvoke({
@@ -123,12 +128,17 @@ async def chat_stream_endpoint(request: ChatRequest):
             retrieved_docs, context_text = await pipeline.aretrieve(
                 query=last_message,
                 category=request.category,
+                rerank_top_k=request.topK
             )
             frontend_context = pipeline.format_for_frontend(retrieved_docs)
 
             yield _sse({"type": "context", "data": frontend_context})
 
-            llm = get_llm(request.model)
+            llm = get_llm(
+                model_name=request.model, 
+                temperature=request.temperature, 
+                max_tokens=request.maxTokens
+            )
             rag_chain = CHAT_PROMPT | llm | get_output_parser()
 
             async for chunk in rag_chain.astream({
