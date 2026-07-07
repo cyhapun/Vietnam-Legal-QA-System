@@ -86,3 +86,5 @@ coverage/
 # =============================
 backend/embedded_files*.json
 backend/vietlaw_faiss_index*/
+backend/evaluation/dataset.json
+backend/evaluation/results.csv
