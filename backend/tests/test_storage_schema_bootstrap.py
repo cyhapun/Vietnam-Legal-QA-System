@@ -9,6 +9,7 @@ def test_ensure_schema_executes_sql_statements():
     class FakeConnection:
         def __init__(self):
             self.cursor_calls = 0
+            self.executed_sqls = []
 
         def __enter__(self):
             return self
@@ -21,9 +22,7 @@ def test_ensure_schema_executes_sql_statements():
             return self
 
         def execute(self, sql):
-            assert "CREATE TABLE IF NOT EXISTS laws" in sql
-            assert "CREATE TABLE IF NOT EXISTS clauses" in sql
-            assert "CREATE TABLE IF NOT EXISTS indexing_runs" in sql
+            self.executed_sqls.append(sql)
 
     fake_conn = FakeConnection()
 
@@ -31,3 +30,6 @@ def test_ensure_schema_executes_sql_statements():
         _ensure_schema()
 
     assert fake_conn.cursor_calls == 1
+    assert any("CREATE TABLE IF NOT EXISTS laws" in s for s in fake_conn.executed_sqls)
+    assert any("CREATE TABLE IF NOT EXISTS clauses" in s for s in fake_conn.executed_sqls)
+    assert any("CREATE TABLE IF NOT EXISTS indexing_runs" in s for s in fake_conn.executed_sqls)
