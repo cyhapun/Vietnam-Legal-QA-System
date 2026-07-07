@@ -86,6 +86,14 @@ def _ensure_schema() -> None:
             created_at TIMESTAMPTZ DEFAULT NOW()
         )
         """,
+        """
+        CREATE TABLE IF NOT EXISTS chat_sessions (
+            session_id TEXT PRIMARY KEY,
+            summary TEXT NOT NULL DEFAULT '',
+            turn_count INTEGER NOT NULL DEFAULT 0,
+            updated_at TIMESTAMPTZ DEFAULT NOW()
+        )
+        """,
     ]
 
     with psycopg.connect(POSTGRES_DSN, autocommit=True) as conn:
@@ -462,3 +470,53 @@ def ingest_documents(records: List[Dict[str, Any]]) -> int:
 
     logger.info("Ingested %d document record(s) into database-backed storage.", len(records))
     return len(records)
+
+
+def get_session_summary(session_id: str) -> Optional[Dict[str, Any]]:
+    """Retrieve the conversation summary and turn count for a given session."""
+    try:
+        import psycopg
+    except ImportError:
+        return None
+
+    try:
+        with psycopg.connect(POSTGRES_DSN, autocommit=True) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    """
+                    SELECT summary, turn_count FROM chat_sessions WHERE session_id = %s
+                    """,
+                    (session_id,)
+                )
+                row = cursor.fetchone()
+                if row:
+                    return {"summary": row[0], "turn_count": row[1]}
+                return None
+    except Exception as exc:
+        logger.warning("Error fetching session summary for %s: %s", session_id, exc)
+        return None
+
+
+def upsert_session_summary(session_id: str, summary: str, turn_count: int) -> None:
+    """Insert or update the session summary and turn count."""
+    try:
+        import psycopg
+    except ImportError:
+        return
+
+    try:
+        with psycopg.connect(POSTGRES_DSN, autocommit=True) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    """
+                    INSERT INTO chat_sessions (session_id, summary, turn_count, updated_at)
+                    VALUES (%s, %s, %s, NOW())
+                    ON CONFLICT (session_id) DO UPDATE SET
+                        summary = EXCLUDED.summary,
+                        turn_count = EXCLUDED.turn_count,
+                        updated_at = EXCLUDED.updated_at
+                    """,
+                    (session_id, summary, turn_count)
+                )
+    except Exception as exc:
+        logger.warning("Error upserting session summary for %s: %s", session_id, exc)
