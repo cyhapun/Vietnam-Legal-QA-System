@@ -15,7 +15,7 @@ from app.config import (
 )
 
 
-def get_llm(model_name: str) -> ChatHuggingFace:
+def get_llm(model_name: str, temperature: float = None, max_tokens: int = None) -> ChatHuggingFace:
     """Khởi tạo kết nối với mô hình ngôn ngữ lớn (LLM) qua HuggingFace."""
     if not HUGGINGFACE_API_KEY:
         raise ValueError(
@@ -23,11 +23,14 @@ def get_llm(model_name: str) -> ChatHuggingFace:
             "Vui lòng cấu hình trong file .env"
         )
 
+    final_temperature = temperature if temperature is not None else LLM_TEMPERATURE
+    final_max_tokens = max_tokens if max_tokens is not None else LLM_MAX_NEW_TOKENS
+
     llm = HuggingFaceEndpoint(
         repo_id=model_name,
         task="text-generation",
-        max_new_tokens=LLM_MAX_NEW_TOKENS,
-        temperature=LLM_TEMPERATURE,
+        max_new_tokens=final_max_tokens,
+        temperature=final_temperature,
         huggingfacehub_api_token=HUGGINGFACE_API_KEY,
         do_sample=True,
         repetition_penalty=LLM_REPETITION_PENALTY,
