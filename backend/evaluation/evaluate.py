@@ -7,6 +7,13 @@ import pandas as pd
 from pathlib import Path
 
 try:
+    import langchain_community.chat_models.vertexai
+except ImportError:
+    import types
+    sys.modules['langchain_community.chat_models.vertexai'] = types.ModuleType('langchain_community.chat_models.vertexai')
+    sys.modules['langchain_community.chat_models.vertexai'].ChatVertexAI = None
+
+try:
     from datasets import Dataset
     from ragas import evaluate
     from ragas.metrics import (
@@ -15,8 +22,8 @@ try:
         faithfulness,
         answer_relevancy,
     )
-except ImportError:
-    print("Please install required packages: pip install ragas datasets pandas")
+except ImportError as e:
+    print(f"Please install required packages: pip install ragas datasets pandas. Error: {e}")
     sys.exit(1)
 
 # Ensure environment has OpenAI API Key for Ragas
@@ -51,13 +58,18 @@ def run_evaluation(limit=10):
         print(f"[{idx+1}/{len(data)}] Query: {question[:50]}...")
         
         try:
-            response = requests.post(API_URL, json={"query": question}, timeout=60)
+            payload = {
+                "messages": [{"role": "user", "content": question}],
+                "model": "gemma-4-31b",
+                "category": "all"
+            }
+            response = requests.post(API_URL, json=payload, timeout=60)
             response.raise_for_status()
             result = response.json()
             
-            answer_text = result.get("response", "")
+            answer_text = result.get("text", "")  # chat API returns 'text', not 'response'
             # Extract text from context_used objects
-            context_objs = result.get("context_used", [])
+            context_objs = result.get("contextUsed", []) # chat API returns 'contextUsed'
             retrieved_contexts = [ctx.get("content", "") for ctx in context_objs]
             
             questions.append(question)
