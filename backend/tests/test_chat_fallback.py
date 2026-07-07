@@ -5,8 +5,15 @@ from fastapi.testclient import TestClient
 from app.main import app
 
 
+class DummyRewriter:
+    def rewrite(self, query, history_str):
+        return "all", [query]
+
 class DummyPipeline:
-    async def aretrieve(self, query, category=None):
+    def __init__(self):
+        self.rewriter = DummyRewriter()
+
+    async def aretrieve(self, query, category=None, **kwargs):
         return [SimpleNamespace(page_content="Nội dung mẫu", metadata={"id": "1"})], "Tài liệu tham khảo"
 
     def format_for_frontend(self, docs):
