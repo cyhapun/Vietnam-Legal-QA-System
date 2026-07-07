@@ -71,7 +71,7 @@ def check_cache(query_vector: List[float]) -> Optional[Dict[str, Any]]:
         logger.warning("Error checking semantic cache: %s", e)
         return None
 
-def update_cache(query_vector: List[float], original_query: str, response_text: str, context_used: List[Dict[str, Any]]) -> None:
+def update_cache(query_vector: List[float], original_query: str, response_text: str, context_used: List[Dict[str, Any]], retrieved_doc_ids: List[str] = None) -> None:
     """
     Update the semantic cache with a new query and its generated response.
     """
@@ -89,7 +89,8 @@ def update_cache(query_vector: List[float], original_query: str, response_text: 
             "original_query": original_query,
             "response_text": response_text,
             "context_used": context_used,
-            "timestamp": time.time()
+            "timestamp": time.time(),
+            "retrieved_doc_ids": retrieved_doc_ids or []
         }
         
         client.upsert(
@@ -106,3 +107,35 @@ def update_cache(query_vector: List[float], original_query: str, response_text: 
         
     except Exception as e:
         logger.warning("Error updating semantic cache: %s", e)
+
+def invalidate_cache_by_doc_ids(doc_ids: List[str]) -> bool:
+    """
+    Invalidate cache entries that relied on any of the provided doc_ids.
+    """
+    if not ENABLE_SEMANTIC_CACHE or not doc_ids:
+        return False
+        
+    client = _get_client()
+    if not client:
+        return False
+        
+    try:
+        client.delete(
+            collection_name="semantic_cache",
+            points_selector=qdrant_models.FilterSelector(
+                filter=qdrant_models.Filter(
+                    must=[
+                        qdrant_models.FieldCondition(
+                            key="retrieved_doc_ids",
+                            match=qdrant_models.MatchAny(any=doc_ids)
+                        )
+                    ]
+                )
+            )
+        )
+        logger.info("Invalidated semantic cache points for %d doc_ids.", len(doc_ids))
+        return True
+    except Exception as e:
+        logger.warning("Error invalidating semantic cache: %s", e)
+        return False
+
