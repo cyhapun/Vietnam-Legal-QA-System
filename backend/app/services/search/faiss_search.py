@@ -2,7 +2,7 @@
 FAISS Search — Vector similarity search dùng FAISS index.
 Đây là implementation mặc định, giữ nguyên logic từ rag.py cũ.
 """
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from langchain_core.documents import Document
 from langchain_community.vectorstores import FAISS
@@ -66,7 +66,7 @@ class FAISSSearcher:
                 logger.warning("Không thể lazy load FAISS index: %s", e)
     def search(
         self,
-        query: str,
+        query: Union[str, List[str]],
         k: int = RETRIEVER_K,
         category: Optional[str] = None,
     ) -> List[Document]:
@@ -95,11 +95,22 @@ class FAISSSearcher:
             search_type="mmr",
             search_kwargs=search_kwargs,
         )
-        return retriever.invoke(query)
+        
+        queries = [query] if isinstance(query, str) else query
+        all_docs = []
+        seen = set()
+        for q in queries:
+            docs = retriever.invoke(q)
+            for d in docs:
+                doc_id = d.metadata.get("id")
+                if doc_id not in seen:
+                    seen.add(doc_id)
+                    all_docs.append(d)
+        return all_docs
 
     async def asearch(
         self,
-        query: str,
+        query: Union[str, List[str]],
         k: int = RETRIEVER_K,
         category: Optional[str] = None,
     ) -> List[Document]:
@@ -128,4 +139,15 @@ class FAISSSearcher:
             search_type="mmr",
             search_kwargs=search_kwargs,
         )
-        return await retriever.ainvoke(query)
+        
+        queries = [query] if isinstance(query, str) else query
+        all_docs = []
+        seen = set()
+        for q in queries:
+            docs = await retriever.ainvoke(q)
+            for d in docs:
+                doc_id = d.metadata.get("id")
+                if doc_id not in seen:
+                    seen.add(doc_id)
+                    all_docs.append(d)
+        return all_docs
