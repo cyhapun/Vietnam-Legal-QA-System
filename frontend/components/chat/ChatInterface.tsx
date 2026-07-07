@@ -201,6 +201,7 @@ export function ChatInterface() {
     abortControllerRef.current = controller;
 
     let accumulated = '';
+    let fullContext: DocumentChunk[] = [];
     let contextUsed: DocumentChunk[] = [];
     let aborted = false;
 
@@ -236,10 +237,21 @@ export function ChatInterface() {
             const event = JSON.parse(raw);
 
             if (event.type === 'context') {
-              contextUsed = event.data || [];
-              setStreamingContext(contextUsed);
+              fullContext = event.data || [];
+              contextUsed = fullContext;
+              setStreamingContext(fullContext);
             } else if (event.type === 'token') {
               accumulated += event.text;
+              
+              const citedIds = Array.from(accumulated.matchAll(/<cite\s+id=["']([^"']+)["']>/g)).map(m => m[1]);
+              if (citedIds.length > 0) {
+                const filteredContext = fullContext.filter(ctx => 
+                  ctx.metadata && citedIds.includes(ctx.metadata.id)
+                );
+                setStreamingContext(filteredContext);
+                contextUsed = filteredContext;
+              }
+              
               setStreamingText(accumulated);
             } else if (event.type === 'done') {
               // Stream hoan tat
