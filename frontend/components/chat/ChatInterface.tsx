@@ -159,7 +159,7 @@ export function ChatInterface() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [currentMessages, streamingText, isLoading]);
+  }, [currentMessages.length, streamingText, isLoading]);
 
   useClickOutside(categoryRef, useCallback(() => setIsCategoryOpen(false), []));
 
