@@ -17,6 +17,7 @@ from app.api.documents import router as documents_router
 from app.api.admin import router as admin_router
 from app.api.feedback import router as feedback_router
 from app.services.pipeline import init_pipeline
+from app.services.knowledge_base import load_knowledge_base
 from app.services.storage import initialize_storage
 from app.utils.logging import setup_logger
 
@@ -60,9 +61,10 @@ def create_app() -> FastAPI:
     # --- Startup Event ---
     @application.on_event("startup")
     async def startup_event():
-        """Schedule initialization as non-blocking background task in a separate thread."""
+        """Load document metadata before serving requests, then initialize heavy services."""
+        await asyncio.to_thread(load_knowledge_base)
         asyncio.create_task(asyncio.to_thread(_initialize_runtime_components_sync))
-        logger.info("Initialization scheduled as background task, server ready to receive requests")
+        logger.info("Document metadata loaded; remaining initialization scheduled in background")
 
     return application
 

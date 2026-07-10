@@ -1,7 +1,5 @@
 import type {NextConfig} from 'next';
 
-const backendUrl = (process.env.BACKEND_URL || 'http://backend:8000').replace(/\/+$/, '');
-
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   devIndicators: false,
@@ -13,14 +11,6 @@ const nextConfig: NextConfig = {
   },
   output: 'standalone',
   transpilePackages: ['motion'],
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: `${backendUrl}/api/:path*`,
-      },
-    ];
-  },
 };
 
 export default nextConfig;
