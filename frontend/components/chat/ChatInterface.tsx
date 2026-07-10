@@ -264,7 +264,11 @@ export function ChatInterface() {
           category: lawCategory,
           temperature: advancedConfig.temperature,
           maxTokens: advancedConfig.maxTokens,
-          topK: advancedConfig.topK
+          topK: advancedConfig.topK,
+          enableQueryRewriter: aiSettings.enableQueryRewriter,
+          enableReranker: aiSettings.enableReranker,
+          enableSemanticCache: aiSettings.enableSemanticCache,
+          enableMemory: aiSettings.enableMemory
         }),
         signal: controller.signal,
       });
