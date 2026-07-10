@@ -47,6 +47,10 @@ export interface ChatApiRequest {
   temperature?: number;
   maxTokens?: number;
   topK?: number;
+  candidateK?: number;
+  cacheThreshold?: number;
+  maxSubqueries?: number;
+  historyMessages?: number;
   enableQueryRewriter?: boolean;
   enableReranker?: boolean;
   enableSemanticCache?: boolean;
