@@ -68,5 +68,12 @@
     "user_message": "Tài sản chung của vợ chồng bao gồm những gì theo Luật Hôn nhân gia đình?",
     "ai_response": "Theo quy định tại <cite id=\"luat_hon_nhan_gia_dinh_456\">Điều 21, Luật hôn nhân và gia đình năm 2014</cite>, tài sản chung của vợ chồng bao gồm:\n\n1. Tài sản được tặng cho hoặc thừa kế trong thời kỳ hôn nhân.\n2. Tài sản mà mỗi bên tích luỹ được từ công việc kinh doanh, lao động, đầu tư, giao dịch mua bán hoặc từ các nguồn khác.\n3. Tài sản mà một bên nhận được từ bố mẹ, con cái, anh chị em ruột, dì, cô, chú, cậu, dượng, bà nội, bà ngoại, chú nội, cô nội, bác, dì ruột, cậu ruột, cháu ruột hoặc người thân thích khác.\n4. Tài sản mà một bên nhận được từ các nguồn khác do pháp luật quy định là tài sản chung.\n\nTuy nhiên, theo <cite id=\"luat_hon_nhan_gia_dinh_789\">Khoản 1 Điều 23</cite>, nếu vợ chồng có thỏa thuận về việc phân chia tài sản hoặc xác định tài sản riêng thì sẽ được tôn trọng.",
     "timestamp": "2026-07-10T14:49:23.053244"
+  },
+  {
+    "id": "f7f2a659-30cc-4e77-b232-3962b0de8c90",
+    "session_id": "unknown",
+    "user_message": "Thừa kế theo pháp luật được chia như thế nào khi không có di chúc?",
+    "ai_response": "Theo quy định của Luật Inheritance Việt Nam, thừa kế theo pháp luật sẽ được thực hiện theo trình tự sau:\n\n1. Trình tự thứ nhất: Người vợ hoặc chồng; cha đẻ, mẹ đẻ của người chết (nếu còn sống); con nuôi của người chết do cha đẻ, mẹ đẻ nuôi dưỡng (nếu còn sống).\n\n2. Trình tự thứ hai: Cha nuôi, mẹ nuôi của người chết (nếu còn sống); anh, chị, em ruột của người chết (nếu còn sống và không thuộc trình tự thứ nhất).\n\n3. Trình tự thứ ba: Con dâu, con rể của người chết (nếu còn sống; cha đẻ, mẹ đẻ của con dâu, con rể đã chết); anh, chị, em ruột của cha đẻ, mẹ đẻ của người chết (nếu còn sống và không thuộc trình tự thứ nhất, thứ hai).\n\nTheo quy định tại <cite id=\"luat_inheritance_456\">Khoản 1 Điều 790</cite> của Luật Inheritance năm 2015, thừa kế theo pháp luật sẽ được chia cho các người thuộc trình tự thừa kế theo thứ tự ưu tiên nêu trên. \n\nNếu có nhiều người cùng thuộc một trình tự thì họ sẽ được hưởng phần di sản bằng nhau.\n\nTrường hợp không còn ai thuộc trình tự nào trong ba trình tự trên, di sản sẽ thuộc về Nhà nước theo quy định của pháp luật <cite id=\"luat_inheritance_456\">Khoản 2 Điều 790</cite>.\n\nNếu có bất kỳ thắc mắc cụ thể nào liên quan đến trường hợp cụ thể, vui lòng cung cấp thêm thông tin để được tư vấn chính xác hơn.",
+    "timestamp": "2026-07-10T15:14:37.684406"
   }
 ]
