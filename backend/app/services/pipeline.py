@@ -74,6 +74,7 @@ class RAGPipeline:
         category: Optional[str] = None,
         domain: Optional[str] = None,
         queries: Optional[List[str]] = None,
+        enable_reranker: bool = True,
     ) -> Tuple[List[Document], str]:
         """Thực hiện full retrieval pipeline: Search → Rerank → Context Build.
 
@@ -116,8 +117,11 @@ class RAGPipeline:
         docs = unique_docs
         dedup_count = len(docs)
 
-        # Step 2: Rerank (using original query)
-        docs = self.reranker.rerank(query, docs, top_k=final_k)
+        # Step 2: Rerank or keep search order.
+        if enable_reranker:
+            docs = self.reranker.rerank(query, docs, top_k=final_k)
+        else:
+            docs = docs[:final_k]
         final_count = len(docs)
         
         logger.info(
@@ -138,6 +142,7 @@ class RAGPipeline:
         category: Optional[str] = None,
         domain: Optional[str] = None,
         queries: Optional[List[str]] = None,
+        enable_reranker: bool = True,
     ) -> Tuple[List[Document], str]:
         """Async version của retrieve — dùng trong FastAPI endpoint."""
         final_k = rerank_top_k or RETRIEVER_K
@@ -171,8 +176,11 @@ class RAGPipeline:
         docs = unique_docs
         dedup_count = len(docs)
 
-        # Step 2: Rerank (sync — thường nhanh)
-        docs = self.reranker.rerank(query, docs, top_k=final_k)
+        # Step 2: Rerank or keep search order.
+        if enable_reranker:
+            docs = self.reranker.rerank(query, docs, top_k=final_k)
+        else:
+            docs = docs[:final_k]
         final_count = len(docs)
         
         logger.info(
