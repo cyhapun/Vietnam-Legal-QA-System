@@ -424,7 +424,7 @@ export function ChatInterface() {
 
   return (
     <div 
-      className="flex h-screen overflow-hidden font-sans relative selection:bg-indigo-100 transition-colors bg-slate-50 dark:bg-slate-950" 
+      className="flex h-screen overflow-hidden font-sans relative selection:bg-indigo-100 dark:selection:bg-indigo-500/30 transition-colors bg-slate-50 dark:bg-[#171717]" 
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -443,7 +443,7 @@ export function ChatInterface() {
       </div>
 
       <div className="flex-1 flex flex-col min-w-0 relative h-full">
-        <div className="flex items-center justify-between bg-white/80 dark:bg-slate-950/80 backdrop-blur-md z-10 absolute top-0 left-0 right-0 px-4 py-3 border-b border-gray-200/60 dark:border-slate-800/60 transition-colors">
+        <div className="flex items-center justify-between bg-white/80 dark:bg-[#171717]/80 backdrop-blur-md z-10 absolute top-0 left-0 right-0 px-4 py-3 border-b border-gray-200/60 dark:border-white/10 transition-colors">
           <div className="flex items-center gap-3">
             {!isSidebarOpen && (
               <button onClick={() => setIsSidebarOpen(true)} className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-colors" title="Mở sidebar">
@@ -527,7 +527,7 @@ export function ChatInterface() {
                   <button
                     key={i}
                     onClick={() => handleSubmit(undefined, s.prompt)}
-                    className="prompt-starter text-left px-4 py-3 rounded-2xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-indigo-300 dark:hover:border-indigo-500/50 hover:bg-indigo-50/50 dark:hover:bg-indigo-500/10 hover:shadow-sm transition-all duration-200 group"
+                    className="prompt-starter text-left px-4 py-3 rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#171717] hover:border-indigo-300 dark:hover:border-indigo-500/50 hover:bg-indigo-50/50 dark:hover:bg-indigo-500/10 hover:shadow-sm transition-all duration-200 group"
                   >
                     <span className="text-[12.5px] font-semibold text-gray-700 dark:text-gray-300 group-hover:text-indigo-700 dark:group-hover:text-indigo-400 transition-colors leading-snug block">
                       {s.label}
@@ -563,14 +563,14 @@ export function ChatInterface() {
           )}
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 pt-10 pb-4 px-4 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent dark:from-slate-950 dark:via-slate-950">
+        <div className="absolute bottom-0 left-0 right-0 pt-10 pb-4 px-4 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent dark:from-[#171717] dark:via-[#171717]">
           <div className="max-w-3xl mx-auto relative">
             {/* Scroll to bottom button */}
             {!isAtBottom && currentMessages.length > 0 && (
               <div className="absolute -top-14 left-1/2 -translate-x-1/2 z-20 fade-in slide-in-from-bottom-2 duration-200">
                 <button
                   onClick={scrollToBottom}
-                  className="w-10 h-10 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center shadow-[0_2px_10px_rgba(0,0,0,0.1)] dark:shadow-none border border-gray-100 dark:border-slate-700 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-all hover:shadow-[0_4px_14px_rgba(0,0,0,0.12)] active:scale-95"
+                  className="w-10 h-10 bg-white dark:bg-[#171717] rounded-full flex items-center justify-center shadow-[0_2px_10px_rgba(0,0,0,0.1)] dark:shadow-none border border-gray-100 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-all hover:shadow-[0_4px_14px_rgba(0,0,0,0.12)] active:scale-95"
                   title="Cuộn xuống"
                 >
                   <ArrowDown className="w-5 h-5" />
@@ -578,13 +578,13 @@ export function ChatInterface() {
               </div>
             )}
 
-            <div className="relative rounded-3xl bg-white dark:bg-slate-900 border border-gray-200/80 dark:border-slate-800 shadow-xl shadow-indigo-100/30 dark:shadow-none input-glow transition-all duration-300">
+            <div className="relative rounded-3xl bg-white dark:bg-[#171717] border border-gray-200/80 dark:border-white/10 shadow-xl shadow-indigo-100/30 dark:shadow-none input-glow transition-all duration-300">
               <div className="flex items-center gap-2 px-3 pt-3 pb-1">
                 <div className="relative flex items-center" ref={categoryRef}>
                   <button
                     type="button"
                     onClick={() => setIsCategoryOpen(!isCategoryOpen)}
-                    className="flex max-w-[230px] items-center rounded-xl border border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800 px-3 py-1.5 transition-colors hover:bg-gray-100 dark:hover:bg-slate-700 active:bg-gray-200 dark:active:bg-slate-600 md:max-w-[320px]"
+                    className="flex max-w-[230px] items-center rounded-xl border border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-[#171717] px-3 py-1.5 transition-colors hover:bg-gray-100 dark:hover:bg-white/5 active:bg-gray-200 dark:active:bg-white/8 md:max-w-[320px]"
                     aria-haspopup="listbox"
                     aria-expanded={isCategoryOpen}
                   >
@@ -593,13 +593,13 @@ export function ChatInterface() {
                     <ChevronDown className={`w-3 h-3 text-gray-400 dark:text-gray-500 ml-1.5 transition-transform duration-200 ${isCategoryOpen ? 'rotate-180' : ''}`} />
                   </button>
                   {isCategoryOpen && (
-                    <div className="absolute bottom-full left-0 z-50 mb-2 w-[320px] max-w-[calc(100vw-2rem)] animate-in rounded-2xl border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 py-1 shadow-xl shadow-gray-200/50 dark:shadow-none fade-in slide-in-from-bottom-2 duration-200" role="listbox">
-                      <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 border-b border-gray-50 dark:border-slate-800 mb-1">Tra cứu theo lĩnh vực</div>
+                    <div className="absolute bottom-full left-0 z-50 mb-2 w-[320px] max-w-[calc(100vw-2rem)] animate-in rounded-2xl border border-gray-100 dark:border-white/10 bg-white dark:bg-[#171717] py-1 shadow-xl shadow-gray-200/50 dark:shadow-none fade-in slide-in-from-bottom-2 duration-200" role="listbox">
+                      <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 border-b border-gray-50 dark:border-white/10 mb-1">Tra cứu theo lĩnh vực</div>
                       {LAW_CATEGORIES.map(category => (
                         <button
                           key={category.id}
                           onClick={() => { setLawCategory(category.id); setIsCategoryOpen(false); }}
-                          className={`flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left text-[12px] font-bold transition-colors ${lawCategory === category.id ? 'text-indigo-700 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-500/10' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800'}`}
+                          className={`flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left text-[12px] font-bold transition-colors ${lawCategory === category.id ? 'text-indigo-700 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-500/10' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5'}`}
                           role="option"
                           aria-selected={lawCategory === category.id}
                         >
@@ -662,18 +662,18 @@ export function ChatInterface() {
 
       {/* Context Drawer */}
       <div 
-        className={`absolute md:relative top-0 right-0 h-full bg-white dark:bg-slate-900 shadow-[0_0_40px_rgba(0,0,0,0.1)] dark:shadow-none transition-all duration-300 z-50 border-l border-gray-200/60 dark:border-slate-800 flex-shrink-0 overflow-hidden
+        className={`absolute md:relative top-0 right-0 h-full bg-white dark:bg-[#171717] shadow-[0_0_40px_rgba(0,0,0,0.1)] dark:shadow-none transition-all duration-300 z-50 border-l border-gray-200/60 dark:border-white/10 flex-shrink-0 overflow-hidden
           ${drawerContext ? 'translate-x-0 md:w-[400px] w-full' : 'translate-x-full md:translate-x-0 md:w-0 w-full'}`}
       >
         {drawerContext && (
           <div className="flex flex-col h-full">
-            <div className="h-14 flex items-center justify-between px-4 border-b border-gray-100 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-900/50 flex-shrink-0 transition-colors">
+            <div className="h-14 flex items-center justify-between px-4 border-b border-gray-100 dark:border-white/10 bg-gray-50/50 dark:bg-[#171717]/50 flex-shrink-0 transition-colors">
               <span className="text-[11px] font-bold uppercase tracking-widest text-indigo-700 dark:text-indigo-400">
                 Văn bản pháp lý áp dụng
               </span>
               <button 
                 onClick={() => setDrawerContext(null)}
-                className="p-1.5 rounded-lg text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-800 transition-colors"
+                className="p-1.5 rounded-lg text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-white/8 transition-colors"
                 title="Đóng"
               >
                 <X className="w-4 h-4" />
@@ -694,7 +694,7 @@ export function ChatInterface() {
                     if (diem) displayText += ` Điểm ${diem}`;
 
                     return (
-                      <div key={idx} className="p-3.5 rounded-xl border border-indigo-100/50 dark:border-indigo-500/20 bg-indigo-50/30 dark:bg-slate-800/50 hover:bg-indigo-50/60 dark:hover:bg-slate-800 transition-colors">
+                      <div key={idx} className="p-3.5 rounded-xl border border-indigo-100/50 dark:border-indigo-500/20 bg-indigo-50/30 dark:bg-[#171717]/50 hover:bg-indigo-50/60 dark:hover:bg-white/5 transition-colors">
                         <p className="text-[13px] font-bold text-indigo-800 dark:text-indigo-400 mb-2 leading-snug">{displayText}</p>
                         <p className="text-[12.5px] leading-relaxed text-gray-600 dark:text-gray-300 whitespace-pre-wrap">
                           {ctx.content}

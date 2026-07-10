@@ -74,7 +74,7 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
         {/* Avatar */}
         <div className="flex-shrink-0 mt-1">
           {isUser ? (
-            <div className="w-8 h-8 rounded-full flex items-center justify-center border border-gray-200 dark:border-slate-700 bg-gray-100 dark:bg-slate-800 shadow-sm">
+            <div className="w-8 h-8 rounded-full flex items-center justify-center border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-[#171717] shadow-sm">
               <User className="w-4 h-4 text-gray-500 dark:text-gray-400" />
             </div>
           ) : (
@@ -209,12 +209,12 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
                   
                   {/* Negative Feedback Form */}
                   {showNegativeForm && (
-                    <div className="absolute top-full mt-2 left-0 w-64 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-2xl z-[150] p-3">
+                    <div className="absolute top-full mt-2 left-0 w-64 bg-white dark:bg-[#171717] border border-gray-200 dark:border-white/10 rounded-xl shadow-2xl z-[150] p-3">
                       <h4 className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Vấn đề bạn gặp phải?</h4>
                       <select 
                         value={reason} 
                         onChange={(e) => setReason(e.target.value)}
-                        className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-lg text-xs p-2 mb-2 text-gray-700 dark:text-gray-300 outline-none focus:border-indigo-500"
+                        className="w-full bg-gray-50 dark:bg-[#171717] border border-gray-200 dark:border-white/10 rounded-lg text-xs p-2 mb-2 text-gray-700 dark:text-gray-300 outline-none focus:border-indigo-500"
                       >
                         <option value="Sai luật">Sai luật</option>
                         <option value="Trích dẫn sai">Trích dẫn sai</option>
@@ -225,7 +225,7 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
                         placeholder="Góp ý thêm (không bắt buộc)..."
-                        className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-lg text-xs p-2 mb-2 min-h-[60px] text-gray-700 dark:text-gray-300 outline-none focus:border-indigo-500 resize-none custom-scrollbar"
+                        className="w-full bg-gray-50 dark:bg-[#171717] border border-gray-200 dark:border-white/10 rounded-lg text-xs p-2 mb-2 min-h-[60px] text-gray-700 dark:text-gray-300 outline-none focus:border-indigo-500 resize-none custom-scrollbar"
                       />
                       <div className="flex justify-end gap-2">
                         <button 
@@ -275,17 +275,17 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
           onClick={() => setSelectedCitation(null)}
         >
           <div 
-            className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-[90%] max-w-2xl overflow-hidden transform transition-all scale-100" 
+            className="bg-white dark:bg-[#171717] rounded-xl shadow-2xl w-[90%] max-w-2xl overflow-hidden transform transition-all scale-100 border dark:border-white/10" 
             onClick={e => e.stopPropagation()}
           >
-            <div className="px-6 py-4 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center bg-gray-50/80 dark:bg-slate-900/60">
+            <div className="px-6 py-4 border-b border-gray-100 dark:border-white/10 flex justify-between items-center bg-gray-50/80 dark:bg-[#171717]/60">
               <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                 Trích dẫn pháp lý
               </h3>
               <button 
                 onClick={() => setSelectedCitation(null)} 
-                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors p-1 rounded-full hover:bg-gray-200 dark:hover:bg-slate-700"
+                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors p-1 rounded-full hover:bg-gray-200 dark:hover:bg-[#3a3a3a]"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -307,12 +307,12 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
                 )}
               </div>
               
-              <div className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm whitespace-pre-wrap bg-gray-50/50 dark:bg-slate-900/60 p-4 rounded-lg border border-gray-100 dark:border-slate-700">
+              <div className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm whitespace-pre-wrap bg-gray-50/50 dark:bg-[#171717]/60 p-4 rounded-lg border border-gray-100 dark:border-white/10">
                 {selectedCitation.content}
               </div>
             </div>
             
-            <div className="px-6 py-4 border-t border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-900/60 flex justify-end">
+            <div className="px-6 py-4 border-t border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-[#171717]/60 flex justify-end">
               <button 
                 onClick={() => setSelectedCitation(null)} 
                 className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm"
