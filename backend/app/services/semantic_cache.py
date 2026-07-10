@@ -29,7 +29,10 @@ def _get_client() -> Optional[QdrantClient]:
             logger.warning("Failed to initialize QdrantClient for semantic cache: %s", e)
     return _qdrant_client
 
-def check_cache(query_vector: List[float]) -> Optional[Dict[str, Any]]:
+def check_cache(
+    query_vector: List[float],
+    score_threshold: Optional[float] = None,
+) -> Optional[Dict[str, Any]]:
     """
     Check if a similar query exists in the semantic cache.
     Returns the cached payload (including text and contextUsed) if found, else None.
@@ -37,6 +40,7 @@ def check_cache(query_vector: List[float]) -> Optional[Dict[str, Any]]:
     if not ENABLE_SEMANTIC_CACHE:
         return None
 
+    threshold = SEMANTIC_CACHE_THRESHOLD if score_threshold is None else score_threshold
     client = _get_client()
     if not client:
         return None
@@ -48,7 +52,7 @@ def check_cache(query_vector: List[float]) -> Optional[Dict[str, Any]]:
                 collection_name="semantic_cache",
                 query=query_vector,
                 limit=1,
-                score_threshold=SEMANTIC_CACHE_THRESHOLD
+                score_threshold=threshold
             ).points
         except AttributeError:
             # Fallback for older versions
@@ -56,7 +60,7 @@ def check_cache(query_vector: List[float]) -> Optional[Dict[str, Any]]:
                 collection_name="semantic_cache",
                 query_vector=query_vector,
                 limit=1,
-                score_threshold=SEMANTIC_CACHE_THRESHOLD
+                score_threshold=threshold
             )
         
         if search_result and len(search_result) > 0:
