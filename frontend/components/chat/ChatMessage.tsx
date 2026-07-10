@@ -68,7 +68,7 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
   ) || '';
 
   return (
-    <div id={`message-${message.id}`} className={`group py-5 px-4 message-animate ${showNegativeForm ? 'relative z-[150]' : ''} ${isUser ? '' : 'hover:bg-slate-50/60 dark:hover:bg-slate-800/50 transition-colors duration-200'}`}>
+    <div id={`message-${message.id}`} className={`group py-5 px-4 message-animate ${showNegativeForm ? 'relative z-[150]' : ''}`}>
       <div className={`max-w-4xl mx-auto flex ${isUser ? 'flex-row-reverse gap-2.5' : 'flex-row gap-4'}`}>
 
         {/* Avatar */}
