@@ -18,7 +18,11 @@ from app.config import (
 
 logger = logging.getLogger(__name__)
 
-def get_llm(model_name: str):
+def get_llm(
+    model_name: str,
+    temperature: float | None = None,
+    max_tokens: int | None = None,
+):
     """Khởi tạo kết nối với mô hình ngôn ngữ lớn (LLM) với cơ chế Hybrid Inference Fallback."""
     if not HUGGINGFACE_API_KEY:
         logger.warning("Không tìm thấy HUGGINGFACE_API_KEY. Remote LLM sẽ không hoạt động.")
@@ -49,8 +53,8 @@ def get_llm(model_name: str):
         model=local_model_name,
         api_key="ollama",
         base_url=f"{OLLAMA_BASE_URL.rstrip('/')}/v1",
-        temperature=LLM_TEMPERATURE,
-        max_tokens=LLM_MAX_NEW_TOKENS,
+        temperature=final_temperature,
+        max_tokens=final_max_tokens,
         timeout=LLM_TIMEOUT,
     )
 
