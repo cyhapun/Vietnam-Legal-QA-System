@@ -5,6 +5,10 @@ export interface AISettings {
   temperature: number;
   maxTokens: number;
   topK: number;
+  candidateK: number;
+  cacheThreshold: number;
+  maxSubqueries: number;
+  historyMessages: number;
   enableQueryRewriter: boolean;
   enableReranker: boolean;
   enableSemanticCache: boolean;
@@ -19,6 +23,10 @@ export const DEFAULT_AI_SETTINGS: AISettings = {
   temperature: 0.3,
   maxTokens: 1024,
   topK: 5,
+  candidateK: 60,
+  cacheThreshold: 0.95,
+  maxSubqueries: 3,
+  historyMessages: 4,
   enableQueryRewriter: true,
   enableReranker: true,
   enableSemanticCache: true,
@@ -34,6 +42,10 @@ export function normalizeAISettings(value: Partial<AISettings> | null | undefine
     temperature: clamp(Number(value?.temperature ?? DEFAULT_AI_SETTINGS.temperature), 0, 1),
     maxTokens: Math.round(clamp(Number(value?.maxTokens ?? DEFAULT_AI_SETTINGS.maxTokens), 100, 4000)),
     topK: Math.round(clamp(Number(value?.topK ?? DEFAULT_AI_SETTINGS.topK), 1, 20)),
+    candidateK: Math.round(clamp(Number(value?.candidateK ?? DEFAULT_AI_SETTINGS.candidateK), 10, 100)),
+    cacheThreshold: clamp(Number(value?.cacheThreshold ?? DEFAULT_AI_SETTINGS.cacheThreshold), 0.8, 0.99),
+    maxSubqueries: Math.round(clamp(Number(value?.maxSubqueries ?? DEFAULT_AI_SETTINGS.maxSubqueries), 1, 5)),
+    historyMessages: Math.round(clamp(Number(value?.historyMessages ?? DEFAULT_AI_SETTINGS.historyMessages), 0, 10)),
     enableQueryRewriter: value?.enableQueryRewriter ?? DEFAULT_AI_SETTINGS.enableQueryRewriter,
     enableReranker: value?.enableReranker ?? DEFAULT_AI_SETTINGS.enableReranker,
     enableSemanticCache: value?.enableSemanticCache ?? DEFAULT_AI_SETTINGS.enableSemanticCache,
