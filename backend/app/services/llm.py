@@ -18,13 +18,19 @@ from app.config import (
 
 logger = logging.getLogger(__name__)
 
-def get_llm(model_name: str):
+def get_llm(
+    model_name: str,
+    temperature: float | None = None,
+    max_tokens: int | None = None,
+    timeout: float | None = None,
+):
     """Khởi tạo kết nối với mô hình ngôn ngữ lớn (LLM) với cơ chế Hybrid Inference Fallback."""
     if not HUGGINGFACE_API_KEY:
         logger.warning("Không tìm thấy HUGGINGFACE_API_KEY. Remote LLM sẽ không hoạt động.")
 
     final_temperature = temperature if temperature is not None else LLM_TEMPERATURE
     final_max_tokens = max_tokens if max_tokens is not None else LLM_MAX_NEW_TOKENS
+    final_timeout = timeout if timeout is not None else LLM_TIMEOUT
 
     # Nếu Frontend truyền "gemma", tự động map sang model đầy đủ
     if model_name.lower() == "gemma":
@@ -41,7 +47,7 @@ def get_llm(model_name: str):
         base_url="https://router.huggingface.co/v1",
         temperature=final_temperature,
         max_tokens=final_max_tokens,
-        timeout=LLM_TIMEOUT,
+        timeout=final_timeout,
     )
 
     # 2. Khởi tạo Local LLM (thông qua Ollama OpenAI API compatible endpoint)
@@ -49,9 +55,9 @@ def get_llm(model_name: str):
         model=local_model_name,
         api_key="ollama",
         base_url=f"{OLLAMA_BASE_URL.rstrip('/')}/v1",
-        temperature=LLM_TEMPERATURE,
-        max_tokens=LLM_MAX_NEW_TOKENS,
-        timeout=LLM_TIMEOUT,
+        temperature=final_temperature,
+        max_tokens=final_max_tokens,
+        timeout=final_timeout,
     )
 
     # 3. Wrapping with Fallbacks

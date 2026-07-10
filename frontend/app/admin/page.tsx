@@ -1,15 +1,20 @@
 'use client';
 
 import React from 'react';
-import { Settings, BarChart2, BookOpen, Plus } from 'lucide-react';
+import { Settings, BarChart2, BookOpen, Plus, BrainCircuit } from 'lucide-react';
 import AnalyticsTab from '@/components/admin/AnalyticsTab';
 import DocumentList from '@/components/docs/DocumentList';
 import UploadModal from '@/components/docs/UploadModal';
 import Link from 'next/link';
+import SystemSettingsTab from '@/components/admin/SystemSettingsTab';
 
 export default function AdminPage() {
-  const [activeTab, setActiveTab] = React.useState<'analytics' | 'docs'>('analytics');
+  const [activeTab, setActiveTab] = React.useState<'analytics' | 'docs' | 'settings'>('analytics');
   const [isUploadOpen, setIsUploadOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    if (window.location.hash === '#settings') setActiveTab('settings');
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col font-sans">
@@ -56,11 +61,24 @@ export default function AdminPage() {
               <BookOpen className="w-4 h-4" />
               Quản lý tài liệu
             </button>
+            <button
+              onClick={() => setActiveTab('settings')}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                activeTab === 'settings'
+                  ? 'bg-white dark:bg-slate-900 text-rose-600 dark:text-rose-400 shadow-sm'
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-200/50 dark:hover:bg-slate-700/50'
+              }`}
+            >
+              <BrainCircuit className="w-4 h-4" />
+              Cấu hình AI
+            </button>
           </div>
 
           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm p-6">
             {activeTab === 'analytics' ? (
               <AnalyticsTab />
+            ) : activeTab === 'settings' ? (
+              <SystemSettingsTab />
             ) : (
               <div className="space-y-4">
                 <div className="flex justify-between items-start mb-6">

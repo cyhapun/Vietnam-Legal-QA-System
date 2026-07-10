@@ -47,6 +47,19 @@ export interface ChatApiRequest {
   temperature?: number;
   maxTokens?: number;
   topK?: number;
+  candidateK?: number;
+  cacheThreshold?: number;
+  maxSubqueries?: number;
+  historyMessages?: number;
+  contextTokenBudget?: number;
+  maxCitations?: number;
+  llmTimeout?: number;
+  streaming?: boolean;
+  useHistoryForRewriter?: boolean;
+  enableQueryRewriter?: boolean;
+  enableReranker?: boolean;
+  enableSemanticCache?: boolean;
+  enableMemory?: boolean;
 }
 
 export interface ChatApiResponse {

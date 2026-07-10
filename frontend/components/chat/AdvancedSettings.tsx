@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
+import Link from 'next/link';
 import { useClickOutside } from '@/hooks/use-click-outside';
 
 export interface AdvancedConfig {
@@ -89,13 +90,22 @@ export function AdvancedSettings({ config, setConfig }: AdvancedSettingsProps) {
               </div>
               <input 
                 type="range" 
-                min="1" max="15" step="1"
+                min="1" max="20" step="1"
                 value={config.topK}
                 onChange={(e) => setConfig({ ...config, topK: parseInt(e.target.value) })}
                 className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-emerald-500"
               />
               <p className="text-[10px] text-gray-400">Số lượng điều luật tối đa để tham chiếu.</p>
             </div>
+          </div>
+          <div className="mt-4 pt-3 border-t border-gray-100 dark:border-slate-800">
+            <Link
+              href="/admin#settings"
+              onClick={() => setIsOpen(false)}
+              className="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300"
+            >
+              Mở cấu hình đầy đủ →
+            </Link>
           </div>
         </div>
       )}

@@ -34,6 +34,19 @@ def _sse(data: dict) -> str:
     return f"data: {json.dumps(data, ensure_ascii=False)}\n\n"
 
 
+def _recent_messages(request: ChatRequest):
+    """Return the configured messages immediately before the latest user message."""
+    limit = request.historyMessages
+    return request.messages[-(limit + 1):-1] if limit > 0 else []
+
+
+def _filter_cited_context(output_text: str, context: list, max_citations: int) -> list:
+    """Return cited contexts in citation order, capped for the client payload."""
+    cited_ids = list(dict.fromkeys(re.findall(r'<cite\s+id=["\']([^"\']+)["\']>', output_text)))
+    cited_ids = cited_ids[:max_citations]
+    by_id = {item.get("metadata", {}).get("id"): item for item in context}
+    return [by_id[citation_id] for citation_id in cited_ids if citation_id in by_id]
+
 @router.post("/chat")
 async def chat_endpoint(request: ChatRequest):
     """Endpoint non-streaming: nhan cau hoi -> truy xuat -> goi LLM -> tra JSON."""
@@ -46,14 +59,14 @@ async def chat_endpoint(request: ChatRequest):
         from app.services.storage import get_session_summary
         from app.services.memory_manager import summarize_session
 
-        session_data = get_session_summary(session_id) if session_id != "unknown" else None
+        session_data = get_session_summary(session_id) if request.enableMemory and session_id != "unknown" else None
         summary = session_data.get("summary", "") if session_data else ""
 
         history_lines = []
         if summary:
             history_lines.append(f"=== BỐI CẢNH TRƯỚC ĐÓ ===\n{summary}\n\n=== HỘI THOẠI GẦN NHẤT ===")
             
-        for msg in request.messages[-5:-1]: # Chỉ lấy 4 tin nhắn gần nhất
+        for msg in _recent_messages(request): # Chỉ lấy 4 tin nhắn gần nhất
             role_name = "USER" if msg.role == "user" else "AI"
             history_lines.append(f"{role_name}: {msg.content}")
             
@@ -68,17 +81,22 @@ async def chat_endpoint(request: ChatRequest):
         
         # Lịch sử ngắn gọn cho rewriter (sliding window: 2 turns = 4 messages)
         recent_history_lines = []
-        for msg in request.messages[-5:-1]: # Lấy tối đa 4 tin nhắn gần nhất
+        for msg in _recent_messages(request): # Lấy tối đa 4 tin nhắn gần nhất
             role_name = "USER" if msg.role == "user" else "AI"
             recent_history_lines.append(f"{role_name}: {msg.content}")
-        recent_history_str = "\n".join(recent_history_lines) if recent_history_lines else ""
+        recent_history_str = "\n".join(recent_history_lines) if request.useHistoryForRewriter else ""
         
         # Gọi rewriter trước để lấy rewritten query
-        domain, queries = await asyncio.to_thread(pipeline.rewriter.rewrite, last_message, recent_history_str)
-        logger.info("Rewriter domain: %s, queries: %s", domain, queries)
+        if request.enableQueryRewriter:
+            domain, queries = await asyncio.to_thread(pipeline.rewriter.rewrite, last_message, recent_history_str)
+        else:
+            domain, queries = "legal", [last_message]
+        if domain != "chitchat":
+            queries = (queries or [last_message])[:request.maxSubqueries]
+        logger.info("Rewriter enabled=%s, domain=%s, queries=%s", request.enableQueryRewriter, domain, queries)
         
         query_vector = None
-        if domain != "chitchat":
+        if request.enableSemanticCache and domain != "chitchat":
             rewritten_query = queries[0] if queries else last_message
             embedding = _get_embedding()
             if embedding:
@@ -87,7 +105,7 @@ async def chat_endpoint(request: ChatRequest):
                     query_vector = await asyncio.to_thread(embedding.embed_query, rewritten_query)
                     
                     # Kiểm tra cache
-                    cached_response = await asyncio.to_thread(check_cache, query_vector)
+                    cached_response = await asyncio.to_thread(check_cache, query_vector, request.cacheThreshold)
                     if cached_response:
                         logger.info("Phản hồi được lấy từ Semantic Cache.")
                         return {
@@ -99,10 +117,13 @@ async def chat_endpoint(request: ChatRequest):
 
         retrieved_docs, context_text = await pipeline.aretrieve(
             query=last_message,
+            k=request.candidateK,
             category=request.category,
             rerank_top_k=request.topK,
             domain=domain,
-            queries=queries
+            queries=queries,
+            enable_reranker=request.enableReranker,
+            context_token_budget=request.contextTokenBudget
         )
         frontend_context = pipeline.format_for_frontend(retrieved_docs)
 
@@ -114,7 +135,8 @@ async def chat_endpoint(request: ChatRequest):
             llm = get_llm(
                 model_name=request.model, 
                 temperature=request.temperature, 
-                max_tokens=request.maxTokens
+                max_tokens=request.maxTokens,
+                timeout=request.llmTimeout
             )
             rag_chain = CHAT_PROMPT | llm | get_output_parser()
 
@@ -132,18 +154,9 @@ async def chat_endpoint(request: ChatRequest):
 
         output_text = _clean_chunk(output_text)
 
-        # 5. Lọc context theo các ID được trích dẫn (Strict Citation Mechanism)
-        cited_ids = set(re.findall(r'<cite\s+id=["\']([^"\']+)["\']>', output_text))
-        if cited_ids:
-            filtered_context = [ctx for ctx in frontend_context if ctx.get("metadata", {}).get("id") in cited_ids]
-            frontend_context = filtered_context
-        else:
-            # Nếu LLM không trích dẫn gì, có thể xóa context rác
-            # Để an toàn cho các trường hợp LLM fallback (lỗi), ta có thể giữ nguyên tất cả hoặc làm rỗng.
-            # Ở đây chọn làm rỗng khi gọi LLM thành công nhưng không có trích dẫn,
-            # Nếu có lỗi (ở phần except), ta vẫn giữ nguyên frontend_context.
-            if "Hiện tại hệ thống chưa thể gọi mô hình" not in output_text:
-                frontend_context = []
+        frontend_context = _filter_cited_context(
+            output_text, frontend_context, request.maxCitations
+        )
 
         if query_vector and domain != "chitchat" and "Hiện tại hệ thống chưa thể gọi mô hình" not in output_text:
             try:
@@ -164,7 +177,7 @@ async def chat_endpoint(request: ChatRequest):
         )
         
         # Summarize memory asynchronously
-        if session_id != "unknown":
+        if request.enableMemory and session_id != "unknown":
             asyncio.create_task(summarize_session(session_id, last_message, output_text))
 
         return {
@@ -192,14 +205,14 @@ async def chat_stream_endpoint(request: ChatRequest):
             from app.services.storage import get_session_summary
             from app.services.memory_manager import summarize_session
 
-            session_data = get_session_summary(session_id) if session_id != "unknown" else None
+            session_data = get_session_summary(session_id) if request.enableMemory and session_id != "unknown" else None
             summary = session_data.get("summary", "") if session_data else ""
 
             history_lines = []
             if summary:
                 history_lines.append(f"=== BỐI CẢNH TRƯỚC ĐÓ ===\n{summary}\n\n=== HỘI THOẠI GẦN NHẤT ===")
                 
-            for msg in request.messages[-5:-1]:
+            for msg in _recent_messages(request):
                 role_name = "USER" if msg.role == "user" else "AI"
                 history_lines.append(f"{role_name}: {msg.content}")
                 
@@ -216,22 +229,27 @@ async def chat_stream_endpoint(request: ChatRequest):
             from app.services.chat_logger import log_interaction
             
             recent_history_lines = []
-            for msg in request.messages[-5:-1]:
+            for msg in _recent_messages(request):
                 role_name = "USER" if msg.role == "user" else "AI"
                 recent_history_lines.append(f"{role_name}: {msg.content}")
-            recent_history_str = "\n".join(recent_history_lines) if recent_history_lines else ""
+            recent_history_str = "\n".join(recent_history_lines) if request.useHistoryForRewriter else ""
             
-            domain, queries = await asyncio.to_thread(pipeline.rewriter.rewrite, last_message, recent_history_str)
-            logger.info("Stream Rewriter domain: %s, queries: %s", domain, queries)
+            if request.enableQueryRewriter:
+                domain, queries = await asyncio.to_thread(pipeline.rewriter.rewrite, last_message, recent_history_str)
+            else:
+                domain, queries = "legal", [last_message]
+            if domain != "chitchat":
+                queries = (queries or [last_message])[:request.maxSubqueries]
+            logger.info("Stream rewriter enabled=%s, domain=%s, queries=%s", request.enableQueryRewriter, domain, queries)
             
             query_vector = None
-            if domain != "chitchat":
+            if request.enableSemanticCache and domain != "chitchat":
                 rewritten_query = queries[0] if queries else last_message
                 embedding = _get_embedding()
                 if embedding:
                     try:
                         query_vector = await asyncio.to_thread(embedding.embed_query, rewritten_query)
-                        cached_response = await asyncio.to_thread(check_cache, query_vector)
+                        cached_response = await asyncio.to_thread(check_cache, query_vector, request.cacheThreshold)
                         if cached_response:
                             logger.info("Stream: Phản hồi được lấy từ Semantic Cache.")
                             frontend_context = cached_response.get("context_used", [])
@@ -250,10 +268,13 @@ async def chat_stream_endpoint(request: ChatRequest):
 
             retrieved_docs, context_text = await pipeline.aretrieve(
                 query=last_message,
+                k=request.candidateK,
                 category=request.category,
                 rerank_top_k=request.topK,
                 domain=domain,
-                queries=queries
+                queries=queries,
+                enable_reranker=request.enableReranker,
+                context_token_budget=request.contextTokenBudget
             )
             frontend_context = pipeline.format_for_frontend(retrieved_docs)
 
@@ -262,7 +283,8 @@ async def chat_stream_endpoint(request: ChatRequest):
             llm = get_llm(
                 model_name=request.model, 
                 temperature=request.temperature, 
-                max_tokens=request.maxTokens
+                max_tokens=request.maxTokens,
+                timeout=request.llmTimeout
             )
             rag_chain = CHAT_PROMPT | llm | get_output_parser()
 
@@ -278,6 +300,10 @@ async def chat_stream_endpoint(request: ChatRequest):
                         accumulated_text += cleaned
                         yield _sse({"type": "token", "text": cleaned})
 
+            frontend_context = _filter_cited_context(
+                accumulated_text, frontend_context, request.maxCitations
+            )
+            yield _sse({"type": "context", "data": frontend_context})
             if query_vector and domain != "chitchat" and "Hiện tại hệ thống chưa thể gọi mô hình" not in accumulated_text:
                 try:
                     await asyncio.to_thread(
@@ -297,7 +323,7 @@ async def chat_stream_endpoint(request: ChatRequest):
             )
 
             # Summarize memory asynchronously
-            if session_id != "unknown":
+            if request.enableMemory and session_id != "unknown":
                 asyncio.create_task(summarize_session(session_id, last_message, accumulated_text))
 
             yield _sse({"type": "done"})

@@ -8,10 +8,10 @@ import { ChatMessage } from './ChatMessage';
 import { Sidebar } from './Sidebar';
 import { useChatSessions } from '@/hooks/use-chat-sessions';
 import { useClickOutside } from '@/hooks/use-click-outside';
+import { useAISettings } from '@/hooks/use-ai-settings';
 import {
   ALL_LAWS_CATEGORY,
   LAW_CATEGORIES,
-  DEFAULT_MODEL,
 } from '@/lib/constants';
 import type { Message, DocumentChunk } from '@/lib/types';
 
@@ -40,12 +40,17 @@ export function ChatInterface() {
 
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [model, setModel] = useState(DEFAULT_MODEL);
-  const [advancedConfig, setAdvancedConfig] = useState<AdvancedConfig>({
-    temperature: 0.3,
-    maxTokens: 1024,
-    topK: 5,
-  });
+  const { settings: aiSettings, setSettings: setAISettings } = useAISettings();
+  const model = aiSettings.model;
+  const advancedConfig: AdvancedConfig = {
+    temperature: aiSettings.temperature,
+    maxTokens: aiSettings.maxTokens,
+    topK: aiSettings.topK,
+  };
+  const setModel = (nextModel: string) =>
+    setAISettings(current => ({ ...current, model: nextModel }));
+  const setAdvancedConfig = (config: AdvancedConfig) =>
+    setAISettings(current => ({ ...current, ...config }));
   const [lawCategory, setLawCategory] = useState(ALL_LAWS_CATEGORY);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const categoryRef = useRef<HTMLDivElement>(null);
@@ -259,13 +264,39 @@ export function ChatInterface() {
           category: lawCategory,
           temperature: advancedConfig.temperature,
           maxTokens: advancedConfig.maxTokens,
-          topK: advancedConfig.topK
+          topK: advancedConfig.topK,
+          candidateK: aiSettings.candidateK,
+          cacheThreshold: aiSettings.cacheThreshold,
+          maxSubqueries: aiSettings.maxSubqueries,
+          historyMessages: aiSettings.historyMessages,
+          contextTokenBudget: aiSettings.contextTokenBudget,
+          maxCitations: aiSettings.maxCitations,
+          llmTimeout: aiSettings.llmTimeout,
+          streaming: aiSettings.streaming,
+          useHistoryForRewriter: aiSettings.useHistoryForRewriter,
+          enableQueryRewriter: aiSettings.enableQueryRewriter,
+          enableReranker: aiSettings.enableReranker,
+          enableSemanticCache: aiSettings.enableSemanticCache,
+          enableMemory: aiSettings.enableMemory
         }),
         signal: controller.signal,
       });
 
       if (!response.ok || !response.body) {
-        throw new Error('Stream không khả dụng');
+        throw new Error('Phản hồi từ máy chủ không khả dụng');
+      }
+
+      if (!aiSettings.streaming) {
+        const data = await response.json();
+        accumulated = data.text || '';
+        contextUsed = (data.contextUsed || []).slice(0, aiSettings.maxCitations);
+        addMessage({
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: accumulated || 'Không có phản hồi từ AI.',
+          contextUsed,
+        });
+        return;
       }
 
       const reader = response.body.getReader();
@@ -293,7 +324,7 @@ export function ChatInterface() {
             } else if (event.type === 'token') {
               accumulated += event.text;
               
-              const citedIds = Array.from(accumulated.matchAll(/<cite\s+id=["']([^"']+)["']>/g)).map(m => m[1]);
+              const citedIds = Array.from(accumulated.matchAll(/<cite\s+id=["']([^"']+)["']>/g)).map(m => m[1]).slice(0, aiSettings.maxCitations);
               if (citedIds.length > 0) {
                 const filteredContext = fullContext.filter(ctx => 
                   ctx.metadata?.id && citedIds.includes(ctx.metadata.id as string)

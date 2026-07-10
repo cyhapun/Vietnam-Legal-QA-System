@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 function getBackendUrl(reqUrl: string): string {
   let base = process.env.BACKEND_URL || 'http://localhost:8000';
@@ -13,10 +13,11 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const backendBase = getBackendUrl(req.url);
-    const streamUrl = `${backendBase}/chat/stream`;
-    console.log(`[Proxy Stream] -> ${streamUrl}`);
+    const streaming = body.streaming !== false;
+    const targetUrl = `${backendBase}${streaming ? '/chat/stream' : '/chat'}`;
+    console.log(`[Proxy Chat] -> ${targetUrl}`);
 
-    const backendRes = await fetch(streamUrl, {
+    const backendRes = await fetch(targetUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
@@ -25,9 +26,16 @@ export async function POST(req: NextRequest) {
     if (!backendRes.ok) {
       const err = await backendRes.json().catch(() => ({}));
       return NextResponse.json(
-        { error: 'Backend loi', details: err.detail || `Status: ${backendRes.status}` },
-        { status: backendRes.status }
+        { error: 'Backend error', details: err.detail || `Status: ${backendRes.status}` },
+        { status: backendRes.status },
       );
+    }
+
+    if (!streaming) {
+      return new NextResponse(await backendRes.arrayBuffer(), {
+        status: backendRes.status,
+        headers: { 'Content-Type': backendRes.headers.get('content-type') || 'application/json' },
+      });
     }
 
     return new NextResponse(backendRes.body, {
@@ -36,15 +44,15 @@ export async function POST(req: NextRequest) {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
         'X-Accel-Buffering': 'no',
-        'Connection': 'keep-alive',
+        Connection: 'keep-alive',
       },
     });
-
-  } catch (error: any) {
-    console.error('[Proxy Stream Error]', error);
+  } catch (error: unknown) {
+    const details = error instanceof Error ? error.message : 'Unknown proxy error';
+    console.error('[Proxy Chat Error]', error);
     return NextResponse.json(
-      { error: 'Loi ket noi Backend', details: error.message },
-      { status: 500 }
+      { error: 'Backend connection error', details },
+      { status: 502 },
     );
   }
 }

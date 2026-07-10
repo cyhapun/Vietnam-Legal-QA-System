@@ -11,6 +11,7 @@ from app.utils.logging import setup_logger
 logger = setup_logger("vietlaw.api.documents")
 router = APIRouter()
 
+@router.get("")
 @router.get("/")
 async def list_documents():
     """Lấy danh sách tất cả các tài liệu đã được nạp."""
