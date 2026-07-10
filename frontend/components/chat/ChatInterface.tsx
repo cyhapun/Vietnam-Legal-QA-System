@@ -269,6 +269,11 @@ export function ChatInterface() {
           cacheThreshold: aiSettings.cacheThreshold,
           maxSubqueries: aiSettings.maxSubqueries,
           historyMessages: aiSettings.historyMessages,
+          contextTokenBudget: aiSettings.contextTokenBudget,
+          maxCitations: aiSettings.maxCitations,
+          llmTimeout: aiSettings.llmTimeout,
+          streaming: aiSettings.streaming,
+          useHistoryForRewriter: aiSettings.useHistoryForRewriter,
           enableQueryRewriter: aiSettings.enableQueryRewriter,
           enableReranker: aiSettings.enableReranker,
           enableSemanticCache: aiSettings.enableSemanticCache,
@@ -278,7 +283,20 @@ export function ChatInterface() {
       });
 
       if (!response.ok || !response.body) {
-        throw new Error('Stream không khả dụng');
+        throw new Error('Phản hồi từ máy chủ không khả dụng');
+      }
+
+      if (!aiSettings.streaming) {
+        const data = await response.json();
+        accumulated = data.text || '';
+        contextUsed = (data.contextUsed || []).slice(0, aiSettings.maxCitations);
+        addMessage({
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: accumulated || 'Không có phản hồi từ AI.',
+          contextUsed,
+        });
+        return;
       }
 
       const reader = response.body.getReader();
@@ -306,7 +324,7 @@ export function ChatInterface() {
             } else if (event.type === 'token') {
               accumulated += event.text;
               
-              const citedIds = Array.from(accumulated.matchAll(/<cite\s+id=["']([^"']+)["']>/g)).map(m => m[1]);
+              const citedIds = Array.from(accumulated.matchAll(/<cite\s+id=["']([^"']+)["']>/g)).map(m => m[1]).slice(0, aiSettings.maxCitations);
               if (citedIds.length > 0) {
                 const filteredContext = fullContext.filter(ctx => 
                   ctx.metadata?.id && citedIds.includes(ctx.metadata.id as string)
