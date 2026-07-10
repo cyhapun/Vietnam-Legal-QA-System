@@ -8,10 +8,10 @@ import { ChatMessage } from './ChatMessage';
 import { Sidebar } from './Sidebar';
 import { useChatSessions } from '@/hooks/use-chat-sessions';
 import { useClickOutside } from '@/hooks/use-click-outside';
+import { useAISettings } from '@/hooks/use-ai-settings';
 import {
   ALL_LAWS_CATEGORY,
   LAW_CATEGORIES,
-  DEFAULT_MODEL,
 } from '@/lib/constants';
 import type { Message, DocumentChunk } from '@/lib/types';
 
@@ -40,12 +40,17 @@ export function ChatInterface() {
 
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [model, setModel] = useState(DEFAULT_MODEL);
-  const [advancedConfig, setAdvancedConfig] = useState<AdvancedConfig>({
-    temperature: 0.3,
-    maxTokens: 1024,
-    topK: 5,
-  });
+  const { settings: aiSettings, setSettings: setAISettings } = useAISettings();
+  const model = aiSettings.model;
+  const advancedConfig: AdvancedConfig = {
+    temperature: aiSettings.temperature,
+    maxTokens: aiSettings.maxTokens,
+    topK: aiSettings.topK,
+  };
+  const setModel = (nextModel: string) =>
+    setAISettings(current => ({ ...current, model: nextModel }));
+  const setAdvancedConfig = (config: AdvancedConfig) =>
+    setAISettings(current => ({ ...current, ...config }));
   const [lawCategory, setLawCategory] = useState(ALL_LAWS_CATEGORY);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const categoryRef = useRef<HTMLDivElement>(null);
