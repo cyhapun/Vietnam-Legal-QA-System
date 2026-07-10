@@ -6,15 +6,11 @@ import {
   Check,
   Database,
   FileCheck2,
-  History,
   RefreshCw,
   RotateCcw,
   Save,
   Search,
   ShieldCheck,
-  SlidersHorizontal,
-  Sparkles,
-  Zap,
 } from 'lucide-react';
 import { AI_MODELS } from '@/lib/constants';
 import { AISettings, DEFAULT_AI_SETTINGS } from '@/lib/ai-settings';
@@ -24,38 +20,14 @@ const SYSTEM_FEATURES = [
   {
     icon: Search,
     title: 'Truy xuất tài liệu',
-    status: 'Hybrid Search',
-    description: 'Kết hợp tìm kiếm ngữ nghĩa và từ khóa, sau đó lọc theo lĩnh vực pháp luật.',
-  },
-  {
-    icon: SlidersHorizontal,
-    title: 'Reranking',
     status: 'Theo cấu hình backend',
-    description: 'Sắp xếp lại các điều khoản theo mức độ liên quan trước khi gửi cho mô hình.',
-  },
-  {
-    icon: Sparkles,
-    title: 'Query Rewriter',
-    status: 'Theo cấu hình backend',
-    description: 'Chuẩn hóa câu hỏi và có thể tách câu hỏi phức tạp thành nhiều truy vấn pháp lý.',
+    description: 'FAISS hoặc Qdrant/Hybrid Search được chọn khi backend khởi động; bước search luôn cần để lấy căn cứ.',
   },
   {
     icon: FileCheck2,
     title: 'Trích dẫn pháp lý',
     status: 'Bắt buộc',
     description: 'Chỉ hiển thị các căn cứ được mô hình trích dẫn bằng ID điều khoản hợp lệ.',
-  },
-  {
-    icon: History,
-    title: 'Bộ nhớ hội thoại',
-    status: 'Đang bật',
-    description: 'Sử dụng lịch sử gần nhất và bản tóm tắt phiên để giữ ngữ cảnh trao đổi.',
-  },
-  {
-    icon: Zap,
-    title: 'Semantic Cache',
-    status: 'Theo cấu hình backend',
-    description: 'Tái sử dụng câu trả lời cho truy vấn tương đồng và tự vô hiệu hóa khi tài liệu đổi.',
   },
   {
     icon: Database,
@@ -215,9 +187,40 @@ export default function SystemSettingsTab() {
         </div>
       ) : (
         <div className="space-y-4">
+          <section className="rounded-2xl border border-gray-200 dark:border-slate-800 p-5">
+            <div className="mb-4">
+              <h3 className="text-sm font-bold text-gray-900 dark:text-white">Bật/tắt từng bước pipeline</h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Mỗi lựa chọn được gửi theo từng câu hỏi. Bước bị tắt sẽ không gọi model hoặc dịch vụ tương ứng.</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <ToggleSetting
+                label="Query Rewriter"
+                description="Viết lại và tách câu hỏi trước khi tìm kiếm; có thể thêm một lần gọi LLM."
+                enabled={draft.enableQueryRewriter}
+                onChange={enabled => updateDraft('enableQueryRewriter', enabled)}
+              />
+              <ToggleSetting
+                label="Reranker"
+                description="Chấm điểm lại tài liệu bằng reranker; tắt sẽ giữ thứ tự của search."
+                enabled={draft.enableReranker}
+                onChange={enabled => updateDraft('enableReranker', enabled)}
+              />
+              <ToggleSetting
+                label="Semantic Cache"
+                description="Tìm câu hỏi tương tự trước retrieval; tắt sẽ bỏ lượt embedding kiểm tra cache."
+                enabled={draft.enableSemanticCache}
+                onChange={enabled => updateDraft('enableSemanticCache', enabled)}
+              />
+              <ToggleSetting
+                label="Bộ nhớ hội thoại"
+                description="Đọc và cập nhật bản tóm tắt phiên; cập nhật có thể gọi thêm một LLM chạy nền."
+                enabled={draft.enableMemory}
+                onChange={enabled => updateDraft('enableMemory', enabled)}
+              />
+            </div>
+          </section>
           <div className="rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 p-4 text-xs leading-5 text-amber-800 dark:text-amber-300">
-            Các mục dưới đây thuộc cấu hình vận hành phía backend. Chúng được hiển thị để minh bạch kiến trúc và không thể thay đổi từ trình duyệt vì có thể yêu cầu khởi tạo lại model, index hoặc dịch vụ.
-          </div>
+            Các cấu hình hạ tầng bên dưới vẫn chỉ đọc vì thay đổi chúng cần khởi tạo lại model, index hoặc dịch vụ. API key và thông tin kết nối không được gửi xuống trình duyệt.</div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {SYSTEM_FEATURES.map(feature => {
               const Icon = feature.icon;
@@ -243,6 +246,32 @@ export default function SystemSettingsTab() {
   );
 }
 
+interface ToggleSettingProps {
+  label: string;
+  description: string;
+  enabled: boolean;
+  onChange: (enabled: boolean) => void;
+}
+
+function ToggleSetting({ label, description, enabled, onChange }: ToggleSettingProps) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={enabled}
+      onClick={() => onChange(!enabled)}
+      className={`flex items-start justify-between gap-4 rounded-xl border p-4 text-left transition-all ${enabled ? 'border-indigo-300 bg-indigo-50/50 dark:border-indigo-700 dark:bg-indigo-500/10' : 'border-gray-200 dark:border-slate-700'}`}
+    >
+      <div>
+        <p className="text-sm font-semibold text-gray-900 dark:text-white">{label}</p>
+        <p className="text-xs leading-5 text-gray-500 dark:text-gray-400 mt-1">{description}</p>
+      </div>
+      <span className={`relative mt-0.5 h-6 w-11 shrink-0 rounded-full transition-colors ${enabled ? 'bg-indigo-600' : 'bg-gray-300 dark:bg-slate-600'}`}>
+        <span className={`absolute top-1 h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${enabled ? 'translate-x-6' : 'translate-x-1'}`} />
+      </span>
+    </button>
+  );
+}
 interface RangeSettingProps {
   label: string;
   value: number;
