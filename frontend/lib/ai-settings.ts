@@ -9,6 +9,11 @@ export interface AISettings {
   cacheThreshold: number;
   maxSubqueries: number;
   historyMessages: number;
+  contextTokenBudget: number;
+  maxCitations: number;
+  llmTimeout: number;
+  streaming: boolean;
+  useHistoryForRewriter: boolean;
   enableQueryRewriter: boolean;
   enableReranker: boolean;
   enableSemanticCache: boolean;
@@ -27,6 +32,11 @@ export const DEFAULT_AI_SETTINGS: AISettings = {
   cacheThreshold: 0.95,
   maxSubqueries: 3,
   historyMessages: 4,
+  contextTokenBudget: 6000,
+  maxCitations: 5,
+  llmTimeout: 300,
+  streaming: true,
+  useHistoryForRewriter: true,
   enableQueryRewriter: true,
   enableReranker: true,
   enableSemanticCache: true,
@@ -46,6 +56,11 @@ export function normalizeAISettings(value: Partial<AISettings> | null | undefine
     cacheThreshold: clamp(Number(value?.cacheThreshold ?? DEFAULT_AI_SETTINGS.cacheThreshold), 0.8, 0.99),
     maxSubqueries: Math.round(clamp(Number(value?.maxSubqueries ?? DEFAULT_AI_SETTINGS.maxSubqueries), 1, 5)),
     historyMessages: Math.round(clamp(Number(value?.historyMessages ?? DEFAULT_AI_SETTINGS.historyMessages), 0, 10)),
+    contextTokenBudget: Math.round(clamp(Number(value?.contextTokenBudget ?? DEFAULT_AI_SETTINGS.contextTokenBudget), 1000, 16000)),
+    maxCitations: Math.round(clamp(Number(value?.maxCitations ?? DEFAULT_AI_SETTINGS.maxCitations), 1, 10)),
+    llmTimeout: Math.round(clamp(Number(value?.llmTimeout ?? DEFAULT_AI_SETTINGS.llmTimeout), 30, 300)),
+    streaming: value?.streaming ?? DEFAULT_AI_SETTINGS.streaming,
+    useHistoryForRewriter: value?.useHistoryForRewriter ?? DEFAULT_AI_SETTINGS.useHistoryForRewriter,
     enableQueryRewriter: value?.enableQueryRewriter ?? DEFAULT_AI_SETTINGS.enableQueryRewriter,
     enableReranker: value?.enableReranker ?? DEFAULT_AI_SETTINGS.enableReranker,
     enableSemanticCache: value?.enableSemanticCache ?? DEFAULT_AI_SETTINGS.enableSemanticCache,
