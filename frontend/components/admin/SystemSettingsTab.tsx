@@ -215,6 +215,36 @@ export default function SystemSettingsTab() {
               description="Số tin nhắn gần nhất được đưa vào ngữ cảnh và query rewriter."
               onChange={value => updateDraft('historyMessages', value)}
             />
+            <RangeSetting
+              label="Context Token Budget"
+              value={draft.contextTokenBudget}
+              displayValue={String(draft.contextTokenBudget)}
+              min={1000}
+              max={16000}
+              step={500}
+              description="Ngân sách token ước lượng cho toàn bộ căn cứ đưa vào LLM."
+              onChange={value => updateDraft('contextTokenBudget', value)}
+            />
+            <RangeSetting
+              label="Số căn cứ tối đa"
+              value={draft.maxCitations}
+              displayValue={String(draft.maxCitations)}
+              min={1}
+              max={10}
+              step={1}
+              description="Giới hạn số căn cứ pháp lý trả về và hiển thị trên giao diện."
+              onChange={value => updateDraft('maxCitations', value)}
+            />
+            <RangeSetting
+              label="LLM Timeout (giây)"
+              value={draft.llmTimeout}
+              displayValue={String(draft.llmTimeout)}
+              min={30}
+              max={300}
+              step={30}
+              description="Thời gian tối đa chờ API hoặc Ollama sinh câu trả lời."
+              onChange={value => updateDraft('llmTimeout', value)}
+            />
           </section>
 
           <div className="flex items-start gap-3 rounded-xl bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 p-4">
@@ -255,6 +285,18 @@ export default function SystemSettingsTab() {
                 description="Đọc và cập nhật bản tóm tắt phiên; cập nhật có thể gọi thêm một LLM chạy nền."
                 enabled={draft.enableMemory}
                 onChange={enabled => updateDraft('enableMemory', enabled)}
+              />
+              <ToggleSetting
+                label="Streaming"
+                description="Hiển thị token ngay khi model sinh; tắt sẽ chờ câu trả lời JSON hoàn chỉnh."
+                enabled={draft.streaming}
+                onChange={enabled => updateDraft('streaming', enabled)}
+              />
+              <ToggleSetting
+                label="Dùng lịch sử cho Rewriter"
+                description="Cho phép query rewriter đọc cửa sổ lịch sử; độc lập với lịch sử gửi cho LLM trả lời."
+                enabled={draft.useHistoryForRewriter}
+                onChange={enabled => updateDraft('useHistoryForRewriter', enabled)}
               />
             </div>
           </section>
