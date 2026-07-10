@@ -25,6 +25,11 @@ class ChatRequest(BaseModel):
     cacheThreshold: float = Field(default=0.95, ge=0.8, le=0.99)
     maxSubqueries: int = Field(default=3, ge=1, le=5)
     historyMessages: int = Field(default=4, ge=0, le=10)
+    contextTokenBudget: int = Field(default=6000, ge=1000, le=16000)
+    maxCitations: int = Field(default=5, ge=1, le=10)
+    llmTimeout: int = Field(default=300, ge=30, le=300)
+    streaming: bool = True
+    useHistoryForRewriter: bool = True
     enableQueryRewriter: bool = True
     enableReranker: bool = True
     enableSemanticCache: bool = True
