@@ -21,6 +21,10 @@ class ChatRequest(BaseModel):
     temperature: Optional[float] = None
     maxTokens: Optional[int] = None
     topK: Optional[int] = None
+    enableQueryRewriter: bool = True
+    enableReranker: bool = True
+    enableSemanticCache: bool = True
+    enableMemory: bool = True
 
 
 class ChatResponse(BaseModel):
