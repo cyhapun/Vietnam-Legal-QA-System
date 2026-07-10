@@ -46,7 +46,7 @@ async def chat_endpoint(request: ChatRequest):
         from app.services.storage import get_session_summary
         from app.services.memory_manager import summarize_session
 
-        session_data = get_session_summary(session_id) if session_id != "unknown" else None
+        session_data = get_session_summary(session_id) if request.enableMemory and session_id != "unknown" else None
         summary = session_data.get("summary", "") if session_data else ""
 
         history_lines = []
@@ -74,11 +74,14 @@ async def chat_endpoint(request: ChatRequest):
         recent_history_str = "\n".join(recent_history_lines) if recent_history_lines else ""
         
         # Gọi rewriter trước để lấy rewritten query
-        domain, queries = await asyncio.to_thread(pipeline.rewriter.rewrite, last_message, recent_history_str)
-        logger.info("Rewriter domain: %s, queries: %s", domain, queries)
+        if request.enableQueryRewriter:
+            domain, queries = await asyncio.to_thread(pipeline.rewriter.rewrite, last_message, recent_history_str)
+        else:
+            domain, queries = "legal", [last_message]
+        logger.info("Rewriter enabled=%s, domain=%s, queries=%s", request.enableQueryRewriter, domain, queries)
         
         query_vector = None
-        if domain != "chitchat":
+        if request.enableSemanticCache and domain != "chitchat":
             rewritten_query = queries[0] if queries else last_message
             embedding = _get_embedding()
             if embedding:
@@ -102,7 +105,8 @@ async def chat_endpoint(request: ChatRequest):
             category=request.category,
             rerank_top_k=request.topK,
             domain=domain,
-            queries=queries
+            queries=queries,
+            enable_reranker=request.enableReranker
         )
         frontend_context = pipeline.format_for_frontend(retrieved_docs)
 
@@ -164,7 +168,7 @@ async def chat_endpoint(request: ChatRequest):
         )
         
         # Summarize memory asynchronously
-        if session_id != "unknown":
+        if request.enableMemory and session_id != "unknown":
             asyncio.create_task(summarize_session(session_id, last_message, output_text))
 
         return {
@@ -192,7 +196,7 @@ async def chat_stream_endpoint(request: ChatRequest):
             from app.services.storage import get_session_summary
             from app.services.memory_manager import summarize_session
 
-            session_data = get_session_summary(session_id) if session_id != "unknown" else None
+            session_data = get_session_summary(session_id) if request.enableMemory and session_id != "unknown" else None
             summary = session_data.get("summary", "") if session_data else ""
 
             history_lines = []
@@ -221,11 +225,14 @@ async def chat_stream_endpoint(request: ChatRequest):
                 recent_history_lines.append(f"{role_name}: {msg.content}")
             recent_history_str = "\n".join(recent_history_lines) if recent_history_lines else ""
             
-            domain, queries = await asyncio.to_thread(pipeline.rewriter.rewrite, last_message, recent_history_str)
-            logger.info("Stream Rewriter domain: %s, queries: %s", domain, queries)
+            if request.enableQueryRewriter:
+                domain, queries = await asyncio.to_thread(pipeline.rewriter.rewrite, last_message, recent_history_str)
+            else:
+                domain, queries = "legal", [last_message]
+            logger.info("Stream rewriter enabled=%s, domain=%s, queries=%s", request.enableQueryRewriter, domain, queries)
             
             query_vector = None
-            if domain != "chitchat":
+            if request.enableSemanticCache and domain != "chitchat":
                 rewritten_query = queries[0] if queries else last_message
                 embedding = _get_embedding()
                 if embedding:
@@ -253,7 +260,8 @@ async def chat_stream_endpoint(request: ChatRequest):
                 category=request.category,
                 rerank_top_k=request.topK,
                 domain=domain,
-                queries=queries
+                queries=queries,
+                enable_reranker=request.enableReranker
             )
             frontend_context = pipeline.format_for_frontend(retrieved_docs)
 
@@ -297,7 +305,7 @@ async def chat_stream_endpoint(request: ChatRequest):
             )
 
             # Summarize memory asynchronously
-            if session_id != "unknown":
+            if request.enableMemory and session_id != "unknown":
                 asyncio.create_task(summarize_session(session_id, last_message, accumulated_text))
 
             yield _sse({"type": "done"})
