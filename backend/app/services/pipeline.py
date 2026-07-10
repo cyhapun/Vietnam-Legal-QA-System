@@ -75,6 +75,7 @@ class RAGPipeline:
         domain: Optional[str] = None,
         queries: Optional[List[str]] = None,
         enable_reranker: bool = True,
+        context_token_budget: Optional[int] = None,
     ) -> Tuple[List[Document], str]:
         """Thực hiện full retrieval pipeline: Search → Rerank → Context Build.
 
@@ -129,8 +130,8 @@ class RAGPipeline:
             domain, len(queries), retrieved_count, dedup_count, final_count
         )
 
-        # Step 3: Build context
-        context = self.context_builder.build(docs)
+        # Step 3: Build context within the configured token budget.
+        docs, context = self._build_context_with_budget(docs, context_token_budget)
 
         return docs, context
 
@@ -143,6 +144,7 @@ class RAGPipeline:
         domain: Optional[str] = None,
         queries: Optional[List[str]] = None,
         enable_reranker: bool = True,
+        context_token_budget: Optional[int] = None,
     ) -> Tuple[List[Document], str]:
         """Async version của retrieve — dùng trong FastAPI endpoint."""
         final_k = rerank_top_k or RETRIEVER_K
@@ -188,11 +190,40 @@ class RAGPipeline:
             domain, len(queries), retrieved_count, dedup_count, final_count
         )
 
-        # Step 3: Build context
-        context = self.context_builder.build(docs)
+        # Step 3: Build context within the configured token budget.
+        docs, context = self._build_context_with_budget(docs, context_token_budget)
 
         return docs, context
 
+    def _build_context_with_budget(
+        self,
+        docs: List[Document],
+        token_budget: Optional[int],
+    ) -> Tuple[List[Document], str]:
+        """Keep complete legal chunks while approximating four characters per token."""
+        if not docs or token_budget is None:
+            return docs, self.context_builder.build(docs)
+
+        selected: List[Document] = []
+        context = ""
+        for doc in docs:
+            candidate_docs = [*selected, doc]
+            candidate_context = self.context_builder.build(candidate_docs)
+            estimated_tokens = max(1, (len(candidate_context) + 3) // 4)
+            if estimated_tokens <= token_budget or not selected:
+                selected = candidate_docs
+                context = candidate_context
+            else:
+                break
+
+        logger.info(
+            "Context budget %d tokens kept %d/%d documents (estimated=%d)",
+            token_budget,
+            len(selected),
+            len(docs),
+            max(1, (len(context) + 3) // 4) if context else 0,
+        )
+        return selected, context
     def format_for_frontend(self, docs: List[Document]) -> List[Dict[str, Any]]:
         """Delegate format cho context_builder."""
         return self.context_builder.format_for_frontend(docs)
