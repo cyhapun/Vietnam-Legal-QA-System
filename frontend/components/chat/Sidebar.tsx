@@ -55,14 +55,14 @@ export function Sidebar({
       <div className="h-14 flex items-center justify-between px-4 mt-1 flex-shrink-0">
         <div className="flex items-center gap-2.5">
           <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20"
-            style={{ background: 'linear-gradient(135deg, #4F46E5, #2563EB)' }}
+            className="w-8 h-8 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20"
+            style={{ background: 'linear-gradient(135deg, #2563EB, #1D4ED8)' }}
           >
             <Scale className="w-4 h-4 text-white" />
           </div>
           <div>
             <span className="text-sm font-bold text-gray-800 dark:text-white tracking-tight">VietLaw AI</span>
-            <span className="block text-[9px] font-medium text-indigo-600 dark:text-indigo-400 uppercase tracking-widest leading-none mt-0.5">Legal Assistant</span>
+            <span className="block text-[9px] font-medium text-blue-600 dark:text-blue-400 uppercase tracking-widest leading-none mt-0.5">Legal Assistant</span>
           </div>
         </div>
         <button
@@ -78,7 +78,7 @@ export function Sidebar({
       <div className="px-3 py-2 flex-shrink-0 space-y-2">
         <button
           onClick={onNewChat}
-          className="w-full flex items-center justify-center gap-2 rounded-xl py-2.5 px-3 transition-all duration-200 border border-indigo-500/25 bg-indigo-50/60 dark:bg-[rgba(79,70,229,0.07)] text-indigo-600 dark:text-indigo-300 hover:text-indigo-700 dark:hover:text-indigo-100 hover:border-indigo-400 dark:hover:border-indigo-400/50 hover:bg-indigo-100 dark:hover:bg-indigo-500/10 active:scale-98"
+          className="w-full flex items-center justify-center gap-2 rounded-xl py-2.5 px-3 transition-all duration-200 border border-blue-500/25 bg-blue-50/60 dark:bg-[rgba(37,99,235,0.07)] text-blue-600 dark:text-blue-300 hover:text-blue-700 dark:hover:text-blue-100 hover:border-blue-400 dark:hover:border-blue-400/50 hover:bg-blue-100 dark:hover:bg-blue-500/10 active:scale-98"
         >
           <Plus className="w-4 h-4" />
           <span className="text-[13px] font-semibold">Đoạn chat mới</span>
@@ -108,7 +108,7 @@ export function Sidebar({
             placeholder="Tìm kiếm đoạn chat..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl py-2 pl-9 pr-3 text-[12.5px] text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:bg-white dark:focus:bg-white/10 transition-all"
+            className="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl py-2 pl-9 pr-3 text-[12.5px] text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-blue-400 dark:focus:border-blue-500/50 focus:bg-white dark:focus:bg-white/10 transition-all"
           />
         </div>
       </div>
@@ -140,17 +140,17 @@ export function Sidebar({
                     <div
                       key={session.id}
                       className={`group relative flex items-center px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-200 ${
-                        isActive ? 'sidebar-item-active' : 'hover:bg-gray-100 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                        isActive ? 'sidebar-item-active !border-l-0' : 'hover:bg-gray-100 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                       }`}
                       onClick={() => onSelectSession(session.id)}
                     >
                       <MessageSquare
                         className={`w-3.5 h-3.5 mr-2.5 flex-shrink-0 transition-colors ${
-                          isActive ? 'text-indigo-500 dark:text-indigo-400' : 'text-gray-400 dark:text-gray-600 group-hover:text-gray-600 dark:group-hover:text-gray-400'
+                          isActive ? 'text-blue-500 dark:text-blue-400' : 'text-gray-400 dark:text-gray-600 group-hover:text-gray-600 dark:group-hover:text-gray-400'
                         }`}
                       />
                       <div className="flex-1 truncate pr-6">
-                        <span className={`text-[12.5px] font-medium block truncate ${isActive ? 'text-indigo-700 dark:text-white' : ''}`}>
+                        <span className={`text-[12.5px] font-medium block truncate ${isActive ? 'text-blue-700 dark:text-white' : ''}`}>
                           {session.title}
                         </span>
                       </div>
@@ -177,7 +177,7 @@ export function Sidebar({
         </p>
         <button
           onClick={() => setTheme(currentTheme === 'dark' ? 'light' : 'dark')}
-          className="p-1.5 rounded-lg text-gray-500 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-500/10 transition-all"
+          className="p-1.5 rounded-lg text-gray-500 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/10 transition-all"
           title="Chuyển chế độ giao diện"
         >
           {currentTheme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
