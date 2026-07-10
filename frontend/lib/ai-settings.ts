@@ -5,6 +5,10 @@ export interface AISettings {
   temperature: number;
   maxTokens: number;
   topK: number;
+  enableQueryRewriter: boolean;
+  enableReranker: boolean;
+  enableSemanticCache: boolean;
+  enableMemory: boolean;
 }
 
 export const AI_SETTINGS_STORAGE_KEY = 'vietlaw_ai_settings';
@@ -15,6 +19,10 @@ export const DEFAULT_AI_SETTINGS: AISettings = {
   temperature: 0.3,
   maxTokens: 1024,
   topK: 5,
+  enableQueryRewriter: true,
+  enableReranker: true,
+  enableSemanticCache: true,
+  enableMemory: true,
 };
 
 const clamp = (value: number, min: number, max: number) =>
@@ -26,6 +34,10 @@ export function normalizeAISettings(value: Partial<AISettings> | null | undefine
     temperature: clamp(Number(value?.temperature ?? DEFAULT_AI_SETTINGS.temperature), 0, 1),
     maxTokens: Math.round(clamp(Number(value?.maxTokens ?? DEFAULT_AI_SETTINGS.maxTokens), 100, 4000)),
     topK: Math.round(clamp(Number(value?.topK ?? DEFAULT_AI_SETTINGS.topK), 1, 20)),
+    enableQueryRewriter: value?.enableQueryRewriter ?? DEFAULT_AI_SETTINGS.enableQueryRewriter,
+    enableReranker: value?.enableReranker ?? DEFAULT_AI_SETTINGS.enableReranker,
+    enableSemanticCache: value?.enableSemanticCache ?? DEFAULT_AI_SETTINGS.enableSemanticCache,
+    enableMemory: value?.enableMemory ?? DEFAULT_AI_SETTINGS.enableMemory,
   };
 }
 
