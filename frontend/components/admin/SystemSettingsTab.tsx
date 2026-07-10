@@ -167,7 +167,16 @@ export default function SystemSettingsTab() {
               onChange={value => updateDraft('maxTokens', value)}
             />
             <RangeSetting
-              label="Số đoạn đưa cho AI (Top K)"
+              label="Candidate K"
+              value={draft.candidateK}
+              displayValue={String(draft.candidateK)}
+              min={10}
+              max={100}
+              step={5}
+              description="Số đoạn ứng viên được search lấy trước khi reranking."
+              onChange={value => updateDraft('candidateK', value)}
+            />            <RangeSetting
+              label="Rerank Top K"
               value={draft.topK}
               displayValue={String(draft.topK)}
               min={1}
@@ -175,6 +184,36 @@ export default function SystemSettingsTab() {
               step={1}
               description="Số điều khoản sau truy xuất/reranking được gửi cho mô hình."
               onChange={value => updateDraft('topK', value)}
+            />
+            <RangeSetting
+              label="Cache Similarity Threshold"
+              value={draft.cacheThreshold}
+              displayValue={draft.cacheThreshold.toFixed(2)}
+              min={0.8}
+              max={0.99}
+              step={0.01}
+              description="Độ tương đồng tối thiểu để dùng lại câu trả lời cache."
+              onChange={value => updateDraft('cacheThreshold', value)}
+            />
+            <RangeSetting
+              label="Số truy vấn con tối đa"
+              value={draft.maxSubqueries}
+              displayValue={String(draft.maxSubqueries)}
+              min={1}
+              max={5}
+              step={1}
+              description="Giới hạn số query sau bước viết lại để kiểm soát số lần search/embedding."
+              onChange={value => updateDraft('maxSubqueries', value)}
+            />
+            <RangeSetting
+              label="Số tin nhắn lịch sử"
+              value={draft.historyMessages}
+              displayValue={String(draft.historyMessages)}
+              min={0}
+              max={10}
+              step={1}
+              description="Số tin nhắn gần nhất được đưa vào ngữ cảnh và query rewriter."
+              onChange={value => updateDraft('historyMessages', value)}
             />
           </section>
 
