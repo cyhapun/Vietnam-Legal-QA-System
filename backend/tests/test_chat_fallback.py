@@ -20,9 +20,10 @@ class DummyPipeline:
         return [{"id": doc.metadata["id"]} for doc in docs]
 
 
-def test_chat_returns_fallback_when_llm_is_unavailable(monkeypatch):
+def test_chat_returns_http_error_when_llm_is_unavailable(monkeypatch):
     monkeypatch.setattr("app.api.chat.get_pipeline", lambda: DummyPipeline())
-    monkeypatch.setattr("app.api.chat.get_llm", lambda model: (_ for _ in ()).throw(RuntimeError("LLM unavailable")))
+    monkeypatch.setattr("app.api.chat.get_llm", lambda **kwargs: (_ for _ in ()).throw(RuntimeError("LLM unavailable")))
+    monkeypatch.setattr("app.services.pipeline._get_embedding", lambda: None)
 
     with TestClient(app) as client:
         response = client.post(
@@ -34,7 +35,6 @@ def test_chat_returns_fallback_when_llm_is_unavailable(monkeypatch):
             },
         )
 
-    assert response.status_code == 200
+    assert response.status_code == 503
     body = response.json()
-    assert "text" in body
-    assert body["contextUsed"] == [{"id": "1"}]
+    assert "dịch vụ suy luận" in body["detail"].lower()

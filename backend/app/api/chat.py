@@ -185,6 +185,8 @@ async def chat_endpoint(request: ChatRequest):
             "contextUsed": frontend_context
         }
 
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error("Loi xu ly chat: %s", str(e))
         traceback.print_exc()
