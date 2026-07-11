@@ -54,7 +54,8 @@ export const LAW_CATEGORIES = [
 // Danh sách model AI hỗ trợ
 export const AI_MODELS: AIModel[] = [
   { id: 'Qwen/Qwen2.5-7B-Instruct', name: 'Qwen 2.5', fullName: 'Qwen2.5 7B' },
-  { id: 'google/gemma-4-31B-it', name: 'Gemma 4', fullName: 'Gemma 4 31B' },
+  { id: 'gemini-3.1-flash-lite', name: 'Gemini 3.1 Lite', fullName: 'Gemini 3.1 Flash-Lite' },
+  { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Lite', fullName: 'Gemini 2.5 Flash-Lite' },
   { id: 'meta-llama/Llama-3.1-8B-Instruct', name: 'Llama 3.1', fullName: 'Llama 3.1 8B' },
   { id: 'deepseek-ai/DeepSeek-R1-Distill-Llama-8B', name: 'DeepSeek R1', fullName: 'DeepSeek R1 8B' },
 ];
