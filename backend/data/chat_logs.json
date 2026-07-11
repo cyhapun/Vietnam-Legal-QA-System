@@ -40,5 +40,40 @@
     "user_message": "Câu hỏi mẫu",
     "ai_response": "Hiện tại hệ thống chưa thể gọi mô hình sinh câu trả lời, nhưng đã tìm thấy tài liệu liên quan. Vui lòng xem contextUsed để tham khảo.",
     "timestamp": "2026-07-07T16:29:18.601008"
+  },
+  {
+    "id": "ac9792c1-e4ce-4aa2-a08f-61b974dc6585",
+    "session_id": "unknown",
+    "user_message": "Thủ tục cấp giấy chứng nhận quyền sử dụng đất (sổ đỏ) như thế nào?",
+    "ai_response": "Căn cứ theo quy định của Luật Đất đai năm 2013, thủ tục cấp Giấy chứng nhận quyền sử dụng đất (sổ đỏ) bao gồm các bước sau:\n\n1. **Đề nghị cấp giấy chứng nhận**:\n  - Chủ thể có yêu cầu được cấp Giấy chứng nhận quyền sử dụng đất phải gửi hồ sơ đề nghị đến cơ quan nhà nước có thẩm quyền.\n  - Hồ sơ đề nghị bao gồm các giấy tờ như: Bản sao hợp đồng mua bán, bản sao quyết định giao đất, thuê đất, bản sao Giấy chứng nhận trước đó (nếu có), bản cam kết của người xin cấp Giấy chứng nhận.\n\n2. **Kiểm tra hồ sơ**:\n  - Cơ quan nhà nước có thẩm quyền sẽ kiểm tra tính hợp pháp và đầy đủ của hồ sơ.\n  - Nếu hồ sơ không đầy đủ, cơ quan này sẽ thông báo cho chủ thể biết để bổ sung.\n\n3. **Xác minh thực tế**:\n  - Căn cứ theo <cite id=\"luat_dat_dai_124\">Khoản 1 Điều 124 Luật Đất đai năm 2013</cite>, cơ quan nhà nước có thẩm quyền sẽ tiến hành xác minh thực tế về tình trạng sử dụng đất.\n  - Nếu phát hiện vi phạm, việc cấp Giấy chứng nhận sẽ bị hoãn hoặc từ chối.\n\n4. **Cấp giấy chứng nhận**:\n  - Sau khi hoàn tất các bước trên và không phát hiện vi phạm, cơ quan nhà nước có thẩm quyền sẽ cấp Giấy chứng nhận quyền sử dụng đất cho chủ thể.\n  - Hồ sơ được lưu trữ tại cơ quan nhà nước có thẩm quyền.\n\nTrên đây là quy trình chung để cấp Giấy chứng nhận quyền sử dụng đất. Tuy nhiên, tùy thuộc vào từng trường hợp cụ thể và loại đất (đất nông nghiệp, đất phi nông nghiệp), các bước thực hiện có thể có sự khác biệt nhỏ.",
+    "timestamp": "2026-07-10T14:20:16.309221"
+  },
+  {
+    "id": "2c957eea-3023-4fba-960b-5ebbb7f33648",
+    "session_id": "unknown",
+    "user_message": "Giải thích đơn giản hơn với ví dụ thực tế",
+    "ai_response": "Dựa trên quy định của Luật Đất đai năm 2013, tôi sẽ giải thích thủ tục cấp Giấy chứng nhận quyền sử dụng đất (sổ đỏ) một cách đơn giản và kèm theo ví dụ:\n\n### Bước 1: Đề nghị cấp giấy chứng nhận\n- **Ví dụ**: Anh A muốn mua một lô đất từ chị B. Anh A cần chuẩn bị các giấy tờ như hợp đồng mua bán, bản sao Giấy chứng nhận quyền sử dụng đất của chị B (nếu có), và cam kết về việc mua bán.\n- **Hồ sơ gửi đến**: Cục Đất đai tỉnh nơi lô đất nằm.\n\n### Bước 2: Kiểm tra hồ sơ\n- **Ví dụ**: Cục Đất đai tỉnh nhận hồ sơ của anh A. Nếu thấy thiếu giấy tờ, họ sẽ thông báo cho anh A biết để bổ sung.\n- **Kết quả**: Hồ sơ đầy đủ thì được tiếp tục.\n\n### Bước 3: Xác minh thực tế\n- **Ví dụ**: Sau khi kiểm tra hồ sơ, Cục Đất đai tỉnh sẽ đi kiểm tra thực tế lô đất mà anh A mua. Họ sẽ xác nhận xem lô đất có bị tranh chấp hay vi phạm pháp luật không.\n- **Kết quả**: Nếu không phát hiện vấn đề, họ tiếp tục quy trình.\n\n### Bước 4: Cấp giấy chứng nhận\n- **Ví dụ**: Sau khi xác minh thực tế và không phát hiện vấn đề, Cục Đất đai tỉnh sẽ cấp Giấy chứng nhận quyền sử dụng đất cho anh A.\n- **Kết quả**: Anh A có thể sử dụng lô đất theo đúng quy định.\n\nTrên đây là quy trình đơn giản để cấp Giấy chứng nhận quyền sử dụng đất. Nếu bạn gặp vấn đề cụ thể, vui lòng cung cấp thêm thông tin để được hỗ trợ chi tiết hơn.",
+    "timestamp": "2026-07-10T14:24:39.317564"
+  },
+  {
+    "id": "d93724bd-4f5e-4023-b9d8-c41cd09389c9",
+    "session_id": "unknown",
+    "user_message": "đơn giản hơn nữa",
+    "ai_response": "Dựa trên quy định của Luật Đất đai năm 2013, tôi sẽ giải thích thủ tục cấp Giấy chứng nhận quyền sử dụng đất (sổ đỏ) một cách đơn giản:\n\n### Bước 1: Chuẩn bị hồ sơ\n- **Ví dụ**: Anh A mua lô đất từ chị B. Anh A cần chuẩn bị:\n  - Hợp đồng mua bán.\n  - Bản sao Giấy chứng nhận quyền sử dụng đất của chị B (nếu có).\n  - Cam kết về việc mua bán.\n\n### Bước 2: Gửi hồ sơ\n- **Ví dụ**: Anh A gửi hồ sơ đến Cục Đất đai tỉnh nơi lô đất nằm.\n\n### Bước 3: Kiểm tra hồ sơ\n- **Ví dụ**: Cục Đất đai tỉnh kiểm tra. Nếu thiếu giấy tờ, họ sẽ thông báo để bổ sung.\n- **Kết quả**: Hồ sơ đầy đủ thì được tiếp tục.\n\n### Bước 4: Xác minh thực tế\n- **Ví dụ**: Cục Đất đai tỉnh đi kiểm tra lô đất. Họ xác nhận xem có vấn đề gì không.\n- **Kết quả**: Nếu không phát hiện vấn đề, họ cấp Giấy chứng nhận quyền sử dụng đất.\n\n### Bước 5: Nhận Giấy chứng nhận\n- **Ví dụ**: Anh A nhận Giấy chứng nhận quyền sử dụng đất từ Cục Đất đai tỉnh.\n\nTrên đây là quy trình đơn giản để cấp Giấy chứng nhận quyền sử dụng đất.",
+    "timestamp": "2026-07-10T14:28:14.438397"
+  },
+  {
+    "id": "5fee8b7b-3731-441c-af1f-1300109bfb9d",
+    "session_id": "unknown",
+    "user_message": "Tài sản chung của vợ chồng bao gồm những gì theo Luật Hôn nhân gia đình?",
+    "ai_response": "Theo quy định tại <cite id=\"luat_hon_nhan_gia_dinh_456\">Điều 21, Luật hôn nhân và gia đình năm 2014</cite>, tài sản chung của vợ chồng bao gồm:\n\n1. Tài sản được tặng cho hoặc thừa kế trong thời kỳ hôn nhân.\n2. Tài sản mà mỗi bên tích luỹ được từ công việc kinh doanh, lao động, đầu tư, giao dịch mua bán hoặc từ các nguồn khác.\n3. Tài sản mà một bên nhận được từ bố mẹ, con cái, anh chị em ruột, dì, cô, chú, cậu, dượng, bà nội, bà ngoại, chú nội, cô nội, bác, dì ruột, cậu ruột, cháu ruột hoặc người thân thích khác.\n4. Tài sản mà một bên nhận được từ các nguồn khác do pháp luật quy định là tài sản chung.\n\nTuy nhiên, theo <cite id=\"luat_hon_nhan_gia_dinh_789\">Khoản 1 Điều 23</cite>, nếu vợ chồng có thỏa thuận về việc phân chia tài sản hoặc xác định tài sản riêng thì sẽ được tôn trọng.",
+    "timestamp": "2026-07-10T14:49:23.053244"
+  },
+  {
+    "id": "f7f2a659-30cc-4e77-b232-3962b0de8c90",
+    "session_id": "unknown",
+    "user_message": "Thừa kế theo pháp luật được chia như thế nào khi không có di chúc?",
+    "ai_response": "Theo quy định của Luật Inheritance Việt Nam, thừa kế theo pháp luật sẽ được thực hiện theo trình tự sau:\n\n1. Trình tự thứ nhất: Người vợ hoặc chồng; cha đẻ, mẹ đẻ của người chết (nếu còn sống); con nuôi của người chết do cha đẻ, mẹ đẻ nuôi dưỡng (nếu còn sống).\n\n2. Trình tự thứ hai: Cha nuôi, mẹ nuôi của người chết (nếu còn sống); anh, chị, em ruột của người chết (nếu còn sống và không thuộc trình tự thứ nhất).\n\n3. Trình tự thứ ba: Con dâu, con rể của người chết (nếu còn sống; cha đẻ, mẹ đẻ của con dâu, con rể đã chết); anh, chị, em ruột của cha đẻ, mẹ đẻ của người chết (nếu còn sống và không thuộc trình tự thứ nhất, thứ hai).\n\nTheo quy định tại <cite id=\"luat_inheritance_456\">Khoản 1 Điều 790</cite> của Luật Inheritance năm 2015, thừa kế theo pháp luật sẽ được chia cho các người thuộc trình tự thừa kế theo thứ tự ưu tiên nêu trên. \n\nNếu có nhiều người cùng thuộc một trình tự thì họ sẽ được hưởng phần di sản bằng nhau.\n\nTrường hợp không còn ai thuộc trình tự nào trong ba trình tự trên, di sản sẽ thuộc về Nhà nước theo quy định của pháp luật <cite id=\"luat_inheritance_456\">Khoản 2 Điều 790</cite>.\n\nNếu có bất kỳ thắc mắc cụ thể nào liên quan đến trường hợp cụ thể, vui lòng cung cấp thêm thông tin để được tư vấn chính xác hơn.",
+    "timestamp": "2026-07-10T15:14:37.684406"
   }
 ]

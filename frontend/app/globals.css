@@ -7,8 +7,8 @@
    ============================================ */
 :root {
   --font-sans: 'Inter', system-ui, sans-serif;
-  --color-primary: #4F46E5;
-  --color-primary-glow: rgba(79, 70, 229, 0.3);
+  --color-primary: #2563EB;
+  --color-primary-glow: rgba(37, 99, 235, 0.3);
 }
 
 html, body {
@@ -28,7 +28,7 @@ html, body {
   border-radius: 20px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(99, 102, 241, 0.5);
+  background-color: rgba(59, 130, 246, 0.5);
 }
 
 /* ============================================
@@ -71,8 +71,8 @@ html, body {
    ============================================ */
 .input-glow:focus-within {
   box-shadow:
-    0 0 0 3px rgba(79, 70, 229, 0.12),
-    0 0 24px rgba(79, 70, 229, 0.08),
+    0 0 0 3px rgba(37, 99, 235, 0.12),
+    0 0 24px rgba(37, 99, 235, 0.08),
     0 4px 32px rgba(0, 0, 0, 0.07);
 }
 
@@ -113,8 +113,8 @@ html, body {
    SIDEBAR ACTIVE ITEM
    ============================================ */
 .sidebar-item-active {
-  background: linear-gradient(90deg, rgba(99,102,241,0.18), rgba(79,70,229,0.08));
-  border-left: 2px solid #6366F1;
+  background: linear-gradient(90deg, rgba(59,130,246,0.18), rgba(37,99,235,0.08));
+  border-left: 2px solid #3B82F6;
 }
 
 /* ============================================
@@ -124,8 +124,8 @@ html, body {
   transition: all 0.15s ease;
 }
 .quick-action-btn:hover {
-  background-color: rgba(99,102,241,0.08);
-  color: #4F46E5;
+  background-color: rgba(59,130,246,0.08);
+  color: #2563EB;
 }
 
 /* ============================================
@@ -140,7 +140,7 @@ html, body {
   content: '▋';
   display: inline-block;
   margin-left: 2px;
-  color: #4F46E5;
+  color: #2563EB;
   animation: blink 0.8s step-start infinite;
   font-size: 0.85em;
   vertical-align: baseline;
@@ -150,12 +150,12 @@ html, body {
    SEND BUTTON GLOW (when active)
    ============================================ */
 .send-btn-ready {
-  box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4);
+  box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
   animation: send-pulse 2s ease-in-out infinite;
 }
 
 @keyframes send-pulse {
-  0%, 100% { box-shadow: 0 4px 12px rgba(79,70,229,0.3); }
-  50% { box-shadow: 0 4px 20px rgba(79,70,229,0.55); }
+  0%, 100% { box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+  50% { box-shadow: 0 4px 20px rgba(37,99,235,0.55); }
 }
 

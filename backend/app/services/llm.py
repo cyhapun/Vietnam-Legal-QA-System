@@ -32,10 +32,18 @@ def get_llm(
     final_max_tokens = max_tokens if max_tokens is not None else LLM_MAX_NEW_TOKENS
     final_timeout = timeout if timeout is not None else LLM_TIMEOUT
 
-    # Nếu Frontend truyền "gemma", tự động map sang model đầy đủ
-    if model_name.lower() == "gemma":
-        actual_model = "google/gemma-4-31B-it:novita" 
-        local_model_name = "gemma2:9b" # Map cho local Ollama
+    if "gemma" in model_name.lower():
+        actual_model = "google/gemma-4-31B-it:novita" if model_name.lower() == "gemma" else model_name
+        local_model_name = "gemma2:9b" 
+    elif "qwen" in model_name.lower():
+        actual_model = model_name
+        local_model_name = "qwen2.5:7b-instruct"
+    elif "llama" in model_name.lower():
+        actual_model = model_name
+        local_model_name = "llama3.1:8b"
+    elif "deepseek" in model_name.lower():
+        actual_model = model_name
+        local_model_name = "deepseek-r1:8b"
     else:
         actual_model = model_name
         local_model_name = model_name
