@@ -226,16 +226,6 @@ export default function SystemSettingsTab() {
               onChange={value => updateDraft('contextTokenBudget', value)}
             />
             <RangeSetting
-              label="Số căn cứ tối đa"
-              value={draft.maxCitations}
-              displayValue={String(draft.maxCitations)}
-              min={1}
-              max={10}
-              step={1}
-              description="Giới hạn số căn cứ pháp lý trả về và hiển thị trên giao diện."
-              onChange={value => updateDraft('maxCitations', value)}
-            />
-            <RangeSetting
               label="LLM Timeout (giây)"
               value={draft.llmTimeout}
               displayValue={String(draft.llmTimeout)}
