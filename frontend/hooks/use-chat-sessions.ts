@@ -134,24 +134,78 @@ export function useChatSessions() {
     );
   }, [currentSessionId]);
 
-  // --- Load từ localStorage khi mount ---
+  // --- Load từ DB/API khi mount ---
   useEffect(() => {
     setIsMounted(true);
-    const savedSessions = localStorage.getItem(STORAGE_KEYS.sessions);
-    const savedMessages = localStorage.getItem(STORAGE_KEYS.messages);
 
-    if (savedSessions && savedMessages) {
-      const parsedSessions = JSON.parse(savedSessions);
-      setSessions(parsedSessions);
-      setMessagesBySession(JSON.parse(savedMessages));
-      if (parsedSessions.length > 0) {
-        setCurrentSessionId(parsedSessions[0].id);
-      } else {
-        handleNewChat();
+    const loadFromDB = async () => {
+      try {
+        const res = await fetch('/api/chat/sessions');
+        if (!res.ok) throw new Error('Failed to fetch sessions');
+        const dbSessions: any[] = await res.json();
+
+        if (dbSessions.length === 0) {
+          handleNewChat();
+          return;
+        }
+
+        const loadedSessions: ChatSession[] = [];
+        const loadedMessages: Record<string, Message[]> = {};
+
+        // Fetch messages cho tất cả sessions
+        await Promise.all(dbSessions.map(async (dbSession) => {
+          const mRes = await fetch(`/api/chat/session/${dbSession.session_id}/messages`);
+          if (mRes.ok) {
+            const dbMsgs: any[] = await mRes.json();
+            
+            const messages: Message[] = dbMsgs.map(m => ({
+              id: m.id,
+              role: m.role as 'user' | 'assistant',
+              content: m.content,
+              contextUsed: m.contextUsed || []
+            }));
+
+            if (messages.length > 0) {
+              loadedSessions.push({
+                id: dbSession.session_id,
+                title: dbSession.title || 'Cuộc trò chuyện mới',
+                lastMessage: messages[messages.length - 1].content,
+                timestamp: dbSession.updated_at ? new Date(dbSession.updated_at).getTime() : Date.now(),
+              });
+              loadedMessages[dbSession.session_id] = messages;
+            }
+          }
+        }));
+
+        if (loadedSessions.length > 0) {
+          loadedSessions.sort((a, b) => b.timestamp - a.timestamp);
+          setSessions(loadedSessions);
+          setMessagesBySession(loadedMessages);
+          setCurrentSessionId(loadedSessions[0].id);
+        } else {
+          handleNewChat();
+        }
+      } catch (err) {
+        console.error('Lỗi khi load DB sessions, fallback to localStorage:', err);
+        // Fallback to localStorage
+        const savedSessions = localStorage.getItem(STORAGE_KEYS.sessions);
+        const savedMessages = localStorage.getItem(STORAGE_KEYS.messages);
+        if (savedSessions && savedMessages) {
+          const parsedSessions = JSON.parse(savedSessions);
+          setSessions(parsedSessions);
+          setMessagesBySession(JSON.parse(savedMessages));
+          if (parsedSessions.length > 0) {
+            setCurrentSessionId(parsedSessions[0].id);
+          } else {
+            handleNewChat();
+          }
+        } else {
+          handleNewChat();
+        }
       }
-    } else {
-      handleNewChat();
-    }
+    };
+
+    loadFromDB();
   }, [handleNewChat]);
 
   // --- Lưu vào localStorage khi thay đổi ---
