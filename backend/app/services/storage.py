@@ -7,6 +7,7 @@ preserving backward compatibility with the existing FAISS-based flow.
 from __future__ import annotations
 
 import json
+from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from app.config import (
@@ -580,6 +581,7 @@ def save_chat_message(
     role: str,
     content: str,
     context_used: Optional[List[Dict[str, Any]]] = None,
+    created_at: Optional[datetime] = None,
 ) -> None:
     """Persist a single chat message (user or assistant) to PostgreSQL."""
     try:
@@ -592,10 +594,10 @@ def save_chat_message(
                 cursor.execute(
                     """
                     INSERT INTO chat_messages (id, session_id, role, content, context_used, created_at)
-                    VALUES (%s, %s, %s, %s, %s, NOW())
+                    VALUES (%s, %s, %s, %s, %s, COALESCE(%s, NOW()))
                     ON CONFLICT (id) DO NOTHING
                     """,
-                    (message_id, session_id, role, content, json.dumps(context_used or [], ensure_ascii=False))
+                    (message_id, session_id, role, content, json.dumps(context_used or [], ensure_ascii=False), created_at)
                 )
                 # Keep updated_at fresh on the parent session row
                 cursor.execute(
