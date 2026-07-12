@@ -201,20 +201,23 @@ cd Vietnam-Legal-QA-System
 # Tạo file biến môi trường từ template
 cp .env.example .env
 
-# Mở .env và điền API key của bạn
-# HUGGINGFACE_API_KEY=hf_your_actual_key_here
+# .env contains server defaults and infrastructure settings.
+# Runtime provider/model API keys are configured in the web UI.
 #
-# # Tùy chọn chế độ chạy Embedding (local hoặc api):
-# # Mặc định là "local" để tránh lỗi "Model not supported" của Hugging Face
+# Embeddings are fixed to HuggingFace BAAI/bge-m3 for retrieval consistency:
+# EMBEDDING_PROVIDER=huggingface
+# HUGGINGFACE_EMBEDDING_MODEL=BAAI/bge-m3
 # HUGGINGFACE_EMBEDDING_MODE=local
 #
-# # Tính năng Fallback chống lỗi (Ollama <-> HuggingFace API)
-# INFERENCE_STRATEGY=remote_first  # hoặc local_first
-#
-# Nếu dùng Docker cho PostgreSQL + Qdrant, hãy giữ:
+# If using Docker with PostgreSQL + Qdrant, keep:
 # STORAGE_BACKEND=qdrant_postgres
 # POSTGRES_DSN=postgresql://postgres:postgres@localhost:5432/vietlaw
 # QDRANT_URL=http://localhost:6333
+#
+# Optional server fallback defaults:
+# GOOGLE_API_KEY=
+# ENABLE_GOOGLE_FALLBACK=false
+# INFERENCE_STRATEGY=remote_first
 ```
 
 ### Bước 2: Chạy Backend (Terminal 1)
@@ -476,12 +479,13 @@ Mỗi file JSON trong `data/processed/` có cấu trúc:
 | **Backend** | FastAPI, Uvicorn, Python | Async API |
 | **Database** | PostgreSQL, Qdrant | Persistent Storage |
 | **LLM Framework** | LangChain (core, community, huggingface) | Orchestration |
-| **Embedding** | BAAI/bge-m3 qua HuggingFace API | Multilingual, 1024 dims |
+| **Embedding** | HuggingFace BAAI/bge-m3 | Multilingual, 1024 dims |
 | **Vector DB** | Qdrant (Native Hybrid Search) | Cấu hình Named Vectors |
-| **LLM Models** | Gemma4-31B, Qwen3.5-9B, Llama3.1-8B, DeepSeek-R1-7B | HF Inference API |
+| **LLM Models** | Gemini Flash-Lite, Gemma, Qwen, Llama, DeepSeek | Browser-configured providers |
+
 ## Deployed Inference Setup
 
-For deployed usage, users configure LLM providers from the browser setup popup.
+For deployed usage, users configure LLM providers from the browser configuration screen.
 API keys entered by users are stored only in the current browser profile, then sent
 to the backend per chat request. The backend uses those keys in memory for that
 request and does not persist them.
@@ -505,6 +509,13 @@ Embeddings are not user-configurable at runtime. The deployed retrieval stack
 stays fixed to HuggingFace `BAAI/bge-m3` so queries use the same embedding space
 as the indexed legal corpus.
 
+Environment file roles:
+
+- `.env`: local/server defaults, storage URLs, pipeline knobs, and optional
+  server fallback API keys.
+- `.env.example`: public template with all supported keys and safe defaults.
+- Browser storage: per-user BYOK API keys and selected provider/model per role.
+
 Rollback: ignore browser `inferenceConfig` payloads and rely on server-side
-environment defaults such as `HUGGINGFACE_API_KEY`, `GOOGLE_API_KEY`, and
-`ENABLE_GOOGLE_FALLBACK`.
+environment defaults such as `HUGGINGFACE_API_KEY`, `GOOGLE_API_KEY`,
+`ENABLE_GOOGLE_FALLBACK`, and `INFERENCE_STRATEGY`.
