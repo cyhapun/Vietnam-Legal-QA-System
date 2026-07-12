@@ -11,7 +11,7 @@ class BaseRewriter(ABC):
     Abstract base class for Query Rewriters.
     """
     @abstractmethod
-    def rewrite(self, query: str, history: str = None) -> Tuple[str, List[str]]:
+    def rewrite(self, query: str, history: str = None, runtime_config=None) -> Tuple[str, List[str]]:
         """
         Rewrite the query and return the domain and a list of queries.
         

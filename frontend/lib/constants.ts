@@ -2,7 +2,7 @@
  * Hằng số dùng chung cho toàn frontend.
  * Tách từ ChatInterface.tsx và ProviderSelector.tsx.
  */
-import type { AIModel } from './types';
+import type { AIModel, InferenceProvider } from './types';
 
 export interface LawCategory {
   id: string;
@@ -52,15 +52,24 @@ export const LAW_CATEGORIES = [
 ] as const satisfies readonly LawCategory[];
 
 // Danh sách model AI hỗ trợ
+export const AI_PROVIDERS: InferenceProvider[] = [
+  { id: 'google', name: 'Google AI Studio', requiresApiKey: true, deploymentSupported: true },
+  { id: 'huggingface', name: 'HuggingFace Router', requiresApiKey: true, deploymentSupported: true },
+  { id: 'ollama', name: 'Ollama', requiresApiKey: false, deploymentSupported: false },
+];
+
 export const AI_MODELS: AIModel[] = [
-  { id: 'Qwen/Qwen2.5-7B-Instruct', name: 'Qwen 2.5', fullName: 'Qwen2.5 7B' },
-  { id: 'google/gemma-4-31B-it', name: 'Gemma 4', fullName: 'Gemma 4 31B' },
-  { id: 'meta-llama/Llama-3.1-8B-Instruct', name: 'Llama 3.1', fullName: 'Llama 3.1 8B' },
-  { id: 'deepseek-ai/DeepSeek-R1-Distill-Llama-8B', name: 'DeepSeek R1', fullName: 'DeepSeek R1 8B' },
+  { id: 'gemini-3.1-flash-lite', provider: 'google', name: 'Gemini 3.1 Lite', fullName: 'Gemini 3.1 Flash-Lite' },
+  { id: 'gemini-2.5-flash-lite', provider: 'google', name: 'Gemini 2.5 Lite', fullName: 'Gemini 2.5 Flash-Lite' },
+  { id: 'Qwen/Qwen2.5-7B-Instruct', provider: 'huggingface', name: 'Qwen 2.5', fullName: 'Qwen2.5 7B' },
+  { id: 'meta-llama/Llama-3.1-8B-Instruct', provider: 'huggingface', name: 'Llama 3.1', fullName: 'Llama 3.1 8B' },
+  { id: 'deepseek-ai/DeepSeek-R1-Distill-Llama-8B', provider: 'huggingface', name: 'DeepSeek R1', fullName: 'DeepSeek R1 8B' },
+  { id: 'qwen2.5:7b-instruct', provider: 'ollama', name: 'Qwen Local', fullName: 'Qwen2.5 7B via Ollama' },
+  { id: 'qwen2.5:1.5b', provider: 'ollama', name: 'Qwen Mini Local', fullName: 'Qwen2.5 1.5B via Ollama' },
 ];
 
 // Model mặc định
-export const DEFAULT_MODEL = 'deepseek-ai/DeepSeek-R1-Distill-Llama-8B';
+export const DEFAULT_MODEL = 'gemini-2.5-flash-lite';
 
 // LocalStorage keys
 export const STORAGE_KEYS = {

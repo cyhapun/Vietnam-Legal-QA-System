@@ -34,6 +34,7 @@ TRACKING_FILE = os.getenv(
 
 # --- API KEYS ---
 HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY", "")
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
 
 # --- STORAGE BACKEND ---
 STORAGE_BACKEND = os.getenv("STORAGE_BACKEND", "faiss").strip().lower()
@@ -72,6 +73,12 @@ LLM_MAX_NEW_TOKENS = 1500
 LLM_TEMPERATURE = 0.1
 LLM_REPETITION_PENALTY = 1.0
 LLM_TIMEOUT = 300
+ENABLE_GOOGLE_FALLBACK = os.getenv("ENABLE_GOOGLE_FALLBACK", "false").strip().lower() == "true"
+GOOGLE_FALLBACK_MODEL = os.getenv("GOOGLE_FALLBACK_MODEL", "gemini-3.1-flash-lite").strip()
+GOOGLE_OPENAI_BASE_URL = os.getenv(
+    "GOOGLE_OPENAI_BASE_URL",
+    "https://generativelanguage.googleapis.com/v1beta/openai/",
+).strip()
 
 # --- CORS ---
 CORS_ORIGINS = ["*"]

@@ -4,11 +4,17 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Send, PanelLeft, LibraryBig, Scale, Check, ChevronDown, Square, ArrowDown, X } from 'lucide-react';
 import { ProviderSelector } from './ProviderSelector';
 import { AdvancedSettings, AdvancedConfig } from './AdvancedSettings';
+import { InferenceSetupModal } from './InferenceSetupModal';
 import { ChatMessage } from './ChatMessage';
 import { Sidebar } from './Sidebar';
 import { useChatSessions } from '@/hooks/use-chat-sessions';
 import { useClickOutside } from '@/hooks/use-click-outside';
 import { useAISettings } from '@/hooks/use-ai-settings';
+import {
+  isInferenceConfigured,
+  setRoleByModel,
+  toRuntimeInferenceConfig,
+} from '@/lib/ai-settings';
 import {
   ALL_LAWS_CATEGORY,
   LAW_CATEGORIES,
@@ -41,14 +47,14 @@ export function ChatInterface() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { settings: aiSettings, setSettings: setAISettings } = useAISettings();
-  const model = aiSettings.model;
+  const model = aiSettings.roles.answer.model;
   const advancedConfig: AdvancedConfig = {
     temperature: aiSettings.temperature,
     maxTokens: aiSettings.maxTokens,
     topK: aiSettings.topK,
   };
   const setModel = (nextModel: string) =>
-    setAISettings(current => ({ ...current, model: nextModel }));
+    setAISettings(current => setRoleByModel(current, 'answer', nextModel));
   const setAdvancedConfig = (config: AdvancedConfig) =>
     setAISettings(current => ({ ...current, ...config }));
   const [lawCategory, setLawCategory] = useState(ALL_LAWS_CATEGORY);
@@ -277,7 +283,8 @@ export function ChatInterface() {
           enableQueryRewriter: aiSettings.enableQueryRewriter,
           enableReranker: aiSettings.enableReranker,
           enableSemanticCache: aiSettings.enableSemanticCache,
-          enableMemory: aiSettings.enableMemory
+          enableMemory: aiSettings.enableMemory,
+          inferenceConfig: toRuntimeInferenceConfig(aiSettings)
         }),
         signal: controller.signal,
       });
@@ -659,6 +666,10 @@ export function ChatInterface() {
           </div>
         </div>
       </div>
+
+      {!isInferenceConfigured(aiSettings) && (
+        <InferenceSetupModal />
+      )}
 
       {/* Context Drawer */}
       <div 

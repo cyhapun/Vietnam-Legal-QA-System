@@ -7,6 +7,7 @@ import logging
 
 from app.config import PIPELINE_CONFIG
 from .base import BaseRewriter, RewriteResult
+from app.services.provider_registry import REWRITER_ROLE
 
 logger = logging.getLogger(__name__)
 
@@ -48,9 +49,19 @@ Do not output any other text or markdown block outside the JSON."""),
         # get_llm now automatically supports Hybrid Fallback (Local <-> Remote)
         return get_llm(model_name)
 
-    def rewrite(self, query: str, history: str = None) -> Tuple[str, List[str]]:
+    def rewrite(self, query: str, history: str = None, runtime_config=None) -> Tuple[str, List[str]]:
         try:
-            result = self.chain.invoke({
+            chain = self.chain
+            if runtime_config is not None:
+                from app.services.llm import get_llm
+                model_name = PIPELINE_CONFIG.get("rewriter_model_name", "qwen2.5:1.5b")
+                chain = self.prompt | get_llm(
+                    model_name=model_name,
+                    runtime_config=runtime_config,
+                    role=REWRITER_ROLE,
+                ) | self.parser
+
+            result = chain.invoke({
                 "query": query,
                 "history": history if history else "No previous history."
             })

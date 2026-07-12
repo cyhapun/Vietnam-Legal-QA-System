@@ -1,8 +1,5 @@
-# Capability: Query Rewriting
+## MODIFIED Requirements
 
-## Purpose
-TBD
-## Requirements
 ### Requirement: Classify and rewrite user queries
 The system SHALL intercept user queries and use the configured rewriter role LLM to classify the domain (legal vs chitchat) and rewrite non-formal legal language into formal legal terminology. When a runtime rewriter provider/model is configured in the chat request, the rewriter SHALL use that runtime role configuration for the current request.
 
