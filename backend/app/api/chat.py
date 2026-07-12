@@ -43,6 +43,8 @@ def _recent_messages(request: ChatRequest):
 def _filter_cited_context(output_text: str, context: list, max_citations: int) -> list:
     """Return cited contexts in citation order, capped for the client payload."""
     cited_ids = list(dict.fromkeys(re.findall(r'<cite\s+id=["\']([^"\']+)["\']>', output_text)))
+    if not cited_ids:
+        return context[:max_citations]
     cited_ids = cited_ids[:max_citations]
     by_id = {item.get("metadata", {}).get("id"): item for item in context}
     return [by_id[citation_id] for citation_id in cited_ids if citation_id in by_id]
