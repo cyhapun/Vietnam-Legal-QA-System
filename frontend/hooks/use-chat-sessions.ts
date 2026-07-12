@@ -60,6 +60,11 @@ export function useChatSessions() {
 
   // --- Xóa session ---
   const handleDeleteSession = useCallback((id: string) => {
+    // Gọi API xóa ở backend không đồng bộ
+    fetch(`/api/chat/session/${id}`, { method: 'DELETE' }).catch(err => {
+      console.error('Lỗi khi xóa session ở backend:', err);
+    });
+
     const { currentSessionId } = stateRef.current;
     setSessions(prev => {
       const remaining = prev.filter(s => s.id !== id);

@@ -520,3 +520,19 @@ def upsert_session_summary(session_id: str, summary: str, turn_count: int) -> No
                 )
     except Exception as exc:
         logger.warning("Error upserting session summary for %s: %s", session_id, exc)
+
+
+def delete_session_summary(session_id: str) -> None:
+    """Delete a session summary and associated feedbacks from PostgreSQL."""
+    try:
+        import psycopg
+    except ImportError:
+        return
+
+    try:
+        with psycopg.connect(POSTGRES_DSN, autocommit=True) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute("DELETE FROM chat_feedbacks WHERE session_id = %s", (session_id,))
+                cursor.execute("DELETE FROM chat_sessions WHERE session_id = %s", (session_id,))
+    except Exception as exc:
+        logger.warning("Error deleting session data for %s: %s", session_id, exc)

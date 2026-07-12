@@ -378,3 +378,26 @@ async def chat_stream_endpoint(request: ChatRequest):
             "X-Accel-Buffering": "no",
         },
     )
+
+
+@router.delete("/chat/session/{session_id}")
+async def delete_session(session_id: str):
+    """Xóa lịch sử trò chuyện của một session cụ thể khỏi hệ thống."""
+    if not session_id or session_id == "unknown":
+        raise HTTPException(status_code=400, detail="Invalid session_id")
+    
+    try:
+        import asyncio
+        from app.services.chat_logger import delete_chat_logs
+        from app.services.storage import delete_session_summary
+        
+        # Execute deletions concurrently
+        await asyncio.gather(
+            asyncio.to_thread(delete_chat_logs, session_id),
+            asyncio.to_thread(delete_session_summary, session_id)
+        )
+        
+        return {"status": "success", "message": f"Session {session_id} deleted."}
+    except Exception as e:
+        logger.error(f"Error deleting session {session_id}: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to delete session: {e}")

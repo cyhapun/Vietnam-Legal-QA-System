@@ -49,6 +49,25 @@ def log_interaction(session_id: str, user_message: str, ai_response: str):
     except Exception as e:
         logger.error(f"Failed to log chat interaction: {e}")
 
+def delete_chat_logs(session_id: str):
+    """Xóa các bản ghi chat của một session cụ thể khỏi file JSON."""
+    _ensure_log_file()
+    try:
+        with _lock:
+            with open(CHAT_LOGS_FILE, "r", encoding="utf-8") as f:
+                try:
+                    logs = json.load(f)
+                except json.JSONDecodeError:
+                    logs = []
+            
+            filtered_logs = [log for log in logs if log.get("session_id") != session_id]
+            
+            with open(CHAT_LOGS_FILE, "w", encoding="utf-8") as f:
+                json.dump(filtered_logs, f, ensure_ascii=False, indent=2)
+                
+    except Exception as e:
+        logger.error(f"Failed to delete chat logs for session {session_id}: {e}")
+
 def get_chat_logs():
     """Lấy toàn bộ lịch sử chat."""
     _ensure_log_file()
