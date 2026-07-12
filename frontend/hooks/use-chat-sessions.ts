@@ -11,6 +11,7 @@ import { STORAGE_KEYS } from '@/lib/constants';
 export function useChatSessions() {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+  const [isSessionLoading, setIsSessionLoading] = useState(false);
   const [messagesBySession, setMessagesBySession] = useState<Record<string, Message[]>>({});
   const [isMounted, setIsMounted] = useState(false);
 
@@ -49,13 +50,38 @@ export function useChatSessions() {
   }, []);
 
   // --- Chọn session ---
-  const handleSelectSession = useCallback((id: string) => {
+  const handleSelectSession = useCallback(async (id: string) => {
     const { currentSessionId, messagesBySession } = stateRef.current;
     if (id === currentSessionId) return;
 
     // Khi chuyển sang session khác, lọc bỏ các session rỗng cũ
     setSessions(prev => prev.filter(s => s.id === id || (messagesBySession[s.id] && messagesBySession[s.id].length > 0)));
     setCurrentSessionId(id);
+
+    // Lazy load messages nếu chưa có
+    if (!messagesBySession[id]) {
+      setIsSessionLoading(true);
+      try {
+        const res = await fetch(`/api/chat/session/${id}/messages`);
+        if (res.ok) {
+          const dbMsgs: any[] = await res.json();
+          const messages: Message[] = dbMsgs.map(m => ({
+            id: m.id,
+            role: m.role as 'user' | 'assistant',
+            content: m.content,
+            contextUsed: m.contextUsed || []
+          }));
+          setMessagesBySession(prev => ({ ...prev, [id]: messages }));
+        } else {
+          setMessagesBySession(prev => ({ ...prev, [id]: [] }));
+        }
+      } catch (err) {
+        console.error('Lỗi khi fetch messages cho session:', id, err);
+        setMessagesBySession(prev => ({ ...prev, [id]: [] }));
+      } finally {
+        setIsSessionLoading(false);
+      }
+    }
   }, []);
 
   // --- Xóa session ---
@@ -149,15 +175,22 @@ export function useChatSessions() {
           return;
         }
 
-        const loadedSessions: ChatSession[] = [];
+        const loadedSessions: ChatSession[] = dbSessions.map(dbSession => ({
+          id: dbSession.session_id,
+          title: dbSession.title || 'Cuộc trò chuyện mới',
+          lastMessage: '',
+          timestamp: dbSession.updated_at ? new Date(dbSession.updated_at).getTime() : Date.now(),
+        }));
+
+        loadedSessions.sort((a, b) => b.timestamp - a.timestamp);
         const loadedMessages: Record<string, Message[]> = {};
 
-        // Fetch messages cho tất cả sessions
-        await Promise.all(dbSessions.map(async (dbSession) => {
-          const mRes = await fetch(`/api/chat/session/${dbSession.session_id}/messages`);
+        // Fetch messages cho session đầu tiên
+        if (loadedSessions.length > 0) {
+          const firstSessionId = loadedSessions[0].id;
+          const mRes = await fetch(`/api/chat/session/${firstSessionId}/messages`);
           if (mRes.ok) {
             const dbMsgs: any[] = await mRes.json();
-            
             const messages: Message[] = dbMsgs.map(m => ({
               id: m.id,
               role: m.role as 'user' | 'assistant',
@@ -166,22 +199,14 @@ export function useChatSessions() {
             }));
 
             if (messages.length > 0) {
-              loadedSessions.push({
-                id: dbSession.session_id,
-                title: dbSession.title || 'Cuộc trò chuyện mới',
-                lastMessage: messages[messages.length - 1].content,
-                timestamp: dbSession.updated_at ? new Date(dbSession.updated_at).getTime() : Date.now(),
-              });
-              loadedMessages[dbSession.session_id] = messages;
+              loadedSessions[0].lastMessage = messages[messages.length - 1].content;
             }
+            loadedMessages[firstSessionId] = messages;
           }
-        }));
 
-        if (loadedSessions.length > 0) {
-          loadedSessions.sort((a, b) => b.timestamp - a.timestamp);
           setSessions(loadedSessions);
           setMessagesBySession(loadedMessages);
-          setCurrentSessionId(loadedSessions[0].id);
+          setCurrentSessionId(firstSessionId);
         } else {
           handleNewChat();
         }
@@ -231,5 +256,6 @@ export function useChatSessions() {
     addMessage,
     updateMessage,
     updateSessionTitle,
+    isSessionLoading,
   };
 }

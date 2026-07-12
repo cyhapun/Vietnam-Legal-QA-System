@@ -42,6 +42,7 @@ export function ChatInterface() {
     addMessage,
     updateMessage,
     updateSessionTitle,
+    isSessionLoading,
   } = useChatSessions();
 
   const [input, setInput] = useState('');
@@ -409,6 +410,26 @@ export function ChatInterface() {
     </div>
   );
 
+  const SessionSkeletonLoader = () => (
+    <div className="animate-pulse flex flex-col gap-6 py-5 px-4 max-w-4xl mx-auto">
+      {/* Fake User Message */}
+      <div className="flex justify-end gap-3 w-full mt-4">
+        <div className="h-10 w-64 bg-gray-200/80 dark:bg-gray-800/80 rounded-2xl rounded-tr-sm"></div>
+        <div className="h-8 w-8 bg-gray-200/80 dark:bg-gray-800/80 rounded-full flex-shrink-0"></div>
+      </div>
+      
+      {/* Fake AI Message */}
+      <div className="flex justify-start gap-3 w-full">
+        <div className="h-8 w-8 bg-blue-100/80 dark:bg-blue-900/40 rounded-full flex-shrink-0"></div>
+        <div className="space-y-3 pt-1">
+          <div className="h-3.5 w-64 bg-gray-200/80 dark:bg-gray-800/80 rounded"></div>
+          <div className="h-3.5 w-48 bg-gray-200/80 dark:bg-gray-800/80 rounded"></div>
+          <div className="h-3.5 w-80 bg-gray-200/80 dark:bg-gray-800/80 rounded"></div>
+        </div>
+      </div>
+    </div>
+  );
+
   // Tin nhan dang stream (hien thi realtime)
   const streamingMessage: Message | null = isLoading && streamingText
     ? {
@@ -524,7 +545,7 @@ export function ChatInterface() {
           ref={scrollContainerRef}
           onScroll={handleScroll}
         >
-          {currentMessages.length === 0 && !streamingMessage ? (
+          {currentMessages.length === 0 && !streamingMessage && !isSessionLoading ? (
             <div className="h-full flex flex-col items-center justify-center text-center px-4">
               <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-6 shadow-lg shadow-blue-500/20" style={{ background: 'linear-gradient(135deg, #2563EB, #1D4ED8)' }}>
                 <Scale className="w-10 h-10 text-white" />
@@ -549,26 +570,32 @@ export function ChatInterface() {
             </div>
           ) : (
             <div className="pb-8">
-              {currentMessages.map(msg => (
-                <ChatMessage
-                  key={msg.id}
-                  message={msg}
-                  onRefine={(prompt) => handleSubmit(undefined, prompt)}
-                  onOpenContext={setDrawerContext}
-                  onFeedbackSubmit={handleFeedbackSubmit}
-                />
-              ))}
-              {/* Streaming message realtime */}
-              {streamingMessage && (
-                <ChatMessage
-                  key="streaming"
-                  message={streamingMessage}
-                  isStreaming={true}
-                  onOpenContext={setDrawerContext}
-                />
+              {isSessionLoading ? (
+                <SessionSkeletonLoader />
+              ) : (
+                <>
+                  {currentMessages.map(msg => (
+                    <ChatMessage
+                      key={msg.id}
+                      message={msg}
+                      onRefine={(prompt) => handleSubmit(undefined, prompt)}
+                      onOpenContext={setDrawerContext}
+                      onFeedbackSubmit={handleFeedbackSubmit}
+                    />
+                  ))}
+                  {/* Streaming message realtime */}
+                  {streamingMessage && (
+                    <ChatMessage
+                      key="streaming"
+                      message={streamingMessage}
+                      isStreaming={true}
+                      onOpenContext={setDrawerContext}
+                    />
+                  )}
+                  {/* Skeleton chi hien khi chua co text nao */}
+                  {isLoading && !streamingText && <SkeletonLoader />}
+                </>
               )}
-              {/* Skeleton chi hien khi chua co text nao */}
-              {isLoading && !streamingText && <SkeletonLoader />}
               <div ref={messagesEndRef} />
             </div>
           )}
