@@ -23,23 +23,23 @@ class HuggingFaceEndpointEmbedding:
     def __init__(
         self,
         model: str = EMBEDDING_MODEL,
-        api_key: str = HUGGINGFACE_API_KEY,
+        api_key: str = None,
         mode: str = HUGGINGFACE_EMBEDDING_MODE,
     ):
         self._model_name = model
         self._mode = mode
         
         if mode == "api":
-            if not api_key:
+            final_api_key = api_key or HUGGINGFACE_API_KEY
+            if not final_api_key:
                 raise ValueError(
-                    "Không tìm thấy HUGGINGFACE_API_KEY. "
-                    "Vui lòng kiểm tra lại file .env của bạn nhé."
+                    "Vui lòng cung cấp API Key HuggingFace trong cấu hình để sử dụng mô hình Embedding qua API."
                 )
             logger.info("Đang kết nối mô hình %s qua Hugging Face API...", model)
             self._engine = HuggingFaceEndpointEmbeddings(
                 model=model,
                 task="feature-extraction",
-                huggingfacehub_api_token=api_key,
+                huggingfacehub_api_token=final_api_key,
             )
         else:
             logger.info("Đang tải mô hình %s chạy TRỰC TIẾP (Local) qua sentence-transformers...", model)

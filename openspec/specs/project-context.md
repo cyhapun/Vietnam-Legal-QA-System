@@ -64,7 +64,7 @@ The project is currently focused on:
 5. The response is returned as plain text plus contextUsed metadata.
 
 ### Main backend modules
-- app/api/chat.py: HTTP endpoint handling
+- app/api/chat.py: HTTP endpoint handling for chat, streaming, and session management
 - app/services/pipeline.py: orchestrates retrieval → reranking → context building
 - app/services/knowledge_base.py: loads legal data into memory and provides metadata lookup
 - app/services/llm.py: LLM client setup and prompt templates
@@ -73,6 +73,9 @@ The project is currently focused on:
 - app/services/context_builder/: builds legal context for answer generation
 - app/services/chunking/: document chunking logic
 - app/services/embedding/: embedding provider abstraction
+- app/services/storage.py: database abstraction for PostgreSQL and Qdrant
+- app/services/memory_manager.py: handles asynchronous chat history summarization
+- app/services/semantic_cache.py: manages Qdrant-backed semantic caching for LLM responses
 
 ### Frontend modules
 - components/chat/ChatInterface.tsx: main chat experience and input handling
@@ -102,17 +105,23 @@ The project is currently focused on:
 ## 6. API conventions
 
 ### Backend API
-- Primary endpoint: POST /chat
+- Primary endpoint: POST /chat and POST /chat/stream
 - Request body shape:
   - messages: array of { role, content }
   - model: selected model identifier
   - category: legal category filter, default "all"
+  - sessionId: identifier for chat session
 - Response shape:
   - text: generated answer
   - contextUsed: list of retrieved legal context items
+- Session Management endpoints:
+  - GET /chat/sessions: retrieves list of chat sessions
+  - GET /chat/session/{session_id}/messages: retrieves message history
+  - DELETE /chat/session/{session_id}: deletes a chat session
 
 ### Frontend proxy API
 - The Next.js route at frontend/app/api/chat/route.ts forwards requests to the backend.
+- Additional Next.js proxy routes in frontend/app/api/chat/sessions/ allow frontend to sync session data with the backend database.
 - Frontend client calls /api/chat and expects the same response format.
 - Error responses should carry a clear error and details payload.
 
@@ -147,18 +156,18 @@ The project is currently focused on:
 ## 8. Data model and storage
 
 ### Current data storage approach
-- No relational database is currently used.
-- Legal content is stored as JSON files in backend/data/processed.
-- A FAISS index is used for vector retrieval.
-- In-memory knowledge base data is loaded at startup from the processed JSON files.
+- **PostgreSQL**: Used as the primary relational database to store legal metadata, clause text, chat sessions, chat messages, and memory summaries.
+- **Qdrant**: Used as the vector database for hybrid search (dense and sparse vectors) and semantic caching.
+- **FAISS & JSON fallback**: The system retains backward compatibility with local FAISS index and JSON files if database services are unavailable.
 
-### Current data shape (inferred)
-- Each processed legal document contains law metadata and clauses.
-- Clause entries include identifiers, content, and cross-reference data.
-- The knowledge base stores clause-level content and metadata for retrieval.
+### Current data shape
+- PostgreSQL `laws` and `clauses` tables store the corpus text and metadata.
+- PostgreSQL `chat_sessions` and `chat_messages` tables store conversational history.
+- Qdrant points store dense (BAAI/bge-m3) and sparse (BM25) vector representations.
+- Semantic cache uses a separate Qdrant collection to map previously answered query vectors to their LLM responses.
 
 ### Important note
-- The current pipeline assumes local files and a local FAISS index. Introducing a new database should be justified by a clear product need.
+- Start the database services using Docker (`docker compose up -d postgres qdrant`) and ingest data with `scripts/ingest_to_storage.py` for the optimal persistence layer.
 
 ## 9. Authentication and permissions
 
@@ -170,7 +179,8 @@ The project is currently focused on:
 ## 10. Existing product behavior and UI conventions
 
 - The UI is a single-page chat experience with a sidebar for chat sessions.
-- Chat sessions persist in localStorage in the browser.
+- Chat sessions persist in the backend PostgreSQL database. The frontend fetches and synchronizes state via API proxies.
+- Background tasks on the backend automatically summarize chat sessions to compress context length for long conversations.
 - Users can select a legal category and an LLM provider/model.
 - Responses may include legal context references.
 - The UI is Vietnamese-first and should remain consistent with that language.

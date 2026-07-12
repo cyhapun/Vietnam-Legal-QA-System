@@ -46,12 +46,17 @@ class QdrantSearcher:
     def strategy_name(self) -> str:
         return "qdrant"
 
-    def _get_embedding_backend(self):
+    def _get_embedding_backend(self, api_key: Optional[str] = None):
         from app.config import EMBEDDING_PROVIDER
 
         if EMBEDDING_PROVIDER == "ollama":
             return OllamaEmbedding()
-        return HuggingFaceEndpointEmbedding()
+            
+        from app.services.pipeline import _get_embedding
+        emb = _get_embedding(api_key)
+        if emb is None:
+            return HuggingFaceEndpointEmbedding(api_key=api_key)
+        return emb
 
     def _get_client(self):
         if self._client is None:
@@ -92,8 +97,8 @@ class QdrantSearcher:
             ]
         )
 
-    def _search_qdrant(self, query: Union[str, List[str]], k: int, category: Optional[str]) -> List[Document]:
-        embedding_backend = self._get_embedding_backend()
+    def _search_qdrant(self, query: Union[str, List[str]], k: int, category: Optional[str], api_key: Optional[str] = None) -> List[Document]:
+        embedding_backend = self._get_embedding_backend(api_key)
         
         try:
             from app.services.sparse_vector import SparseVectorGenerator
@@ -216,12 +221,16 @@ class QdrantSearcher:
         query: Union[str, List[str]],
         k: int = RETRIEVER_K,
         category: Optional[str] = None,
+        api_key: Optional[str] = None,
     ) -> List[Document]:
         try:
-            return self._search_qdrant(query, k=k, category=category)
+            return self._search_qdrant(query, k=k, category=category, api_key=api_key)
         except Exception as exc:
             logger.warning("Qdrant retrieval failed, falling back to FAISS: %s", exc)
             if self._fallback_searcher is not None:
+                import inspect
+                if "api_key" in inspect.signature(self._fallback_searcher.search).parameters:
+                    return self._fallback_searcher.search(query, k=k, category=category, api_key=api_key)
                 return self._fallback_searcher.search(query, k=k, category=category)
             return []
 
@@ -230,14 +239,20 @@ class QdrantSearcher:
         query: Union[str, List[str]],
         k: int = RETRIEVER_K,
         category: Optional[str] = None,
+        api_key: Optional[str] = None,
     ) -> List[Document]:
         import asyncio
         try:
-            return await asyncio.to_thread(self._search_qdrant, query, k, category)
+            return await asyncio.to_thread(self._search_qdrant, query, k, category, api_key)
         except Exception as exc:
             logger.warning("Qdrant async retrieval failed, falling back to fallback searcher: %s", exc)
             if self._fallback_searcher is not None:
+                import inspect
                 if hasattr(self._fallback_searcher, "asearch"):
+                    if "api_key" in inspect.signature(self._fallback_searcher.asearch).parameters:
+                        return await self._fallback_searcher.asearch(query, k=k, category=category, api_key=api_key)
                     return await self._fallback_searcher.asearch(query, k=k, category=category)
+                if "api_key" in inspect.signature(self._fallback_searcher.search).parameters:
+                    return self._fallback_searcher.search(query, k=k, category=category, api_key=api_key)
                 return self._fallback_searcher.search(query, k=k, category=category)
             return []

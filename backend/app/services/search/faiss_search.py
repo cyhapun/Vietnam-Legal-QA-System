@@ -44,7 +44,7 @@ class FAISSSearcher:
         """Trả về FAISS vectorstore — cần cho indexing."""
         return self._vectorstore
 
-    def _lazy_load_vectorstore(self) -> None:
+    def _lazy_load_vectorstore(self, api_key: Optional[str] = None) -> None:
         if self._vectorstore is not None:
             return
 
@@ -54,7 +54,7 @@ class FAISSSearcher:
         
         if os.path.exists(FAISS_INDEX_PATH):
             try:
-                embedding = _get_embedding()
+                embedding = _get_embedding(api_key)
                 if embedding is not None:
                     logger.info("Lazy loading FAISS Index từ ổ cứng để dùng làm fallback...")
                     self._vectorstore = FAISS.load_local(
@@ -69,9 +69,10 @@ class FAISSSearcher:
         query: Union[str, List[str]],
         k: int = RETRIEVER_K,
         category: Optional[str] = None,
+        api_key: Optional[str] = None,
     ) -> List[Document]:
         """Tìm kiếm bằng MMR trên FAISS index."""
-        self._lazy_load_vectorstore()
+        self._lazy_load_vectorstore(api_key)
         if self._vectorstore is None:
             logger.warning("FAISS vectorstore is not initialized; returning empty results")
             return []
@@ -113,9 +114,10 @@ class FAISSSearcher:
         query: Union[str, List[str]],
         k: int = RETRIEVER_K,
         category: Optional[str] = None,
+        api_key: Optional[str] = None,
     ) -> List[Document]:
         """Async version — dùng trong FastAPI endpoint."""
-        self._lazy_load_vectorstore()
+        self._lazy_load_vectorstore(api_key)
         if self._vectorstore is None:
             logger.warning("FAISS vectorstore is not initialized; returning empty results")
             return []

@@ -404,7 +404,7 @@ Kỹ thuật này giúp tiết kiệm lượng lớn token API, giảm thiểu �
 ### Giao diện hiện đại
 - **UI chuyên nghiệp** — thiết kế tối giản, responsive, animations mượt.
 - **Sidebar quản lý phiên chat** — tạo mới, chọn, xóa các cuộc hội thoại.
-- **Lưu lịch sử tự động** vào localStorage — không mất dữ liệu khi tải lại trang.
+- **Lưu lịch sử đồng bộ** lên cơ sở dữ liệu PostgreSQL — không mất dữ liệu khi đổi thiết bị và duy trì được trí nhớ dài hạn.
 - **Phím tắt** — Enter gửi, Shift+Enter xuống dòng.
 - **Render Markdown** — câu trả lời hiển thị với format (heading, bold, list...).
 
