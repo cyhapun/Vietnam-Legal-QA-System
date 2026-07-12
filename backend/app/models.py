@@ -102,6 +102,8 @@ class ChatRequest(BaseModel):
     messages: List[Message]
     model: str
     sessionId: Optional[str] = "unknown"
+    sessionTitle: Optional[str] = "Cuộc trò chuyện mới"
+    messageId: Optional[str] = None
     category: str = "all"  # Lĩnh vực pháp luật để lọc tài liệu
     temperature: Optional[float] = None
     maxTokens: Optional[int] = None

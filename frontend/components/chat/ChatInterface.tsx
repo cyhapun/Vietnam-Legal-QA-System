@@ -267,6 +267,8 @@ export function ChatInterface() {
           messages: apiMessages, 
           model, 
           sessionId: currentSessionId || 'unknown',
+          sessionTitle: sessions.find(s => s.id === currentSessionId)?.title || 'Cuộc trò chuyện mới',
+          messageId: userMessage.id,
           category: lawCategory,
           temperature: advancedConfig.temperature,
           maxTokens: advancedConfig.maxTokens,
