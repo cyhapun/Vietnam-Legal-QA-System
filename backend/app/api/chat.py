@@ -7,6 +7,7 @@ import json
 import time
 import traceback
 from typing import AsyncGenerator
+from datetime import datetime, timedelta
 
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
@@ -214,11 +215,13 @@ async def chat_endpoint(request: ChatRequest):
             ))
             user_msg_id = request.messageId or str(_uuid.uuid4())
             ai_msg_id = str(_uuid.uuid4())
+            user_time = datetime.utcnow()
+            ai_time = user_time + timedelta(milliseconds=10)
             asyncio.create_task(asyncio.to_thread(
-                save_chat_message, session_id, user_msg_id, "user", last_message, []
+                save_chat_message, session_id, user_msg_id, "user", last_message, [], user_time
             ))
             asyncio.create_task(asyncio.to_thread(
-                save_chat_message, session_id, ai_msg_id, "assistant", output_text, frontend_context
+                save_chat_message, session_id, ai_msg_id, "assistant", output_text, frontend_context, ai_time
             ))
 
         # Summarize memory asynchronously
@@ -402,11 +405,13 @@ async def chat_stream_endpoint(request: ChatRequest):
                 ))
                 user_msg_id = request.messageId or str(_uuid.uuid4())
                 ai_msg_id = str(_uuid.uuid4())
+                user_time = datetime.utcnow()
+                ai_time = user_time + timedelta(milliseconds=10)
                 asyncio.create_task(asyncio.to_thread(
-                    save_chat_message, session_id, user_msg_id, "user", last_message, []
+                    save_chat_message, session_id, user_msg_id, "user", last_message, [], user_time
                 ))
                 asyncio.create_task(asyncio.to_thread(
-                    save_chat_message, session_id, ai_msg_id, "assistant", accumulated_text, frontend_context
+                    save_chat_message, session_id, ai_msg_id, "assistant", accumulated_text, frontend_context, ai_time
                 ))
 
             # Summarize memory asynchronously
