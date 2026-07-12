@@ -479,3 +479,32 @@ Mỗi file JSON trong `data/processed/` có cấu trúc:
 | **Embedding** | BAAI/bge-m3 qua HuggingFace API | Multilingual, 1024 dims |
 | **Vector DB** | Qdrant (Native Hybrid Search) | Cấu hình Named Vectors |
 | **LLM Models** | Gemma4-31B, Qwen3.5-9B, Llama3.1-8B, DeepSeek-R1-7B | HF Inference API |
+## Deployed Inference Setup
+
+For deployed usage, users configure LLM providers from the browser setup popup.
+API keys entered by users are stored only in the current browser profile, then sent
+to the backend per chat request. The backend uses those keys in memory for that
+request and does not persist them.
+
+Inference roles:
+
+- `answer`: final legal answer generation.
+- `rewriter`: query classification and rewrite before retrieval.
+- `summarizer`: background memory summary updates.
+
+Recommended first setup:
+
+```text
+Provider: Google AI Studio
+Answer model: Gemini 2.5 Flash-Lite
+Rewriter model: Gemini 2.5 Flash-Lite
+Summarizer model: Gemini 2.5 Flash-Lite
+```
+
+Embeddings are not user-configurable at runtime. The deployed retrieval stack
+stays fixed to HuggingFace `BAAI/bge-m3` so queries use the same embedding space
+as the indexed legal corpus.
+
+Rollback: ignore browser `inferenceConfig` payloads and rely on server-side
+environment defaults such as `HUGGINGFACE_API_KEY`, `GOOGLE_API_KEY`, and
+`ENABLE_GOOGLE_FALLBACK`.
