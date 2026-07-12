@@ -111,37 +111,50 @@ async def chat_endpoint(request: ChatRequest):
             queries = (queries or [last_message])[:request.maxSubqueries]
         logger.info("Rewriter enabled=%s, domain=%s, queries=%s", request.enableQueryRewriter, domain, queries)
         
-        query_vector = None
-        if request.enableSemanticCache and domain != "chitchat":
-            rewritten_query = queries[0] if queries else last_message
-            embedding = _get_embedding()
-            if embedding:
-                try:
-                    # Sinh embedding cho câu hỏi đã được viết lại
-                    query_vector = await asyncio.to_thread(embedding.embed_query, rewritten_query)
-                    
-                    # Kiểm tra cache
-                    from app.services.semantic_cache import check_cache
-                    cached_response = await asyncio.to_thread(check_cache, query_vector, request.cacheThreshold)
-                    if cached_response:
-                        logger.info("Phản hồi được lấy từ Semantic Cache.")
-                        return {
-                            "text": cached_response.get("response_text", ""),
-                            "contextUsed": cached_response.get("context_used", [])
-                        }
-                except Exception as e:
-                    logger.warning("Cache check failed: %s", e)
+        api_key = request.inference_config.api_key_for("huggingface") if request.inference_config else None
+        
+        try:
+            query_vector = None
+            if request.enableSemanticCache and domain != "chitchat":
+                rewritten_query = queries[0] if queries else last_message
+                embedding = _get_embedding(api_key)
+                if embedding:
+                    try:
+                        # Sinh embedding cho câu hỏi đã được viết lại
+                        query_vector = await asyncio.to_thread(embedding.embed_query, rewritten_query)
+                        
+                        # Kiểm tra cache
+                        from app.services.semantic_cache import check_cache
+                        cached_response = await asyncio.to_thread(check_cache, query_vector, request.cacheThreshold)
+                        if cached_response:
+                            logger.info("Phản hồi được lấy từ Semantic Cache.")
+                            return {
+                                "text": cached_response.get("response_text", ""),
+                                "contextUsed": cached_response.get("context_used", [])
+                            }
+                    except Exception as e:
+                        logger.warning("Cache check failed: %s", e)
+                        if "401" in str(e) or "Unauthorized" in str(e) or "Invalid token" in str(e):
+                            raise ValueError("API Key HuggingFace không hợp lệ hoặc đã hết hạn.")
 
-        retrieved_docs, context_text = await pipeline.aretrieve(
-            query=last_message,
-            k=request.candidateK,
-            category=request.category,
-            rerank_top_k=request.topK,
-            domain=domain,
-            queries=queries,
-            enable_reranker=request.enableReranker,
-            context_token_budget=request.contextTokenBudget
-        )
+            retrieved_docs, context_text = await pipeline.aretrieve(
+                query=last_message,
+                k=request.candidateK,
+                category=request.category,
+                rerank_top_k=request.topK,
+                domain=domain,
+                queries=queries,
+                enable_reranker=request.enableReranker,
+                context_token_budget=request.contextTokenBudget,
+                api_key=api_key
+            )
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+        except Exception as e:
+            if "401" in str(e) or "Unauthorized" in str(e) or "Invalid token" in str(e):
+                raise HTTPException(status_code=401, detail="API Key HuggingFace không hợp lệ hoặc đã hết hạn.")
+            raise
+
         frontend_context = pipeline.format_for_frontend(retrieved_docs)
 
         logger.info("Đã chuẩn bị %d ký tự context (từ %d tài liệu) cho LLM", len(context_text), len(retrieved_docs))
@@ -285,41 +298,55 @@ async def chat_stream_endpoint(request: ChatRequest):
                 queries = (queries or [last_message])[:request.maxSubqueries]
             logger.info("Stream rewriter enabled=%s, domain=%s, queries=%s", request.enableQueryRewriter, domain, queries)
             
-            query_vector = None
-            if request.enableSemanticCache and domain != "chitchat":
-                rewritten_query = queries[0] if queries else last_message
-                embedding = _get_embedding()
-                if embedding:
-                    try:
-                        query_vector = await asyncio.to_thread(embedding.embed_query, rewritten_query)
-                        from app.services.semantic_cache import check_cache
-                        cached_response = await asyncio.to_thread(check_cache, query_vector, request.cacheThreshold)
-                        if cached_response:
-                            logger.info("Stream: Phản hồi được lấy từ Semantic Cache.")
-                            frontend_context = cached_response.get("context_used", [])
-                            yield _sse({"type": "context", "data": frontend_context})
-                            
-                            cached_text = cached_response.get("response_text", "")
-                            words = cached_text.split(" ")
-                            for i, word in enumerate(words):
-                                yield _sse({"type": "token", "text": word + (" " if i < len(words) - 1 else "")})
-                                await asyncio.sleep(0.01)
+            api_key = request.inference_config.api_key_for("huggingface") if request.inference_config else None
+            
+            try:
+                query_vector = None
+                if request.enableSemanticCache and domain != "chitchat":
+                    rewritten_query = queries[0] if queries else last_message
+                    embedding = _get_embedding(api_key)
+                    if embedding:
+                        try:
+                            query_vector = await asyncio.to_thread(embedding.embed_query, rewritten_query)
+                            from app.services.semantic_cache import check_cache
+                            cached_response = await asyncio.to_thread(check_cache, query_vector, request.cacheThreshold)
+                            if cached_response:
+                                logger.info("Stream: Phản hồi được lấy từ Semantic Cache.")
+                                frontend_context = cached_response.get("context_used", [])
+                                yield _sse({"type": "context", "data": frontend_context})
                                 
-                            yield _sse({"type": "done"})
-                            return
-                    except Exception as e:
-                        logger.warning("Stream Cache check failed: %s", e)
+                                cached_text = cached_response.get("response_text", "")
+                                words = cached_text.split(" ")
+                                for i, word in enumerate(words):
+                                    yield _sse({"type": "token", "text": word + (" " if i < len(words) - 1 else "")})
+                                    await asyncio.sleep(0.01)
+                                    
+                                yield _sse({"type": "done"})
+                                return
+                        except Exception as e:
+                            logger.warning("Stream Cache check failed: %s", e)
+                            if "401" in str(e) or "Unauthorized" in str(e) or "Invalid token" in str(e):
+                                raise ValueError("API Key HuggingFace không hợp lệ hoặc đã hết hạn.")
 
-            retrieved_docs, context_text = await pipeline.aretrieve(
-                query=last_message,
-                k=request.candidateK,
-                category=request.category,
-                rerank_top_k=request.topK,
-                domain=domain,
-                queries=queries,
-                enable_reranker=request.enableReranker,
-                context_token_budget=request.contextTokenBudget
-            )
+                retrieved_docs, context_text = await pipeline.aretrieve(
+                    query=last_message,
+                    k=request.candidateK,
+                    category=request.category,
+                    rerank_top_k=request.topK,
+                    domain=domain,
+                    queries=queries,
+                    enable_reranker=request.enableReranker,
+                    context_token_budget=request.contextTokenBudget,
+                    api_key=api_key
+                )
+            except ValueError as e:
+                yield _sse({"type": "error", "message": str(e)})
+                return
+            except Exception as e:
+                if "401" in str(e) or "Unauthorized" in str(e) or "Invalid token" in str(e):
+                    yield _sse({"type": "error", "message": "API Key HuggingFace không hợp lệ hoặc đã hết hạn."})
+                    return
+                raise
             frontend_context = pipeline.format_for_frontend(retrieved_docs)
 
             yield _sse({"type": "context", "data": frontend_context})

@@ -76,6 +76,7 @@ class RAGPipeline:
         queries: Optional[List[str]] = None,
         enable_reranker: bool = True,
         context_token_budget: Optional[int] = None,
+        api_key: Optional[str] = None,
     ) -> Tuple[List[Document], str]:
         """Thực hiện full retrieval pipeline: Search → Rerank → Context Build.
 
@@ -84,6 +85,7 @@ class RAGPipeline:
             k: Number of candidate documents to retrieve before reranking.
             rerank_top_k: Number of documents kept after reranking (default = RETRIEVER_K).
             category: Lọc theo lĩnh vực luật.
+            api_key: API key cho embedding model (nếu dùng endpoint cloud).
 
         Returns:
             Tuple (documents, context_string).
@@ -103,7 +105,12 @@ class RAGPipeline:
             queries = [query]
 
         # Step 1: Search
-        docs = self.searcher.search(queries, k=k, category=category)
+        # Truyền api_key xuống searcher nếu nó hỗ trợ
+        import inspect
+        if "api_key" in inspect.signature(self.searcher.search).parameters:
+            docs = self.searcher.search(queries, k=k, category=category, api_key=api_key)
+        else:
+            docs = self.searcher.search(queries, k=k, category=category)
         retrieved_count = len(docs)
         
         # Deduplicate
@@ -145,6 +152,7 @@ class RAGPipeline:
         queries: Optional[List[str]] = None,
         enable_reranker: bool = True,
         context_token_budget: Optional[int] = None,
+        api_key: Optional[str] = None,
     ) -> Tuple[List[Document], str]:
         """Async version của retrieve — dùng trong FastAPI endpoint."""
         final_k = rerank_top_k or RETRIEVER_K
@@ -163,7 +171,27 @@ class RAGPipeline:
             queries = [query]
 
         # Step 1: Async Search
-        docs = await self.searcher.asearch(queries, k=k, category=category)
+        import inspect
+        if hasattr(self.searcher, "asearch") and "api_key" in inspect.signature(self.searcher.asearch).parameters:
+            docs = await self.searcher.asearch(queries, k=k, category=category, api_key=api_key)
+        elif "api_key" in inspect.signature(self.searcher.search).parameters:
+            docs = await self.searcher.asearch(queries, k=k, category=category) # Wait, asearch might not support it
+            # Actually let's just pass it safely
+            if hasattr(self.searcher, "asearch"):
+                 # if asearch doesn't have it, we shouldn't pass it. But we just check signature.
+                 pass
+            # Just do dynamic check properly below:
+            
+        if hasattr(self.searcher, "asearch"):
+            if "api_key" in inspect.signature(self.searcher.asearch).parameters:
+                docs = await self.searcher.asearch(queries, k=k, category=category, api_key=api_key)
+            else:
+                docs = await self.searcher.asearch(queries, k=k, category=category)
+        else:
+            if "api_key" in inspect.signature(self.searcher.search).parameters:
+                docs = self.searcher.search(queries, k=k, category=category, api_key=api_key)
+            else:
+                docs = self.searcher.search(queries, k=k, category=category)
         retrieved_count = len(docs)
         
         # Deduplicate
@@ -234,28 +262,34 @@ class RAGPipeline:
 # ---------------------------------------------------------------------------
 
 # Module-level state
-_embedding = None
+_embedding_cache: Dict[str, BaseEmbedding] = {}
 _pipeline: Optional[RAGPipeline] = None
 _faiss_vectorstore: Optional[FAISS] = None
 
 
-def _get_embedding() -> BaseEmbedding:
-    """Lazy init embedding model (singleton) with Fallback."""
-    global _embedding
-    if _embedding is None:
-        try:
-            from app.config import INFERENCE_STRATEGY
-            hf_emb = HuggingFaceEndpointEmbedding()
-            ollama_emb = OllamaEmbedding()
+def _get_embedding(api_key: str = None) -> Optional[BaseEmbedding]:
+    """Lazy init embedding model, cached by api_key."""
+    global _embedding_cache
+    
+    cache_key = api_key or "default"
+    if cache_key in _embedding_cache:
+        return _embedding_cache[cache_key]
+        
+    try:
+        from app.config import INFERENCE_STRATEGY
+        hf_emb = HuggingFaceEndpointEmbedding(api_key=api_key)
+        ollama_emb = OllamaEmbedding()
+        
+        if INFERENCE_STRATEGY == "local_first":
+            emb = FallbackEmbedding(primary=ollama_emb, secondary=hf_emb)
+        else:
+            emb = FallbackEmbedding(primary=hf_emb, secondary=ollama_emb)
             
-            if INFERENCE_STRATEGY == "local_first":
-                _embedding = FallbackEmbedding(primary=ollama_emb, secondary=hf_emb)
-            else:
-                _embedding = FallbackEmbedding(primary=hf_emb, secondary=ollama_emb)
-        except Exception as exc:
-            logger.warning("Embedding backend unavailable during pipeline init: %s", exc)
-            _embedding = None
-    return _embedding
+        _embedding_cache[cache_key] = emb
+        return emb
+    except Exception as exc:
+        logger.warning("Embedding backend unavailable: %s", exc)
+        return None
 
 
 def _get_processed_files() -> List[str]:
