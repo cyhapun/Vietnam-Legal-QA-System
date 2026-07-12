@@ -88,7 +88,6 @@ async def chat_endpoint(request: ChatRequest):
         
         import asyncio
         from app.services.pipeline import _get_embedding
-        from app.services.chat_logger import log_interaction
         
         # Lịch sử ngắn gọn cho rewriter (sliding window: 2 turns = 4 messages)
         recent_history_lines = []
@@ -192,11 +191,7 @@ async def chat_endpoint(request: ChatRequest):
             except Exception as e:
                 logger.warning("Failed to update cache: %s", e)
 
-        # Log interaction asynchronously
-        asyncio.create_task(
-            asyncio.to_thread(log_interaction, "unknown", last_message, output_text)
-        )
-        
+
         # Summarize memory asynchronously
         if request.enableMemory and session_id != "unknown":
             asyncio.create_task(summarize_session(
@@ -253,7 +248,6 @@ async def chat_stream_endpoint(request: ChatRequest):
             
             import asyncio
             from app.services.pipeline import _get_embedding
-            from app.services.chat_logger import log_interaction
             
             recent_history_lines = []
             for msg in _recent_messages(request):
@@ -354,10 +348,7 @@ async def chat_stream_endpoint(request: ChatRequest):
                 except Exception as e:
                     logger.warning("Stream Failed to update cache: %s", e)
 
-            # Log interaction asynchronously
-            asyncio.create_task(
-                asyncio.to_thread(log_interaction, "unknown", last_message, accumulated_text)
-            )
+
 
             # Summarize memory asynchronously
             if request.enableMemory and session_id != "unknown":
