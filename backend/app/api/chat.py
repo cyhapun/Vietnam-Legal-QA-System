@@ -47,7 +47,10 @@ def _filter_cited_context(output_text: str, context: list, max_citations: int) -
         return context[:max_citations]
     cited_ids = cited_ids[:max_citations]
     by_id = {item.get("metadata", {}).get("id"): item for item in context}
-    return [by_id[citation_id] for citation_id in cited_ids if citation_id in by_id]
+    valid_citations = [by_id[citation_id] for citation_id in cited_ids if citation_id in by_id]
+    if not valid_citations:
+        return context[:max_citations]
+    return valid_citations
 
 
 def _rewrite_query(rewriter, query: str, history: str, runtime_config):

@@ -336,8 +336,10 @@ export function ChatInterface() {
                 const filteredContext = fullContext.filter(ctx => 
                   ctx.metadata?.id && citedIds.includes(ctx.metadata.id as string)
                 );
-                setStreamingContext(filteredContext);
-                contextUsed = filteredContext;
+                if (filteredContext.length > 0) {
+                  setStreamingContext(filteredContext);
+                  contextUsed = filteredContext;
+                }
               }
               
               setStreamingText(accumulated);
