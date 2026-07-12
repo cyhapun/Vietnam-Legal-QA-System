@@ -61,40 +61,45 @@ export function useChatSessions() {
   // --- Xóa session ---
   const handleDeleteSession = useCallback((id: string) => {
     // Gọi API xóa ở backend không đồng bộ
-    fetch(`/api/chat/session/${id}`, { method: 'DELETE' }).catch(err => {
-      console.error('Lỗi khi xóa session ở backend:', err);
-    });
+    fetch(`/api/chat/session/${id}`, { method: 'DELETE' })
+      .then(res => {
+        if (!res.ok) console.warn(`[Delete Session] Backend trả về ${res.status} cho session ${id}`);
+      })
+      .catch(err => {
+        console.error('Lỗi khi xóa session ở backend:', err);
+      });
 
-    const { currentSessionId } = stateRef.current;
-    setSessions(prev => {
-      const remaining = prev.filter(s => s.id !== id);
-      // Nếu đang xóa session hiện tại, chuyển sang session khác
-      if (currentSessionId === id) {
-        if (remaining.length > 0) {
-          setCurrentSessionId(remaining[0].id);
-        } else {
-          // Tạo session mới nếu không còn
-          const newId = Date.now().toString();
-          const newSession: ChatSession = {
-            id: newId,
-            title: 'Cuộc trò chuyện mới',
-            lastMessage: '',
-            timestamp: Date.now(),
-          };
-          setCurrentSessionId(newId);
-          setMessagesBySession(prev => ({ ...prev, [newId]: [] }));
-          return [newSession];
-        }
+    // Cập nhật đồng thời cả sessions và messages trong cùng một lần render
+    const { currentSessionId, sessions, messagesBySession } = stateRef.current;
+    const remaining = sessions.filter(s => s.id !== id);
+
+    // Xóa messages của session bị xóa
+    const nextMessages = { ...messagesBySession };
+    delete nextMessages[id];
+    setMessagesBySession(nextMessages);
+
+    if (currentSessionId === id) {
+      if (remaining.length > 0) {
+        setCurrentSessionId(remaining[0].id);
+        setSessions(remaining);
+      } else {
+        // Tạo session mới nếu không còn session nào
+        const newId = Date.now().toString();
+        const newSession: ChatSession = {
+          id: newId,
+          title: 'Cuộc trò chuyện mới',
+          lastMessage: '',
+          timestamp: Date.now(),
+        };
+        nextMessages[newId] = [];
+        setMessagesBySession({ ...nextMessages });
+        setCurrentSessionId(newId);
+        setSessions([newSession]);
       }
-      return remaining;
-    });
-
-    setMessagesBySession(prev => {
-      const next = { ...prev };
-      delete next[id];
-      return next;
-    });
-  }, [currentSessionId]);
+    } else {
+      setSessions(remaining);
+    }
+  }, []);
 
   // --- Thêm message vào session hiện tại ---
   const addMessage = useCallback((message: Message) => {
@@ -153,8 +158,11 @@ export function useChatSessions() {
   useEffect(() => {
     if (isMounted) {
       const validSessions = sessions.filter(s => messagesBySession[s.id] && messagesBySession[s.id].length > 0);
+      // Chỉ lưu messages của các session hợp lệ để tránh tích lũy orphan data
+      const validMessages: Record<string, Message[]> = {};
+      validSessions.forEach(s => { validMessages[s.id] = messagesBySession[s.id]; });
       localStorage.setItem(STORAGE_KEYS.sessions, JSON.stringify(validSessions));
-      localStorage.setItem(STORAGE_KEYS.messages, JSON.stringify(messagesBySession));
+      localStorage.setItem(STORAGE_KEYS.messages, JSON.stringify(validMessages));
     }
   }, [sessions, messagesBySession, isMounted]);
 
