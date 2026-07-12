@@ -1,12 +1,12 @@
 from fastapi import APIRouter
-from app.services.chat_logger import get_chat_logs
+from app.services.storage import get_all_chat_messages
 
 router = APIRouter()
 
 @router.get("/analytics/logs")
 async def get_logs(page: int = 1, limit: int = 50):
     """Lấy lịch sử chat có phân trang."""
-    logs = get_chat_logs()
+    logs = get_all_chat_messages()
     # Sort by timestamp descending
     logs.sort(key=lambda x: x.get("timestamp", ""), reverse=True)
     
@@ -23,7 +23,7 @@ async def get_logs(page: int = 1, limit: int = 50):
 @router.get("/analytics/stats")
 async def get_stats():
     """Lấy thống kê cơ bản."""
-    logs = get_chat_logs()
+    logs = get_all_chat_messages()
     
     # Simple stats: total chats, and breakdown by date
     stats_by_date = {}

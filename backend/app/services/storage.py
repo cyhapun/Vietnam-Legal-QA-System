@@ -89,10 +89,24 @@ def _ensure_schema() -> None:
         """
         CREATE TABLE IF NOT EXISTS chat_sessions (
             session_id TEXT PRIMARY KEY,
+            title TEXT NOT NULL DEFAULT 'Cuộc trò chuyện mới',
             summary TEXT NOT NULL DEFAULT '',
             turn_count INTEGER NOT NULL DEFAULT 0,
             updated_at TIMESTAMPTZ DEFAULT NOW()
         )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS chat_messages (
+            id TEXT PRIMARY KEY,
+            session_id TEXT NOT NULL REFERENCES chat_sessions(session_id) ON DELETE CASCADE,
+            role TEXT NOT NULL,
+            content TEXT NOT NULL,
+            context_used JSONB DEFAULT '[]'::jsonb,
+            created_at TIMESTAMPTZ DEFAULT NOW()
+        )
+        """,
+        """
+        ALTER TABLE chat_sessions ADD COLUMN IF NOT EXISTS title TEXT NOT NULL DEFAULT 'Cuộc trò chuyện mới'
         """,
     ]
 
@@ -520,3 +534,189 @@ def upsert_session_summary(session_id: str, summary: str, turn_count: int) -> No
                 )
     except Exception as exc:
         logger.warning("Error upserting session summary for %s: %s", session_id, exc)
+
+
+def ensure_session_exists(session_id: str, title: str = "Cuộc trò chuyện mới") -> None:
+    """Create a chat_sessions row if it doesn't exist yet."""
+    try:
+        import psycopg
+    except ImportError:
+        return
+    try:
+        with psycopg.connect(POSTGRES_DSN, autocommit=True) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    """
+                    INSERT INTO chat_sessions (session_id, title, summary, turn_count, updated_at)
+                    VALUES (%s, %s, '', 0, NOW())
+                    ON CONFLICT (session_id) DO NOTHING
+                    """,
+                    (session_id, title)
+                )
+    except Exception as exc:
+        logger.warning("Error ensuring session %s: %s", session_id, exc)
+
+
+def update_session_title(session_id: str, title: str) -> None:
+    """Update the display title for a session."""
+    try:
+        import psycopg
+    except ImportError:
+        return
+    try:
+        with psycopg.connect(POSTGRES_DSN, autocommit=True) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    "UPDATE chat_sessions SET title = %s WHERE session_id = %s",
+                    (title, session_id)
+                )
+    except Exception as exc:
+        logger.warning("Error updating session title %s: %s", session_id, exc)
+
+
+def save_chat_message(
+    session_id: str,
+    message_id: str,
+    role: str,
+    content: str,
+    context_used: Optional[List[Dict[str, Any]]] = None,
+) -> None:
+    """Persist a single chat message (user or assistant) to PostgreSQL."""
+    try:
+        import psycopg
+    except ImportError:
+        return
+    try:
+        with psycopg.connect(POSTGRES_DSN, autocommit=True) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    """
+                    INSERT INTO chat_messages (id, session_id, role, content, context_used, created_at)
+                    VALUES (%s, %s, %s, %s, %s, NOW())
+                    ON CONFLICT (id) DO NOTHING
+                    """,
+                    (message_id, session_id, role, content, json.dumps(context_used or [], ensure_ascii=False))
+                )
+                # Keep updated_at fresh on the parent session row
+                cursor.execute(
+                    "UPDATE chat_sessions SET updated_at = NOW() WHERE session_id = %s",
+                    (session_id,)
+                )
+    except Exception as exc:
+        logger.warning("Error saving chat message %s: %s", message_id, exc)
+
+
+def get_session_messages(session_id: str) -> List[Dict[str, Any]]:
+    """Return all messages for a session ordered by creation time."""
+    try:
+        import psycopg
+    except ImportError:
+        return []
+    try:
+        with psycopg.connect(POSTGRES_DSN) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    """
+                    SELECT id, role, content, context_used, created_at
+                    FROM chat_messages
+                    WHERE session_id = %s
+                    ORDER BY created_at ASC
+                    """,
+                    (session_id,)
+                )
+                rows = cursor.fetchall()
+                return [
+                    {
+                        "id": r[0],
+                        "role": r[1],
+                        "content": r[2],
+                        "contextUsed": r[3] if r[3] else [],
+                        "created_at": r[4].isoformat() if r[4] else None,
+                    }
+                    for r in rows
+                ]
+    except Exception as exc:
+        logger.warning("Error getting messages for session %s: %s", session_id, exc)
+        return []
+
+
+def list_sessions() -> List[Dict[str, Any]]:
+    """Return all sessions ordered by most recent activity."""
+    try:
+        import psycopg
+    except ImportError:
+        return []
+    try:
+        with psycopg.connect(POSTGRES_DSN) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    """
+                    SELECT session_id, title, turn_count, updated_at
+                    FROM chat_sessions
+                    ORDER BY updated_at DESC
+                    """
+                )
+                rows = cursor.fetchall()
+                return [
+                    {
+                        "session_id": r[0],
+                        "title": r[1],
+                        "turn_count": r[2],
+                        "updated_at": r[3].isoformat() if r[3] else None,
+                    }
+                    for r in rows
+                ]
+    except Exception as exc:
+        logger.warning("Error listing sessions: %s", exc)
+        return []
+
+
+def delete_session_summary(session_id: str) -> None:
+    """Delete a session and ALL associated data (messages, feedbacks) from PostgreSQL."""
+    try:
+        import psycopg
+    except ImportError:
+        return
+
+    try:
+        with psycopg.connect(POSTGRES_DSN, autocommit=True) as conn:
+            with conn.cursor() as cursor:
+                # chat_messages and chat_feedbacks are cascade-deleted via FK,
+                # but chat_feedbacks has no FK so delete explicitly.
+                cursor.execute("DELETE FROM chat_feedbacks WHERE session_id = %s", (session_id,))
+                # This cascades to chat_messages automatically.
+                cursor.execute("DELETE FROM chat_sessions WHERE session_id = %s", (session_id,))
+                logger.info("Deleted session %s from PostgreSQL", session_id)
+    except Exception as exc:
+        logger.warning("Error deleting session data for %s: %s", session_id, exc)
+
+def get_all_chat_messages() -> List[Dict[str, Any]]:
+    """Get all chat messages from PostgreSQL for analytics."""
+    try:
+        import psycopg
+    except ImportError:
+        return []
+    try:
+        with psycopg.connect(POSTGRES_DSN) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    """
+                    SELECT id, session_id, role, content, created_at
+                    FROM chat_messages
+                    ORDER BY created_at DESC
+                    """
+                )
+                rows = cursor.fetchall()
+                return [
+                    {
+                        "id": r[0],
+                        "session_id": r[1],
+                        "role": r[2],
+                        "content": r[3],
+                        "timestamp": r[4].isoformat() if r[4] else None,
+                    }
+                    for r in rows
+                ]
+    except Exception as exc:
+        logger.warning("Error getting all chat messages: %s", exc)
+        return []

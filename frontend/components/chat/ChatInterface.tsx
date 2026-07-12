@@ -267,6 +267,8 @@ export function ChatInterface() {
           messages: apiMessages, 
           model, 
           sessionId: currentSessionId || 'unknown',
+          sessionTitle: sessions.find(s => s.id === currentSessionId)?.title || 'Cuộc trò chuyện mới',
+          messageId: userMessage.id,
           category: lawCategory,
           temperature: advancedConfig.temperature,
           maxTokens: advancedConfig.maxTokens,
@@ -336,8 +338,10 @@ export function ChatInterface() {
                 const filteredContext = fullContext.filter(ctx => 
                   ctx.metadata?.id && citedIds.includes(ctx.metadata.id as string)
                 );
-                setStreamingContext(filteredContext);
-                contextUsed = filteredContext;
+                if (filteredContext.length > 0) {
+                  setStreamingContext(filteredContext);
+                  contextUsed = filteredContext;
+                }
               }
               
               setStreamingText(accumulated);

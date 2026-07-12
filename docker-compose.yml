@@ -28,8 +28,8 @@ services:
       - .env
     environment:
       STORAGE_BACKEND: qdrant_postgres
-      POSTGRES_DSN: postgresql://postgres:postgres@postgres:5432/vietlaw
-      QDRANT_URL: http://qdrant:6333
+      POSTGRES_DSN: ${POSTGRES_DSN:-postgresql://postgres:postgres@postgres:5432/vietlaw}
+      QDRANT_URL: ${QDRANT_URL:-http://qdrant:6333}
       HUGGINGFACE_API_KEY: ${HUGGINGFACE_API_KEY:-}
       HF_TOKEN: ${HUGGINGFACE_API_KEY:-}
       EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-huggingface}
@@ -65,8 +65,10 @@ services:
       - .env
     environment:
       STORAGE_BACKEND: qdrant_postgres
-      POSTGRES_DSN: postgresql://postgres:postgres@postgres:5432/vietlaw
-      QDRANT_URL: http://qdrant:6333
+      # POSTGRES_DSN: postgresql://postgres:postgres@postgres:5432/vietlaw
+      # QDRANT_URL: http://qdrant:6333
+      POSTGRES_DSN: ${POSTGRES_DSN:-postgresql://postgres:postgres@postgres:5432/vietlaw}
+      QDRANT_URL: ${QDRANT_URL:-http://qdrant:6333}
       HUGGINGFACE_API_KEY: ${HUGGINGFACE_API_KEY:-}
       HF_TOKEN: ${HUGGINGFACE_API_KEY:-}
       EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-huggingface}

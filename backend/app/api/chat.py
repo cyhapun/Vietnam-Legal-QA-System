@@ -43,9 +43,14 @@ def _recent_messages(request: ChatRequest):
 def _filter_cited_context(output_text: str, context: list, max_citations: int) -> list:
     """Return cited contexts in citation order, capped for the client payload."""
     cited_ids = list(dict.fromkeys(re.findall(r'<cite\s+id=["\']([^"\']+)["\']>', output_text)))
+    if not cited_ids:
+        return context[:max_citations]
     cited_ids = cited_ids[:max_citations]
     by_id = {item.get("metadata", {}).get("id"): item for item in context}
-    return [by_id[citation_id] for citation_id in cited_ids if citation_id in by_id]
+    valid_citations = [by_id[citation_id] for citation_id in cited_ids if citation_id in by_id]
+    if not valid_citations:
+        return context[:max_citations]
+    return valid_citations
 
 
 def _rewrite_query(rewriter, query: str, history: str, runtime_config):
@@ -83,7 +88,6 @@ async def chat_endpoint(request: ChatRequest):
         
         import asyncio
         from app.services.pipeline import _get_embedding
-        from app.services.chat_logger import log_interaction
         
         # Lịch sử ngắn gọn cho rewriter (sliding window: 2 turns = 4 messages)
         recent_history_lines = []
@@ -187,11 +191,23 @@ async def chat_endpoint(request: ChatRequest):
             except Exception as e:
                 logger.warning("Failed to update cache: %s", e)
 
-        # Log interaction asynchronously
-        asyncio.create_task(
-            asyncio.to_thread(log_interaction, "unknown", last_message, output_text)
-        )
-        
+
+        # Persist messages to PostgreSQL for DB/UI sync
+        if session_id != "unknown":
+            from app.services.storage import ensure_session_exists, save_chat_message
+            import uuid as _uuid
+            asyncio.create_task(asyncio.to_thread(
+                ensure_session_exists, session_id, request.sessionTitle or "Cuộc trò chuyện mới"
+            ))
+            user_msg_id = request.messageId or str(_uuid.uuid4())
+            ai_msg_id = str(_uuid.uuid4())
+            asyncio.create_task(asyncio.to_thread(
+                save_chat_message, session_id, user_msg_id, "user", last_message, []
+            ))
+            asyncio.create_task(asyncio.to_thread(
+                save_chat_message, session_id, ai_msg_id, "assistant", output_text, frontend_context
+            ))
+
         # Summarize memory asynchronously
         if request.enableMemory and session_id != "unknown":
             asyncio.create_task(summarize_session(
@@ -248,7 +264,6 @@ async def chat_stream_endpoint(request: ChatRequest):
             
             import asyncio
             from app.services.pipeline import _get_embedding
-            from app.services.chat_logger import log_interaction
             
             recent_history_lines = []
             for msg in _recent_messages(request):
@@ -349,10 +364,23 @@ async def chat_stream_endpoint(request: ChatRequest):
                 except Exception as e:
                     logger.warning("Stream Failed to update cache: %s", e)
 
-            # Log interaction asynchronously
-            asyncio.create_task(
-                asyncio.to_thread(log_interaction, "unknown", last_message, accumulated_text)
-            )
+
+
+            # Persist messages to PostgreSQL for DB/UI sync
+            if session_id != "unknown":
+                from app.services.storage import ensure_session_exists, save_chat_message
+                import uuid as _uuid
+                asyncio.create_task(asyncio.to_thread(
+                    ensure_session_exists, session_id, request.sessionTitle or "Cuộc trò chuyện mới"
+                ))
+                user_msg_id = request.messageId or str(_uuid.uuid4())
+                ai_msg_id = str(_uuid.uuid4())
+                asyncio.create_task(asyncio.to_thread(
+                    save_chat_message, session_id, user_msg_id, "user", last_message, []
+                ))
+                asyncio.create_task(asyncio.to_thread(
+                    save_chat_message, session_id, ai_msg_id, "assistant", accumulated_text, frontend_context
+                ))
 
             # Summarize memory asynchronously
             if request.enableMemory and session_id != "unknown":
@@ -378,3 +406,35 @@ async def chat_stream_endpoint(request: ChatRequest):
             "X-Accel-Buffering": "no",
         },
     )
+
+
+@router.get("/chat/sessions")
+async def get_sessions():
+    """Trả về danh sách tất cả sessions từ PostgreSQL."""
+    from app.services.storage import list_sessions
+    return list_sessions()
+
+
+@router.get("/chat/session/{session_id}/messages")
+async def get_session_messages(session_id: str):
+    """Trả về tất cả tin nhắn của một session từ PostgreSQL."""
+    from app.services.storage import get_session_messages
+    return get_session_messages(session_id)
+
+
+@router.delete("/chat/session/{session_id}")
+async def delete_session(session_id: str):
+    """Xóa lịch sử trò chuyện của một session cụ thể khỏi hệ thống."""
+    if not session_id or session_id == "unknown":
+        raise HTTPException(status_code=400, detail="Invalid session_id")
+    
+    try:
+        import asyncio
+        from app.services.storage import delete_session_summary
+        
+        await asyncio.to_thread(delete_session_summary, session_id)
+        
+        return {"status": "success", "message": f"Session {session_id} deleted."}
+    except Exception as e:
+        logger.error(f"Error deleting session {session_id}: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to delete session: {e}")

@@ -355,7 +355,7 @@ CÁC QUY TẮC BẮT BUỘC:
 3. KHÔNG TỰ Ý SUY DIỄN: Chỉ trả lời dựa trên dữ liệu được cung cấp. Nếu dữ liệu không đủ để giải quyết vấn đề, hãy trả lời chính xác là:
    "Hiện tại tài liệu hệ thống cung cấp chưa đủ để giải đáp chi tiết vấn đề này".
 4. NGÔN NGỮ: Luôn luôn trả lời bằng tiếng Việt chuyên nghiệp, khách quan và chuẩn xác. Tuyệt đối không sử dụng tiếng Anh, tiếng Hàn hoặc bất kỳ ngôn ngữ nào khác ngoài tiếng Việt trong câu trả lời.
-5. STRICT CITATION FORMAT: Whenever you use a provided context, you MUST cite it using the exact XML tag format `<cite id="[ID]">Tên Điều/Khoản</cite>`, where `[ID]` is the ID provided in `[CĂN CỨ ID: ...]`. Example: `<cite id="luat_xay_dung_123">Khoản 1 Điều 5</cite>`.
+5. BẮT BUỘC TRÍCH DẪN (STRICT CITATION): Khi sử dụng thông tin từ dữ liệu tham chiếu, bạn PHẢI trích dẫn bằng thẻ `<cite id="[MÃ ID]">Tên Điều/Khoản</cite>`, trong đó `[MÃ ID]` CHÍNH XÁC là đoạn mã được cung cấp trong thẻ `[CĂN CỨ ID: ...]`. TUYỆT ĐỐI KHÔNG TỰ BỊA RA ID VÀ KHÔNG SỬ DỤNG ID VÍ DỤ.
 
 ====================
 [1] DỮ LIỆU THAM CHIẾU PHÁP LÝ ĐƯỢC TRÍCH XUẤT TỪ HỆ THỐNG:
