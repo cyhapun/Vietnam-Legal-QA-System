@@ -9,6 +9,8 @@ function getBackendUrl(reqUrl: string): string {
   return base.replace(/\/+$/, '');
 }
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -20,6 +22,7 @@ export async function GET(
     
     const backendRes = await fetch(targetUrl, {
       method: 'GET',
+      cache: 'no-store',
     });
 
     if (!backendRes.ok) {

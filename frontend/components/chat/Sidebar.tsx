@@ -25,6 +25,7 @@ export function Sidebar({
   onCloseSidebar,
 }: SidebarProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [sessionToDelete, setSessionToDelete] = useState<string | null>(null);
   const { theme, setTheme, systemTheme } = useTheme();
   
   const currentTheme = theme === 'system' ? systemTheme : theme;
@@ -155,7 +156,10 @@ export function Sidebar({
                         </span>
                       </div>
                       <button
-                        onClick={(e) => { e.stopPropagation(); onDeleteSession(session.id); }}
+                        onClick={(e) => { 
+                          e.stopPropagation(); 
+                          setSessionToDelete(session.id);
+                        }}
                         className="absolute right-2 p-1.5 rounded-lg text-gray-600 hover:text-red-400 hover:bg-red-400/10 transition-all opacity-0 group-hover:opacity-100"
                         title="Xóa đoạn chat"
                       >
@@ -183,6 +187,45 @@ export function Sidebar({
           {currentTheme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
         </button>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {sessionToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setSessionToDelete(null)}>
+          <div 
+            className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-2xl p-6 w-[90%] max-w-sm transform transition-all animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 mb-4 text-red-500">
+              <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-500/10 flex items-center justify-center flex-shrink-0">
+                <Trash2 className="w-5 h-5" />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white">Xóa hội thoại?</h3>
+            </div>
+            
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 leading-relaxed">
+              Bạn có chắc chắn muốn xóa đoạn hội thoại này không? Dữ liệu sẽ bị xóa hoàn toàn khỏi cơ sở dữ liệu và không thể khôi phục.
+            </p>
+            
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setSessionToDelete(null)}
+                className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl transition-colors"
+              >
+                Hủy bỏ
+              </button>
+              <button
+                onClick={() => {
+                  onDeleteSession(sessionToDelete);
+                  setSessionToDelete(null);
+                }}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 shadow-md shadow-red-500/20 rounded-xl transition-colors"
+              >
+                Xác nhận xóa
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

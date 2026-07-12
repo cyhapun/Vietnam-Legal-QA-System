@@ -9,6 +9,8 @@ function getBackendUrl(reqUrl: string): string {
   return base.replace(/\/+$/, '');
 }
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
   try {
     const backendBase = getBackendUrl(req.url);
@@ -16,6 +18,7 @@ export async function GET(req: NextRequest) {
     
     const backendRes = await fetch(targetUrl, {
       method: 'GET',
+      cache: 'no-store',
     });
 
     if (!backendRes.ok) {
