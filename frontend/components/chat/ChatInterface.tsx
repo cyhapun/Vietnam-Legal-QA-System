@@ -43,6 +43,7 @@ export function ChatInterface() {
     updateMessage,
     updateSessionTitle,
     isSessionLoading,
+    isSessionsListLoading,
   } = useChatSessions();
 
   const [input, setInput] = useState('');
@@ -470,6 +471,7 @@ export function ChatInterface() {
             onSelectSession={handleSelectSession}
             onDeleteSession={handleDeleteSession}
             onCloseSidebar={() => setIsSidebarOpen(false)}
+            isSessionsListLoading={isSessionsListLoading}
           />
         </div>
       </div>

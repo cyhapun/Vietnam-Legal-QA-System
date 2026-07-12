@@ -12,6 +12,7 @@ export function useChatSessions() {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [isSessionLoading, setIsSessionLoading] = useState(false);
+  const [isSessionsListLoading, setIsSessionsListLoading] = useState(true);
   const [messagesBySession, setMessagesBySession] = useState<Record<string, Message[]>>({});
   const [isMounted, setIsMounted] = useState(false);
 
@@ -229,6 +230,8 @@ export function useChatSessions() {
         } else {
           handleNewChat();
         }
+      } finally {
+        setIsSessionsListLoading(false);
       }
     };
 
@@ -259,5 +262,6 @@ export function useChatSessions() {
     updateMessage,
     updateSessionTitle,
     isSessionLoading,
+    isSessionsListLoading,
   };
 }
