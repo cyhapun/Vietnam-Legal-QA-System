@@ -668,7 +668,7 @@ export function ChatInterface() {
       </div>
 
       {!isInferenceConfigured(aiSettings) && (
-        <InferenceSetupModal settings={aiSettings} setSettings={setAISettings} />
+        <InferenceSetupModal />
       )}
 
       {/* Context Drawer */}
