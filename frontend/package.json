@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "clean": "next clean",
-    "verify:models": "node scripts/verify-ai-models.mjs"
+    "verify:models": "node scripts/verify-ai-models.mjs",
+    "verify:inference-settings": "node scripts/verify-inference-settings.mjs"
   },
   "dependencies": {
     "autoprefixer": "^10.4.21",

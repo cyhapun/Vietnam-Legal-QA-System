@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { Cpu, ChevronDown, Check } from 'lucide-react';
 import { useClickOutside } from '@/hooks/use-click-outside';
-import { AI_MODELS } from '@/lib/constants';
+import { AI_MODELS, AI_PROVIDERS } from '@/lib/constants';
 
 interface ModelSelectorProps {
   model: string;
@@ -13,6 +13,7 @@ export function ProviderSelector({ model, setModel }: ModelSelectorProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const selectedModel = AI_MODELS.find(m => m.id === model) || AI_MODELS[0];
+  const selectedProvider = AI_PROVIDERS.find(provider => provider.id === selectedModel.provider);
 
   // Dùng hook tái sử dụng thay vì duplicate useEffect
   useClickOutside(dropdownRef, useCallback(() => setIsOpen(false), []));
@@ -26,7 +27,9 @@ export function ProviderSelector({ model, setModel }: ModelSelectorProps) {
       >
         <Cpu className="w-3.5 h-3.5 text-emerald-600 mr-2" />
         <div className="flex items-center gap-1">
-          <span className="text-[12px] font-bold text-gray-700 dark:text-gray-300">{selectedModel.name}</span>
+          <span className="text-[12px] font-bold text-gray-700 dark:text-gray-300">
+            {selectedProvider?.name ?? selectedModel.provider}: {selectedModel.name}
+          </span>
           <ChevronDown className={`w-3 h-3 text-gray-400 dark:text-gray-500 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
         </div>
       </button>
@@ -50,7 +53,12 @@ export function ProviderSelector({ model, setModel }: ModelSelectorProps) {
                   : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800'
               }`}
             >
-              {m.fullName}
+              <span>
+                <span className="block">{m.fullName}</span>
+                <span className="block text-[10px] text-gray-400">
+                  {AI_PROVIDERS.find(provider => provider.id === m.provider)?.name ?? m.provider}
+                </span>
+              </span>
               {model === m.id && <Check className="w-3.5 h-3.5 text-emerald-600" />}
             </button>
           ))}
