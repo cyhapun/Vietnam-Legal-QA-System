@@ -187,6 +187,7 @@ export function useChatSessions() {
 
         // Fetch messages cho session đầu tiên
         if (loadedSessions.length > 0) {
+          setIsSessionLoading(true);
           const firstSessionId = loadedSessions[0].id;
           const mRes = await fetch(`/api/chat/session/${firstSessionId}/messages`);
           if (mRes.ok) {
@@ -207,6 +208,7 @@ export function useChatSessions() {
           setSessions(loadedSessions);
           setMessagesBySession(loadedMessages);
           setCurrentSessionId(firstSessionId);
+          setIsSessionLoading(false);
         } else {
           handleNewChat();
         }
