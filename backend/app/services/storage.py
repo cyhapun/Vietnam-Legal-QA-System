@@ -105,7 +105,6 @@ def _ensure_schema() -> None:
             created_at TIMESTAMPTZ DEFAULT NOW()
         )
         """,
-        -- Add title column if upgrading from older schema
         """
         ALTER TABLE chat_sessions ADD COLUMN IF NOT EXISTS title TEXT NOT NULL DEFAULT 'Cuộc trò chuyện mới'
         """,
@@ -690,3 +689,34 @@ def delete_session_summary(session_id: str) -> None:
                 logger.info("Deleted session %s from PostgreSQL", session_id)
     except Exception as exc:
         logger.warning("Error deleting session data for %s: %s", session_id, exc)
+
+def get_all_chat_messages() -> List[Dict[str, Any]]:
+    """Get all chat messages from PostgreSQL for analytics."""
+    try:
+        import psycopg
+    except ImportError:
+        return []
+    try:
+        with psycopg.connect(POSTGRES_DSN) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    """
+                    SELECT id, session_id, role, content, created_at
+                    FROM chat_messages
+                    ORDER BY created_at DESC
+                    """
+                )
+                rows = cursor.fetchall()
+                return [
+                    {
+                        "id": r[0],
+                        "session_id": r[1],
+                        "role": r[2],
+                        "content": r[3],
+                        "timestamp": r[4].isoformat() if r[4] else None,
+                    }
+                    for r in rows
+                ]
+    except Exception as exc:
+        logger.warning("Error getting all chat messages: %s", exc)
+        return []
