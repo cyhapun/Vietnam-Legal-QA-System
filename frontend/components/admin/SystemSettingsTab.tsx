@@ -98,6 +98,11 @@ export default function SystemSettingsTab() {
   };
 
   const handleReset = () => {
+    const confirmed = window.confirm(
+      'Restore default AI configuration? This will clear provider API keys and reset model selections on this browser.',
+    );
+    if (!confirmed) return;
+
     resetSettings();
     setDraft(DEFAULT_AI_SETTINGS);
     setSaved(false);
@@ -406,8 +411,6 @@ export default function SystemSettingsTab() {
               />
             </div>
           </section>
-          <div className="rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 p-4 text-xs leading-5 text-amber-800 dark:text-amber-300">
-            Các cấu hình hạ tầng bên dưới vẫn chỉ đọc vì thay đổi chúng cần khởi tạo lại model, index hoặc dịch vụ. API key và thông tin kết nối không được gửi xuống trình duyệt.</div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {SYSTEM_FEATURES.map(feature => {
               const Icon = feature.icon;
