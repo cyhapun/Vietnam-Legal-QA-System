@@ -14,6 +14,7 @@ interface SidebarProps {
   onSelectSession: (id: string) => void;
   onDeleteSession: (id: string) => void;
   onCloseSidebar: () => void;
+  isSessionsListLoading?: boolean;
 }
 
 export function Sidebar({
@@ -23,6 +24,7 @@ export function Sidebar({
   onSelectSession,
   onDeleteSession,
   onCloseSidebar,
+  isSessionsListLoading = false,
 }: SidebarProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [sessionToDelete, setSessionToDelete] = useState<string | null>(null);
@@ -119,7 +121,16 @@ export function Sidebar({
 
       {/* Session list */}
       <div className="flex-1 overflow-y-auto px-2 py-2 space-y-4 custom-scrollbar">
-        {filteredSessions.length === 0 ? (
+        {isSessionsListLoading ? (
+          <div className="space-y-2 px-1 py-2">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="animate-pulse flex items-center px-3 py-2.5 rounded-xl bg-gray-100 dark:bg-white/5">
+                <div className="w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded mr-2.5 flex-shrink-0"></div>
+                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+              </div>
+            ))}
+          </div>
+        ) : filteredSessions.length === 0 ? (
           <div className="px-3 py-6 text-[12px] text-gray-400 dark:text-gray-600 text-center italic leading-relaxed">
             {searchQuery ? 'Không tìm thấy đoạn chat nào.' : (
               <>Chưa có hội thoại nào.<br /><span className="not-italic text-gray-400 dark:text-gray-500">Bắt đầu một câu hỏi mới!</span></>

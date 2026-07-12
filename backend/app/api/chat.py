@@ -325,6 +325,25 @@ async def chat_stream_endpoint(request: ChatRequest):
                                     await asyncio.sleep(0.01)
                                     
                                 yield _sse({"type": "done"})
+                                
+                                # Persist messages to PostgreSQL for DB/UI sync on cache hit
+                                if session_id != "unknown":
+                                    from app.services.storage import ensure_session_exists, save_chat_message
+                                    import uuid as _uuid
+                                    asyncio.create_task(asyncio.to_thread(
+                                        ensure_session_exists, session_id, request.sessionTitle or "Cuộc trò chuyện mới"
+                                    ))
+                                    user_msg_id = request.messageId or str(_uuid.uuid4())
+                                    ai_msg_id = str(_uuid.uuid4())
+                                    user_time = datetime.utcnow()
+                                    ai_time = user_time + timedelta(milliseconds=10)
+                                    asyncio.create_task(asyncio.to_thread(
+                                        save_chat_message, session_id, user_msg_id, "user", last_message, [], user_time
+                                    ))
+                                    asyncio.create_task(asyncio.to_thread(
+                                        save_chat_message, session_id, ai_msg_id, "assistant", cached_text, frontend_context, ai_time
+                                    ))
+                                
                                 return
                         except Exception as e:
                             logger.warning("Stream Cache check failed: %s", e)
