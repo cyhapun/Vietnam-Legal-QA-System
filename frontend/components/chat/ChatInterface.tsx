@@ -245,7 +245,7 @@ export function ChatInterface() {
     addMessage(userMessage);
 
     if (currentMessages.length === 0) {
-      updateSessionTitle(userText);
+      updateSessionTitle(userText.length > 40 ? userText.substring(0, 40) + '...' : userText);
     }
 
     setIsLoading(true);
@@ -269,7 +269,7 @@ export function ChatInterface() {
           messages: apiMessages, 
           model, 
           sessionId: currentSessionId || 'unknown',
-          sessionTitle: sessions.find(s => s.id === currentSessionId)?.title || 'Cuộc trò chuyện mới',
+          sessionTitle: currentMessages.length === 0 ? (userText.length > 40 ? userText.substring(0, 40) + '...' : userText) : (sessions.find(s => s.id === currentSessionId)?.title || 'Cuộc trò chuyện mới'),
           messageId: userMessage.id,
           category: lawCategory,
           temperature: advancedConfig.temperature,
