@@ -19,6 +19,16 @@ from app.config import (
     LLM_TIMEOUT,
     OLLAMA_BASE_URL,
 )
+from app.services.provider_registry import (
+    ANSWER_ROLE,
+    GOOGLE_PROVIDER,
+    HUGGINGFACE_PROVIDER,
+    OLLAMA_PROVIDER,
+    PROVIDER_REGISTRY,
+    is_supported_model,
+    normalize_provider_id,
+    redact_runtime_inference_config,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -78,8 +88,10 @@ def _make_google_llm(
     temperature: float,
     max_tokens: int,
     timeout: float,
+    api_key: str | None = None,
 ):
-    if not GOOGLE_API_KEY:
+    resolved_api_key = (api_key or GOOGLE_API_KEY or "").strip()
+    if not resolved_api_key:
         logger.warning(
             "GOOGLE_API_KEY khong duoc cau hinh; bo qua Google AI Studio model %s.",
             model_name,
@@ -88,12 +100,61 @@ def _make_google_llm(
 
     return _make_openai_chat(
         model_name=model_name,
-        api_key=GOOGLE_API_KEY,
+        api_key=resolved_api_key,
         base_url=GOOGLE_OPENAI_BASE_URL,
         temperature=temperature,
         max_tokens=max_tokens,
         timeout=timeout,
     )
+
+
+def _make_provider_llm(
+    provider: str,
+    model_name: str,
+    temperature: float,
+    max_tokens: int,
+    timeout: float,
+    api_key: str | None = None,
+):
+    provider_id = normalize_provider_id(provider)
+    if not is_supported_model(provider_id, model_name):
+        logger.warning("Bo qua provider/model khong ho tro: %s/%s", provider_id, model_name)
+        return None
+
+    if provider_id == GOOGLE_PROVIDER:
+        return _make_google_llm(
+            model_name=model_name,
+            api_key=api_key,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            timeout=timeout,
+        )
+
+    if provider_id == HUGGINGFACE_PROVIDER:
+        resolved_api_key = (api_key or HUGGINGFACE_API_KEY or "").strip()
+        if not resolved_api_key:
+            logger.warning("HuggingFace API key khong duoc cau hinh; bo qua model %s.", model_name)
+            return None
+        return _make_openai_chat(
+            model_name=model_name,
+            api_key=resolved_api_key,
+            base_url=PROVIDER_REGISTRY[HUGGINGFACE_PROVIDER].base_url,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            timeout=timeout,
+        )
+
+    if provider_id == OLLAMA_PROVIDER:
+        return _make_openai_chat(
+            model_name=model_name,
+            api_key="ollama",
+            base_url=f"{OLLAMA_BASE_URL.rstrip('/')}/v1",
+            temperature=temperature,
+            max_tokens=max_tokens,
+            timeout=timeout,
+        )
+
+    return None
 
 
 def _append_unique_llm(entries, provider: str, model_name: str, llm) -> None:
@@ -107,6 +168,19 @@ def _append_unique_llm(entries, provider: str, model_name: str, llm) -> None:
         return
 
     entries.append((key, llm))
+
+
+def _runtime_role(runtime_config, role: str):
+    if runtime_config is None:
+        return None
+    roles = getattr(runtime_config, "roles", None)
+    return roles.get(role) if roles else None
+
+
+def _runtime_api_key(runtime_config, provider: str) -> str:
+    if runtime_config is None:
+        return ""
+    return runtime_config.api_key_for(provider)
 
 def _legacy_get_llm(
     model_name: str,
@@ -174,6 +248,8 @@ def get_llm(
     temperature: float | None = None,
     max_tokens: int | None = None,
     timeout: float | None = None,
+    runtime_config=None,
+    role: str = ANSWER_ROLE,
 ):
     """Khá»Ÿi táº¡o LLM vá»›i fallback HuggingFace/Ollama vÃ  Google AI Studio tÃ¹y chá»n."""
     selected_google_model = is_google_chat_model(model_name)
@@ -183,6 +259,28 @@ def get_llm(
     final_temperature = temperature if temperature is not None else LLM_TEMPERATURE
     final_max_tokens = max_tokens if max_tokens is not None else LLM_MAX_NEW_TOKENS
     final_timeout = timeout if timeout is not None else LLM_TIMEOUT
+    runtime_entries = []
+    runtime_role = _runtime_role(runtime_config, role)
+    has_runtime_role = runtime_role is not None
+    if runtime_role is not None:
+        runtime_provider = normalize_provider_id(runtime_role.provider)
+        runtime_model = runtime_role.model
+        runtime_llm = _make_provider_llm(
+            provider=runtime_provider,
+            model_name=runtime_model,
+            api_key=_runtime_api_key(runtime_config, runtime_provider),
+            temperature=final_temperature,
+            max_tokens=final_max_tokens,
+            timeout=final_timeout,
+        )
+        _append_unique_llm(runtime_entries, runtime_provider, runtime_model, runtime_llm)
+        if runtime_llm is None:
+            logger.warning(
+                "Runtime inference role unavailable: role=%s config=%s",
+                role,
+                redact_runtime_inference_config(runtime_config),
+            )
+
     actual_model, local_model_name = _resolve_provider_models(model_name)
 
     if selected_google_model:
@@ -215,15 +313,17 @@ def get_llm(
         timeout=final_timeout,
     )
 
-    entries = []
-    if INFERENCE_STRATEGY == "local_first":
-        _append_unique_llm(entries, "ollama", local_model_name, local_llm)
-        _append_unique_llm(entries, remote_provider, remote_model, remote_llm)
-    else:
-        _append_unique_llm(entries, remote_provider, remote_model, remote_llm)
-        _append_unique_llm(entries, "ollama", local_model_name, local_llm)
+    entries = list(runtime_entries)
+    use_server_fallbacks = getattr(runtime_config, "use_server_fallbacks", True)
+    if (not has_runtime_role and not runtime_entries) or use_server_fallbacks:
+        if INFERENCE_STRATEGY == "local_first":
+            _append_unique_llm(entries, "ollama", local_model_name, local_llm)
+            _append_unique_llm(entries, remote_provider, remote_model, remote_llm)
+        else:
+            _append_unique_llm(entries, remote_provider, remote_model, remote_llm)
+            _append_unique_llm(entries, "ollama", local_model_name, local_llm)
 
-    if ENABLE_GOOGLE_FALLBACK:
+    if ENABLE_GOOGLE_FALLBACK and ((not has_runtime_role and not runtime_entries) or use_server_fallbacks):
         google_fallback_llm = _make_google_llm(
             model_name=GOOGLE_FALLBACK_MODEL,
             temperature=final_temperature,

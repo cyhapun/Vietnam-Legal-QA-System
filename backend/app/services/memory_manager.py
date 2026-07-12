@@ -1,6 +1,7 @@
 import logging
 from typing import List
 from app.services.llm import get_llm
+from app.services.provider_registry import SUMMARIZER_ROLE
 from app.services.storage import get_session_summary, upsert_session_summary
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -26,7 +27,7 @@ RULES:
 Generate the [NEW SUMMARY]:""")
 ])
 
-async def summarize_session(session_id: str, new_user_msg: str, new_ai_msg: str):
+async def summarize_session(session_id: str, new_user_msg: str, new_ai_msg: str, runtime_config=None):
     """
     Asynchronously summarize the session by taking the old summary from DB,
     combining it with the latest turn, and saving it back.
@@ -50,7 +51,12 @@ async def summarize_session(session_id: str, new_user_msg: str, new_ai_msg: str)
         new_interaction = f"User: {new_user_msg}\nAI: {new_ai_msg}"
         
         # Use a lightweight model for summarization
-        llm = get_llm(model_name="qwen2.5:1.5b", temperature=0.1)
+        llm = get_llm(
+            model_name="qwen2.5:1.5b",
+            temperature=0.1,
+            runtime_config=runtime_config,
+            role=SUMMARIZER_ROLE,
+        )
         chain = SUMMARIZER_PROMPT | llm | StrOutputParser()
         
         new_summary = await chain.ainvoke({

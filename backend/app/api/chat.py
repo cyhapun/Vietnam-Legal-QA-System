@@ -47,6 +47,13 @@ def _filter_cited_context(output_text: str, context: list, max_citations: int) -
     by_id = {item.get("metadata", {}).get("id"): item for item in context}
     return [by_id[citation_id] for citation_id in cited_ids if citation_id in by_id]
 
+
+def _rewrite_query(rewriter, query: str, history: str, runtime_config):
+    try:
+        return rewriter.rewrite(query, history, runtime_config)
+    except TypeError:
+        return rewriter.rewrite(query, history)
+
 @router.post("/chat")
 async def chat_endpoint(request: ChatRequest):
     """Endpoint non-streaming: nhan cau hoi -> truy xuat -> goi LLM -> tra JSON."""
@@ -76,7 +83,6 @@ async def chat_endpoint(request: ChatRequest):
         
         import asyncio
         from app.services.pipeline import _get_embedding
-        from app.services.semantic_cache import check_cache, update_cache
         from app.services.chat_logger import log_interaction
         
         # Lịch sử ngắn gọn cho rewriter (sliding window: 2 turns = 4 messages)
@@ -88,7 +94,13 @@ async def chat_endpoint(request: ChatRequest):
         
         # Gọi rewriter trước để lấy rewritten query
         if request.enableQueryRewriter:
-            domain, queries = await asyncio.to_thread(pipeline.rewriter.rewrite, last_message, recent_history_str)
+            domain, queries = await asyncio.to_thread(
+                _rewrite_query,
+                pipeline.rewriter,
+                last_message,
+                recent_history_str,
+                request.inference_config,
+            )
         else:
             domain, queries = "legal", [last_message]
         if domain != "chitchat":
@@ -105,6 +117,7 @@ async def chat_endpoint(request: ChatRequest):
                     query_vector = await asyncio.to_thread(embedding.embed_query, rewritten_query)
                     
                     # Kiểm tra cache
+                    from app.services.semantic_cache import check_cache
                     cached_response = await asyncio.to_thread(check_cache, query_vector, request.cacheThreshold)
                     if cached_response:
                         logger.info("Phản hồi được lấy từ Semantic Cache.")
@@ -136,7 +149,9 @@ async def chat_endpoint(request: ChatRequest):
                 model_name=request.model, 
                 temperature=request.temperature, 
                 max_tokens=request.maxTokens,
-                timeout=request.llmTimeout
+                timeout=request.llmTimeout,
+                runtime_config=request.inference_config,
+                role="answer",
             )
             rag_chain = CHAT_PROMPT | llm | get_output_parser()
 
@@ -160,6 +175,7 @@ async def chat_endpoint(request: ChatRequest):
 
         if query_vector and domain != "chitchat" and "Hiện tại hệ thống chưa thể gọi mô hình" not in output_text:
             try:
+                from app.services.semantic_cache import update_cache
                 await asyncio.to_thread(
                     update_cache,
                     query_vector=query_vector,
@@ -178,7 +194,12 @@ async def chat_endpoint(request: ChatRequest):
         
         # Summarize memory asynchronously
         if request.enableMemory and session_id != "unknown":
-            asyncio.create_task(summarize_session(session_id, last_message, output_text))
+            asyncio.create_task(summarize_session(
+                session_id,
+                last_message,
+                output_text,
+                runtime_config=request.inference_config,
+            ))
 
         return {
             "text": output_text,
@@ -227,7 +248,6 @@ async def chat_stream_endpoint(request: ChatRequest):
             
             import asyncio
             from app.services.pipeline import _get_embedding
-            from app.services.semantic_cache import check_cache, update_cache
             from app.services.chat_logger import log_interaction
             
             recent_history_lines = []
@@ -237,7 +257,13 @@ async def chat_stream_endpoint(request: ChatRequest):
             recent_history_str = "\n".join(recent_history_lines) if request.useHistoryForRewriter else ""
             
             if request.enableQueryRewriter:
-                domain, queries = await asyncio.to_thread(pipeline.rewriter.rewrite, last_message, recent_history_str)
+                domain, queries = await asyncio.to_thread(
+                    _rewrite_query,
+                    pipeline.rewriter,
+                    last_message,
+                    recent_history_str,
+                    request.inference_config,
+                )
             else:
                 domain, queries = "legal", [last_message]
             if domain != "chitchat":
@@ -251,6 +277,7 @@ async def chat_stream_endpoint(request: ChatRequest):
                 if embedding:
                     try:
                         query_vector = await asyncio.to_thread(embedding.embed_query, rewritten_query)
+                        from app.services.semantic_cache import check_cache
                         cached_response = await asyncio.to_thread(check_cache, query_vector, request.cacheThreshold)
                         if cached_response:
                             logger.info("Stream: Phản hồi được lấy từ Semantic Cache.")
@@ -286,7 +313,9 @@ async def chat_stream_endpoint(request: ChatRequest):
                 model_name=request.model, 
                 temperature=request.temperature, 
                 max_tokens=request.maxTokens,
-                timeout=request.llmTimeout
+                timeout=request.llmTimeout,
+                runtime_config=request.inference_config,
+                role="answer",
             )
             rag_chain = CHAT_PROMPT | llm | get_output_parser()
 
@@ -308,6 +337,7 @@ async def chat_stream_endpoint(request: ChatRequest):
             yield _sse({"type": "context", "data": frontend_context})
             if query_vector and domain != "chitchat" and "Hiện tại hệ thống chưa thể gọi mô hình" not in accumulated_text:
                 try:
+                    from app.services.semantic_cache import update_cache
                     await asyncio.to_thread(
                         update_cache,
                         query_vector=query_vector,
@@ -326,7 +356,12 @@ async def chat_stream_endpoint(request: ChatRequest):
 
             # Summarize memory asynchronously
             if request.enableMemory and session_id != "unknown":
-                asyncio.create_task(summarize_session(session_id, last_message, accumulated_text))
+                asyncio.create_task(summarize_session(
+                    session_id,
+                    last_message,
+                    accumulated_text,
+                    runtime_config=request.inference_config,
+                ))
 
             yield _sse({"type": "done"})
 
