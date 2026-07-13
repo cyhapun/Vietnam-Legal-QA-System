@@ -171,12 +171,9 @@ export function useChatSessions() {
         if (!res.ok) throw new Error('Failed to fetch sessions');
         const dbSessions: any[] = await res.json();
 
-        if (dbSessions.length === 0) {
-          handleNewChat();
-          return;
-        }
+        const filteredSessions = dbSessions.filter(s => s.message_count > 0);
 
-        const loadedSessions: ChatSession[] = dbSessions.map(dbSession => ({
+        const loadedSessions: ChatSession[] = filteredSessions.map(dbSession => ({
           id: dbSession.session_id,
           title: dbSession.title || 'Cuộc trò chuyện mới',
           lastMessage: '',
@@ -184,35 +181,22 @@ export function useChatSessions() {
         }));
 
         loadedSessions.sort((a, b) => b.timestamp - a.timestamp);
-        const loadedMessages: Record<string, Message[]> = {};
 
-        // Fetch messages cho session đầu tiên
-        if (loadedSessions.length > 0) {
-          setIsSessionLoading(true);
-          const firstSessionId = loadedSessions[0].id;
-          const mRes = await fetch(`/api/chat/session/${firstSessionId}/messages`);
-          if (mRes.ok) {
-            const dbMsgs: any[] = await mRes.json();
-            const messages: Message[] = dbMsgs.map(m => ({
-              id: m.id,
-              role: m.role as 'user' | 'assistant',
-              content: m.content,
-              contextUsed: m.contextUsed || []
-            }));
+        // Khởi tạo một session mới thay vì fetch messages của session cũ
+        const newId = Date.now().toString();
+        const newSession: ChatSession = {
+          id: newId,
+          title: 'Cuộc trò chuyện mới',
+          lastMessage: '',
+          timestamp: Date.now(),
+        };
 
-            if (messages.length > 0) {
-              loadedSessions[0].lastMessage = messages[messages.length - 1].content;
-            }
-            loadedMessages[firstSessionId] = messages;
-          }
+        loadedSessions.unshift(newSession);
 
-          setSessions(loadedSessions);
-          setMessagesBySession(loadedMessages);
-          setCurrentSessionId(firstSessionId);
-          setIsSessionLoading(false);
-        } else {
-          handleNewChat();
-        }
+        setSessions(loadedSessions);
+        setMessagesBySession({ [newId]: [] });
+        setCurrentSessionId(newId);
+        setIsSessionLoading(false);
       } catch (err) {
         console.error('Lỗi khi load DB sessions, fallback to localStorage:', err);
         // Fallback to localStorage

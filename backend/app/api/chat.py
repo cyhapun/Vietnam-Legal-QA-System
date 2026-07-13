@@ -60,6 +60,19 @@ def _rewrite_query(rewriter, query: str, history: str, runtime_config):
     except TypeError:
         return rewriter.rewrite(query, history)
 
+
+async def _persist_turn(session_id: str, session_title: str, user_msg_id: str, user_content: str, ai_msg_id: str, ai_content: str, ai_context: list, user_time: datetime, ai_time: datetime):
+    """Helper to persist chat turns sequentially to avoid foreign key violations."""
+    import asyncio
+    from app.services.storage import ensure_session_exists, save_chat_message
+    try:
+        await asyncio.to_thread(ensure_session_exists, session_id, session_title)
+        await asyncio.to_thread(save_chat_message, session_id, user_msg_id, "user", user_content, [], user_time)
+        await asyncio.to_thread(save_chat_message, session_id, ai_msg_id, "assistant", ai_content, ai_context, ai_time)
+    except Exception as e:
+        logger.error("Failed to persist chat turn sequentially for session %s: %s", session_id, e)
+
+
 @router.post("/chat")
 async def chat_endpoint(request: ChatRequest):
     """Endpoint non-streaming: nhan cau hoi -> truy xuat -> goi LLM -> tra JSON."""
@@ -208,20 +221,21 @@ async def chat_endpoint(request: ChatRequest):
 
         # Persist messages to PostgreSQL for DB/UI sync
         if session_id != "unknown":
-            from app.services.storage import ensure_session_exists, save_chat_message
             import uuid as _uuid
-            asyncio.create_task(asyncio.to_thread(
-                ensure_session_exists, session_id, request.sessionTitle or "Cuộc trò chuyện mới"
-            ))
             user_msg_id = request.messageId or str(_uuid.uuid4())
             ai_msg_id = str(_uuid.uuid4())
             user_time = datetime.utcnow()
             ai_time = user_time + timedelta(milliseconds=10)
-            asyncio.create_task(asyncio.to_thread(
-                save_chat_message, session_id, user_msg_id, "user", last_message, [], user_time
-            ))
-            asyncio.create_task(asyncio.to_thread(
-                save_chat_message, session_id, ai_msg_id, "assistant", output_text, frontend_context, ai_time
+            asyncio.create_task(_persist_turn(
+                session_id=session_id,
+                session_title=request.sessionTitle or "Cuộc trò chuyện mới",
+                user_msg_id=user_msg_id,
+                user_content=last_message,
+                ai_msg_id=ai_msg_id,
+                ai_content=output_text,
+                ai_context=frontend_context,
+                user_time=user_time,
+                ai_time=ai_time
             ))
 
         # Summarize memory asynchronously
@@ -328,20 +342,21 @@ async def chat_stream_endpoint(request: ChatRequest):
                                 
                                 # Persist messages to PostgreSQL for DB/UI sync on cache hit
                                 if session_id != "unknown":
-                                    from app.services.storage import ensure_session_exists, save_chat_message
                                     import uuid as _uuid
-                                    asyncio.create_task(asyncio.to_thread(
-                                        ensure_session_exists, session_id, request.sessionTitle or "Cuộc trò chuyện mới"
-                                    ))
                                     user_msg_id = request.messageId or str(_uuid.uuid4())
                                     ai_msg_id = str(_uuid.uuid4())
                                     user_time = datetime.utcnow()
                                     ai_time = user_time + timedelta(milliseconds=10)
-                                    asyncio.create_task(asyncio.to_thread(
-                                        save_chat_message, session_id, user_msg_id, "user", last_message, [], user_time
-                                    ))
-                                    asyncio.create_task(asyncio.to_thread(
-                                        save_chat_message, session_id, ai_msg_id, "assistant", cached_text, frontend_context, ai_time
+                                    asyncio.create_task(_persist_turn(
+                                        session_id=session_id,
+                                        session_title=request.sessionTitle or "Cuộc trò chuyện mới",
+                                        user_msg_id=user_msg_id,
+                                        user_content=last_message,
+                                        ai_msg_id=ai_msg_id,
+                                        ai_content=cached_text,
+                                        ai_context=frontend_context,
+                                        user_time=user_time,
+                                        ai_time=ai_time
                                     ))
                                 
                                 return
@@ -417,20 +432,21 @@ async def chat_stream_endpoint(request: ChatRequest):
 
             # Persist messages to PostgreSQL for DB/UI sync
             if session_id != "unknown":
-                from app.services.storage import ensure_session_exists, save_chat_message
                 import uuid as _uuid
-                asyncio.create_task(asyncio.to_thread(
-                    ensure_session_exists, session_id, request.sessionTitle or "Cuộc trò chuyện mới"
-                ))
                 user_msg_id = request.messageId or str(_uuid.uuid4())
                 ai_msg_id = str(_uuid.uuid4())
                 user_time = datetime.utcnow()
                 ai_time = user_time + timedelta(milliseconds=10)
-                asyncio.create_task(asyncio.to_thread(
-                    save_chat_message, session_id, user_msg_id, "user", last_message, [], user_time
-                ))
-                asyncio.create_task(asyncio.to_thread(
-                    save_chat_message, session_id, ai_msg_id, "assistant", accumulated_text, frontend_context, ai_time
+                asyncio.create_task(_persist_turn(
+                    session_id=session_id,
+                    session_title=request.sessionTitle or "Cuộc trò chuyện mới",
+                    user_msg_id=user_msg_id,
+                    user_content=last_message,
+                    ai_msg_id=ai_msg_id,
+                    ai_content=accumulated_text,
+                    ai_context=frontend_context,
+                    user_time=user_time,
+                    ai_time=ai_time
                 ))
 
             # Summarize memory asynchronously
