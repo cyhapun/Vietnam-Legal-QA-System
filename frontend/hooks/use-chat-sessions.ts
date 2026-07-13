@@ -27,7 +27,7 @@ export function useChatSessions() {
 
   // --- Tạo session mới ---
   const handleNewChat = useCallback(() => {
-    const { currentSessionId, messagesBySession, sessions } = stateRef.current;
+    const { currentSessionId, messagesBySession } = stateRef.current;
     
     // Nếu đang ở session rỗng rồi thì không tạo thêm
     if (currentSessionId && (!messagesBySession[currentSessionId] || messagesBySession[currentSessionId].length === 0)) {
@@ -35,17 +35,6 @@ export function useChatSessions() {
     }
 
     const newId = Date.now().toString();
-    const newSession: ChatSession = {
-      id: newId,
-      title: 'Cuộc trò chuyện mới',
-      lastMessage: '',
-      timestamp: Date.now(),
-    };
-
-    // Lọc bỏ các session rỗng cũ
-    const validSessions = sessions.filter(s => messagesBySession[s.id] && messagesBySession[s.id].length > 0);
-
-    setSessions([newSession, ...validSessions]);
     setCurrentSessionId(newId);
     setMessagesBySession(prev => ({ ...prev, [newId]: [] }));
   }, []);
@@ -55,8 +44,6 @@ export function useChatSessions() {
     const { currentSessionId, messagesBySession } = stateRef.current;
     if (id === currentSessionId) return;
 
-    // Khi chuyển sang session khác, lọc bỏ các session rỗng cũ
-    setSessions(prev => prev.filter(s => s.id === id || (messagesBySession[s.id] && messagesBySession[s.id].length > 0)));
     setCurrentSessionId(id);
 
     // Lazy load messages nếu chưa có
@@ -110,18 +97,12 @@ export function useChatSessions() {
         setCurrentSessionId(remaining[0].id);
         setSessions(remaining);
       } else {
-        // Tạo session mới nếu không còn session nào
+        // Tạo ID mới nếu không còn session nào, nhưng KHÔNG add vào sessions list
         const newId = Date.now().toString();
-        const newSession: ChatSession = {
-          id: newId,
-          title: 'Cuộc trò chuyện mới',
-          lastMessage: '',
-          timestamp: Date.now(),
-        };
         nextMessages[newId] = [];
         setMessagesBySession({ ...nextMessages });
         setCurrentSessionId(newId);
-        setSessions([newSession]);
+        setSessions([]);
       }
     } else {
       setSessions(remaining);
@@ -135,6 +116,19 @@ export function useChatSessions() {
       ...prev,
       [currentSessionId]: [...(prev[currentSessionId] || []), message],
     }));
+
+    setSessions(prev => {
+      const idx = prev.findIndex(s => s.id === currentSessionId);
+      if (idx === -1) {
+        return [{
+          id: currentSessionId,
+          title: message.content.substring(0, 40) + (message.content.length > 40 ? '...' : ''),
+          lastMessage: message.content,
+          timestamp: Date.now()
+        }, ...prev];
+      }
+      return prev;
+    });
   }, [currentSessionId]);
 
   // --- Cập nhật message ---
@@ -182,16 +176,8 @@ export function useChatSessions() {
 
         loadedSessions.sort((a, b) => b.timestamp - a.timestamp);
 
-        // Khởi tạo một session mới thay vì fetch messages của session cũ
+        // Khởi tạo một ID mới cho session, không push vào mảng loadedSessions
         const newId = Date.now().toString();
-        const newSession: ChatSession = {
-          id: newId,
-          title: 'Cuộc trò chuyện mới',
-          lastMessage: '',
-          timestamp: Date.now(),
-        };
-
-        loadedSessions.unshift(newSession);
 
         setSessions(loadedSessions);
         setMessagesBySession({ [newId]: [] });
