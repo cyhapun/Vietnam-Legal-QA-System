@@ -22,6 +22,13 @@ const mapDbMessage = (m: any): Message => ({
   contextUsed: m.contextUsed || []
 });
 
+const chooseCompleteMessages = (cached: Message[] | undefined, dbMessages: Message[]) => {
+  if (!cached || dbMessages.length >= cached.length) {
+    return dbMessages;
+  }
+  return cached;
+};
+
 export function useChatSessions() {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
@@ -64,28 +71,32 @@ export function useChatSessions() {
     setCurrentSessionId(id);
     localStorage.setItem(STORAGE_KEYS.activeSessionId, id);
 
-    // Lazy load messages nếu chưa có
-    if (!messagesBySession[id]) {
+    const cachedMessages = messagesBySession[id];
+    if (!cachedMessages) {
       setIsSessionLoading(true);
-      try {
-        const res = await fetch(`/api/chat/session/${id}/messages`);
-        if (res.ok) {
-          const dbMsgs: any[] = await res.json();
-          const messages = dbMsgs.map(mapDbMessage);
-          setMessagesBySession(prev => ({ ...prev, [id]: messages }));
-        } else {
-          setMessagesBySession(prev => ({ ...prev, [id]: [] }));
-        }
-      } catch (err) {
-        console.error('Lỗi khi fetch messages cho session:', id, err);
+    }
+
+    try {
+      const res = await fetch(`/api/chat/session/${id}/messages`);
+      if (res.ok) {
+        const dbMsgs: any[] = await res.json();
+        const dbMessages = dbMsgs.map(mapDbMessage);
+        setMessagesBySession(prev => ({
+          ...prev,
+          [id]: chooseCompleteMessages(prev[id], dbMessages)
+        }));
+      } else if (!cachedMessages) {
         setMessagesBySession(prev => ({ ...prev, [id]: [] }));
-      } finally {
-        if (sessionLoadSeqRef.current === loadSeq) {
-          setIsSessionLoading(false);
-        }
       }
-    } else {
-      setIsSessionLoading(false);
+    } catch (err) {
+      console.error('Error fetching messages for session:', id, err);
+      if (!cachedMessages) {
+        setMessagesBySession(prev => ({ ...prev, [id]: [] }));
+      }
+    } finally {
+      if (sessionLoadSeqRef.current === loadSeq) {
+        setIsSessionLoading(false);
+      }
     }
   }, []);
 
@@ -194,6 +205,9 @@ export function useChatSessions() {
         const savedMessages: Record<string, Message[]> = savedMessagesRaw ? JSON.parse(savedMessagesRaw) : {};
 
         const filteredSessions = dbSessions.filter(s => s.message_count > 0);
+        const dbMessageCounts = Object.fromEntries(
+          filteredSessions.map(s => [s.session_id, Number(s.message_count || 0)])
+        ) as Record<string, number>;
 
         let loadedSessions: ChatSession[] = filteredSessions.map(dbSession => ({
           id: dbSession.session_id,
@@ -240,12 +254,21 @@ export function useChatSessions() {
         setCurrentSessionId(activeId);
         localStorage.setItem(STORAGE_KEYS.activeSessionId, activeId);
 
-        if (shouldRestoreActive && !savedMessages[activeId]) {
+        const cachedActiveMessages = savedMessages[activeId];
+        const shouldFetchActiveMessages =
+          shouldRestoreActive &&
+          (!cachedActiveMessages || (dbMessageCounts[activeId] || 0) > cachedActiveMessages.length);
+
+        if (shouldFetchActiveMessages) {
           setIsSessionLoading(true);
           const messagesRes = await fetch(`/api/chat/session/${activeId}/messages`);
           if (messagesRes.ok) {
             const dbMsgs: any[] = await messagesRes.json();
-            setMessagesBySession(prev => ({ ...prev, [activeId]: dbMsgs.map(mapDbMessage) }));
+            const dbMessages = dbMsgs.map(mapDbMessage);
+            setMessagesBySession(prev => ({
+              ...prev,
+              [activeId]: chooseCompleteMessages(prev[activeId], dbMessages)
+            }));
           }
         }
         setIsSessionLoading(false);

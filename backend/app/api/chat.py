@@ -73,6 +73,30 @@ async def _persist_turn(session_id: str, session_title: str, user_msg_id: str, u
         logger.error("Failed to persist chat turn sequentially for session %s: %s", session_id, e)
 
 
+async def _persist_completed_turn(request: ChatRequest, session_id: str, user_content: str, ai_content: str, ai_context: list):
+    """Persist a finished turn before the client treats it as complete."""
+    if session_id == "unknown":
+        return
+
+    import uuid as _uuid
+
+    user_msg_id = request.messageId or str(_uuid.uuid4())
+    ai_msg_id = str(_uuid.uuid4())
+    user_time = datetime.utcnow()
+    ai_time = user_time + timedelta(milliseconds=10)
+    await _persist_turn(
+        session_id=session_id,
+        session_title=request.sessionTitle or "Cuoc tro chuyen moi",
+        user_msg_id=user_msg_id,
+        user_content=user_content,
+        ai_msg_id=ai_msg_id,
+        ai_content=ai_content,
+        ai_context=ai_context,
+        user_time=user_time,
+        ai_time=ai_time,
+    )
+
+
 @router.post("/chat")
 async def chat_endpoint(request: ChatRequest):
     """Endpoint non-streaming: nhan cau hoi -> truy xuat -> goi LLM -> tra JSON."""
@@ -142,9 +166,18 @@ async def chat_endpoint(request: ChatRequest):
                         cached_response = await asyncio.to_thread(check_cache, query_vector, request.cacheThreshold)
                         if cached_response:
                             logger.info("Phản hồi được lấy từ Semantic Cache.")
+                            cached_text = cached_response.get("response_text", "")
+                            cached_context = cached_response.get("context_used", [])
+                            await _persist_completed_turn(
+                                request,
+                                session_id,
+                                last_message,
+                                cached_text,
+                                cached_context,
+                            )
                             return {
-                                "text": cached_response.get("response_text", ""),
-                                "contextUsed": cached_response.get("context_used", [])
+                                "text": cached_text,
+                                "contextUsed": cached_context
                             }
                     except Exception as e:
                         logger.warning("Cache check failed: %s", e)
@@ -219,24 +252,14 @@ async def chat_endpoint(request: ChatRequest):
                 logger.warning("Failed to update cache: %s", e)
 
 
-        # Persist messages to PostgreSQL for DB/UI sync
-        if session_id != "unknown":
-            import uuid as _uuid
-            user_msg_id = request.messageId or str(_uuid.uuid4())
-            ai_msg_id = str(_uuid.uuid4())
-            user_time = datetime.utcnow()
-            ai_time = user_time + timedelta(milliseconds=10)
-            asyncio.create_task(_persist_turn(
-                session_id=session_id,
-                session_title=request.sessionTitle or "Cuộc trò chuyện mới",
-                user_msg_id=user_msg_id,
-                user_content=last_message,
-                ai_msg_id=ai_msg_id,
-                ai_content=output_text,
-                ai_context=frontend_context,
-                user_time=user_time,
-                ai_time=ai_time
-            ))
+        # Persist before returning so a refresh sees the complete turn in PostgreSQL.
+        await _persist_completed_turn(
+            request,
+            session_id,
+            last_message,
+            output_text,
+            frontend_context,
+        )
 
         # Summarize memory asynchronously
         if request.enableMemory and session_id != "unknown":
@@ -338,26 +361,14 @@ async def chat_stream_endpoint(request: ChatRequest):
                                     yield _sse({"type": "token", "text": word + (" " if i < len(words) - 1 else "")})
                                     await asyncio.sleep(0.01)
                                     
+                                await _persist_completed_turn(
+                                    request,
+                                    session_id,
+                                    last_message,
+                                    cached_text,
+                                    frontend_context,
+                                )
                                 yield _sse({"type": "done"})
-                                
-                                # Persist messages to PostgreSQL for DB/UI sync on cache hit
-                                if session_id != "unknown":
-                                    import uuid as _uuid
-                                    user_msg_id = request.messageId or str(_uuid.uuid4())
-                                    ai_msg_id = str(_uuid.uuid4())
-                                    user_time = datetime.utcnow()
-                                    ai_time = user_time + timedelta(milliseconds=10)
-                                    asyncio.create_task(_persist_turn(
-                                        session_id=session_id,
-                                        session_title=request.sessionTitle or "Cuộc trò chuyện mới",
-                                        user_msg_id=user_msg_id,
-                                        user_content=last_message,
-                                        ai_msg_id=ai_msg_id,
-                                        ai_content=cached_text,
-                                        ai_context=frontend_context,
-                                        user_time=user_time,
-                                        ai_time=ai_time
-                                    ))
                                 
                                 return
                         except Exception as e:
@@ -430,24 +441,14 @@ async def chat_stream_endpoint(request: ChatRequest):
 
 
 
-            # Persist messages to PostgreSQL for DB/UI sync
-            if session_id != "unknown":
-                import uuid as _uuid
-                user_msg_id = request.messageId or str(_uuid.uuid4())
-                ai_msg_id = str(_uuid.uuid4())
-                user_time = datetime.utcnow()
-                ai_time = user_time + timedelta(milliseconds=10)
-                asyncio.create_task(_persist_turn(
-                    session_id=session_id,
-                    session_title=request.sessionTitle or "Cuộc trò chuyện mới",
-                    user_msg_id=user_msg_id,
-                    user_content=last_message,
-                    ai_msg_id=ai_msg_id,
-                    ai_content=accumulated_text,
-                    ai_context=frontend_context,
-                    user_time=user_time,
-                    ai_time=ai_time
-                ))
+            # Persist before signalling done so refresh sees the complete turn.
+            await _persist_completed_turn(
+                request,
+                session_id,
+                last_message,
+                accumulated_text,
+                frontend_context,
+            )
 
             # Summarize memory asynchronously
             if request.enableMemory and session_id != "unknown":

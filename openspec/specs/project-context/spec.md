@@ -19,6 +19,22 @@ The `project-context.md` file MUST document that chat sessions and messages are 
 - **WHEN** reading the product behavior section
 - **THEN** it is stated that sessions are synced with the backend rather than being purely local.
 
+### Requirement: Document Refresh-Safe Chat Sessions
+The `project-context.md` file MUST document that the frontend restores the active session on refresh and reconciles browser-cached messages with PostgreSQL when the backend has a larger message count.
+
+#### Scenario: Reading chat session behavior
+- **WHEN** reading the data model or UI behavior sections
+- **THEN** it is stated that the active session id is restored from browser storage
+- **AND** PostgreSQL remains authoritative for complete historical messages.
+
+### Requirement: Document Completion Persistence Boundary
+The `project-context.md` file MUST document that completed chat turns are persisted before `/chat` returns or `/chat/stream` emits `done`.
+
+#### Scenario: Understanding refresh consistency
+- **WHEN** reviewing the backend flow
+- **THEN** it is clear that chat message persistence is completion-blocking
+- **AND** only memory summarization remains asynchronous after the turn.
+
 ### Requirement: Document Conversational Memory Manager
 The `project-context.md` file MUST document the background task that incrementally summarizes chat history.
 
