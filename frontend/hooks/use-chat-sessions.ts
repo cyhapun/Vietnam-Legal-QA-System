@@ -171,12 +171,14 @@ export function useChatSessions() {
         if (!res.ok) throw new Error('Failed to fetch sessions');
         const dbSessions: any[] = await res.json();
 
-        if (dbSessions.length === 0) {
+        const filteredSessions = dbSessions.filter((s, index) => s.message_count > 0 || index === 0);
+
+        if (filteredSessions.length === 0) {
           handleNewChat();
           return;
         }
 
-        const loadedSessions: ChatSession[] = dbSessions.map(dbSession => ({
+        const loadedSessions: ChatSession[] = filteredSessions.map(dbSession => ({
           id: dbSession.session_id,
           title: dbSession.title || 'Cuộc trò chuyện mới',
           lastMessage: '',
