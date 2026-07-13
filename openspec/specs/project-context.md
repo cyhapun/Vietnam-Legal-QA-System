@@ -61,7 +61,9 @@ The project is currently focused on:
 2. Backend route extracts the latest user message and chat history.
 3. The RAG pipeline performs retrieval, reranking, and context construction.
 4. The LLM is invoked with the assembled context and a legal-answering system prompt.
-5. The response is returned as plain text plus contextUsed metadata.
+5. The completed user/assistant turn is persisted to PostgreSQL before the client receives completion.
+6. The response is returned as plain text plus contextUsed metadata.
+7. The memory manager may summarize the turn asynchronously after response completion.
 
 ### Main backend modules
 - app/api/chat.py: HTTP endpoint handling for chat, streaming, and session management
@@ -79,7 +81,7 @@ The project is currently focused on:
 
 ### Frontend modules
 - components/chat/ChatInterface.tsx: main chat experience and input handling
-- hooks/use-chat-sessions.ts: session state and persistence in localStorage
+- hooks/use-chat-sessions.ts: session state, active-session restore, lazy message loading, and browser-cache reconciliation with PostgreSQL
 - lib/types.ts: shared TypeScript interfaces
 - lib/constants.ts: categories, models, and storage keys
 
@@ -166,6 +168,14 @@ The project is currently focused on:
 - Qdrant points store dense (BAAI/bge-m3) and sparse (BM25) vector representations.
 - Semantic cache uses a separate Qdrant collection to map previously answered query vectors to their LLM responses.
 
+### Chat session consistency
+- The frontend keeps the active session id in browser storage so a refresh can restore the conversation the user was viewing.
+- Opening the app without an active session starts from a blank new-chat state that is not inserted into the sidebar until a message is created.
+- Historical messages are lazy-loaded from PostgreSQL when a session is selected.
+- Cached browser messages are used for fast rendering, but PostgreSQL is authoritative when it reports a larger `message_count`.
+- The backend persists the complete user/assistant turn before returning `/chat` or emitting the final `/chat/stream` `done` event.
+- Background summarization remains asynchronous and updates session summaries after the completed turn is available.
+
 ### Important note
 - Start the database services using Docker (`docker compose up -d postgres qdrant`) and ingest data with `scripts/ingest_to_storage.py` for the optimal persistence layer.
 
@@ -180,6 +190,7 @@ The project is currently focused on:
 
 - The UI is a single-page chat experience with a sidebar for chat sessions.
 - Chat sessions persist in the backend PostgreSQL database. The frontend fetches and synchronizes state via API proxies.
+- Refreshing while viewing an existing conversation restores that active session and must not merge messages into another session.
 - Background tasks on the backend automatically summarize chat sessions to compress context length for long conversations.
 - Users can select a legal category and an LLM provider/model.
 - Responses may include legal context references.

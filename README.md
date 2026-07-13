@@ -78,8 +78,9 @@ Hệ thống theo mô hình **Client-Server** với 2 thành phần chính giao 
 3. **Backend** dùng Qdrant Hybrid Search (Dense Vector + Sparse Vector BM25) với RRF để tìm các điều khoản liên quan
 4. Hàm `build_nested_context()` xây dựng **context 2 cấp** (dẫn chiếu đệ quy giữa các điều luật)
 5. Context + **Tóm tắt bối cảnh cũ** (từ Memory Manager) + lịch sử chat ngắn + câu hỏi → **System Prompt** → gọi LLM qua HuggingFace API
-6. LLM sinh câu trả lời → trả về `{text, contextUsed}` → Frontend render Markdown + hiển thị căn cứ pháp lý
-7. **Background Task** kích hoạt ngầm tóm tắt lại lượt hội thoại vừa xong và lưu vào PostgreSQL.
+6. The LLM generates the answer, then the backend persists the complete `user/assistant` message pair to PostgreSQL before the turn is considered complete.
+7. The backend returns `{text, contextUsed}` or emits the final SSE `done` event; the frontend renders Markdown and legal context references.
+8. A background task only summarizes conversation memory after the completed turn has been persisted.
 
 ---
 
@@ -371,6 +372,15 @@ Thay vì tải toàn bộ index vào RAM, phiên bản mới nhất sử dụng 
 
 Đảm bảo hệ thống có thể mở rộng lên hàng triệu điều luật mà không gây tràn bộ nhớ (OOM). Khởi động siêu tốc vì bỏ qua việc rebuild BM25 Index.
 
+### Chat session persistence and refresh behavior
+
+- `chat_sessions` and `chat_messages` are stored in PostgreSQL; browser storage is only used for active-session identity and fast UI recovery.
+- A first visit without an active session opens a blank new-chat frame that is not persisted until the user sends a message.
+- Refreshing while viewing an existing conversation restores that active session and keeps follow-up messages under the same `sessionId`.
+- Historical conversations are lazy-loaded from PostgreSQL when selected in the sidebar.
+- If browser cache is stale, the frontend reconciles it with PostgreSQL whenever `/chat/sessions` reports a larger `message_count`.
+- The backend persists the complete user/assistant turn before returning `/chat` or emitting `/chat/stream` `done`, so immediate refreshes should still show both the question and response.
+
 ### 9. Hybrid Inference Fallback (Chống lỗi Single Point of Failure)
 
 Hệ thống được trang bị cơ chế tự động chuyển đổi mô hình (fallback) giữa các nhà cung cấp **Local** (Ollama) và **Remote** (HuggingFace API). Áp dụng cho cả 3 lớp:
@@ -404,7 +414,7 @@ Kỹ thuật này giúp tiết kiệm lượng lớn token API, giảm thiểu �
 ### Giao diện hiện đại
 - **UI chuyên nghiệp** — thiết kế tối giản, responsive, animations mượt.
 - **Sidebar quản lý phiên chat** — tạo mới, chọn, xóa các cuộc hội thoại.
-- **Lưu lịch sử đồng bộ** lên cơ sở dữ liệu PostgreSQL — không mất dữ liệu khi đổi thiết bị và duy trì được trí nhớ dài hạn.
+- **Lưu lịch sử đồng bộ** lên cơ sở dữ liệu PostgreSQL — mỗi lượt chat được lưu đủ `user/assistant` trước khi hoàn tất, hỗ trợ refresh an toàn và duy trì trí nhớ dài hạn.
 - **Phím tắt** — Enter gửi, Shift+Enter xuống dòng.
 - **Render Markdown** — câu trả lời hiển thị với format (heading, bold, list...).
 
