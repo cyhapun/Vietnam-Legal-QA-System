@@ -653,9 +653,11 @@ def list_sessions() -> List[Dict[str, Any]]:
             with conn.cursor() as cursor:
                 cursor.execute(
                     """
-                    SELECT session_id, title, turn_count, updated_at
-                    FROM chat_sessions
-                    ORDER BY updated_at DESC
+                    SELECT s.session_id, s.title, s.turn_count, s.updated_at, COUNT(m.id) as message_count
+                    FROM chat_sessions s
+                    LEFT JOIN chat_messages m ON s.session_id = m.session_id
+                    GROUP BY s.session_id
+                    ORDER BY s.updated_at DESC
                     """
                 )
                 rows = cursor.fetchall()
@@ -665,6 +667,7 @@ def list_sessions() -> List[Dict[str, Any]]:
                         "title": r[1],
                         "turn_count": r[2],
                         "updated_at": r[3].isoformat() if r[3] else None,
+                        "message_count": r[4],
                     }
                     for r in rows
                 ]
