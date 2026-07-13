@@ -8,6 +8,20 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import type { ChatSession, Message } from '@/lib/types';
 import { STORAGE_KEYS } from '@/lib/constants';
 
+const createSessionId = () => {
+  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
+    return crypto.randomUUID();
+  }
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+};
+
+const mapDbMessage = (m: any): Message => ({
+  id: m.id,
+  role: m.role as 'user' | 'assistant',
+  content: m.content,
+  contextUsed: m.contextUsed || []
+});
+
 export function useChatSessions() {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
@@ -15,6 +29,7 @@ export function useChatSessions() {
   const [isSessionsListLoading, setIsSessionsListLoading] = useState(true);
   const [messagesBySession, setMessagesBySession] = useState<Record<string, Message[]>>({});
   const [isMounted, setIsMounted] = useState(false);
+  const sessionLoadSeqRef = useRef(0);
 
   const stateRef = useRef({ sessions, currentSessionId, messagesBySession });
   useEffect(() => {
@@ -34,8 +49,9 @@ export function useChatSessions() {
       return;
     }
 
-    const newId = Date.now().toString();
+    const newId = createSessionId();
     setCurrentSessionId(newId);
+    localStorage.setItem(STORAGE_KEYS.activeSessionId, newId);
     setMessagesBySession(prev => ({ ...prev, [newId]: [] }));
   }, []);
 
@@ -44,7 +60,9 @@ export function useChatSessions() {
     const { currentSessionId, messagesBySession } = stateRef.current;
     if (id === currentSessionId) return;
 
+    const loadSeq = ++sessionLoadSeqRef.current;
     setCurrentSessionId(id);
+    localStorage.setItem(STORAGE_KEYS.activeSessionId, id);
 
     // Lazy load messages nếu chưa có
     if (!messagesBySession[id]) {
@@ -53,12 +71,7 @@ export function useChatSessions() {
         const res = await fetch(`/api/chat/session/${id}/messages`);
         if (res.ok) {
           const dbMsgs: any[] = await res.json();
-          const messages: Message[] = dbMsgs.map(m => ({
-            id: m.id,
-            role: m.role as 'user' | 'assistant',
-            content: m.content,
-            contextUsed: m.contextUsed || []
-          }));
+          const messages = dbMsgs.map(mapDbMessage);
           setMessagesBySession(prev => ({ ...prev, [id]: messages }));
         } else {
           setMessagesBySession(prev => ({ ...prev, [id]: [] }));
@@ -67,8 +80,12 @@ export function useChatSessions() {
         console.error('Lỗi khi fetch messages cho session:', id, err);
         setMessagesBySession(prev => ({ ...prev, [id]: [] }));
       } finally {
-        setIsSessionLoading(false);
+        if (sessionLoadSeqRef.current === loadSeq) {
+          setIsSessionLoading(false);
+        }
       }
+    } else {
+      setIsSessionLoading(false);
     }
   }, []);
 
@@ -95,13 +112,15 @@ export function useChatSessions() {
     if (currentSessionId === id) {
       if (remaining.length > 0) {
         setCurrentSessionId(remaining[0].id);
+        localStorage.setItem(STORAGE_KEYS.activeSessionId, remaining[0].id);
         setSessions(remaining);
       } else {
         // Tạo ID mới nếu không còn session nào, nhưng KHÔNG add vào sessions list
-        const newId = Date.now().toString();
+        const newId = createSessionId();
         nextMessages[newId] = [];
         setMessagesBySession({ ...nextMessages });
         setCurrentSessionId(newId);
+        localStorage.setItem(STORAGE_KEYS.activeSessionId, newId);
         setSessions([]);
       }
     } else {
@@ -127,7 +146,11 @@ export function useChatSessions() {
           timestamp: Date.now()
         }, ...prev];
       }
-      return prev;
+      return prev.map(s =>
+        s.id === currentSessionId
+          ? { ...s, lastMessage: message.content, timestamp: Date.now() }
+          : s
+      );
     });
   }, [currentSessionId]);
 
@@ -164,10 +187,15 @@ export function useChatSessions() {
         const res = await fetch('/api/chat/sessions');
         if (!res.ok) throw new Error('Failed to fetch sessions');
         const dbSessions: any[] = await res.json();
+        const savedActiveSessionId = localStorage.getItem(STORAGE_KEYS.activeSessionId);
+        const savedSessionsRaw = localStorage.getItem(STORAGE_KEYS.sessions);
+        const savedMessagesRaw = localStorage.getItem(STORAGE_KEYS.messages);
+        const savedSessions: ChatSession[] = savedSessionsRaw ? JSON.parse(savedSessionsRaw) : [];
+        const savedMessages: Record<string, Message[]> = savedMessagesRaw ? JSON.parse(savedMessagesRaw) : {};
 
         const filteredSessions = dbSessions.filter(s => s.message_count > 0);
 
-        const loadedSessions: ChatSession[] = filteredSessions.map(dbSession => ({
+        let loadedSessions: ChatSession[] = filteredSessions.map(dbSession => ({
           id: dbSession.session_id,
           title: dbSession.title || 'Cuộc trò chuyện mới',
           lastMessage: '',
@@ -176,24 +204,67 @@ export function useChatSessions() {
 
         loadedSessions.sort((a, b) => b.timestamp - a.timestamp);
 
-        // Khởi tạo một ID mới cho session, không push vào mảng loadedSessions
-        const newId = Date.now().toString();
+        // Restore the active conversation first; create a blank one only when none exists.
+        if (
+          savedActiveSessionId &&
+          !loadedSessions.some(s => s.id === savedActiveSessionId) &&
+          savedMessages[savedActiveSessionId]?.length > 0
+        ) {
+          const localSession = savedSessions.find(s => s.id === savedActiveSessionId);
+          const firstMessage = savedMessages[savedActiveSessionId].find(m => m.role === 'user');
+          loadedSessions = [
+            localSession || {
+              id: savedActiveSessionId,
+              title: firstMessage
+                ? firstMessage.content.substring(0, 30) + (firstMessage.content.length > 30 ? '...' : '')
+                : 'Cuoc tro chuyen moi',
+              lastMessage: savedMessages[savedActiveSessionId].at(-1)?.content || '',
+              timestamp: Date.now()
+            },
+            ...loadedSessions,
+          ];
+        }
+
+        const shouldRestoreActive = Boolean(
+          savedActiveSessionId && loadedSessions.some(s => s.id === savedActiveSessionId)
+        );
+        const activeId = shouldRestoreActive && savedActiveSessionId
+          ? savedActiveSessionId
+          : createSessionId();
+        const initialMessages: Record<string, Message[]> = savedMessages[activeId]
+          ? { [activeId]: savedMessages[activeId] }
+          : { [activeId]: [] };
 
         setSessions(loadedSessions);
-        setMessagesBySession({ [newId]: [] });
-        setCurrentSessionId(newId);
+        setMessagesBySession(initialMessages);
+        setCurrentSessionId(activeId);
+        localStorage.setItem(STORAGE_KEYS.activeSessionId, activeId);
+
+        if (shouldRestoreActive && !savedMessages[activeId]) {
+          setIsSessionLoading(true);
+          const messagesRes = await fetch(`/api/chat/session/${activeId}/messages`);
+          if (messagesRes.ok) {
+            const dbMsgs: any[] = await messagesRes.json();
+            setMessagesBySession(prev => ({ ...prev, [activeId]: dbMsgs.map(mapDbMessage) }));
+          }
+        }
         setIsSessionLoading(false);
       } catch (err) {
         console.error('Lỗi khi load DB sessions, fallback to localStorage:', err);
         // Fallback to localStorage
         const savedSessions = localStorage.getItem(STORAGE_KEYS.sessions);
         const savedMessages = localStorage.getItem(STORAGE_KEYS.messages);
+        const savedActiveSessionId = localStorage.getItem(STORAGE_KEYS.activeSessionId);
         if (savedSessions && savedMessages) {
           const parsedSessions = JSON.parse(savedSessions);
+          const parsedMessages = JSON.parse(savedMessages);
           setSessions(parsedSessions);
-          setMessagesBySession(JSON.parse(savedMessages));
-          if (parsedSessions.length > 0) {
+          setMessagesBySession(parsedMessages);
+          if (savedActiveSessionId && parsedMessages[savedActiveSessionId]) {
+            setCurrentSessionId(savedActiveSessionId);
+          } else if (parsedSessions.length > 0) {
             setCurrentSessionId(parsedSessions[0].id);
+            localStorage.setItem(STORAGE_KEYS.activeSessionId, parsedSessions[0].id);
           } else {
             handleNewChat();
           }
@@ -217,8 +288,11 @@ export function useChatSessions() {
       validSessions.forEach(s => { validMessages[s.id] = messagesBySession[s.id]; });
       localStorage.setItem(STORAGE_KEYS.sessions, JSON.stringify(validSessions));
       localStorage.setItem(STORAGE_KEYS.messages, JSON.stringify(validMessages));
+      if (currentSessionId) {
+        localStorage.setItem(STORAGE_KEYS.activeSessionId, currentSessionId);
+      }
     }
-  }, [sessions, messagesBySession, isMounted]);
+  }, [sessions, messagesBySession, currentSessionId, isMounted]);
 
   return {
     sessions,

@@ -75,4 +75,5 @@ export const DEFAULT_MODEL = 'gemini-2.5-flash-lite';
 export const STORAGE_KEYS = {
   sessions: 'vietlaw_sessions',
   messages: 'vietlaw_messages',
+  activeSessionId: 'vietlaw_active_session_id',
 } as const;
