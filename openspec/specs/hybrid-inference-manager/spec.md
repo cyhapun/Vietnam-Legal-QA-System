@@ -57,6 +57,17 @@ The system SHALL surface HuggingFace embedding provider failures to clients inst
 - **WHEN** `INFERENCE_STRATEGY=remote_first` and HuggingFace embedding generation fails
 - **THEN** the backend MUST NOT call Ollama as a secondary embedding provider.
 
+### Requirement: Deploy-Safe Remote Reranking
+The system SHALL provide a remote-only reranking strategy for deployments without local inference.
+
+#### Scenario: Embedding-similarity reranking is selected
+- **WHEN** `PIPELINE_RERANKING=embedding_similarity`
+- **THEN** the backend reranks retrieved documents by cosine similarity between HuggingFace `BAAI/bge-m3` query and document embeddings.
+
+#### Scenario: Cross-encoder is requested in remote-first deployment
+- **WHEN** `PIPELINE_RERANKING=cross_encoder` and `INFERENCE_STRATEGY=remote_first`
+- **THEN** the backend uses embedding-similarity reranking instead of calling a HuggingFace text-classification query/passage pair format that is not reliably supported by Inference Providers.
+
 ### Requirement: Complete Inference Failure Handling
 The system SHALL raise a clear HTTP error if every configured inference provider in the fallback chain fails sequentially.
 
