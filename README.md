@@ -392,7 +392,7 @@ Hệ thống dùng biến môi trường `INFERENCE_STRATEGY` để chọn thứ
 Các lớp chính:
 - **LLM Layer**: trong `remote_first`, chạy runtime/provider remote và Google fallback nếu bật; trong `local_first`, Ollama được dùng trước.
 - **Embedding Layer**: retrieval triển khai cố định trên HuggingFace `BAAI/bge-m3` để đồng nhất với vector đã index. Nếu HuggingFace embedding trả `401` hoặc `500`, API trả lỗi rõ cho người dùng thay vì âm thầm dùng local hoặc trả kết quả rỗng.
-- **Reranking Layer**: fallback về `NoReranker` nếu CrossEncoder chạy cục bộ gặp sự cố tràn RAM (OOM) hoặc timeout.
+- **Reranking Layer**: `PIPELINE_RERANKING=embedding_similarity` dùng HuggingFace `BAAI/bge-m3` remote để cosine rerank candidate docs trên deploy. Nếu cấu hình `cross_encoder` trong `remote_first`, backend tự chuyển sang embedding-similarity reranker vì HuggingFace Inference Providers không expose ổn định query/passage pair cho `BAAI/bge-reranker-v2-m3`.
 
 ### 10. Conversational Memory Manager (Trí nhớ hội thoại lai)
 
@@ -525,6 +525,16 @@ as the indexed legal corpus. In `remote_first`, embedding failures are surfaced
 to the client: invalid HuggingFace credentials return an authentication error,
 and HuggingFace server failures return an embedding-service error. The deployed
 path does not fall back to local Ollama.
+
+Deploy-safe reranking:
+
+- `PIPELINE_RERANKING=embedding_similarity`: remote-only reranking using
+  HuggingFace `BAAI/bge-m3` feature extraction and cosine similarity. It scores
+  up to `RERANKER_MAX_CANDIDATES` retrieved documents per request to keep deploy
+  latency bounded.
+- `PIPELINE_RERANKING=cross_encoder`: kept for local/experimental use. In
+  `remote_first`, it resolves to embedding-similarity reranking to avoid the
+  unsupported HuggingFace text-classification query/passage pair format.
 
 Environment file roles:
 

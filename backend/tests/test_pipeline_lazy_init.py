@@ -32,3 +32,25 @@ def test_remote_first_embedding_does_not_initialize_ollama(monkeypatch):
 
     assert isinstance(embedding, FakeHuggingFaceEmbedding)
     assert embedding.api_key == "runtime-hf-token"
+
+
+def test_remote_first_cross_encoder_uses_embedding_similarity(monkeypatch):
+    class FakeEmbeddingSimilarityReranker:
+        pass
+
+    class FakeCrossEncoderReranker:
+        def __init__(self, model):
+            raise AssertionError("remote_first must not initialize remote cross-encoder reranker")
+
+    monkeypatch.setitem(pipeline_module.PIPELINE_CONFIG, "reranking", "cross_encoder")
+    monkeypatch.setattr(config_module, "INFERENCE_STRATEGY", "remote_first")
+    monkeypatch.setattr(
+        pipeline_module,
+        "HuggingFaceEmbeddingSimilarityReranker",
+        FakeEmbeddingSimilarityReranker,
+    )
+    monkeypatch.setattr(pipeline_module, "CrossEncoderReranker", FakeCrossEncoderReranker)
+
+    reranker = pipeline_module._create_reranker()
+
+    assert isinstance(reranker, FakeEmbeddingSimilarityReranker)

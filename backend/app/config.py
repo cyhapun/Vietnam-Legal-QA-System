@@ -113,6 +113,7 @@ PIPELINE_CONFIG = {
 
     # --- Reranker model (chỉ dùng khi reranking="cross_encoder") ---
     "reranker_model": os.getenv("RERANKER_MODEL", "BAAI/bge-reranker-v2-m3"),
+    "reranker_max_candidates": int(os.getenv("RERANKER_MAX_CANDIDATES", "20")),
 
     # --- Query Rewriter ---
     "rewriter": os.getenv("PIPELINE_REWRITER", "none"),
