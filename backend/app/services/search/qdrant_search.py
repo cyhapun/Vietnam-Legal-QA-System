@@ -53,8 +53,8 @@ class QdrantSearcher:
         if EMBEDDING_PROVIDER == "ollama":
             if INFERENCE_STRATEGY != "local_first":
                 raise EmbeddingServiceError(
-                    "Cau hinh embedding khong hop le: remote_first khong duoc dung Ollama local. "
-                    "Vui long dung HuggingFace embedding hoac chuyen INFERENCE_STRATEGY=local_first."
+                    "Cấu hình embedding không hợp lệ: remote_first không được dùng Ollama local. "
+                    "Vui lòng dùng HuggingFace embedding hoặc chuyển INFERENCE_STRATEGY=local_first."
                 )
             return OllamaEmbedding()
             
