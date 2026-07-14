@@ -278,12 +278,12 @@ def _get_embedding(api_key: str = None) -> Optional[BaseEmbedding]:
     try:
         from app.config import INFERENCE_STRATEGY
         hf_emb = HuggingFaceEndpointEmbedding(api_key=api_key)
-        ollama_emb = OllamaEmbedding()
         
         if INFERENCE_STRATEGY == "local_first":
+            ollama_emb = OllamaEmbedding()
             emb = FallbackEmbedding(primary=ollama_emb, secondary=hf_emb)
         else:
-            emb = FallbackEmbedding(primary=hf_emb, secondary=ollama_emb)
+            emb = hf_emb
             
         _embedding_cache[cache_key] = emb
         return emb

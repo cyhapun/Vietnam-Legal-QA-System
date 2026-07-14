@@ -15,6 +15,10 @@ from fastapi.responses import StreamingResponse
 from app.models import ChatRequest
 from app.services.pipeline import get_pipeline
 from app.services.llm import get_llm, CHAT_PROMPT, get_output_parser
+from app.services.embedding.errors import (
+    EmbeddingAuthError,
+    EmbeddingServiceError,
+)
 from app.utils.logging import setup_logger
 
 logger = setup_logger("vietlaw.api.chat")
@@ -33,6 +37,10 @@ def _clean_chunk(text: str) -> str:
 def _sse(data: dict) -> str:
     """Dinh dang mot dong Server-Sent Event."""
     return f"data: {json.dumps(data, ensure_ascii=False)}\n\n"
+
+
+def _embedding_error_status(exc: EmbeddingServiceError) -> int:
+    return 401 if isinstance(exc, EmbeddingAuthError) else 503
 
 
 def _recent_messages(request: ChatRequest):
@@ -179,6 +187,9 @@ async def chat_endpoint(request: ChatRequest):
                                 "text": cached_text,
                                 "contextUsed": cached_context
                             }
+                    except EmbeddingServiceError as e:
+                        logger.warning("Cache embedding failed: %s", e)
+                        raise
                     except Exception as e:
                         logger.warning("Cache check failed: %s", e)
                         if "401" in str(e) or "Unauthorized" in str(e) or "Invalid token" in str(e):
@@ -195,6 +206,8 @@ async def chat_endpoint(request: ChatRequest):
                 context_token_budget=request.contextTokenBudget,
                 api_key=api_key
             )
+        except EmbeddingServiceError as e:
+            raise HTTPException(status_code=_embedding_error_status(e), detail=str(e))
         except ValueError as e:
             raise HTTPException(status_code=400, detail=str(e))
         except Exception as e:
@@ -371,6 +384,9 @@ async def chat_stream_endpoint(request: ChatRequest):
                                 yield _sse({"type": "done"})
                                 
                                 return
+                        except EmbeddingServiceError as e:
+                            logger.warning("Stream cache embedding failed: %s", e)
+                            raise
                         except Exception as e:
                             logger.warning("Stream Cache check failed: %s", e)
                             if "401" in str(e) or "Unauthorized" in str(e) or "Invalid token" in str(e):
@@ -387,6 +403,9 @@ async def chat_stream_endpoint(request: ChatRequest):
                     context_token_budget=request.contextTokenBudget,
                     api_key=api_key
                 )
+            except EmbeddingServiceError as e:
+                yield _sse({"type": "error", "message": str(e)})
+                return
             except ValueError as e:
                 yield _sse({"type": "error", "message": str(e)})
                 return

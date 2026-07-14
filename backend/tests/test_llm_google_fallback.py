@@ -44,7 +44,7 @@ def test_selected_google_model_uses_google_endpoint(monkeypatch):
     assert llm.base_url == "https://generativelanguage.googleapis.com/v1beta/openai/"
 
 
-def test_remote_first_adds_google_as_final_fallback(monkeypatch):
+def test_remote_first_does_not_add_local_fallback(monkeypatch):
     _patch_chat_factory(monkeypatch)
     monkeypatch.setattr(llm_module, "INFERENCE_STRATEGY", "remote_first")
 
@@ -52,7 +52,6 @@ def test_remote_first_adds_google_as_final_fallback(monkeypatch):
 
     assert llm.model == "Qwen/Qwen2.5-7B-Instruct"
     assert [fallback.model for fallback in llm.fallbacks] == [
-        "qwen2.5:7b-instruct",
         "gemini-3.1-flash-lite",
     ]
 
@@ -70,17 +69,15 @@ def test_local_first_adds_google_as_final_fallback(monkeypatch):
     ]
 
 
-def test_missing_google_key_skips_selected_google_client(monkeypatch):
+def test_missing_google_key_without_local_fallback_raises(monkeypatch):
     _patch_chat_factory(monkeypatch)
     monkeypatch.setattr(llm_module, "INFERENCE_STRATEGY", "remote_first")
     monkeypatch.setattr(llm_module, "GOOGLE_API_KEY", "")
 
-    llm = llm_module.get_llm("gemini-2.5-flash-lite")
+    import pytest
 
-    assert llm.model == "gemini-2.5-flash-lite"
-    assert llm.api_key == "ollama"
-    assert llm.base_url.endswith("/v1")
-    assert llm.fallbacks == []
+    with pytest.raises(RuntimeError):
+        llm_module.get_llm("gemini-2.5-flash-lite")
 
 
 def test_duplicate_google_fallback_model_is_not_retried(monkeypatch):
@@ -90,5 +87,4 @@ def test_duplicate_google_fallback_model_is_not_retried(monkeypatch):
 
     llm = llm_module.get_llm("gemini-3.1-flash-lite")
 
-    assert [fallback.model for fallback in llm.fallbacks] == ["gemini-3.1-flash-lite"]
-    assert llm.fallbacks[0].api_key == "ollama"
+    assert llm.fallbacks == []
