@@ -27,3 +27,17 @@ The system MUST gracefully handle unauthorized errors from the HuggingFace API.
 #### Scenario: The provided API key is invalid
 - **WHEN** the HuggingFace API responds with a 401 Unauthorized or similar authentication error
 - **THEN** the backend catches the exception and streams an error message to the client indicating the API key is incorrect.
+
+### Requirement: HuggingFace Embedding Service Error Handling
+The system MUST gracefully handle server-side HuggingFace embedding failures.
+
+#### Scenario: HuggingFace embedding provider returns a server error
+- **WHEN** the HuggingFace API responds with a 500 Internal Server Error or similar server-side failure while generating embeddings
+- **THEN** the backend catches the exception and streams an error message to the client indicating the HuggingFace embedding service is temporarily unavailable.
+
+### Requirement: Remote-First Embedding Provider Policy
+The system MUST NOT use local Ollama embedding fallback while `INFERENCE_STRATEGY=remote_first`.
+
+#### Scenario: Remote-first embedding fails
+- **WHEN** `INFERENCE_STRATEGY=remote_first` and HuggingFace embedding generation fails
+- **THEN** the backend reports the embedding failure to the client instead of calling the local Ollama embedding endpoint.

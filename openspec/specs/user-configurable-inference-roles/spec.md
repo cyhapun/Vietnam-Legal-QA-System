@@ -64,7 +64,7 @@ The system SHALL send the selected role provider/model configuration and require
 - **THEN** user-provided provider API keys MUST NOT be logged, echoed in responses, or included in persisted chat/session data.
 
 ### Requirement: Fixed deployed embedding stack
-The system SHALL keep the deployed embedding provider fixed to HuggingFace `BAAI/bge-m3` and SHALL NOT expose runtime embedding provider or model selection in user inference settings.
+The system SHALL keep the deployed embedding provider/model fixed to HuggingFace `BAAI/bge-m3` and SHALL NOT expose runtime embedding provider or model selection in user inference settings. Runtime HuggingFace credentials MAY still be used as the API key source for that fixed embedding stack.
 
 #### Scenario: User changes LLM roles
 - **WHEN** a user changes answer, rewriter, or summarizer provider/model settings
@@ -73,4 +73,8 @@ The system SHALL keep the deployed embedding provider fixed to HuggingFace `BAAI
 #### Scenario: Runtime request omits embedding override
 - **WHEN** the frontend sends runtime inference configuration to the backend
 - **THEN** the payload does not include an embedding provider or embedding model override.
+
+#### Scenario: Remote-first does not use local embedding fallback
+- **WHEN** retrieval runs with `INFERENCE_STRATEGY=remote_first`
+- **THEN** the backend does not use Ollama local embeddings as a fallback for HuggingFace `BAAI/bge-m3`.
 

@@ -209,6 +209,7 @@ cp .env.example .env
 # EMBEDDING_PROVIDER=huggingface
 # HUGGINGFACE_EMBEDDING_MODEL=BAAI/bge-m3
 # HUGGINGFACE_EMBEDDING_MODE=local
+# Use HUGGINGFACE_EMBEDDING_MODE=api on deployed environments.
 #
 # If using Docker with PostgreSQL + Qdrant, keep:
 # STORAGE_BACKEND=qdrant_postgres
@@ -219,6 +220,7 @@ cp .env.example .env
 # GOOGLE_API_KEY=
 # ENABLE_GOOGLE_FALLBACK=false
 # INFERENCE_STRATEGY=remote_first
+# remote_first never falls back to local Ollama.
 ```
 
 ### Bước 2: Chạy Backend (Terminal 1)
@@ -381,14 +383,16 @@ Thay vì tải toàn bộ index vào RAM, phiên bản mới nhất sử dụng 
 - If browser cache is stale, the frontend reconciles it with PostgreSQL whenever `/chat/sessions` reports a larger `message_count`.
 - The backend persists the complete user/assistant turn before returning `/chat` or emitting `/chat/stream` `done`, so immediate refreshes should still show both the question and response.
 
-### 9. Hybrid Inference Fallback (Chống lỗi Single Point of Failure)
+### 9. Hybrid Inference Policy
 
-Hệ thống được trang bị cơ chế tự động chuyển đổi mô hình (fallback) giữa các nhà cung cấp **Local** (Ollama) và **Remote** (HuggingFace API). Áp dụng cho cả 3 lớp:
-- **LLM Layer**: Tự động chuyển qua lại giữa API HuggingFace và Ollama cục bộ.
-- **Embedding Layer**: Chuyển đổi giữa `bge-m3` API và `bge-m3` local.
-- **Reranking Layer**: Tự động fallback về `NoReranker` nếu CrossEncoder chạy cục bộ gặp sự cố tràn RAM (OOM) hoặc timeout.
+Hệ thống dùng biến môi trường `INFERENCE_STRATEGY` để chọn thứ tự provider:
+- `remote_first`: chỉ dùng provider remote và các remote fallback đã cấu hình; không khởi tạo hoặc fallback sang Ollama local.
+- `local_first`: dùng Ollama local trước, sau đó mới fallback sang provider remote nếu cấu hình cho phép.
 
-Hành vi được điều khiển bởi biến môi trường `INFERENCE_STRATEGY` (`remote_first` hoặc `local_first`), đảm bảo hệ thống luôn phản hồi người dùng kể cả khi đứt cáp mạng hoặc server quá tải.
+Các lớp chính:
+- **LLM Layer**: trong `remote_first`, chạy runtime/provider remote và Google fallback nếu bật; trong `local_first`, Ollama được dùng trước.
+- **Embedding Layer**: retrieval triển khai cố định trên HuggingFace `BAAI/bge-m3` để đồng nhất với vector đã index. Nếu HuggingFace embedding trả `401` hoặc `500`, API trả lỗi rõ cho người dùng thay vì âm thầm dùng local hoặc trả kết quả rỗng.
+- **Reranking Layer**: fallback về `NoReranker` nếu CrossEncoder chạy cục bộ gặp sự cố tràn RAM (OOM) hoặc timeout.
 
 ### 10. Conversational Memory Manager (Trí nhớ hội thoại lai)
 
@@ -517,7 +521,10 @@ Summarizer model: Gemini 2.5 Flash-Lite
 
 Embeddings are not user-configurable at runtime. The deployed retrieval stack
 stays fixed to HuggingFace `BAAI/bge-m3` so queries use the same embedding space
-as the indexed legal corpus.
+as the indexed legal corpus. In `remote_first`, embedding failures are surfaced
+to the client: invalid HuggingFace credentials return an authentication error,
+and HuggingFace server failures return an embedding-service error. The deployed
+path does not fall back to local Ollama.
 
 Environment file roles:
 

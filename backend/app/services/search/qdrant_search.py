@@ -18,6 +18,7 @@ from app.config import (
 )
 from app.services.embedding.hf_endpoint import HuggingFaceEndpointEmbedding
 from app.services.embedding.ollama import OllamaEmbedding
+from app.services.embedding.errors import EmbeddingServiceError
 from app.services.knowledge_base import (
     ALL_LAWS_CATEGORY,
     document_matches_category,
@@ -47,9 +48,14 @@ class QdrantSearcher:
         return "qdrant"
 
     def _get_embedding_backend(self, api_key: Optional[str] = None):
-        from app.config import EMBEDDING_PROVIDER
+        from app.config import EMBEDDING_PROVIDER, INFERENCE_STRATEGY
 
         if EMBEDDING_PROVIDER == "ollama":
+            if INFERENCE_STRATEGY != "local_first":
+                raise EmbeddingServiceError(
+                    "Cau hinh embedding khong hop le: remote_first khong duoc dung Ollama local. "
+                    "Vui long dung HuggingFace embedding hoac chuyen INFERENCE_STRATEGY=local_first."
+                )
             return OllamaEmbedding()
             
         from app.services.pipeline import _get_embedding
@@ -225,6 +231,8 @@ class QdrantSearcher:
     ) -> List[Document]:
         try:
             return self._search_qdrant(query, k=k, category=category, api_key=api_key)
+        except EmbeddingServiceError:
+            raise
         except Exception as exc:
             logger.warning("Qdrant retrieval failed, falling back to FAISS: %s", exc)
             if self._fallback_searcher is not None:
@@ -244,6 +252,8 @@ class QdrantSearcher:
         import asyncio
         try:
             return await asyncio.to_thread(self._search_qdrant, query, k, category, api_key)
+        except EmbeddingServiceError:
+            raise
         except Exception as exc:
             logger.warning("Qdrant async retrieval failed, falling back to fallback searcher: %s", exc)
             if self._fallback_searcher is not None:

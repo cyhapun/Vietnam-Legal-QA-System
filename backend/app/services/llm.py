@@ -222,24 +222,22 @@ def _legacy_get_llm(
         timeout=final_timeout,
     )
 
-    # 2. Khởi tạo Local LLM (thông qua Ollama OpenAI API compatible endpoint)
-    local_llm = ChatOpenAI(
-        model=local_model_name,
-        api_key="ollama",
-        base_url=f"{OLLAMA_BASE_URL.rstrip('/')}/v1",
-        temperature=final_temperature,
-        max_tokens=final_max_tokens,
-        timeout=final_timeout,
-    )
-
-    # 3. Wrapping with Fallbacks
     if INFERENCE_STRATEGY == "local_first":
+        # 2. Khoi tao Local LLM chi khi local_first.
+        local_llm = ChatOpenAI(
+            model=local_model_name,
+            api_key="ollama",
+            base_url=f"{OLLAMA_BASE_URL.rstrip('/')}/v1",
+            temperature=final_temperature,
+            max_tokens=final_max_tokens,
+            timeout=final_timeout,
+        )
         logger.info(f"LLM Strategy: local_first ({local_model_name} -> {actual_model})")
         return local_llm.with_fallbacks([remote_llm])
     else:
-        # Default: remote_first
-        logger.info(f"LLM Strategy: remote_first ({actual_model} -> {local_model_name})")
-        return remote_llm.with_fallbacks([local_llm])
+        # Default: remote_first. Do not fall back to local providers in deployed remote mode.
+        logger.info(f"LLM Strategy: remote_first ({actual_model})")
+        return remote_llm
 
 
 # --- CẤU TRÚC SYSTEM PROMPT ---
@@ -304,24 +302,22 @@ def get_llm(
             timeout=final_timeout,
         )
 
-    local_llm = _make_openai_chat(
-        model_name=local_model_name,
-        api_key="ollama",
-        base_url=f"{OLLAMA_BASE_URL.rstrip('/')}/v1",
-        temperature=final_temperature,
-        max_tokens=final_max_tokens,
-        timeout=final_timeout,
-    )
-
     entries = list(runtime_entries)
     use_server_fallbacks = getattr(runtime_config, "use_server_fallbacks", True)
     if (not has_runtime_role and not runtime_entries) or use_server_fallbacks:
         if INFERENCE_STRATEGY == "local_first":
+            local_llm = _make_openai_chat(
+                model_name=local_model_name,
+                api_key="ollama",
+                base_url=f"{OLLAMA_BASE_URL.rstrip('/')}/v1",
+                temperature=final_temperature,
+                max_tokens=final_max_tokens,
+                timeout=final_timeout,
+            )
             _append_unique_llm(entries, "ollama", local_model_name, local_llm)
             _append_unique_llm(entries, remote_provider, remote_model, remote_llm)
         else:
             _append_unique_llm(entries, remote_provider, remote_model, remote_llm)
-            _append_unique_llm(entries, "ollama", local_model_name, local_llm)
 
     if ENABLE_GOOGLE_FALLBACK and ((not has_runtime_role and not runtime_entries) or use_server_fallbacks):
         google_fallback_llm = _make_google_llm(
