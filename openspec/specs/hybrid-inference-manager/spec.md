@@ -2,14 +2,22 @@
 
 ## Purpose
 
-This capability manages the fallback strategies and configuration for inference models (LLM, Embeddings, Reranking) to ensure fault tolerance by automatically switching between primary and fallback modes (remote and local).
+This capability manages the provider policy and fallback strategies for inference models (LLM, Embeddings, Reranking). Remote deployments MUST avoid silently falling back to local providers unless explicitly configured with `local_first`.
 ## Requirements
 ### Requirement: Fallback Mode Configuration
-The system SHALL support configuring a primary and secondary inference mode via the `INFERENCE_STRATEGY` environment variable (e.g., `remote_first`, `local_first`).
+The system SHALL support configuring inference mode via the `INFERENCE_STRATEGY` environment variable (`remote_first` or `local_first`).
 
 #### Scenario: Inference strategy initialization
 - **WHEN** the backend application starts
-- **THEN** it reads the `INFERENCE_STRATEGY` variable and prioritizes initialization of the respective Primary and Fallback model instances.
+- **THEN** it reads the `INFERENCE_STRATEGY` variable before constructing provider chains.
+
+#### Scenario: Remote-first does not initialize local providers
+- **WHEN** `INFERENCE_STRATEGY=remote_first`
+- **THEN** the backend MUST NOT initialize or fallback to Ollama local providers for LLM or embedding execution.
+
+#### Scenario: Local-first may use local providers
+- **WHEN** `INFERENCE_STRATEGY=local_first`
+- **THEN** the backend MAY initialize Ollama local providers before configured remote providers.
 
 ### Requirement: LLM Fallback Execution
 The LLM integration (for rewriting, memory summarization, and answer generation) SHALL automatically fallback through the configured provider chain if the current provider throws a timeout, rate limit, authentication, or connection exception. When a runtime user provider/model is configured for a role, that runtime provider/model SHALL be used as the role's primary LLM before configured server fallbacks are considered. When Google final fallback is enabled and configured, the provider chain SHALL include Google AI Studio after the existing configured providers unless it duplicates the selected runtime provider/model.
@@ -22,8 +30,8 @@ The LLM integration (for rewriting, memory summarization, and answer generation)
 - **WHEN** a role uses a user-selected runtime provider/model and that provider throws an exception
 - **THEN** the system routes the same prompt to the next configured fallback provider when fallback is enabled.
 
-#### Scenario: Existing providers fail with Google fallback configured
-- **WHEN** both the HuggingFace-backed and Ollama-backed LLM instances fail
+#### Scenario: Remote providers fail with Google fallback configured
+- **WHEN** a remote LLM provider fails and Google fallback is enabled with a distinct configured model
 - **THEN** the system routes the same prompt to the configured Google AI Studio fallback model.
 
 #### Scenario: Duplicate Google fallback model
@@ -33,6 +41,21 @@ The LLM integration (for rewriting, memory summarization, and answer generation)
 #### Scenario: Deployed usage without local provider
 - **WHEN** the deployed environment has no reachable local Ollama provider and a remote runtime provider is configured
 - **THEN** answer generation, rewriting, and summarization can run without requiring Ollama.
+
+### Requirement: Embedding Provider Error Handling
+The system SHALL surface HuggingFace embedding provider failures to clients instead of silently falling back to local embeddings in `remote_first`.
+
+#### Scenario: HuggingFace embedding credentials are invalid
+- **WHEN** HuggingFace embedding generation returns a 401 Unauthorized or equivalent authentication error
+- **THEN** the API returns a clear error indicating the HuggingFace API key is invalid, expired, or lacks permission.
+
+#### Scenario: HuggingFace embedding service is unavailable
+- **WHEN** HuggingFace embedding generation returns a 500 Internal Server Error or equivalent server-side failure
+- **THEN** the API returns a clear embedding-service error indicating HuggingFace is temporarily unavailable.
+
+#### Scenario: Remote-first embedding does not use Ollama
+- **WHEN** `INFERENCE_STRATEGY=remote_first` and HuggingFace embedding generation fails
+- **THEN** the backend MUST NOT call Ollama as a secondary embedding provider.
 
 ### Requirement: Complete Inference Failure Handling
 The system SHALL raise a clear HTTP error if every configured inference provider in the fallback chain fails sequentially.
