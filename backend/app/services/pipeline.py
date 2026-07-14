@@ -32,7 +32,12 @@ from app.services.embedding import (
 )
 from app.services.chunking import ClauseChunker
 from app.services.search import FAISSSearcher, QdrantSearcher
-from app.services.reranking import NoReranker, CrossEncoderReranker, FallbackReranker
+from app.services.reranking import (
+    NoReranker,
+    CrossEncoderReranker,
+    HuggingFaceEmbeddingSimilarityReranker,
+    FallbackReranker,
+)
 from app.services.context_builder import NestedContextBuilder
 from app.utils.logging import setup_logger
 
@@ -425,15 +430,29 @@ def _create_searcher(embedding) -> Any:
 def _create_reranker():
     """Tạo reranker dựa trên config, tích hợp Fallback."""
     strategy = PIPELINE_CONFIG.get("reranking", "none")
+    max_candidates = PIPELINE_CONFIG.get("reranker_max_candidates", 20)
     if strategy == "none":
         return NoReranker()
+    elif strategy in {"embedding_similarity", "remote_embedding_similarity"}:
+        return HuggingFaceEmbeddingSimilarityReranker(max_candidates=max_candidates)
     elif strategy == "cross_encoder":
         model = PIPELINE_CONFIG.get("reranker_model", "BAAI/bge-reranker-v2-m3")
+        from app.config import INFERENCE_STRATEGY
+        if INFERENCE_STRATEGY == "remote_first":
+            logger.warning(
+                "Remote HuggingFace text-classification does not reliably support query/passage pairs for %s; "
+                "using embedding_similarity reranker on remote_first.",
+                model,
+            )
+            return HuggingFaceEmbeddingSimilarityReranker(max_candidates=max_candidates)
         primary_reranker = CrossEncoderReranker(model=model)
-        fallback_reranker = NoReranker()
+        fallback_reranker = HuggingFaceEmbeddingSimilarityReranker(max_candidates=max_candidates)
         return FallbackReranker(primary=primary_reranker, secondary=fallback_reranker)
     else:
-        raise ValueError(f"Unknown reranking strategy: {strategy}")
+        raise ValueError(
+            f"Unknown reranking strategy: {strategy} "
+            "(supported: none, cross_encoder, embedding_similarity)"
+        )
 
 
 def _create_context_builder():

@@ -96,7 +96,7 @@ class CrossEncoderReranker:
                 "Cross-encoder reranking thất bại, fallback về thứ tự gốc: %s",
                 str(e)[:200]
             )
-            return documents[:top_k]
+            raise RuntimeError("Cross-encoder reranking failed.") from e
 
         # Ghép score với document và sắp xếp
         scored_docs = list(zip(scores, documents))
