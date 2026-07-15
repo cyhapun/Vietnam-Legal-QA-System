@@ -2,7 +2,8 @@
 
 Date: 2026-07-16
 
-Status: blocked before model selection.
+Status: validation-set selection blocked. `candidate-003-004` is configured as
+a provisional runtime candidate only.
 
 ## Objective
 
@@ -17,6 +18,11 @@ set. The two local candidates are:
 
 Both candidates were previously validated offline as
 `XLMRobertaForSequenceClassification` models with logits shape `(batch, 1)`.
+
+The ignored local symlink
+`models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/selected` currently
+points to `candidates/candidate-003-004`. This is not a best-model decision; no
+validation-set comparison has been performed.
 
 ## Fine-Tuning Protocol Audit
 
@@ -158,14 +164,17 @@ python3 fine-tuning/reranking/evaluate_candidates.py \
 
 ## Selection Decision
 
-No candidate selected.
+No official best candidate selected.
 
 Reason: the validation dataset and fixed validation candidate pools needed for
 fair selection are not available locally, and Stage 2 rules prohibit selecting
 from smoke-test logits or held-out test metrics.
 
-No `models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/selected` symlink was
-created.
+For runtime continuity, `candidate-003-004` is selected provisionally through
+the ignored local `selected` symlink. The basis is only artifact compatibility
+and successful offline smoke inference. `candidate-002-001` is retained for
+rollback, and switching candidates should be done by repointing the `selected`
+symlink.
 
 ## Required Recovery
 
@@ -184,7 +193,8 @@ After validation data is restored:
 
 1. Run candidate evaluation on validation only.
 2. Select candidate by `eval_mrr`/MRR@10 and documented tie-breakers.
-3. Create ignored symlink `models/.../selected` to the winner.
+3. Repoint ignored symlink `models/.../selected` to the validation winner if it
+   differs from the provisional runtime candidate.
 4. Evaluate only the selected candidate on held-out test.
 5. Update this report and `models/ARTIFACT_MANIFEST.md`.
 6. Proceed to Stage 3: versioned Qdrant/FAISS index migration and semantic cache rebuild.

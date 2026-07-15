@@ -10,14 +10,22 @@ Expected host paths:
 - Embedding: `models/embedding/vietlaw-bge-m3-finetuned/best`
 - Reranker candidate 002-001: `models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/candidates/candidate-002-001`
 - Reranker candidate 003-004: `models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/candidates/candidate-003-004`
+- Provisional reranker runtime path: `models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/selected`
 
 Expected Docker container paths:
 
 - Embedding: `/models/embedding/vietlaw-bge-m3-finetuned/best`
 - Reranker candidates under `/models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/candidates/`
+- Provisional reranker runtime path: `/models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/selected`
 
 The `models/` directory is ignored by Git and must not be committed. Docker
 Compose mounts it read-only into the backend and ingest containers.
+
+`candidate-003-004` is currently used as a provisional runtime candidate through
+the ignored local `selected` symlink. This is an operational choice based on
+artifact compatibility and offline smoke inference only. It is not a
+validation-set comparison and must not be described as the best checkpoint.
+`candidate-002-001` remains available for rollback.
 
 Current validated weight hashes:
 
@@ -44,7 +52,7 @@ Reranker:
 
 ```env
 PIPELINE_RERANKING=cross_encoder
-RERANKER_MODEL=models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/candidates/candidate-002-001
+RERANKER_MODEL=models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/selected
 RERANKER_DEVICE=cpu
 RERANKER_BATCH_SIZE=8
 RERANKER_MAX_LENGTH=512
@@ -52,11 +60,11 @@ RERANKER_FAIL_OPEN=false
 LOCAL_MODELS_OFFLINE=true
 ```
 
-Switch candidates by changing only `RERANKER_MODEL`. After Stage 2 is completed
-with a local validation dataset, use the stable ignored symlink
-`models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/selected`. Do not treat
-smoke-test logits as a model-selection result; the best reranker still requires
-evaluation on a representative validation set. See
+The backend should reference the stable `selected` path instead of a concrete
+candidate directory. Switch or rollback candidates by repointing the ignored
+local symlink, for example from `candidate-003-004` to `candidate-002-001`.
+Do not treat smoke-test logits as a model-selection result; the best reranker
+still requires evaluation on a representative validation set. See
 `docs/reranker_candidate_evaluation.md` for the current selection status.
 
 ## Local-Only Behavior
@@ -88,7 +96,7 @@ Validate a reranker candidate:
 cd backend
 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 python scripts/validate_local_models.py \
   --skip-embedding \
-  --reranker-path ../models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/candidates/candidate-002-001
+  --reranker-path ../models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/selected
 ```
 
 Real-model pytest coverage is opt-in:
@@ -125,6 +133,9 @@ not pin CUDA-specific local builds in the shared dependency manifest.
 ## Rollback
 
 - Disable reranking with `PIPELINE_RERANKING=none`.
+- Repoint `models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/selected` to
+  `candidates/candidate-002-001` if the provisional candidate performs poorly
+  in real use.
 - Point embedding and collection configuration back to the previous model/index
   pair before serving traffic.
 - Do not reuse semantic cache entries across embedding model changes.
