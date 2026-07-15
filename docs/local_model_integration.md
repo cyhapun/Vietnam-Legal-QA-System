@@ -113,12 +113,19 @@ the main Qdrant dense vector and semantic cache collection. Existing Qdrant
 collections with a different dimension now raise a migration error; they are
 not recreated automatically.
 
+Semantic cache collection name is configured independently with
+`SEMANTIC_CACHE_COLLECTION`. Use a new cache collection when switching to a new
+embedding index, for example `semantic_cache_bge_m3_ft_v1`.
+
 Changing the embedding model requires a migration stage:
 
 - Re-index Qdrant with the new embedding model.
 - Rebuild FAISS if FAISS fallback is used.
 - Clear or rebuild semantic cache.
 - Avoid querying a pretrained-model index with fine-tuned query embeddings.
+
+See `docs/versioned_index_migration.md` for the versioned Qdrant migration,
+cutover, and rollback procedure.
 
 This stage does not re-index, clear cache, or mutate production data.
 

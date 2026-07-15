@@ -46,3 +46,22 @@ def test_semantic_cache_rejects_wrong_dimension(monkeypatch):
 
     with pytest.raises(ValueError, match="dimension mismatch"):
         semantic_cache.check_cache([0.0, 1.0])
+
+
+def test_semantic_cache_uses_configured_collection(monkeypatch):
+    class FakeClient:
+        def __init__(self):
+            self.collection_name = None
+
+        def upsert(self, collection_name, points):
+            self.collection_name = collection_name
+
+    fake_client = FakeClient()
+    monkeypatch.setattr(semantic_cache, "ENABLE_SEMANTIC_CACHE", True)
+    monkeypatch.setattr(semantic_cache, "EMBEDDING_DIMENSION", 2)
+    monkeypatch.setattr(semantic_cache, "SEMANTIC_CACHE_COLLECTION", "semantic_cache_bge_m3_ft_v1")
+    monkeypatch.setattr(semantic_cache, "_qdrant_client", fake_client)
+
+    semantic_cache.update_cache([0.0, 1.0], "query", "answer", [], [])
+
+    assert fake_client.collection_name == "semantic_cache_bge_m3_ft_v1"

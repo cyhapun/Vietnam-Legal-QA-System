@@ -13,6 +13,7 @@ from app.config import (
     QDRANT_URL,
     QDRANT_API_KEY,
     ENABLE_SEMANTIC_CACHE,
+    SEMANTIC_CACHE_COLLECTION,
     SEMANTIC_CACHE_THRESHOLD
 )
 from app.utils.logging import setup_logger
@@ -58,7 +59,7 @@ def check_cache(
         try:
             # Try query_points (newer versions)
             search_result = client.query_points(
-                collection_name="semantic_cache",
+                collection_name=SEMANTIC_CACHE_COLLECTION,
                 query=query_vector,
                 limit=1,
                 score_threshold=threshold
@@ -66,7 +67,7 @@ def check_cache(
         except AttributeError:
             # Fallback for older versions
             search_result = client.search(
-                collection_name="semantic_cache",
+                collection_name=SEMANTIC_CACHE_COLLECTION,
                 query_vector=query_vector,
                 limit=1,
                 score_threshold=threshold
@@ -108,7 +109,7 @@ def update_cache(query_vector: List[float], original_query: str, response_text: 
         }
         
         client.upsert(
-            collection_name="semantic_cache",
+            collection_name=SEMANTIC_CACHE_COLLECTION,
             points=[
                 qdrant_models.PointStruct(
                     id=point_id,
@@ -135,7 +136,7 @@ def invalidate_cache_by_doc_ids(doc_ids: List[str]) -> bool:
         
     try:
         client.delete(
-            collection_name="semantic_cache",
+            collection_name=SEMANTIC_CACHE_COLLECTION,
             points_selector=qdrant_models.FilterSelector(
                 filter=qdrant_models.Filter(
                     must=[

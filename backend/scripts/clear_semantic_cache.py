@@ -14,7 +14,13 @@ sys.path.insert(0, str(backend_dir))
 
 from qdrant_client import QdrantClient
 from qdrant_client.http import models as qdrant_models
-from app.config import QDRANT_URL, QDRANT_API_KEY, ENABLE_SEMANTIC_CACHE, EMBEDDING_DIMENSION
+from app.config import (
+    QDRANT_URL,
+    QDRANT_API_KEY,
+    ENABLE_SEMANTIC_CACHE,
+    EMBEDDING_DIMENSION,
+    SEMANTIC_CACHE_COLLECTION,
+)
 
 def main():
     if not ENABLE_SEMANTIC_CACHE:
@@ -24,7 +30,7 @@ def main():
     print("Connecting to Qdrant...")
     try:
         client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY or None)
-        collection_name = "semantic_cache"
+        collection_name = SEMANTIC_CACHE_COLLECTION
 
         print(f"Checking for collection '{collection_name}'...")
         try:

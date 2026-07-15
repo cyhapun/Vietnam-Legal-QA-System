@@ -17,6 +17,7 @@ from app.config import (
     QDRANT_API_KEY,
     QDRANT_COLLECTION,
     QDRANT_URL,
+    SEMANTIC_CACHE_COLLECTION,
     STORAGE_BACKEND,
 )
 from app.utils.logging import setup_logger
@@ -270,7 +271,7 @@ def initialize_storage() -> Dict[str, Any]:
 
     from app.config import ENABLE_SEMANTIC_CACHE
     if ENABLE_SEMANTIC_CACHE:
-        cache_collection = "semantic_cache"
+        cache_collection = SEMANTIC_CACHE_COLLECTION
         try:
             cache_info = qdrant_client.get_collection(cache_collection)
             _ensure_collection_dimension(

@@ -132,6 +132,7 @@ PIPELINE_CONFIG = {
 # --- SEMANTIC CACHE ---
 ENABLE_SEMANTIC_CACHE = os.getenv("ENABLE_SEMANTIC_CACHE", "true").strip().lower() == "true"
 SEMANTIC_CACHE_THRESHOLD = float(os.getenv("SEMANTIC_CACHE_THRESHOLD", "0.95"))
+SEMANTIC_CACHE_COLLECTION = os.getenv("SEMANTIC_CACHE_COLLECTION", "semantic_cache")
 
 # --- FALLBACK STRATEGY ---
 INFERENCE_STRATEGY = os.getenv("INFERENCE_STRATEGY", "remote_first").strip().lower()
@@ -142,7 +143,14 @@ def _validate_positive_int(name: str, value: int) -> None:
         raise ValueError(f"{name} must be greater than 0; got {value}.")
 
 
+def _validate_non_empty(name: str, value: str) -> None:
+    if not value.strip():
+        raise ValueError(f"{name} must not be empty.")
+
+
 _validate_positive_int("EMBEDDING_BATCH_SIZE", EMBEDDING_BATCH_SIZE)
 _validate_positive_int("EMBEDDING_DIMENSION", EMBEDDING_DIMENSION)
 _validate_positive_int("RERANKER_BATCH_SIZE", PIPELINE_CONFIG["reranker_batch_size"])
 _validate_positive_int("RERANKER_MAX_LENGTH", PIPELINE_CONFIG["reranker_max_length"])
+_validate_non_empty("QDRANT_COLLECTION", QDRANT_COLLECTION)
+_validate_non_empty("SEMANTIC_CACHE_COLLECTION", SEMANTIC_CACHE_COLLECTION)
