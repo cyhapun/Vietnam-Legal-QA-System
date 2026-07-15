@@ -437,17 +437,13 @@ def _create_reranker():
         return HuggingFaceEmbeddingSimilarityReranker(max_candidates=max_candidates)
     elif strategy == "cross_encoder":
         model = PIPELINE_CONFIG.get("reranker_model", "BAAI/bge-reranker-v2-m3")
-        from app.config import INFERENCE_STRATEGY
-        if INFERENCE_STRATEGY == "remote_first":
-            logger.warning(
-                "Remote HuggingFace text-classification does not reliably support query/passage pairs for %s; "
-                "using embedding_similarity reranker on remote_first.",
-                model,
-            )
-            return HuggingFaceEmbeddingSimilarityReranker(max_candidates=max_candidates)
-        primary_reranker = CrossEncoderReranker(model=model)
-        fallback_reranker = HuggingFaceEmbeddingSimilarityReranker(max_candidates=max_candidates)
-        return FallbackReranker(primary=primary_reranker, secondary=fallback_reranker)
+        return CrossEncoderReranker(
+            model=model,
+            device=PIPELINE_CONFIG.get("reranker_device", "cpu"),
+            batch_size=PIPELINE_CONFIG.get("reranker_batch_size", 8),
+            max_length=PIPELINE_CONFIG.get("reranker_max_length", 512),
+            fail_open=PIPELINE_CONFIG.get("reranker_fail_open", False),
+        )
     else:
         raise ValueError(
             f"Unknown reranking strategy: {strategy} "

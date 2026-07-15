@@ -26,6 +26,7 @@ Hệ thống truy xuất các điều khoản pháp luật liên quan từ cơ s
 - [Tính năng](#tính-năng)
 - [Dữ liệu pháp luật](#dữ-liệu-pháp-luật)
 - [Công nghệ](#công-nghệ)
+- [Local model integration](docs/local_model_integration.md)
 
 ---
 

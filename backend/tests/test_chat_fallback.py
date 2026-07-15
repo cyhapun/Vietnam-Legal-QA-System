@@ -23,7 +23,7 @@ class DummyPipeline:
 def test_chat_returns_http_error_when_llm_is_unavailable(monkeypatch):
     monkeypatch.setattr("app.api.chat.get_pipeline", lambda: DummyPipeline())
     monkeypatch.setattr("app.api.chat.get_llm", lambda **kwargs: (_ for _ in ()).throw(RuntimeError("LLM unavailable")))
-    monkeypatch.setattr("app.services.pipeline._get_embedding", lambda: None)
+    monkeypatch.setattr("app.services.pipeline._get_embedding", lambda *args, **kwargs: None)
 
     with TestClient(app) as client:
         response = client.post(

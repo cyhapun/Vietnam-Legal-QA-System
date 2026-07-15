@@ -9,7 +9,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 COPY requirements.txt ./
 RUN pip install uv && \
     uv pip install --system --no-cache-dir -r requirements.txt && \
-    uv pip install --system --no-cache-dir sentence-transformers>=3.0.0 faiss-cpu tqdm>=4.66.0
+    uv pip install --system --no-cache-dir faiss-cpu
 
 RUN echo "bust cache 2"
 COPY . .

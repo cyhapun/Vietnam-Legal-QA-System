@@ -34,23 +34,27 @@ def test_remote_first_embedding_does_not_initialize_ollama(monkeypatch):
     assert embedding.api_key == "runtime-hf-token"
 
 
-def test_remote_first_cross_encoder_uses_embedding_similarity(monkeypatch):
-    class FakeEmbeddingSimilarityReranker:
-        pass
-
+def test_cross_encoder_wires_local_reranker_from_config(monkeypatch):
     class FakeCrossEncoderReranker:
-        def __init__(self, model):
-            raise AssertionError("remote_first must not initialize remote cross-encoder reranker")
+        def __init__(self, model, device, batch_size, max_length, fail_open):
+            self.model = model
+            self.device = device
+            self.batch_size = batch_size
+            self.max_length = max_length
+            self.fail_open = fail_open
 
     monkeypatch.setitem(pipeline_module.PIPELINE_CONFIG, "reranking", "cross_encoder")
-    monkeypatch.setattr(config_module, "INFERENCE_STRATEGY", "remote_first")
-    monkeypatch.setattr(
-        pipeline_module,
-        "HuggingFaceEmbeddingSimilarityReranker",
-        FakeEmbeddingSimilarityReranker,
-    )
+    monkeypatch.setitem(pipeline_module.PIPELINE_CONFIG, "reranker_model", "/models/reranker-candidate")
+    monkeypatch.setitem(pipeline_module.PIPELINE_CONFIG, "reranker_device", "cpu")
+    monkeypatch.setitem(pipeline_module.PIPELINE_CONFIG, "reranker_batch_size", 4)
+    monkeypatch.setitem(pipeline_module.PIPELINE_CONFIG, "reranker_max_length", 256)
+    monkeypatch.setitem(pipeline_module.PIPELINE_CONFIG, "reranker_fail_open", True)
     monkeypatch.setattr(pipeline_module, "CrossEncoderReranker", FakeCrossEncoderReranker)
 
     reranker = pipeline_module._create_reranker()
 
-    assert isinstance(reranker, FakeEmbeddingSimilarityReranker)
+    assert isinstance(reranker, FakeCrossEncoderReranker)
+    assert reranker.model == "/models/reranker-candidate"
+    assert reranker.batch_size == 4
+    assert reranker.max_length == 256
+    assert reranker.fail_open is True

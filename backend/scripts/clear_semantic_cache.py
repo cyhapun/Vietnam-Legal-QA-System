@@ -14,7 +14,7 @@ sys.path.insert(0, str(backend_dir))
 
 from qdrant_client import QdrantClient
 from qdrant_client.http import models as qdrant_models
-from app.config import QDRANT_URL, QDRANT_API_KEY, ENABLE_SEMANTIC_CACHE
+from app.config import QDRANT_URL, QDRANT_API_KEY, ENABLE_SEMANTIC_CACHE, EMBEDDING_DIMENSION
 
 def main():
     if not ENABLE_SEMANTIC_CACHE:
@@ -36,7 +36,7 @@ def main():
         print(f"Recreating collection '{collection_name}' to flush all cached responses...")
         client.recreate_collection(
             collection_name=collection_name,
-            vectors_config=qdrant_models.VectorParams(size=1024, distance=qdrant_models.Distance.COSINE),
+            vectors_config=qdrant_models.VectorParams(size=EMBEDDING_DIMENSION, distance=qdrant_models.Distance.COSINE),
         )
         print("Semantic Cache cleared successfully!")
 

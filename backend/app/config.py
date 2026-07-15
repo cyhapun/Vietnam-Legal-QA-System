@@ -48,6 +48,10 @@ DISABLE_AUTO_INGEST = os.getenv("DISABLE_AUTO_INGEST", "false").strip().lower() 
 EMBEDDING_MODEL = os.getenv("HUGGINGFACE_EMBEDDING_MODEL", "BAAI/bge-m3")
 # Hỗ trợ "api" hoặc "local"
 HUGGINGFACE_EMBEDDING_MODE = os.getenv("HUGGINGFACE_EMBEDDING_MODE", "local").strip().lower()
+EMBEDDING_DEVICE = os.getenv("EMBEDDING_DEVICE", "cpu").strip()
+EMBEDDING_DIMENSION = int(os.getenv("EMBEDDING_DIMENSION", "1024"))
+EMBEDDING_NORMALIZE = os.getenv("EMBEDDING_NORMALIZE", "true").strip().lower() == "true"
+LOCAL_MODELS_OFFLINE = os.getenv("LOCAL_MODELS_OFFLINE", "true").strip().lower() == "true"
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 OLLAMA_EMBEDDING_MODEL = os.getenv("OLLAMA_EMBEDDING_MODEL", "bge-m3")
 OLLAMA_EMBEDDING_TIMEOUT = float(os.getenv("OLLAMA_EMBEDDING_TIMEOUT", "300"))
@@ -114,6 +118,10 @@ PIPELINE_CONFIG = {
     # --- Reranker model (chỉ dùng khi reranking="cross_encoder") ---
     "reranker_model": os.getenv("RERANKER_MODEL", "BAAI/bge-reranker-v2-m3"),
     "reranker_max_candidates": int(os.getenv("RERANKER_MAX_CANDIDATES", "20")),
+    "reranker_device": os.getenv("RERANKER_DEVICE", "cpu").strip(),
+    "reranker_batch_size": int(os.getenv("RERANKER_BATCH_SIZE", "8")),
+    "reranker_max_length": int(os.getenv("RERANKER_MAX_LENGTH", "512")),
+    "reranker_fail_open": os.getenv("RERANKER_FAIL_OPEN", "false").strip().lower() == "true",
 
     # --- Query Rewriter ---
     "rewriter": os.getenv("PIPELINE_REWRITER", "none"),
@@ -127,3 +135,14 @@ SEMANTIC_CACHE_THRESHOLD = float(os.getenv("SEMANTIC_CACHE_THRESHOLD", "0.95"))
 
 # --- FALLBACK STRATEGY ---
 INFERENCE_STRATEGY = os.getenv("INFERENCE_STRATEGY", "remote_first").strip().lower()
+
+
+def _validate_positive_int(name: str, value: int) -> None:
+    if value <= 0:
+        raise ValueError(f"{name} must be greater than 0; got {value}.")
+
+
+_validate_positive_int("EMBEDDING_BATCH_SIZE", EMBEDDING_BATCH_SIZE)
+_validate_positive_int("EMBEDDING_DIMENSION", EMBEDDING_DIMENSION)
+_validate_positive_int("RERANKER_BATCH_SIZE", PIPELINE_CONFIG["reranker_batch_size"])
+_validate_positive_int("RERANKER_MAX_LENGTH", PIPELINE_CONFIG["reranker_max_length"])

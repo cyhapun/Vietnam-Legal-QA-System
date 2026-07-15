@@ -1,54 +1,163 @@
-"""
-Cross-Encoder Reranker — Dùng cross-encoder model để rerank kết quả search.
-Cross-encoder cho accuracy cao hơn bi-encoder vì nó xem xét
-cả query và document cùng lúc (joint encoding).
-"""
-from typing import List
+"""Local cross-encoder reranker."""
+from __future__ import annotations
+
+import math
+import os
+import threading
+from pathlib import Path
+from typing import List, Sequence
 
 from langchain_core.documents import Document
 
-from app.config import HUGGINGFACE_API_KEY
+from app.config import LOCAL_MODELS_OFFLINE, PIPELINE_CONFIG
 from app.utils.logging import setup_logger
 
 logger = setup_logger("vietlaw.reranking.cross_encoder")
 
-# Default model — BGE Reranker v2 hỗ trợ multilingual (bao gồm tiếng Việt)
 DEFAULT_RERANKER_MODEL = "BAAI/bge-reranker-v2-m3"
+_REQUIRED_FILES = (
+    "config.json",
+    "model.safetensors",
+    "tokenizer.json",
+    "tokenizer_config.json",
+    "special_tokens_map.json",
+    "sentencepiece.bpe.model",
+)
 
 
 class CrossEncoderReranker:
-    """Cross-encoder reranker qua HuggingFace Inference API.
-
-    Gọi model cross-encoder để tính relevance score cho mỗi cặp
-    (query, document), rồi sắp xếp lại theo score.
-
-    Model mặc định: BAAI/bge-reranker-v2-m3 — hỗ trợ tiếng Việt.
-    """
+    """Local cross-encoder reranker loaded from a filesystem artifact."""
 
     def __init__(
         self,
         model: str = DEFAULT_RERANKER_MODEL,
-        api_key: str = HUGGINGFACE_API_KEY,
+        device: str | None = None,
+        batch_size: int | None = None,
+        max_length: int | None = None,
+        fail_open: bool | None = None,
+        local_files_only: bool = LOCAL_MODELS_OFFLINE,
     ):
-        self._model = model
-        self._api_key = api_key
-        self._client = None
+        self._model_path = model
+        self._device = device if device is not None else PIPELINE_CONFIG.get("reranker_device", "cpu")
+        self._batch_size = batch_size if batch_size is not None else PIPELINE_CONFIG.get("reranker_batch_size", 8)
+        self._max_length = max_length if max_length is not None else PIPELINE_CONFIG.get("reranker_max_length", 512)
+        self._fail_open = (
+            PIPELINE_CONFIG.get("reranker_fail_open", False)
+            if fail_open is None
+            else fail_open
+        )
+        self._local_files_only = local_files_only
+        self._tokenizer = None
+        self._model = None
+        self._torch = None
+        self._lock = threading.Lock()
 
-        logger.info("CrossEncoderReranker initialized with model: %s", model)
+        if self._batch_size <= 0:
+            raise ValueError(f"RERANKER_BATCH_SIZE must be greater than 0; got {self._batch_size}.")
+        if self._max_length <= 0:
+            raise ValueError(f"RERANKER_MAX_LENGTH must be greater than 0; got {self._max_length}.")
+        self._validate_local_artifact()
 
-    def _get_client(self):
-        """Lazy init HuggingFace InferenceClient."""
-        if self._client is None:
-            from huggingface_hub import InferenceClient
-            self._client = InferenceClient(
-                model=self._model,
-                token=self._api_key,
-            )
-        return self._client
+        if LOCAL_MODELS_OFFLINE:
+            os.environ.setdefault("HF_HUB_OFFLINE", "1")
+            os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
+        logger.info(
+            "Local CrossEncoderReranker configured: model=%s device=%s batch_size=%d max_length=%d fail_open=%s",
+            self._model_path,
+            self._device,
+            self._batch_size,
+            self._max_length,
+            self._fail_open,
+        )
 
     @property
     def strategy_name(self) -> str:
-        return f"cross_encoder({self._model})"
+        return f"cross_encoder({self._model_path})"
+
+    def _validate_local_artifact(self) -> None:
+        if not self._model_path:
+            raise ValueError("RERANKER_MODEL must be a local path when PIPELINE_RERANKING=cross_encoder.")
+
+        path = Path(self._model_path)
+        if not path.exists() or not path.is_dir():
+            raise FileNotFoundError(
+                f"Local reranker model directory does not exist: {path}. "
+                "Set RERANKER_MODEL to one validated candidate directory."
+            )
+
+        missing = [name for name in _REQUIRED_FILES if not (path / name).exists()]
+        if missing:
+            raise FileNotFoundError(
+                f"Local reranker artifact at {path} is missing required files: {', '.join(missing)}."
+            )
+
+    def _load(self):
+        if self._model is None or self._tokenizer is None:
+            with self._lock:
+                if self._model is None or self._tokenizer is None:
+                    try:
+                        import torch
+                        from transformers import AutoModelForSequenceClassification, AutoTokenizer
+                    except ImportError as exc:  # pragma: no cover - dependency check
+                        raise RuntimeError(
+                            "torch and transformers are required for local reranker inference."
+                        ) from exc
+
+                    logger.info("Loading local reranker from %s", self._model_path)
+                    tokenizer = AutoTokenizer.from_pretrained(
+                        self._model_path,
+                        local_files_only=self._local_files_only,
+                    )
+                    model = AutoModelForSequenceClassification.from_pretrained(
+                        self._model_path,
+                        local_files_only=self._local_files_only,
+                    )
+                    model.to(self._device)
+                    model.eval()
+                    self._torch = torch
+                    self._tokenizer = tokenizer
+                    self._model = model
+        return self._tokenizer, self._model, self._torch
+
+    def _score_batch(self, query: str, texts: Sequence[str]) -> List[float]:
+        tokenizer, model, torch = self._load()
+        encoded = tokenizer(
+            list(zip([query] * len(texts), texts)),
+            padding=True,
+            truncation=True,
+            max_length=self._max_length,
+            return_tensors="pt",
+        )
+        encoded = {key: value.to(self._device) for key, value in encoded.items()}
+
+        with torch.inference_mode():
+            outputs = model(**encoded)
+            logits = outputs.logits
+
+        if logits.ndim == 1:
+            logits = logits.unsqueeze(-1)
+        if logits.shape[0] != len(texts):
+            raise RuntimeError(
+                f"Reranker output batch mismatch: expected {len(texts)}, got {logits.shape[0]}."
+            )
+        if logits.shape[-1] < 1:
+            raise RuntimeError(f"Reranker logits have invalid shape: {tuple(logits.shape)}.")
+
+        scores = logits[:, 0].detach().cpu().float().tolist()
+        if not all(math.isfinite(float(score)) for score in scores):
+            raise RuntimeError("Reranker output contains NaN or Inf.")
+        return [float(score) for score in scores]
+
+    def _score(self, query: str, documents: List[Document]) -> List[float]:
+        scores: List[float] = []
+        for start in range(0, len(documents), self._batch_size):
+            batch = documents[start:start + self._batch_size]
+            scores.extend(self._score_batch(query, [doc.page_content for doc in batch]))
+        return scores
+
+    @staticmethod
+    def _fail_open_result(documents: List[Document], top_k: int) -> List[Document]:
+        return documents[:max(0, top_k)]
 
     def rerank(
         self,
@@ -56,56 +165,37 @@ class CrossEncoderReranker:
         documents: List[Document],
         top_k: int,
     ) -> List[Document]:
-        """Rerank documents bằng cross-encoder model.
-
-        Args:
-            query: Câu hỏi gốc.
-            documents: Danh sách Document cần rerank.
-            top_k: Số document trả về sau reranking.
-
-        Returns:
-            Top-k documents xếp theo relevance score giảm dần.
-        """
         if not documents:
             return []
-
-        client = self._get_client()
-
-        # Tạo danh sách text pairs cho cross-encoder
-        texts = [doc.page_content for doc in documents]
+        if top_k <= 0:
+            return []
 
         try:
-            # Gọi HuggingFace Inference API với task text-classification/reranking
-            scores = []
-            for text in texts:
-                result = client.text_classification(
-                    text,
-                    model=self._model,
-                    # Cross-encoder nhận query+document pair
-                    parameters={"query": query},
+            scores = self._score(query, documents)
+        except Exception as exc:
+            if self._fail_open:
+                logger.warning("Local cross-encoder failed open; preserving original order: %s", exc)
+                return self._fail_open_result(documents, top_k)
+            raise RuntimeError(f"Local cross-encoder reranking failed for {self._model_path}: {exc}") from exc
+
+        scored_docs = []
+        for index, (score, doc) in enumerate(zip(scores, documents)):
+            metadata = dict(doc.metadata or {})
+            metadata["rerank_score"] = score
+            scored_docs.append(
+                (
+                    score,
+                    index,
+                    Document(page_content=doc.page_content, metadata=metadata),
                 )
-                # Lấy score từ kết quả (format tùy thuộc model)
-                if isinstance(result, list) and len(result) > 0:
-                    score = result[0].get("score", 0.0) if isinstance(result[0], dict) else float(result[0].score)
-                else:
-                    score = 0.0
-                scores.append(score)
-
-        except Exception as e:
-            logger.warning(
-                "Cross-encoder reranking thất bại, fallback về thứ tự gốc: %s",
-                str(e)[:200]
             )
-            raise RuntimeError("Cross-encoder reranking failed.") from e
 
-        # Ghép score với document và sắp xếp
-        scored_docs = list(zip(scores, documents))
-        scored_docs.sort(key=lambda x: x[0], reverse=True)
-
-        results = [doc for _, doc in scored_docs[:top_k]]
+        scored_docs.sort(key=lambda item: (-item[0], item[1]))
+        results = [doc for _, _, doc in scored_docs[:top_k]]
         logger.info(
-            "CrossEncoder reranked %d → %d documents (top score: %.4f)",
-            len(documents), len(results),
+            "Local CrossEncoder reranked %d -> %d documents (top score: %.4f)",
+            len(documents),
+            len(results),
             scored_docs[0][0] if scored_docs else 0.0,
         )
         return results
