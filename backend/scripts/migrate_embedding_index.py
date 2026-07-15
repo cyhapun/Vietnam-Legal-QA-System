@@ -8,6 +8,7 @@ import hashlib
 import json
 import math
 import os
+import re
 import sys
 import time
 import uuid
@@ -122,6 +123,79 @@ def load_clause_records(source_corpus: Path) -> List[ClauseRecord]:
     return records
 
 
+def grouped_law_records(records: Sequence[ClauseRecord]) -> List[Dict[str, Any]]:
+    grouped: Dict[str, Dict[str, Any]] = {}
+    for record in records:
+        law = grouped.setdefault(
+            record.law_id,
+            {
+                "law_id": record.law_id,
+                "law_name": record.law_name,
+                "summary": "",
+                "category": record.category,
+                "metadata": {"law_name": record.law_name},
+                "clauses": [],
+            },
+        )
+        law["clauses"].append(record)
+    return list(grouped.values())
+
+
+def upsert_postgres_metadata(records: Sequence[ClauseRecord], postgres_dsn: str) -> Dict[str, int]:
+    """Idempotently upsert law/clause metadata without touching Qdrant."""
+    import psycopg
+
+    from app.services.storage import _ensure_schema
+
+    _ensure_schema()
+    laws = grouped_law_records(records)
+    law_count = 0
+    clause_count = 0
+    with psycopg.connect(postgres_dsn, autocommit=True) as conn:
+        with conn.cursor() as cursor:
+            for law in laws:
+                cursor.execute(
+                    """
+                    INSERT INTO laws (law_id, law_name, summary, category, metadata)
+                    VALUES (%s, %s, %s, %s, %s)
+                    ON CONFLICT (law_id) DO UPDATE SET
+                        law_name = EXCLUDED.law_name,
+                        summary = EXCLUDED.summary,
+                        category = EXCLUDED.category,
+                        metadata = EXCLUDED.metadata
+                    """,
+                    (
+                        law["law_id"],
+                        law["law_name"],
+                        law["summary"],
+                        law["category"],
+                        json.dumps(law["metadata"]),
+                    ),
+                )
+                law_count += 1
+                for clause in law["clauses"]:
+                    cursor.execute(
+                        """
+                        INSERT INTO clauses (id, law_id, content, position, cross_references)
+                        VALUES (%s, %s, %s, %s, %s)
+                        ON CONFLICT (id) DO UPDATE SET
+                            law_id = EXCLUDED.law_id,
+                            content = EXCLUDED.content,
+                            position = EXCLUDED.position,
+                            cross_references = EXCLUDED.cross_references
+                        """,
+                        (
+                            clause.clause_id,
+                            clause.law_id,
+                            clause.content,
+                            json.dumps(clause.position),
+                            json.dumps(clause.cross_references),
+                        ),
+                    )
+                    clause_count += 1
+    return {"laws": law_count, "clauses": clause_count}
+
+
 def deterministic_point_id(clause_id: str) -> str:
     return str(uuid.uuid5(uuid.NAMESPACE_URL, clause_id))
 
@@ -164,10 +238,11 @@ def build_qdrant_point(record: ClauseRecord, dense_vector: Sequence[float], spar
 
 
 def target_name_with_version(base_name: str, version: int) -> str:
-    if version == 1 and base_name.endswith("_v1"):
+    match = re.search(r"_v\d+$", base_name)
+    if version == 1 and match:
         return base_name
-    if base_name.endswith("_v1"):
-        return f"{base_name[:-2]}v{version}"
+    if match:
+        return f"{base_name[:match.start()]}_v{version}"
     return f"{base_name}_v{version}"
 
 
@@ -282,6 +357,7 @@ def build_base_report(args: argparse.Namespace, inventory: Dict[str, Any], targe
             "dummy_dimension": 1,
         },
         "batch_size": args.batch_size,
+        "max_seq_length": args.max_seq_length,
         "device": args.device,
         "resume": args.resume,
         "dry_run": args.dry_run,
@@ -315,6 +391,7 @@ def run_migration(args: argparse.Namespace) -> Dict[str, Any]:
     from app.services.sparse_vector import SparseVectorGenerator
 
     client = QdrantClient(url=args.qdrant_url, api_key=args.qdrant_api_key or None)
+    postgres_counts = upsert_postgres_metadata(records, args.postgres_dsn)
     target_collection, target_exists, target_status = resolve_target_collection(
         client,
         args.target_collection,
@@ -337,6 +414,11 @@ def run_migration(args: argparse.Namespace) -> Dict[str, Any]:
         expected_dimension=args.embedding_dimension,
         local_files_only=True,
     )
+    if args.max_seq_length is not None:
+        local_engine = embedding._get_local_engine()
+        if not hasattr(local_engine, "max_seq_length"):
+            raise RuntimeError("Local embedding engine does not expose max_seq_length.")
+        local_engine.max_seq_length = args.max_seq_length
     sparse_generator = SparseVectorGenerator()
 
     indexed = 0
@@ -377,6 +459,7 @@ def run_migration(args: argparse.Namespace) -> Dict[str, Any]:
             "target_collection_status": target_status,
             "semantic_cache_status": cache_status,
             "expected_points": len(records),
+            "postgres_upserted": postgres_counts,
             "point_count_before": before_count,
             "point_count_after": after_info.points_count,
             "indexed_points": indexed,
@@ -404,9 +487,11 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser.add_argument("--embedding-model", required=True)
     parser.add_argument("--embedding-dimension", type=positive_int, default=1024)
     parser.add_argument("--batch-size", type=positive_int, default=32)
+    parser.add_argument("--max-seq-length", type=positive_int, default=None)
     parser.add_argument("--device", default="cpu")
     parser.add_argument("--qdrant-url", default=os.getenv("QDRANT_URL", "http://localhost:6333"))
     parser.add_argument("--qdrant-api-key", default=os.getenv("QDRANT_API_KEY", ""))
+    parser.add_argument("--postgres-dsn", default=os.getenv("POSTGRES_DSN", "postgresql://postgres:postgres@localhost:5432/vietlaw"))
     parser.add_argument("--report-path", default=str(REPO_DIR / "reports" / "index_migrations" / "migration_report.json"))
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--dry-run", action="store_true")

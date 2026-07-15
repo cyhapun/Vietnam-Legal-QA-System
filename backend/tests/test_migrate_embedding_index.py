@@ -67,6 +67,8 @@ def _valid_info():
 def test_versioned_name_generation():
     assert migration.target_name_with_version("vietlaw_clauses_bge_m3_ft_v1", 1) == "vietlaw_clauses_bge_m3_ft_v1"
     assert migration.target_name_with_version("vietlaw_clauses_bge_m3_ft_v1", 2) == "vietlaw_clauses_bge_m3_ft_v2"
+    assert migration.target_name_with_version("vietlaw_clauses_bge_m3_ft_v2", 1) == "vietlaw_clauses_bge_m3_ft_v2"
+    assert migration.target_name_with_version("vietlaw_clauses_bge_m3_ft_v2", 3) == "vietlaw_clauses_bge_m3_ft_v3"
     assert migration.target_name_with_version("custom_collection", 3) == "custom_collection_v3"
 
 
@@ -128,6 +130,19 @@ def test_build_qdrant_point_is_deterministic():
     assert "text-sparse" in point_a.vector
 
 
+def test_grouped_law_records_groups_clauses_by_law():
+    records = [
+        migration.ClauseRecord("c1", "L1", "Law 1", "all", "a", {}, []),
+        migration.ClauseRecord("c2", "L1", "Law 1", "all", "b", {}, []),
+        migration.ClauseRecord("c3", "L2", "Law 2", "land", "c", {}, []),
+    ]
+
+    grouped = migration.grouped_law_records(records)
+
+    assert [law["law_id"] for law in grouped] == ["L1", "L2"]
+    assert [len(law["clauses"]) for law in grouped] == [2, 1]
+
+
 def test_dry_run_reports_counts_without_qdrant(tmp_path):
     corpus = tmp_path / "corpus"
     corpus.mkdir()
@@ -156,6 +171,8 @@ def test_dry_run_reports_counts_without_qdrant(tmp_path):
             str(embedding_dir),
             "--batch-size",
             "1",
+            "--max-seq-length",
+            "512",
         ]
     )
 
@@ -164,6 +181,7 @@ def test_dry_run_reports_counts_without_qdrant(tmp_path):
     assert report["status"] == "dry_run"
     assert report["expected_points"] == 2
     assert report["estimated_batches"] == 2
+    assert report["max_seq_length"] == 512
     assert report["will_mutate"] is False
 
 
