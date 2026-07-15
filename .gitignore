@@ -89,6 +89,7 @@ backend/vietlaw_faiss_index*/
 backend/evaluation/dataset.json
 backend/evaluation/results.csv
 backend/data/chat_logs.json
+fine-tuning/data/local/
 
 # =============================
 # Local Fine-tuned Models
