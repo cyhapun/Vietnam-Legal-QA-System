@@ -52,9 +52,12 @@ RERANKER_FAIL_OPEN=false
 LOCAL_MODELS_OFFLINE=true
 ```
 
-Switch candidates by changing only `RERANKER_MODEL`. Do not treat smoke-test
-logits as a model-selection result; the best reranker still requires evaluation
-on a representative validation set.
+Switch candidates by changing only `RERANKER_MODEL`. After Stage 2 is completed
+with a local validation dataset, use the stable ignored symlink
+`models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/selected`. Do not treat
+smoke-test logits as a model-selection result; the best reranker still requires
+evaluation on a representative validation set. See
+`docs/reranker_candidate_evaluation.md` for the current selection status.
 
 ## Local-Only Behavior
 
