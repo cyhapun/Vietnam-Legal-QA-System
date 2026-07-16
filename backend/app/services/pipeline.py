@@ -444,7 +444,10 @@ def _create_reranker():
     elif strategy in {"embedding_similarity", "remote_embedding_similarity"}:
         return HuggingFaceEmbeddingSimilarityReranker(max_candidates=max_candidates)
     elif strategy == "cross_encoder":
-        model = PIPELINE_CONFIG.get("reranker_model", "BAAI/bge-reranker-v2-m3")
+        model = PIPELINE_CONFIG.get(
+            "reranker_model",
+            "../models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/selected",
+        )
         return CrossEncoderReranker(
             model=model,
             device=PIPELINE_CONFIG.get("reranker_device", "cpu"),

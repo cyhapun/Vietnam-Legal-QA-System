@@ -93,8 +93,7 @@ The backend should reference the stable `selected` path instead of a concrete
 candidate directory. Switch or rollback candidates by repointing the ignored
 local symlink, for example from `candidate-003-004` to `candidate-002-001`.
 Do not treat smoke-test logits as a model-selection result; the best reranker
-still requires evaluation on a representative validation set. See
-`docs/reranker_candidate_evaluation.md` for the current selection status.
+still requires evaluation on a representative validation set.
 
 ## Local-Only Behavior
 
@@ -180,19 +179,16 @@ Semantic cache collection name is configured independently with
 `SEMANTIC_CACHE_COLLECTION`. Use a new cache collection when switching to a new
 embedding index, for example `semantic_cache_bge_m3_ft_v1`.
 
-Changing the embedding model requires a migration stage. If the active Qdrant
-Cloud collection was already created with the same fine-tuned embedding model,
-do not re-index for this integration task.
+If the active Qdrant Cloud collection was already created with the same
+fine-tuned embedding model, do not re-index for this integration. Changing the
+embedding model in the future requires a separate migration stage that re-indexes
+Qdrant, rebuilds FAISS only if FAISS fallback is explicitly used, and clears or
+rebuilds semantic cache. Never query a pretrained-model index with fine-tuned
+query embeddings.
 
-- Re-index Qdrant with the new embedding model.
-- Rebuild FAISS only if FAISS fallback is explicitly used.
-- Clear or rebuild semantic cache.
-- Avoid querying a pretrained-model index with fine-tuned query embeddings.
-
-See `docs/versioned_index_migration.md` for the versioned Qdrant migration,
-cutover, and rollback procedure.
-
-This stage does not re-index, clear cache, or mutate production data.
+This runtime integration does not re-index, clear cache, or mutate production
+data. Local migration/evaluation tooling is intentionally kept out of this PR
+scope.
 
 ## CPU and GPU Notes
 

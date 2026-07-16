@@ -46,7 +46,10 @@ DISABLE_AUTO_INGEST = os.getenv("DISABLE_AUTO_INGEST", "false").strip().lower() 
 ENABLE_FAISS_FALLBACK = os.getenv("ENABLE_FAISS_FALLBACK", "false").strip().lower() == "true"
 
 # --- THÔNG SỐ EMBEDDING ---
-EMBEDDING_MODEL = os.getenv("HUGGINGFACE_EMBEDDING_MODEL", "BAAI/bge-m3")
+DEFAULT_LOCAL_EMBEDDING_MODEL = "../models/embedding/vietlaw-bge-m3-finetuned/best"
+DEFAULT_LOCAL_RERANKER_MODEL = "../models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/selected"
+
+EMBEDDING_MODEL = os.getenv("HUGGINGFACE_EMBEDDING_MODEL", DEFAULT_LOCAL_EMBEDDING_MODEL)
 # Hỗ trợ "api" hoặc "local"
 HUGGINGFACE_EMBEDDING_MODE = os.getenv("HUGGINGFACE_EMBEDDING_MODE", "local").strip().lower()
 EMBEDDING_DEVICE = os.getenv("EMBEDDING_DEVICE", "cpu").strip()
@@ -117,7 +120,7 @@ PIPELINE_CONFIG = {
     "hybrid_bm25_weight": float(os.getenv("HYBRID_BM25_WEIGHT", "0.5")),
 
     # --- Reranker model (chỉ dùng khi reranking="cross_encoder") ---
-    "reranker_model": os.getenv("RERANKER_MODEL", "BAAI/bge-reranker-v2-m3"),
+    "reranker_model": os.getenv("RERANKER_MODEL", DEFAULT_LOCAL_RERANKER_MODEL),
     "reranker_max_candidates": int(os.getenv("RERANKER_MAX_CANDIDATES", "20")),
     "reranker_device": os.getenv("RERANKER_DEVICE", "cpu").strip(),
     "reranker_batch_size": int(os.getenv("RERANKER_BATCH_SIZE", "8")),

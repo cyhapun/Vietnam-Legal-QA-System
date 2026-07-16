@@ -38,18 +38,18 @@ def _raise_huggingface_error(exc: Exception) -> None:
     detail = str(exc)
     if "401" in detail or "Unauthorized" in detail or "Invalid username or password" in detail:
         raise EmbeddingAuthError(
-            "API Key HuggingFace không hợp lệ, đã hết hạn, hoặc không có quyền dùng embedding BAAI/bge-m3. "
+            "API Key HuggingFace không hợp lệ, đã hết hạn, hoặc không có quyền dùng embedding đã cấu hình. "
             "Vui lòng kiểm tra lại HuggingFace API key trong phần cấu hình."
         ) from exc
 
     if "500" in detail or "Internal Server Error" in detail or "Server error" in detail:
         raise EmbeddingServerError(
-            "Dịch vụ HuggingFace embedding đang lỗi phía máy chủ khi gọi BAAI/bge-m3. "
+            "Dịch vụ HuggingFace embedding đang lỗi phía máy chủ khi gọi model đã cấu hình. "
             "Vui lòng thử lại sau hoặc chọn cấu hình embedding ổn định hơn."
         ) from exc
 
     raise EmbeddingServerError(
-        f"Không thể tạo embedding bằng HuggingFace BAAI/bge-m3: {detail}"
+        f"Không thể tạo embedding bằng HuggingFace model đã cấu hình: {detail}"
     ) from exc
 
 

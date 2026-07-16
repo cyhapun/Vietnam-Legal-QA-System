@@ -23,8 +23,8 @@ if (!chatInterface.includes('inferenceConfig: toRuntimeInferenceConfig(aiSetting
   throw new Error('Chat requests do not include runtime inference config');
 }
 
-if (!setupModal.includes('BAAI/bge-m3')) {
-  throw new Error('Setup modal must explain fixed BAAI/bge-m3 embeddings');
+if (!setupModal.includes('fine-tuned local model')) {
+  throw new Error('Setup modal must explain server-managed fine-tuned local embeddings');
 }
 
 if (setupModal.includes('type="text"') && setupModal.includes('API key')) {

@@ -14,7 +14,7 @@ from app.utils.logging import setup_logger
 
 logger = setup_logger("vietlaw.reranking.cross_encoder")
 
-DEFAULT_RERANKER_MODEL = "BAAI/bge-reranker-v2-m3"
+DEFAULT_RERANKER_MODEL = "../models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/selected"
 _REQUIRED_FILES = (
     "config.json",
     "model.safetensors",
