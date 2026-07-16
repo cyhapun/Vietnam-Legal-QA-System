@@ -11,6 +11,22 @@ function getBackendUrl(reqUrl: string): string {
 
 export const dynamic = 'force-dynamic';
 
+async function readSafeErrorBody(response: Response): Promise<string> {
+  const contentType = response.headers.get('content-type') || '';
+  if (contentType.includes('application/json')) {
+    const payload = await response.json().catch(() => ({}));
+    if (payload && typeof payload === 'object' && 'detail' in payload) {
+      return String(payload.detail).slice(0, 240);
+    }
+    if (payload && typeof payload === 'object' && 'error' in payload) {
+      return String(payload.error).slice(0, 240);
+    }
+    return `Status: ${response.status}`;
+  }
+  const text = await response.text().catch(() => '');
+  return text ? text.slice(0, 240) : `Status: ${response.status}`;
+}
+
 export async function GET(req: NextRequest) {
   try {
     const backendBase = getBackendUrl(req.url);
@@ -22,9 +38,9 @@ export async function GET(req: NextRequest) {
     });
 
     if (!backendRes.ok) {
-      const err = await backendRes.json().catch(() => ({}));
+      const details = await readSafeErrorBody(backendRes);
       return NextResponse.json(
-        { error: 'Backend error', details: err.detail || `Status: ${backendRes.status}` },
+        { error: 'Backend error', details },
         { status: backendRes.status },
       );
     }

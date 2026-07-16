@@ -6,6 +6,7 @@ import { User, Scale, BookOpen, Copy, Check, ThumbsUp, ThumbsDown, RotateCcw, Un
 import type { Message, DocumentChunk } from '@/lib/types';
 import { ChatProcessingTrace } from './ChatProcessingTrace';
 import { dedupeLegalSources, LegalSourcesTrigger } from './LegalSources';
+import { CHAT_CONTENT_WIDTH_CLASS, CHAT_ROW_WIDTH_CLASS } from './layout';
 
 export type { Message, DocumentChunk } from '@/lib/types';
 
@@ -30,7 +31,6 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
   const [comment, setComment] = useState('');
   const [selectedCitation, setSelectedCitation] = useState<DocumentChunk | null>(null);
   const [isProcessCollapsed, setIsProcessCollapsed] = useState(true);
-  const assistantContentWidthClass = 'w-full max-w-[92%] sm:max-w-[88%] md:max-w-3xl';
 
   React.useEffect(() => {
     setFeedback(message.feedback === 1 ? 'up' : message.feedback === -1 ? 'down' : null);
@@ -75,7 +75,7 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
 
   return (
     <div id={`message-${message.id}`} className={`group py-5 px-4 message-animate ${showNegativeForm ? 'relative z-[150]' : ''}`}>
-      <div className={`max-w-4xl mx-auto flex ${isUser ? 'flex-row-reverse gap-2.5' : 'flex-row gap-4'}`}>
+      <div className={`${CHAT_ROW_WIDTH_CLASS} flex ${isUser ? 'flex-row-reverse gap-2.5' : 'flex-row gap-4'}`}>
 
         {/* Avatar */}
         <div className="flex-shrink-0 mt-1">
@@ -100,7 +100,7 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
             className={`${
               isUser
                 ? 'inline-block max-w-[92%] sm:max-w-[88%] px-5 py-3.5 rounded-2xl rounded-tr-sm shadow-sm text-white'
-                : `${assistantContentWidthClass} text-gray-800 dark:text-gray-200`
+                : `${CHAT_CONTENT_WIDTH_CLASS} text-gray-800 dark:text-gray-200`
             }`}
             style={isUser ? { background: 'linear-gradient(135deg, #2563EB, #1D4ED8)' } : {}}
           >
@@ -273,7 +273,7 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
                 </div>
               </div>
 
-              <div className={assistantContentWidthClass}>
+              <div className={CHAT_CONTENT_WIDTH_CLASS}>
                 <LegalSourcesTrigger
                   sources={message.contextUsed}
                   onOpenAll={onOpenContext}

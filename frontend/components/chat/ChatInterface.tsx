@@ -10,6 +10,7 @@ import { Sidebar } from './Sidebar';
 import { ChatEmptyState } from './ChatEmptyState';
 import type { ChatProcessingStage } from './ChatProcessingTrace';
 import { LegalSourceList } from './LegalSources';
+import { CHAT_CONTENT_WIDTH_CLASS, CHAT_ROW_WIDTH_CLASS } from './layout';
 import { useChatSessions } from '@/hooks/use-chat-sessions';
 import { useClickOutside } from '@/hooks/use-click-outside';
 import { useAISettings } from '@/hooks/use-ai-settings';
@@ -620,7 +621,9 @@ export function ChatInterface() {
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 pt-10 pb-4 px-4 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent dark:from-[#171717] dark:via-[#171717]">
-          <div className="max-w-3xl mx-auto relative">
+          <div className={`${CHAT_ROW_WIDTH_CLASS} flex gap-4`}>
+            <div className="h-8 w-8 shrink-0" aria-hidden="true" />
+            <div className={`${CHAT_CONTENT_WIDTH_CLASS} relative`}>
             {/* Scroll to bottom button */}
             {!isAtBottom && currentMessages.length > 0 && (
               <div className="absolute -top-14 left-1/2 -translate-x-1/2 z-20 fade-in slide-in-from-bottom-2 duration-200">
@@ -714,6 +717,7 @@ export function ChatInterface() {
             <p className="text-center mt-2.5 text-[10px] text-gray-400 font-medium">
               AI có thể cung cấp thông tin không chính xác. Hãy luôn kiểm tra lại dữ liệu quan trọng.
             </p>
+            </div>
           </div>
         </div>
       </div>
