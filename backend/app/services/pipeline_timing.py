@@ -8,7 +8,7 @@ import uuid
 from contextlib import contextmanager
 from contextvars import ContextVar
 from dataclasses import dataclass, field
-from typing import Dict, Iterator, Optional
+from typing import Any, Dict, Iterator, Optional
 
 from app.config import PIPELINE_CONFIG
 from app.utils.logging import setup_logger
@@ -51,6 +51,7 @@ class PipelineTimingCollector:
     _first_token_ns: Optional[int] = None
     _emitted: bool = False
     _durations_ms: Dict[str, float] = field(default_factory=dict)
+    _metrics: Dict[str, Any] = field(default_factory=dict)
     _cold_flags: Dict[str, bool] = field(
         default_factory=lambda: {
             "embedding_was_cold": False,
@@ -91,6 +92,9 @@ class PipelineTimingCollector:
                 self._first_token_ns,
             )
 
+    def set_metric(self, name: str, value: Any) -> None:
+        self._metrics[name] = value
+
     def payload(self, outcome: str) -> dict:
         now_ns = time.perf_counter_ns()
         durations = dict(self._durations_ms)
@@ -121,6 +125,7 @@ class PipelineTimingCollector:
                 "reranker_max_length": PIPELINE_CONFIG.get("reranker_max_length"),
                 "reranking": PIPELINE_CONFIG.get("reranking"),
             },
+            "metrics": dict(self._metrics),
             "durations_ms": {key: round(value, 3) for key, value in sorted(durations.items())},
         }
 

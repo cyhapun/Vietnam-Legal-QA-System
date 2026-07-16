@@ -75,6 +75,26 @@ def test_chat_request_rejects_embedding_override():
         })
 
 
+def test_chat_request_defaults_candidate_k_to_reduced_workload():
+    request = ChatRequest.model_validate({
+        "messages": [{"role": "user", "content": "test"}],
+        "model": "gemini-3.1-flash-lite",
+    })
+
+    assert request.candidateK == 10
+    assert request.topK is None
+
+
+def test_chat_request_rejects_candidate_k_below_top_k():
+    with pytest.raises(ValidationError):
+        ChatRequest.model_validate({
+            "messages": [{"role": "user", "content": "test"}],
+            "model": "gemini-3.1-flash-lite",
+            "candidateK": 10,
+            "topK": 12,
+        })
+
+
 def test_runtime_google_key_overrides_environment_key(monkeypatch):
     _patch_chat_factory(monkeypatch)
     config = _runtime_config()

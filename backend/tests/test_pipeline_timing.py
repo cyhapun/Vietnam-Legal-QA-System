@@ -48,7 +48,8 @@ def test_emit_once_logs_single_sanitized_payload(monkeypatch):
     payload = emitted[0]
     assert payload["outcome"] == "error"
     assert "query" not in json.dumps(payload).lower()
-    assert "context" not in json.dumps(payload).lower()
+    assert "page_content" not in json.dumps(payload).lower()
+    assert "answer" not in json.dumps(payload).lower()
     assert "api_key" not in json.dumps(payload).lower()
 
 

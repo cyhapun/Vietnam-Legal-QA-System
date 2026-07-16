@@ -50,15 +50,15 @@ def environment_snapshot() -> dict:
     return snapshot
 
 
-def _payload(question: str, streaming: bool, model: str) -> dict:
+def _payload(question: str, streaming: bool, model: str, candidate_k: int, top_k: int) -> dict:
     return {
         "messages": [{"role": "user", "content": question}],
         "model": model,
         "category": "all",
         "temperature": 0.1,
         "maxTokens": 1500,
-        "topK": 5,
-        "candidateK": 20,
+        "topK": top_k,
+        "candidateK": candidate_k,
         "streaming": streaming,
         "enableQueryRewriter": False,
         "enableReranker": True,
@@ -74,10 +74,10 @@ def _iter_sse_lines(response) -> Iterable[str]:
             yield line[6:]
 
 
-def run_once(base_url: str, endpoint: str, question: str, timeout: float, model: str) -> dict:
+def run_once(base_url: str, endpoint: str, question: str, timeout: float, model: str, candidate_k: int, top_k: int) -> dict:
     streaming = endpoint.endswith("/stream")
     request_id = f"bench-{uuid.uuid4()}"
-    body = json.dumps(_payload(question, streaming, model), ensure_ascii=False).encode("utf-8")
+    body = json.dumps(_payload(question, streaming, model, candidate_k, top_k), ensure_ascii=False).encode("utf-8")
     req = request.Request(
         f"{base_url.rstrip('/')}{endpoint}",
         data=body,
@@ -93,6 +93,7 @@ def run_once(base_url: str, endpoint: str, question: str, timeout: float, model:
     status = None
     token_count = 0
     context_events = 0
+    final_context_ids = []
     error_event = None
     try:
         with request.urlopen(req, timeout=timeout) as response:
@@ -105,6 +106,11 @@ def run_once(base_url: str, endpoint: str, question: str, timeout: float, model:
                         continue
                     if event.get("type") == "context":
                         context_events += 1
+                        final_context_ids = [
+                            item.get("id")
+                            for item in event.get("data", [])
+                            if isinstance(item, dict) and item.get("id")
+                        ]
                     elif event.get("type") == "token":
                         token_count += 1
                         if first_token_at is None:
@@ -116,6 +122,11 @@ def run_once(base_url: str, endpoint: str, question: str, timeout: float, model:
             else:
                 data = json.loads(response.read().decode("utf-8"))
                 token_count = 1 if data.get("text") else 0
+                final_context_ids = [
+                    item.get("id")
+                    for item in data.get("contextUsed", [])
+                    if isinstance(item, dict) and item.get("id")
+                ]
     except error.HTTPError as exc:
         status = exc.code
         error_event = f"HTTP {exc.code}"
@@ -129,6 +140,7 @@ def run_once(base_url: str, endpoint: str, question: str, timeout: float, model:
         "client_time_to_first_token_ms": round(ttft_ms, 3) if ttft_ms is not None else None,
         "token_events": token_count,
         "context_events": context_events,
+        "final_context_ids": final_context_ids,
         "error": error_event,
     }
 
@@ -140,6 +152,8 @@ def main() -> int:
     parser.add_argument("--question", action="append", default=[])
     parser.add_argument("--timeout", type=float, default=300)
     parser.add_argument("--model", default="gemini-3.1-flash-lite")
+    parser.add_argument("--candidate-k", type=int, default=10)
+    parser.add_argument("--top-k", type=int, default=5)
     args = parser.parse_args()
 
     questions = args.question or [
@@ -149,7 +163,7 @@ def main() -> int:
     ]
 
     results = [
-        run_once(args.base_url, args.endpoint, question, args.timeout, args.model)
+        run_once(args.base_url, args.endpoint, question, args.timeout, args.model, args.candidate_k, args.top_k)
         for question in questions
     ]
     print(json.dumps({"environment": environment_snapshot(), "results": results}, ensure_ascii=False, indent=2))

@@ -118,6 +118,10 @@ class RAGPipeline:
         else:
             docs = self.searcher.search(queries, k=k, category=category)
         retrieved_count = len(docs)
+        collector = current_timing()
+        if collector is not None:
+            collector.set_metric("requested_candidate_k", k)
+            collector.set_metric("retrieved_candidate_count", retrieved_count)
         
         # Deduplicate
         seen = set()
@@ -130,6 +134,8 @@ class RAGPipeline:
                 
         docs = unique_docs
         dedup_count = len(docs)
+        if collector is not None:
+            collector.set_metric("deduplicated_candidate_count", dedup_count)
 
         # Step 2: Rerank or keep search order.
         if enable_reranker:
@@ -137,6 +143,10 @@ class RAGPipeline:
         else:
             docs = docs[:final_k]
         final_count = len(docs)
+        if collector is not None:
+            collector.set_metric("requested_top_k", final_k)
+            collector.set_metric("final_context_count", final_count)
+            collector.set_metric("final_source_ids", [doc.metadata.get("id") for doc in docs if doc.metadata.get("id")])
         
         logger.info(
             "Pipeline retrieve (Sync) [domain=%s, rewritten=%d] -> Search: %d docs -> Dedup: %d docs -> Rerank: %d docs", 
@@ -144,12 +154,14 @@ class RAGPipeline:
         )
 
         # Step 3: Build context within the configured token budget.
-        collector = current_timing()
         if collector is not None:
             with collector.stage("context_building"):
                 docs, context = self._build_context_with_budget(docs, context_token_budget)
         else:
             docs, context = self._build_context_with_budget(docs, context_token_budget)
+        if collector is not None:
+            collector.set_metric("final_context_count", len(docs))
+            collector.set_metric("final_source_ids", [doc.metadata.get("id") for doc in docs if doc.metadata.get("id")])
 
         return docs, context
 
@@ -204,6 +216,10 @@ class RAGPipeline:
             else:
                 docs = self.searcher.search(queries, k=k, category=category)
         retrieved_count = len(docs)
+        collector = current_timing()
+        if collector is not None:
+            collector.set_metric("requested_candidate_k", k)
+            collector.set_metric("retrieved_candidate_count", retrieved_count)
         
         # Deduplicate
         seen = set()
@@ -216,6 +232,8 @@ class RAGPipeline:
                 
         docs = unique_docs
         dedup_count = len(docs)
+        if collector is not None:
+            collector.set_metric("deduplicated_candidate_count", dedup_count)
 
         # Step 2: Rerank or keep search order.
         if enable_reranker:
@@ -223,6 +241,10 @@ class RAGPipeline:
         else:
             docs = docs[:final_k]
         final_count = len(docs)
+        if collector is not None:
+            collector.set_metric("requested_top_k", final_k)
+            collector.set_metric("final_context_count", final_count)
+            collector.set_metric("final_source_ids", [doc.metadata.get("id") for doc in docs if doc.metadata.get("id")])
         
         logger.info(
             "Pipeline retrieve (Async) [domain=%s, rewritten=%d] -> Search: %d docs -> Dedup: %d docs -> Rerank: %d docs", 
@@ -230,12 +252,14 @@ class RAGPipeline:
         )
 
         # Step 3: Build context within the configured token budget.
-        collector = current_timing()
         if collector is not None:
             with collector.stage("context_building"):
                 docs, context = self._build_context_with_budget(docs, context_token_budget)
         else:
             docs, context = self._build_context_with_budget(docs, context_token_budget)
+        if collector is not None:
+            collector.set_metric("final_context_count", len(docs))
+            collector.set_metric("final_source_ids", [doc.metadata.get("id") for doc in docs if doc.metadata.get("id")])
 
         return docs, context
 

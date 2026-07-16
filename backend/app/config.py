@@ -73,7 +73,7 @@ EMBEDDING_RETRY_BASE_WAIT = float(os.getenv(
 
 # --- THÔNG SỐ RETRIEVAL ---
 RETRIEVER_K = 20
-RETRIEVER_CANDIDATE_K = int(os.getenv("RETRIEVER_CANDIDATE_K", "60"))
+RETRIEVER_CANDIDATE_K = int(os.getenv("RETRIEVER_CANDIDATE_K", "10"))
 RETRIEVER_FETCH_K = 20
 RETRIEVER_LAMBDA_MULT = 0.8
 
@@ -122,7 +122,7 @@ PIPELINE_CONFIG = {
 
     # --- Reranker model (chỉ dùng khi reranking="cross_encoder") ---
     "reranker_model": os.getenv("RERANKER_MODEL", DEFAULT_LOCAL_RERANKER_MODEL),
-    "reranker_max_candidates": int(os.getenv("RERANKER_MAX_CANDIDATES", "20")),
+    "reranker_max_candidates": int(os.getenv("RERANKER_MAX_CANDIDATES", "10")),
     "reranker_device": os.getenv("RERANKER_DEVICE", "cpu").strip(),
     "reranker_batch_size": int(os.getenv("RERANKER_BATCH_SIZE", "8")),
     "reranker_max_length": int(os.getenv("RERANKER_MAX_LENGTH", "512")),
