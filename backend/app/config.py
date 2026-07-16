@@ -44,6 +44,7 @@ QDRANT_API_KEY = os.getenv("QDRANT_API_KEY", "")
 QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION", "vietlaw_clauses")
 DISABLE_AUTO_INGEST = os.getenv("DISABLE_AUTO_INGEST", "false").strip().lower() == "true"
 ENABLE_FAISS_FALLBACK = os.getenv("ENABLE_FAISS_FALLBACK", "false").strip().lower() == "true"
+PIPELINE_TIMING_ENABLED = os.getenv("PIPELINE_TIMING_ENABLED", "false").strip().lower() == "true"
 
 # --- THÔNG SỐ EMBEDDING ---
 DEFAULT_LOCAL_EMBEDDING_MODEL = "../models/embedding/vietlaw-bge-m3-finetuned/best"

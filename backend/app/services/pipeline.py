@@ -39,6 +39,7 @@ from app.services.reranking import (
     FallbackReranker,
 )
 from app.services.context_builder import NestedContextBuilder
+from app.services.pipeline_timing import current_timing
 from app.utils.logging import setup_logger
 
 logger = setup_logger("vietlaw.pipeline")
@@ -143,7 +144,12 @@ class RAGPipeline:
         )
 
         # Step 3: Build context within the configured token budget.
-        docs, context = self._build_context_with_budget(docs, context_token_budget)
+        collector = current_timing()
+        if collector is not None:
+            with collector.stage("context_building"):
+                docs, context = self._build_context_with_budget(docs, context_token_budget)
+        else:
+            docs, context = self._build_context_with_budget(docs, context_token_budget)
 
         return docs, context
 
@@ -224,7 +230,12 @@ class RAGPipeline:
         )
 
         # Step 3: Build context within the configured token budget.
-        docs, context = self._build_context_with_budget(docs, context_token_budget)
+        collector = current_timing()
+        if collector is not None:
+            with collector.stage("context_building"):
+                docs, context = self._build_context_with_budget(docs, context_token_budget)
+        else:
+            docs, context = self._build_context_with_budget(docs, context_token_budget)
 
         return docs, context
 
