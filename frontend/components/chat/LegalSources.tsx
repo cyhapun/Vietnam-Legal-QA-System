@@ -57,7 +57,7 @@ export function LegalSourcesTrigger({
   if (deduped.length === 0 || !onOpenAll) return null;
 
   return (
-    <div className="mt-2 w-full max-w-3xl">
+    <div className="mt-2 w-full">
       <button
         type="button"
         onClick={() => onOpenAll(deduped)}

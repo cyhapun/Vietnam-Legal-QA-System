@@ -30,6 +30,7 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
   const [comment, setComment] = useState('');
   const [selectedCitation, setSelectedCitation] = useState<DocumentChunk | null>(null);
   const [isProcessCollapsed, setIsProcessCollapsed] = useState(true);
+  const assistantContentWidthClass = 'w-full max-w-[92%] sm:max-w-[88%] md:max-w-3xl';
 
   React.useEffect(() => {
     setFeedback(message.feedback === 1 ? 'up' : message.feedback === -1 ? 'down' : null);
@@ -96,10 +97,10 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
         <div className={`flex-1 min-w-0 flex flex-col ${isUser ? 'items-end' : 'items-start'}`}>
           {/* Bubble */}
           <div
-            className={`inline-block max-w-[92%] sm:max-w-[88%] ${
+            className={`${
               isUser
-                ? 'px-5 py-3.5 rounded-2xl rounded-tr-sm shadow-sm text-white'
-                : 'text-gray-800 dark:text-gray-200 w-full max-w-3xl'
+                ? 'inline-block max-w-[92%] sm:max-w-[88%] px-5 py-3.5 rounded-2xl rounded-tr-sm shadow-sm text-white'
+                : `${assistantContentWidthClass} text-gray-800 dark:text-gray-200`
             }`}
             style={isUser ? { background: 'linear-gradient(135deg, #2563EB, #1D4ED8)' } : {}}
           >
@@ -272,12 +273,14 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
                 </div>
               </div>
 
-              <LegalSourcesTrigger
-                sources={message.contextUsed}
-                onOpenAll={onOpenContext}
-                controlsId="legal-sources-panel"
-                expanded={isSourcesPanelOpen && dedupeLegalSources(message.contextUsed || []).length > 0}
-              />
+              <div className={assistantContentWidthClass}>
+                <LegalSourcesTrigger
+                  sources={message.contextUsed}
+                  onOpenAll={onOpenContext}
+                  controlsId="legal-sources-panel"
+                  expanded={isSourcesPanelOpen && dedupeLegalSources(message.contextUsed || []).length > 0}
+                />
+              </div>
             </>
           )}
         </div>
