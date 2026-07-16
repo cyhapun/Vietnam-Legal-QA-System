@@ -44,6 +44,19 @@ TRANSFORMERS_OFFLINE=1 \
   --workers 1
 ```
 
+By default, the backend preloads and warms the local embedding/reranker before
+`/readiness` returns 200:
+
+```bash
+LOCAL_MODELS_PRELOAD_ENABLED=true
+LOCAL_MODELS_WARMUP_ENABLED=true
+```
+
+`/health` remains fast while preload is running. `/readiness` may take around
+90 seconds on the current CPU baseline, so deployment startup/readiness
+timeouts should be greater than 120 seconds. Set either flag to `false` to
+restore lazy request-time model loading for a specific run.
+
 Keep the baseline configuration unchanged:
 
 - local fine-tuned embedding;
