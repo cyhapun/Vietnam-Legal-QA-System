@@ -27,7 +27,7 @@ def _patch_chat_factory(monkeypatch):
     monkeypatch.setattr(llm_module, "INFERENCE_STRATEGY", "remote_first")
 
 
-def _runtime_config(provider="google", model="gemini-2.5-flash-lite", key="runtime-google-token", role="answer"):
+def _runtime_config(provider="google", model="gemini-3.1-flash-lite", key="runtime-google-token", role="answer"):
     return RuntimeInferenceConfig.model_validate({
         "credentials": {
             provider: {"apiKey": key}
@@ -54,7 +54,7 @@ def test_runtime_inference_config_rejects_arbitrary_base_url():
             "roles": {
                 "answer": {
                     "provider": "google",
-                    "model": "gemini-2.5-flash-lite",
+                    "model": "gemini-3.1-flash-lite",
                     "baseUrl": "http://169.254.169.254",
                 }
             }
@@ -68,7 +68,7 @@ def test_chat_request_rejects_embedding_override():
             "model": "gemini-2.5-flash-lite",
             "inferenceConfig": {
                 "roles": {
-                    "answer": {"provider": "google", "model": "gemini-2.5-flash-lite"}
+                    "answer": {"provider": "google", "model": "gemini-3.1-flash-lite"}
                 },
                 "embedding": {"provider": "google", "model": "anything"},
             },
@@ -85,7 +85,7 @@ def test_runtime_google_key_overrides_environment_key(monkeypatch):
         role="answer",
     )
 
-    assert llm.model == "gemini-2.5-flash-lite"
+    assert llm.model == "gemini-3.1-flash-lite"
     assert llm.api_key == "runtime-google-token"
     assert llm.fallbacks == []
 
@@ -100,7 +100,7 @@ def test_runtime_role_routing(monkeypatch):
         "roles": {
             "answer": {"provider": "google", "model": "gemini-3.1-flash-lite"},
             "rewriter": {"provider": "huggingface", "model": "Qwen/Qwen2.5-7B-Instruct"},
-            "summarizer": {"provider": "google", "model": "gemini-2.5-flash-lite"},
+            "summarizer": {"provider": "google", "model": "gemini-3.1-flash-lite"},
         },
         "useServerFallbacks": False,
     })
@@ -113,7 +113,7 @@ def test_runtime_role_routing(monkeypatch):
     assert answer.api_key == "runtime-google-token"
     assert rewriter.model == "Qwen/Qwen2.5-7B-Instruct"
     assert rewriter.api_key == "runtime-hf-token"
-    assert summarizer.model == "gemini-2.5-flash-lite"
+    assert summarizer.model == "gemini-3.1-flash-lite"
 
 
 def test_missing_runtime_key_without_server_fallback_raises(monkeypatch):
@@ -121,7 +121,7 @@ def test_missing_runtime_key_without_server_fallback_raises(monkeypatch):
     monkeypatch.setattr(llm_module, "GOOGLE_API_KEY", "")
     config = RuntimeInferenceConfig.model_validate({
         "roles": {
-            "answer": {"provider": "google", "model": "gemini-2.5-flash-lite"}
+            "answer": {"provider": "google", "model": "gemini-3.1-flash-lite"}
         },
         "useServerFallbacks": False,
     })

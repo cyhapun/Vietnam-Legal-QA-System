@@ -60,7 +60,6 @@ export const AI_PROVIDERS: InferenceProvider[] = [
 
 export const AI_MODELS: AIModel[] = [
   { id: 'gemini-3.1-flash-lite', provider: 'google', name: 'Gemini 3.1 Lite', fullName: 'Gemini 3.1 Flash-Lite' },
-  { id: 'gemini-2.5-flash-lite', provider: 'google', name: 'Gemini 2.5 Lite', fullName: 'Gemini 2.5 Flash-Lite' },
   { id: 'Qwen/Qwen2.5-7B-Instruct', provider: 'huggingface', name: 'Qwen 2.5', fullName: 'Qwen2.5 7B' },
   { id: 'meta-llama/Llama-3.1-8B-Instruct', provider: 'huggingface', name: 'Llama 3.1', fullName: 'Llama 3.1 8B' },
   { id: 'deepseek-ai/DeepSeek-R1-Distill-Llama-8B', provider: 'huggingface', name: 'DeepSeek R1', fullName: 'DeepSeek R1 8B' },
@@ -69,7 +68,7 @@ export const AI_MODELS: AIModel[] = [
 ];
 
 // Model mặc định
-export const DEFAULT_MODEL = 'gemini-2.5-flash-lite';
+export const DEFAULT_MODEL = 'gemini-3.1-flash-lite';
 
 // LocalStorage keys
 export const STORAGE_KEYS = {

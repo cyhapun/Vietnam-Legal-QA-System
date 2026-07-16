@@ -34,7 +34,6 @@ logger = logging.getLogger(__name__)
 
 GOOGLE_CHAT_MODELS = frozenset({
     "gemini-3.1-flash-lite",
-    "gemini-2.5-flash-lite",
 })
 
 
@@ -250,6 +249,12 @@ def get_llm(
     role: str = ANSWER_ROLE,
 ):
     """Khá»Ÿi táº¡o LLM vá»›i fallback HuggingFace/Ollama vÃ  Google AI Studio tÃ¹y chá»n."""
+    if model_name.strip().lower().startswith("gemini-") and not is_supported_model(GOOGLE_PROVIDER, model_name):
+        supported = ", ".join(sorted(PROVIDER_REGISTRY[GOOGLE_PROVIDER].models))
+        raise ValueError(
+            f"Unsupported Google model '{model_name}'. Choose one of the configured supported models: {supported}."
+        )
+
     selected_google_model = is_google_chat_model(model_name)
     if not HUGGINGFACE_API_KEY and not selected_google_model:
         logger.warning("KhÃ´ng tÃ¬m tháº¥y HUGGINGFACE_API_KEY. Remote LLM sáº½ khÃ´ng hoáº¡t Ä‘á»™ng.")

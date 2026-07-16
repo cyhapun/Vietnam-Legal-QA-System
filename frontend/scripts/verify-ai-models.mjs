@@ -6,7 +6,6 @@ const source = readFileSync(constantsPath, 'utf8');
 
 const requiredModels = [
   'gemini-3.1-flash-lite',
-  'gemini-2.5-flash-lite',
 ];
 
 for (const model of requiredModels) {
@@ -17,6 +16,10 @@ for (const model of requiredModels) {
 
 if (source.includes("id: 'google/gemma-4-31B-it'")) {
   throw new Error('Unverified Gemma 4 31B model option must not be enabled');
+}
+
+if (source.includes("id: 'gemini-2.5-flash-lite'")) {
+  throw new Error('Deprecated Gemini 2.5 Flash-Lite model option must not be enabled');
 }
 
 console.log('AI model catalog verification passed.');

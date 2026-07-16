@@ -43,6 +43,20 @@ def _embedding_error_status(exc: EmbeddingServiceError) -> int:
     return 401 if isinstance(exc, EmbeddingAuthError) else 503
 
 
+def _llm_error_detail(model_name: str, exc: Exception) -> str:
+    """Return a user-safe LLM error message without exposing credentials."""
+    text = str(exc)
+    lowered = text.lower()
+    if "unsupported google model" in lowered:
+        return text
+    if "404" in lowered or "not_found" in lowered or "no longer available" in lowered:
+        return (
+            f"LLM provider rejected model '{model_name}'. "
+            "Choose a currently supported model and retry."
+        )
+    return "Tất cả các dịch vụ suy luận (LLM) đều không khả dụng. Vui lòng thử lại sau."
+
+
 def _recent_messages(request: ChatRequest):
     """Return the configured messages immediately before the latest user message."""
     limit = request.historyMessages
@@ -239,7 +253,7 @@ async def chat_endpoint(request: ChatRequest):
             })
         except Exception as llm_exc:
             logger.error("All LLM providers failed: %s", llm_exc)
-            raise HTTPException(status_code=503, detail="Tất cả các dịch vụ suy luận (LLM) đều không khả dụng. Vui lòng thử lại sau.")
+            raise HTTPException(status_code=503, detail=_llm_error_detail(request.model, llm_exc))
 
         execution_time = time.time() - start_time
         logger.info("LLM tra loi trong %.2fs", execution_time)
@@ -483,7 +497,7 @@ async def chat_stream_endpoint(request: ChatRequest):
         except Exception as e:
             logger.error("Loi streaming chat: %s", str(e))
             traceback.print_exc()
-            yield _sse({"type": "error", "message": "Dịch vụ suy luận gặp sự cố: " + str(e)})
+            yield _sse({"type": "error", "message": _llm_error_detail(request.model, e)})
 
     return StreamingResponse(
         event_generator(),
