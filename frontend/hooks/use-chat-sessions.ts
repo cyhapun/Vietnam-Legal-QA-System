@@ -15,7 +15,14 @@ const createSessionId = () => {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 };
 
-const mapDbMessage = (m: any): Message => ({
+interface DbMessage {
+  id: string;
+  role: string;
+  content: string;
+  contextUsed?: Message['contextUsed'];
+}
+
+const mapDbMessage = (m: DbMessage): Message => ({
   id: m.id,
   role: m.role as 'user' | 'assistant',
   content: m.content,
@@ -132,7 +139,7 @@ export function useChatSessions() {
     try {
       const res = await fetch(`/api/chat/session/${id}/messages`);
       if (res.ok) {
-        const dbMsgs: any[] = await res.json();
+        const dbMsgs = await res.json() as DbMessage[];
         const dbMessages = dbMsgs.map(mapDbMessage);
         setMessagesBySession(prev => ({
           ...prev,
@@ -337,7 +344,7 @@ export function useChatSessions() {
           setIsSessionLoading(true);
           const messagesRes = await fetch(`/api/chat/session/${activeId}/messages`);
           if (messagesRes.ok) {
-            const dbMsgs: any[] = await messagesRes.json();
+            const dbMsgs = await messagesRes.json() as DbMessage[];
             const dbMessages = dbMsgs.map(mapDbMessage);
             setMessagesBySession(prev => ({
               ...prev,

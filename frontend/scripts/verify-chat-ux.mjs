@@ -49,6 +49,10 @@ if (!legalSources.includes('rounded-full') || !legalSources.includes('min-w-6') 
   throw new Error('Legal source count must render as a centered rounded badge');
 }
 
+if (!legalSources.includes('aria-label={`Mở ${deduped.length} căn cứ pháp lý`}')) {
+  throw new Error('Legal source trigger must expose an accessible count label');
+}
+
 if (!legalSources.includes('dedupeLegalSources') || !legalSources.includes('LegalSourceList')) {
   throw new Error('Legal sources must share deduplication and render full cards in the side panel');
 }

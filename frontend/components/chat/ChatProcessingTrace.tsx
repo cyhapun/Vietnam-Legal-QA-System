@@ -1,5 +1,6 @@
 'use client';
 
+import { useId } from 'react';
 import { Check, ChevronDown, Circle, Loader2, XCircle } from 'lucide-react';
 
 export type ChatProcessingStage =
@@ -58,12 +59,14 @@ export function ChatProcessingTrace({
   collapsed = true,
   onToggleCollapsed,
 }: ChatProcessingTraceProps) {
+  const componentId = useId();
+
   if (stage === 'idle') return null;
 
   const activeIndex = ORDER[stage];
   const isDone = stage === 'completed';
   const isTerminal = isDone || stage === 'cancelled' || stage === 'error';
-  const detailsId = `processing-trace-${stage}`;
+  const detailsId = `${componentId}-processing-trace`;
   const toggleLabel = collapsed ? 'Xem quá trình' : 'Ẩn quá trình';
 
   if (collapsed) {
