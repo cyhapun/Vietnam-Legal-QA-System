@@ -15,12 +15,12 @@ export async function POST(req: NextRequest) {
     const backendBase = getBackendUrl(req.url);
     const streaming = body.streaming !== false;
     const targetUrl = `${backendBase}${streaming ? '/chat/stream' : '/chat'}`;
-    console.log(`[Proxy Chat] -> ${targetUrl}`);
 
     const backendRes = await fetch(targetUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
+      signal: req.signal,
     });
 
     if (!backendRes.ok) {

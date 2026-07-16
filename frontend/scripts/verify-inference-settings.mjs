@@ -23,8 +23,8 @@ if (!chatInterface.includes('inferenceConfig: toRuntimeInferenceConfig(aiSetting
   throw new Error('Chat requests do not include runtime inference config');
 }
 
-if (!setupModal.includes('fine-tuned local model')) {
-  throw new Error('Setup modal must explain server-managed fine-tuned local embeddings');
+if (!setupModal.includes('Tra cứu căn cứ pháp lý được quản lý an toàn bởi máy chủ')) {
+  throw new Error('Setup modal must explain server-managed legal retrieval without technical internals');
 }
 
 if (setupModal.includes('type="text"') && setupModal.includes('API key')) {

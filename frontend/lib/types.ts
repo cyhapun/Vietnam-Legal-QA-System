@@ -22,6 +22,7 @@ export interface Message {
   content: string;
   contextUsed?: DocumentChunk[];
   feedback?: 1 | -1;
+  processingStage?: 'idle' | 'analyzing' | 'searching' | 'selecting' | 'generating' | 'completed' | 'cancelled' | 'error';
 }
 
 // --- Chat Session ---
