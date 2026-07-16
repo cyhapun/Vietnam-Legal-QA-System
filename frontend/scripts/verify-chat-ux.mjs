@@ -7,6 +7,8 @@ const chatMessage = readFileSync(resolve(root, 'components/chat/ChatMessage.tsx'
 const processingTrace = readFileSync(resolve(root, 'components/chat/ChatProcessingTrace.tsx'), 'utf8');
 const legalSources = readFileSync(resolve(root, 'components/chat/LegalSources.tsx'), 'utf8');
 const emptyState = readFileSync(resolve(root, 'components/chat/ChatEmptyState.tsx'), 'utf8');
+const advancedSettings = readFileSync(resolve(root, 'components/chat/AdvancedSettings.tsx'), 'utf8');
+const providerSelector = readFileSync(resolve(root, 'components/chat/ProviderSelector.tsx'), 'utf8');
 const proxyRoute = readFileSync(resolve(root, 'app/api/chat/route.ts'), 'utf8');
 
 for (const label of [
@@ -38,12 +40,32 @@ if (!chatInterface.includes('abortControllerRef.current.abort()') || !proxyRoute
   throw new Error('Cancel must abort the client stream and proxy fetch');
 }
 
-if (!chatMessage.includes('LegalSources') || !legalSources.includes('Căn cứ pháp lý')) {
-  throw new Error('Assistant messages must render legal sources with the dedicated component');
+if (!chatMessage.includes('LegalSourcesTrigger') || !legalSources.includes('Căn cứ pháp lý {deduped.length}')) {
+  throw new Error('Assistant messages must render compact legal source trigger with dynamic deduplicated count');
+}
+
+if (!legalSources.includes('dedupeLegalSources') || !legalSources.includes('LegalSourceList')) {
+  throw new Error('Legal sources must share deduplication and render full cards in the side panel');
+}
+
+if (!chatInterface.includes('id="legal-sources-panel"') || !chatInterface.includes('LegalSourceList sources={drawerContext}')) {
+  throw new Error('Legal sources trigger must open the existing side panel');
 }
 
 if (legalSources.includes('contextUsed.length') || legalSources.includes('retrieval score') || legalSources.includes('reranker score')) {
   throw new Error('Legal sources UI must not expose counts or scores');
+}
+
+if (legalSources.includes('md:grid-cols-2') || legalSources.includes('Mở bảng bên')) {
+  throw new Error('Legal source cards should not render as an inline grid or separate open-panel button');
+}
+
+if (chatInterface.includes('Tùy chọn') || chatInterface.includes('isComposerSettingsOpen')) {
+  throw new Error('Composer must show inference controls directly, without a Tùy chọn gate');
+}
+
+if (!advancedSettings.includes('Tham số') || !providerSelector.includes('selectedProvider?.name')) {
+  throw new Error('Composer must expose parameter and provider/model summary directly');
 }
 
 if (!emptyState.includes('Tra cứu pháp luật dễ dàng hơn')) {

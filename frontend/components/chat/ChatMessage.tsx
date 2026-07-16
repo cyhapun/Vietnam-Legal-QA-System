@@ -5,7 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import { User, Scale, BookOpen, Copy, Check, ThumbsUp, ThumbsDown, RotateCcw, Undo2 } from 'lucide-react';
 import type { Message, DocumentChunk } from '@/lib/types';
 import { ChatProcessingTrace } from './ChatProcessingTrace';
-import { LegalSources } from './LegalSources';
+import { dedupeLegalSources, LegalSourcesTrigger } from './LegalSources';
 
 export type { Message, DocumentChunk } from '@/lib/types';
 
@@ -17,9 +17,10 @@ interface ChatMessageProps {
   onFeedbackSubmit?: (messageId: string, type: 1 | -1, reason?: string, comment?: string) => void;
   onCancel?: () => void;
   onRetry?: () => void;
+  isSourcesPanelOpen?: boolean;
 }
 
-export function ChatMessage({ message, isStreaming = false, onRefine, onOpenContext, onFeedbackSubmit, onCancel, onRetry }: ChatMessageProps) {
+export function ChatMessage({ message, isStreaming = false, onRefine, onOpenContext, onFeedbackSubmit, onCancel, onRetry, isSourcesPanelOpen = false }: ChatMessageProps) {
   const isUser = message.role === 'user';
   const [copied, setCopied] = useState(false);
   const [feedback, setFeedback] = useState<'up' | 'down' | null>(
@@ -273,9 +274,12 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
                 </div>
               </div>
 
-              <div className="w-full max-w-3xl">
-                <LegalSources sources={message.contextUsed} onOpenAll={onOpenContext} />
-              </div>
+              <LegalSourcesTrigger
+                sources={message.contextUsed}
+                onOpenAll={onOpenContext}
+                controlsId="legal-sources-panel"
+                expanded={isSourcesPanelOpen && dedupeLegalSources(message.contextUsed || []).length > 0}
+              />
             </>
           )}
         </div>

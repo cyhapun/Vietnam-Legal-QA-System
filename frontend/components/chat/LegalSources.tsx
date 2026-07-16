@@ -4,10 +4,25 @@ import { useMemo, useState } from 'react';
 import { BookOpen, Check, ChevronDown, Copy } from 'lucide-react';
 import type { DocumentChunk } from '@/lib/types';
 
-interface LegalSourcesProps {
+interface LegalSourcesTriggerProps {
   sources?: DocumentChunk[];
-  compact?: boolean;
   onOpenAll?: (sources: DocumentChunk[]) => void;
+  controlsId?: string;
+  expanded?: boolean;
+}
+
+interface LegalSourceListProps {
+  sources?: DocumentChunk[];
+}
+
+export function dedupeLegalSources(sources: DocumentChunk[] = []): DocumentChunk[] {
+  const seen = new Set<string>();
+  return sources.filter((source, index) => {
+    const key = sourceKey(source, index);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 function sourceKey(source: DocumentChunk, index: number): string {
@@ -31,19 +46,40 @@ function excerpt(text: string, expanded: boolean): string {
   return `${text.slice(0, 260).trim()}...`;
 }
 
-export function LegalSources({ sources = [], compact = false, onOpenAll }: LegalSourcesProps) {
+export function LegalSourcesTrigger({
+  sources = [],
+  onOpenAll,
+  controlsId,
+  expanded = false,
+}: LegalSourcesTriggerProps) {
+  const deduped = useMemo(() => dedupeLegalSources(sources), [sources]);
+
+  if (deduped.length === 0 || !onOpenAll) return null;
+
+  return (
+    <div className="mt-2 w-full max-w-3xl">
+      <button
+        type="button"
+        onClick={() => onOpenAll(deduped)}
+        className="flex w-full items-center justify-between gap-3 rounded-xl border border-blue-100 bg-blue-50/70 px-3 py-2 text-left text-sm font-semibold text-blue-800 transition hover:border-blue-200 hover:bg-blue-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 dark:border-blue-500/20 dark:bg-blue-500/10 dark:text-blue-200 dark:hover:bg-blue-500/20"
+        aria-expanded={expanded}
+        aria-controls={controlsId}
+      >
+        <span className="inline-flex min-w-0 items-center gap-2">
+          <BookOpen className="h-4 w-4 shrink-0" />
+          <span className="truncate">Căn cứ pháp lý {deduped.length}</span>
+        </span>
+        <ChevronDown className={`h-4 w-4 shrink-0 transition-transform ${expanded ? 'rotate-90' : '-rotate-90'}`} />
+      </button>
+    </div>
+  );
+}
+
+export function LegalSourceList({ sources = [] }: LegalSourceListProps) {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
-  const deduped = useMemo(() => {
-    const seen = new Set<string>();
-    return sources.filter((source, index) => {
-      const key = sourceKey(source, index);
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-  }, [sources]);
+  const deduped = useMemo(() => dedupeLegalSources(sources), [sources]);
 
   if (deduped.length === 0) return null;
 
@@ -55,23 +91,8 @@ export function LegalSources({ sources = [], compact = false, onOpenAll }: Legal
   };
 
   return (
-    <section className="mt-4 w-full" aria-label="Căn cứ pháp lý">
-      <div className="mb-2 flex items-center justify-between gap-3">
-        <h3 className="inline-flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-slate-100">
-          <BookOpen className="h-4 w-4 text-blue-700 dark:text-blue-300" />
-          Căn cứ pháp lý
-        </h3>
-        {onOpenAll && (
-          <button
-            type="button"
-            onClick={() => onOpenAll(deduped)}
-            className="rounded-lg px-2 py-1 text-xs font-semibold text-blue-700 transition hover:bg-blue-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 dark:text-blue-300 dark:hover:bg-blue-500/10"
-          >
-            Mở bảng bên
-          </button>
-        )}
-      </div>
-      <div className={`grid gap-2 ${compact ? '' : 'md:grid-cols-2'}`}>
+    <section className="w-full" aria-label="Danh sách căn cứ pháp lý">
+      <div className="space-y-3">
         {deduped.map((source, index) => {
           const key = sourceKey(source, index);
           const isExpanded = expanded[key] ?? false;

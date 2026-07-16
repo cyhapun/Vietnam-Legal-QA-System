@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Send, PanelLeft, LibraryBig, Check, ChevronDown, Square, ArrowDown, X, SlidersHorizontal } from 'lucide-react';
+import { Send, PanelLeft, LibraryBig, Check, ChevronDown, Square, ArrowDown, X } from 'lucide-react';
 import { ProviderSelector } from './ProviderSelector';
 import { AdvancedSettings, AdvancedConfig } from './AdvancedSettings';
 import { InferenceSetupModal } from './InferenceSetupModal';
@@ -9,6 +9,7 @@ import { ChatMessage } from './ChatMessage';
 import { Sidebar } from './Sidebar';
 import { ChatEmptyState } from './ChatEmptyState';
 import type { ChatProcessingStage } from './ChatProcessingTrace';
+import { LegalSourceList } from './LegalSources';
 import { useChatSessions } from '@/hooks/use-chat-sessions';
 import { useClickOutside } from '@/hooks/use-click-outside';
 import { useAISettings } from '@/hooks/use-ai-settings';
@@ -54,7 +55,6 @@ export function ChatInterface() {
     setAISettings(current => ({ ...current, ...config }));
   const [lawCategory, setLawCategory] = useState(ALL_LAWS_CATEGORY);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
-  const [isComposerSettingsOpen, setIsComposerSettingsOpen] = useState(false);
   const categoryRef = useRef<HTMLDivElement>(null);
   const selectedLawCategory =
     LAW_CATEGORIES.find(category => category.id === lawCategory) ?? LAW_CATEGORIES[0];
@@ -590,14 +590,15 @@ export function ChatInterface() {
                       ? [...currentMessages.slice(0, index)].reverse().find(item => item.role === 'user')
                       : undefined;
                     return (
-                    <ChatMessage
-                      key={msg.id}
-                      message={msg}
-                      onRefine={(prompt) => handleSubmit(undefined, prompt)}
-                      onRetry={previousUser ? () => handleSubmit(undefined, previousUser.content) : undefined}
-                      onOpenContext={setDrawerContext}
-                      onFeedbackSubmit={handleFeedbackSubmit}
-                    />
+                      <ChatMessage
+                        key={msg.id}
+                        message={msg}
+                        onRefine={(prompt) => handleSubmit(undefined, prompt)}
+                        onRetry={previousUser ? () => handleSubmit(undefined, previousUser.content) : undefined}
+                        onOpenContext={setDrawerContext}
+                        onFeedbackSubmit={handleFeedbackSubmit}
+                        isSourcesPanelOpen={drawerContext === msg.contextUsed}
+                      />
                     );
                   })}
                   {/* Streaming message realtime */}
@@ -609,6 +610,7 @@ export function ChatInterface() {
                       onRefine={(prompt) => handleSubmit(undefined, prompt)}
                       onOpenContext={setDrawerContext}
                       onCancel={handleAbort}
+                      isSourcesPanelOpen={drawerContext === streamingMessage.contextUsed}
                     />
                   )}
                 </>
@@ -665,23 +667,11 @@ export function ChatInterface() {
                     </div>
                   )}
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setIsComposerSettingsOpen(current => !current)}
-                  className="ml-auto inline-flex items-center gap-1.5 rounded-xl border border-gray-100 bg-gray-50 px-3 py-1.5 text-[12px] font-bold text-gray-600 transition-colors hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10"
-                  aria-expanded={isComposerSettingsOpen}
-                >
-                  <SlidersHorizontal className="h-3.5 w-3.5 text-blue-600" />
-                  Tùy chọn
-                </button>
-              </div>
-
-              {isComposerSettingsOpen && (
-                <div className="flex flex-wrap items-center gap-2 border-t border-gray-100 px-3 py-2 dark:border-white/10">
+                <div className="ml-auto flex min-w-0 flex-wrap items-center justify-end gap-2">
                   <AdvancedSettings config={advancedConfig} setConfig={setAdvancedConfig} />
                   <ProviderSelector model={model} setModel={setModel} />
                 </div>
-              )}
+              </div>
 
               <textarea
                 ref={textareaRef}
@@ -737,12 +727,13 @@ export function ChatInterface() {
       <div
         className={`absolute md:relative top-0 right-0 h-full bg-white dark:bg-[#171717] shadow-[0_0_40px_rgba(0,0,0,0.1)] dark:shadow-none transition-all duration-300 z-50 border-l border-gray-200/60 dark:border-white/10 flex-shrink-0 overflow-hidden
           ${drawerContext ? 'translate-x-0 md:w-[400px] w-full' : 'translate-x-full md:translate-x-0 md:w-0 w-full'}`}
+        id="legal-sources-panel"
       >
         {drawerContext && (
           <div className="flex flex-col h-full">
             <div className="h-14 flex items-center justify-between px-4 border-b border-gray-100 dark:border-white/10 bg-gray-50/50 dark:bg-[#171717]/50 flex-shrink-0 transition-colors">
               <span className="text-[11px] font-bold uppercase tracking-widest text-blue-700 dark:text-blue-400">
-                Văn bản pháp lý áp dụng
+                Căn cứ pháp lý
               </span>
               <button
                 onClick={() => setDrawerContext(null)}
@@ -759,22 +750,7 @@ export function ChatInterface() {
                     Không có văn bản pháp lý trích dẫn cho đoạn chat này.
                   </p>
                 ) : (
-                  drawerContext.map((ctx, idx) => {
-                    const { source, dieu, khoan, diem } = ctx.metadata || {};
-                    let displayText = source || 'Tài liệu pháp lý';
-                    if (dieu) displayText += ` — Điều ${dieu}`;
-                    if (khoan) displayText += ` (Khoản ${khoan})`;
-                    if (diem) displayText += ` Điểm ${diem}`;
-
-                    return (
-                      <div key={idx} className="p-3.5 rounded-xl border border-blue-100/50 dark:border-blue-500/20 bg-blue-50/30 dark:bg-[#171717]/50 hover:bg-blue-50/60 dark:hover:bg-white/5 transition-colors">
-                        <p className="text-[13px] font-bold text-blue-800 dark:text-blue-400 mb-2 leading-snug">{displayText}</p>
-                        <p className="text-[12.5px] leading-relaxed text-gray-600 dark:text-gray-300 whitespace-pre-wrap">
-                          {ctx.content}
-                        </p>
-                      </div>
-                    );
-                  })
+                  <LegalSourceList sources={drawerContext} />
                 )}
               </div>
             </div>
