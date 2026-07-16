@@ -9,9 +9,11 @@ from qdrant_client import QdrantClient
 from qdrant_client.http import models as qdrant_models
 
 from app.config import (
+    EMBEDDING_DIMENSION,
     QDRANT_URL,
     QDRANT_API_KEY,
     ENABLE_SEMANTIC_CACHE,
+    SEMANTIC_CACHE_COLLECTION,
     SEMANTIC_CACHE_THRESHOLD
 )
 from app.utils.logging import setup_logger
@@ -19,6 +21,13 @@ from app.utils.logging import setup_logger
 logger = setup_logger("vietlaw.semantic_cache")
 
 _qdrant_client = None
+
+
+def _validate_query_vector(query_vector: List[float]) -> None:
+    if len(query_vector) != EMBEDDING_DIMENSION:
+        raise ValueError(
+            f"Semantic cache vector dimension mismatch: expected {EMBEDDING_DIMENSION}, got {len(query_vector)}."
+        )
 
 def _get_client() -> Optional[QdrantClient]:
     global _qdrant_client
@@ -39,6 +48,7 @@ def check_cache(
     """
     if not ENABLE_SEMANTIC_CACHE:
         return None
+    _validate_query_vector(query_vector)
 
     threshold = SEMANTIC_CACHE_THRESHOLD if score_threshold is None else score_threshold
     client = _get_client()
@@ -49,7 +59,7 @@ def check_cache(
         try:
             # Try query_points (newer versions)
             search_result = client.query_points(
-                collection_name="semantic_cache",
+                collection_name=SEMANTIC_CACHE_COLLECTION,
                 query=query_vector,
                 limit=1,
                 score_threshold=threshold
@@ -57,7 +67,7 @@ def check_cache(
         except AttributeError:
             # Fallback for older versions
             search_result = client.search(
-                collection_name="semantic_cache",
+                collection_name=SEMANTIC_CACHE_COLLECTION,
                 query_vector=query_vector,
                 limit=1,
                 score_threshold=threshold
@@ -81,6 +91,7 @@ def update_cache(query_vector: List[float], original_query: str, response_text: 
     """
     if not ENABLE_SEMANTIC_CACHE:
         return
+    _validate_query_vector(query_vector)
 
     client = _get_client()
     if not client:
@@ -98,7 +109,7 @@ def update_cache(query_vector: List[float], original_query: str, response_text: 
         }
         
         client.upsert(
-            collection_name="semantic_cache",
+            collection_name=SEMANTIC_CACHE_COLLECTION,
             points=[
                 qdrant_models.PointStruct(
                     id=point_id,
@@ -125,7 +136,7 @@ def invalidate_cache_by_doc_ids(doc_ids: List[str]) -> bool:
         
     try:
         client.delete(
-            collection_name="semantic_cache",
+            collection_name=SEMANTIC_CACHE_COLLECTION,
             points_selector=qdrant_models.FilterSelector(
                 filter=qdrant_models.Filter(
                     must=[
@@ -142,4 +153,3 @@ def invalidate_cache_by_doc_ids(doc_ids: List[str]) -> bool:
     except Exception as e:
         logger.warning("Error invalidating semantic cache: %s", e)
         return False
-

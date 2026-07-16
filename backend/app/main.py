@@ -7,11 +7,22 @@ File này chỉ chịu trách nhiệm:
   4. Khởi tạo RAG Pipeline khi startup
 """
 import asyncio
+from pathlib import Path
+from urllib.parse import urlparse
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.config import CORS_ORIGINS
+from app.config import (
+    CORS_ORIGINS,
+    EMBEDDING_DIMENSION,
+    EMBEDDING_MODEL,
+    PIPELINE_CONFIG,
+    POSTGRES_DSN,
+    QDRANT_API_KEY,
+    QDRANT_COLLECTION,
+    QDRANT_URL,
+)
 from app.api.chat import router as chat_router
 from app.api.documents import router as documents_router
 from app.api.admin import router as admin_router
@@ -22,6 +33,91 @@ from app.services.storage import initialize_storage
 from app.utils.logging import setup_logger
 
 logger = setup_logger("vietlaw.main")
+
+
+def _resolve_runtime_path(path_value: str) -> Path:
+    path = Path(path_value)
+    if path.is_absolute():
+        return path
+    return (Path(__file__).resolve().parents[1] / path).resolve()
+
+
+def _check_artifacts() -> dict:
+    embedding_path = _resolve_runtime_path(EMBEDDING_MODEL)
+    embedding_ok = embedding_path.exists() and (embedding_path / "model.safetensors").exists()
+
+    reranker_strategy = PIPELINE_CONFIG.get("reranking", "none")
+    reranker_required = reranker_strategy == "cross_encoder"
+    reranker_model = PIPELINE_CONFIG.get("reranker_model", "")
+    reranker_path = _resolve_runtime_path(reranker_model) if reranker_model else Path("")
+    reranker_ok = (
+        not reranker_required
+        or (reranker_path.exists() and (reranker_path / "model.safetensors").exists())
+    )
+
+    return {
+        "embedding": {
+            "status": "ok" if embedding_ok else "error",
+            "configured": bool(EMBEDDING_MODEL),
+            "weights": embedding_ok,
+        },
+        "reranker": {
+            "status": "ok" if reranker_ok else "error",
+            "enabled": reranker_required,
+            "weights": reranker_ok,
+        },
+    }
+
+
+def _check_postgres() -> dict:
+    try:
+        import psycopg
+    except Exception:  # pragma: no cover - compatibility fallback
+        import psycopg2 as psycopg
+
+    parsed = urlparse(POSTGRES_DSN)
+    connect_kwargs = {}
+    if psycopg.__name__ == "psycopg":
+        connect_kwargs["connect_timeout"] = 3
+
+    conn = psycopg.connect(POSTGRES_DSN, **connect_kwargs)
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT 1")
+        cursor.fetchone()
+    finally:
+        conn.close()
+
+    return {
+        "status": "ok",
+        "host": parsed.hostname,
+        "port": parsed.port,
+        "database": (parsed.path or "").lstrip("/"),
+    }
+
+
+def _check_qdrant() -> dict:
+    from qdrant_client import QdrantClient
+
+    client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY or None, timeout=5)
+    info = client.get_collection(QDRANT_COLLECTION)
+    vectors = info.config.params.vectors
+    dense = vectors.get("text-dense") if isinstance(vectors, dict) else vectors
+    dense_size = getattr(dense, "size", None)
+    distance = str(getattr(dense, "distance", "")).split(".")[-1]
+    if dense_size != EMBEDDING_DIMENSION:
+        raise RuntimeError(
+            f"Qdrant collection {QDRANT_COLLECTION} text-dense dimension is {dense_size}, expected {EMBEDDING_DIMENSION}."
+        )
+
+    parsed = urlparse(QDRANT_URL)
+    return {
+        "status": "ok",
+        "host": parsed.hostname,
+        "collection": QDRANT_COLLECTION,
+        "points": getattr(info, "points_count", None),
+        "denseVector": {"name": "text-dense", "dimension": dense_size, "distance": distance},
+    }
 
 
 def create_app() -> FastAPI:
@@ -42,6 +138,38 @@ def create_app() -> FastAPI:
     application.include_router(documents_router, prefix="/api/documents", tags=["Documents"])
     application.include_router(admin_router, prefix="/api/admin", tags=["Admin"])
     application.include_router(feedback_router, prefix="/api/feedback", tags=["Feedback"])
+
+    @application.get("/health")
+    async def health():
+        return {"status": "ok"}
+
+    @application.get("/readiness")
+    async def readiness():
+        components = {"config": {"status": "ok"}}
+        ready = True
+
+        try:
+            components.update(await asyncio.to_thread(_check_artifacts))
+        except Exception as exc:
+            ready = False
+            components["artifacts"] = {"status": "error", "error": type(exc).__name__}
+
+        try:
+            components["postgres"] = await asyncio.to_thread(_check_postgres)
+        except Exception as exc:
+            ready = False
+            components["postgres"] = {"status": "error", "error": type(exc).__name__}
+
+        try:
+            components["qdrant"] = await asyncio.to_thread(_check_qdrant)
+        except Exception as exc:
+            ready = False
+            components["qdrant"] = {"status": "error", "error": type(exc).__name__}
+
+        response = {"status": "ready" if ready else "not_ready", "components": components}
+        if not ready:
+            raise HTTPException(status_code=503, detail=response)
+        return response
 
     def _initialize_runtime_components_sync() -> None:
         logger.info("Khởi tạo storage layer...")

@@ -20,7 +20,7 @@ from app.config import (
     FAISS_INDEX_PATH, JSON_DATA_PATH, TRACKING_FILE,
     EMBEDDING_BATCH_SIZE, EMBEDDING_MAX_RETRIES,
     EMBEDDING_SLEEP_BETWEEN_BATCHES, EMBEDDING_RETRY_BASE_WAIT,
-    EMBEDDING_PROVIDER, PIPELINE_CONFIG,
+    EMBEDDING_PROVIDER, ENABLE_FAISS_FALLBACK, PIPELINE_CONFIG,
     RETRIEVER_CANDIDATE_K, RETRIEVER_K, STORAGE_BACKEND,
 )
 from app.services.knowledge_base import load_knowledge_base
@@ -411,7 +411,15 @@ def _create_searcher(embedding) -> Any:
     strategy = PIPELINE_CONFIG.get("search", "faiss")
 
     if STORAGE_BACKEND.lower() in {"qdrant_postgres", "qdrant"}:
-        faiss_searcher = FAISSSearcher(vectorstore=_faiss_vectorstore)
+        faiss_searcher = FAISSSearcher(vectorstore=_faiss_vectorstore) if ENABLE_FAISS_FALLBACK else None
+        if faiss_searcher is None:
+            logger.info("FAISS fallback disabled for %s storage backend.", STORAGE_BACKEND)
+        else:
+            logger.warning(
+                "FAISS fallback explicitly enabled for %s. Ensure the FAISS index was built "
+                "with the same embedding model as the active Qdrant collection.",
+                STORAGE_BACKEND,
+            )
         return QdrantSearcher(vectorstore=_faiss_vectorstore, fallback_searcher=faiss_searcher)
 
     # FAISS searcher luôn cần (dùng cho cả hybrid)
@@ -436,18 +444,17 @@ def _create_reranker():
     elif strategy in {"embedding_similarity", "remote_embedding_similarity"}:
         return HuggingFaceEmbeddingSimilarityReranker(max_candidates=max_candidates)
     elif strategy == "cross_encoder":
-        model = PIPELINE_CONFIG.get("reranker_model", "BAAI/bge-reranker-v2-m3")
-        from app.config import INFERENCE_STRATEGY
-        if INFERENCE_STRATEGY == "remote_first":
-            logger.warning(
-                "Remote HuggingFace text-classification does not reliably support query/passage pairs for %s; "
-                "using embedding_similarity reranker on remote_first.",
-                model,
-            )
-            return HuggingFaceEmbeddingSimilarityReranker(max_candidates=max_candidates)
-        primary_reranker = CrossEncoderReranker(model=model)
-        fallback_reranker = HuggingFaceEmbeddingSimilarityReranker(max_candidates=max_candidates)
-        return FallbackReranker(primary=primary_reranker, secondary=fallback_reranker)
+        model = PIPELINE_CONFIG.get(
+            "reranker_model",
+            "../models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/selected",
+        )
+        return CrossEncoderReranker(
+            model=model,
+            device=PIPELINE_CONFIG.get("reranker_device", "cpu"),
+            batch_size=PIPELINE_CONFIG.get("reranker_batch_size", 8),
+            max_length=PIPELINE_CONFIG.get("reranker_max_length", 512),
+            fail_open=PIPELINE_CONFIG.get("reranker_fail_open", False),
+        )
     else:
         raise ValueError(
             f"Unknown reranking strategy: {strategy} "

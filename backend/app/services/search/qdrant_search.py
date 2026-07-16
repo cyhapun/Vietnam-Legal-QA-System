@@ -1,8 +1,8 @@
 """
 Qdrant-backed searcher for legal clause retrieval.
 
-This implementation uses Qdrant when available and falls back to the existing
-FAISS-based retriever if the database-backed service is unavailable.
+This implementation uses Qdrant. A FAISS fallback can be injected explicitly,
+but the default runtime should fail clearly instead of querying a stale index.
 """
 from __future__ import annotations
 
@@ -30,7 +30,7 @@ logger = setup_logger("vietlaw.search.qdrant")
 
 
 class QdrantSearcher:
-    """Vector search using Qdrant with a FAISS fallback for local resilience."""
+    """Vector search using Qdrant with an optional explicitly configured fallback."""
 
     def __init__(
         self,
@@ -234,13 +234,25 @@ class QdrantSearcher:
         except EmbeddingServiceError:
             raise
         except Exception as exc:
-            logger.warning("Qdrant retrieval failed, falling back to FAISS: %s", exc)
             if self._fallback_searcher is not None:
+                logger.warning(
+                    "Qdrant retrieval failed for collection %s; FAISS fallback is explicitly enabled: %s",
+                    self._collection_name,
+                    type(exc).__name__,
+                )
                 import inspect
                 if "api_key" in inspect.signature(self._fallback_searcher.search).parameters:
                     return self._fallback_searcher.search(query, k=k, category=category, api_key=api_key)
                 return self._fallback_searcher.search(query, k=k, category=category)
-            return []
+            logger.error(
+                "Qdrant retrieval failed for collection %s and FAISS fallback is disabled: %s",
+                self._collection_name,
+                type(exc).__name__,
+            )
+            raise RuntimeError(
+                f"Qdrant retrieval failed for collection {self._collection_name}; "
+                "FAISS fallback is disabled."
+            ) from exc
 
     async def asearch(
         self,
@@ -255,8 +267,12 @@ class QdrantSearcher:
         except EmbeddingServiceError:
             raise
         except Exception as exc:
-            logger.warning("Qdrant async retrieval failed, falling back to fallback searcher: %s", exc)
             if self._fallback_searcher is not None:
+                logger.warning(
+                    "Qdrant async retrieval failed for collection %s; FAISS fallback is explicitly enabled: %s",
+                    self._collection_name,
+                    type(exc).__name__,
+                )
                 import inspect
                 if hasattr(self._fallback_searcher, "asearch"):
                     if "api_key" in inspect.signature(self._fallback_searcher.asearch).parameters:
@@ -265,4 +281,12 @@ class QdrantSearcher:
                 if "api_key" in inspect.signature(self._fallback_searcher.search).parameters:
                     return self._fallback_searcher.search(query, k=k, category=category, api_key=api_key)
                 return self._fallback_searcher.search(query, k=k, category=category)
-            return []
+            logger.error(
+                "Qdrant async retrieval failed for collection %s and FAISS fallback is disabled: %s",
+                self._collection_name,
+                type(exc).__name__,
+            )
+            raise RuntimeError(
+                f"Qdrant retrieval failed for collection {self._collection_name}; "
+                "FAISS fallback is disabled."
+            ) from exc

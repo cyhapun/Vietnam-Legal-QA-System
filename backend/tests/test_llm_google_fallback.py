@@ -29,7 +29,7 @@ def _patch_chat_factory(monkeypatch):
 
 def test_google_model_detection():
     assert llm_module.is_google_chat_model("gemini-3.1-flash-lite")
-    assert llm_module.is_google_chat_model("gemini-2.5-flash-lite")
+    assert not llm_module.is_google_chat_model("gemini-2.5-flash-lite")
     assert not llm_module.is_google_chat_model("google/gemma-4-31B-it")
 
 
@@ -77,6 +77,15 @@ def test_missing_google_key_without_local_fallback_raises(monkeypatch):
     import pytest
 
     with pytest.raises(RuntimeError):
+        llm_module.get_llm("gemini-3.1-flash-lite")
+
+
+def test_unsupported_google_model_raises_clear_error(monkeypatch):
+    _patch_chat_factory(monkeypatch)
+
+    import pytest
+
+    with pytest.raises(ValueError, match="Unsupported Google model"):
         llm_module.get_llm("gemini-2.5-flash-lite")
 
 
