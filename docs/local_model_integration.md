@@ -2,6 +2,20 @@
 
 This backend can run the fine-tuned retrieval models from the local filesystem
 without Hugging Face Hub or Hugging Face Inference API fallback in local mode.
+The current runtime architecture is:
+
+```text
+local backend
+-> local fine-tuned query embedding
+-> existing Qdrant Cloud collection
+-> local fine-tuned cross-encoder reranker
+-> context builder
+-> LLM selected by INFERENCE_STRATEGY
+```
+
+Qdrant Cloud stores the already-indexed legal chunk vectors. `local` embedding
+mode means query embedding is local; it does not require Qdrant itself to be
+local.
 
 ## Artifacts
 
@@ -40,7 +54,7 @@ Embedding:
 ```env
 EMBEDDING_PROVIDER=huggingface
 HUGGINGFACE_EMBEDDING_MODE=local
-HUGGINGFACE_EMBEDDING_MODEL=models/embedding/vietlaw-bge-m3-finetuned/best
+HUGGINGFACE_EMBEDDING_MODEL=../models/embedding/vietlaw-bge-m3-finetuned/best
 EMBEDDING_DEVICE=cpu
 EMBEDDING_BATCH_SIZE=32
 EMBEDDING_DIMENSION=1024
@@ -48,11 +62,26 @@ EMBEDDING_NORMALIZE=true
 LOCAL_MODELS_OFFLINE=true
 ```
 
+Storage with an existing Qdrant Cloud collection:
+
+```env
+STORAGE_BACKEND=qdrant_postgres
+POSTGRES_DSN=postgresql://postgres:postgres@localhost:15432/vietlaw
+QDRANT_URL=<qdrant-cloud-url>
+QDRANT_API_KEY=<qdrant-cloud-api-key>
+QDRANT_COLLECTION=vietlaw_clauses
+DISABLE_AUTO_INGEST=true
+ENABLE_FAISS_FALLBACK=false
+```
+
+`QDRANT_API_KEY` authorizes vector database access only. It is not a Hugging
+Face embedding or reranking API key.
+
 Reranker:
 
 ```env
 PIPELINE_RERANKING=cross_encoder
-RERANKER_MODEL=models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/selected
+RERANKER_MODEL=../models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/selected
 RERANKER_DEVICE=cpu
 RERANKER_BATCH_SIZE=8
 RERANKER_MAX_LENGTH=512
@@ -78,6 +107,16 @@ with `AutoTokenizer.from_pretrained(..., local_files_only=True)` and
 There is no Hugging Face API fallback for `PIPELINE_RERANKING=cross_encoder`.
 If the local artifact is missing or invalid, startup/request handling raises a
 clear error instead of converting the path into a Hub model id.
+
+`INFERENCE_STRATEGY` controls the answer-generation provider ordering. With
+`EMBEDDING_PROVIDER=huggingface` and `HUGGINGFACE_EMBEDDING_MODE=local`, it does
+not switch query embedding to Ollama or to a Hugging Face API endpoint.
+
+`ENABLE_FAISS_FALLBACK=false` is the safe default. Keep it disabled when serving
+against Qdrant Cloud so missing collections, auth failures, schema mismatches, or
+dimension errors fail clearly instead of silently querying a stale local FAISS
+index. Enable it only when the FAISS index has been rebuilt with the same
+fine-tuned embedding model as the active Qdrant collection.
 
 ## Validation
 
@@ -106,6 +145,30 @@ cd backend
 RUN_LOCAL_MODEL_TESTS=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 pytest tests/test_local_models_real.py
 ```
 
+Smoke-test retrieval without LLM generation by disabling semantic cache and
+FAISS fallback for the process:
+
+```bash
+cd backend
+HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 \
+ENABLE_SEMANTIC_CACHE=false ENABLE_FAISS_FALLBACK=false \
+python - <<'PY'
+from app.services.pipeline import get_pipeline
+
+docs, _ = get_pipeline().retrieve(
+    "Điều kiện chuyển nhượng quyền sử dụng đất là gì?",
+    k=20,
+    rerank_top_k=5,
+    enable_reranker=True,
+)
+print("documents:", len(docs))
+print("top_ids:", [doc.metadata.get("id") for doc in docs[:5]])
+PY
+```
+
+This smoke path should load the local embedding, query Qdrant Cloud, run the
+local selected reranker, and avoid LLM generation.
+
 ## Index and Cache Consistency
 
 The embedding dimension is configured by `EMBEDDING_DIMENSION` and is used by
@@ -117,10 +180,12 @@ Semantic cache collection name is configured independently with
 `SEMANTIC_CACHE_COLLECTION`. Use a new cache collection when switching to a new
 embedding index, for example `semantic_cache_bge_m3_ft_v1`.
 
-Changing the embedding model requires a migration stage:
+Changing the embedding model requires a migration stage. If the active Qdrant
+Cloud collection was already created with the same fine-tuned embedding model,
+do not re-index for this integration task.
 
 - Re-index Qdrant with the new embedding model.
-- Rebuild FAISS if FAISS fallback is used.
+- Rebuild FAISS only if FAISS fallback is explicitly used.
 - Clear or rebuild semantic cache.
 - Avoid querying a pretrained-model index with fine-tuned query embeddings.
 
