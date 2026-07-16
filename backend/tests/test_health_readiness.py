@@ -88,3 +88,42 @@ def test_readiness_returns_503_when_required_dependency_fails(monkeypatch):
     detail = response.json()["detail"]
     assert detail["status"] == "not_ready"
     assert detail["components"]["qdrant"]["status"] == "error"
+
+
+def test_readiness_waits_for_local_model_preload(monkeypatch):
+    monkeypatch.setattr(main_module, "LOCAL_MODELS_PRELOAD_ENABLED", True)
+    monkeypatch.setattr(main_module, "LOCAL_MODELS_WARMUP_ENABLED", True)
+    monkeypatch.setattr(main_module, "preload_local_models", lambda warmup=False: {})
+    monkeypatch.setattr(main_module.asyncio, "create_task", lambda coro: coro.close())
+    app = _app_without_startup_side_effects(monkeypatch)
+    monkeypatch.setattr(main_module, "_check_artifacts", lambda: {"embedding": {"status": "ok"}, "reranker": {"status": "ok"}})
+    monkeypatch.setattr(main_module, "_check_postgres", lambda: {"status": "ok"})
+    monkeypatch.setattr(main_module, "_check_qdrant", lambda: {"status": "ok", "denseVector": {"dimension": 1024}})
+
+    with TestClient(app) as client:
+        app.state.local_models_ready = False
+        response = client.get("/readiness")
+
+    assert response.status_code == 503
+    detail = response.json()["detail"]
+    assert detail["components"]["localModels"]["status"] == "error"
+    assert detail["components"]["localModels"]["preload"] is True
+
+
+def test_readiness_allows_ready_local_model_preload(monkeypatch):
+    monkeypatch.setattr(main_module, "LOCAL_MODELS_PRELOAD_ENABLED", True)
+    monkeypatch.setattr(main_module, "LOCAL_MODELS_WARMUP_ENABLED", True)
+    monkeypatch.setattr(main_module, "preload_local_models", lambda warmup=False: {})
+    monkeypatch.setattr(main_module.asyncio, "create_task", lambda coro: coro.close())
+    app = _app_without_startup_side_effects(monkeypatch)
+    monkeypatch.setattr(main_module, "_check_artifacts", lambda: {"embedding": {"status": "ok"}, "reranker": {"status": "ok"}})
+    monkeypatch.setattr(main_module, "_check_postgres", lambda: {"status": "ok"})
+    monkeypatch.setattr(main_module, "_check_qdrant", lambda: {"status": "ok", "denseVector": {"dimension": 1024}})
+
+    with TestClient(app) as client:
+        app.state.local_models_ready = True
+        response = client.get("/readiness")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["components"]["localModels"]["status"] == "ok"

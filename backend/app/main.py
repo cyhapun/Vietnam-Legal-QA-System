@@ -17,6 +17,8 @@ from app.config import (
     CORS_ORIGINS,
     EMBEDDING_DIMENSION,
     EMBEDDING_MODEL,
+    LOCAL_MODELS_PRELOAD_ENABLED,
+    LOCAL_MODELS_WARMUP_ENABLED,
     PIPELINE_CONFIG,
     POSTGRES_DSN,
     QDRANT_API_KEY,
@@ -27,7 +29,7 @@ from app.api.chat import router as chat_router
 from app.api.documents import router as documents_router
 from app.api.admin import router as admin_router
 from app.api.feedback import router as feedback_router
-from app.services.pipeline import init_pipeline
+from app.services.pipeline import init_pipeline, preload_local_models
 from app.services.knowledge_base import load_knowledge_base
 from app.services.storage import initialize_storage
 from app.utils.logging import setup_logger
@@ -148,6 +150,19 @@ def create_app() -> FastAPI:
         components = {"config": {"status": "ok"}}
         ready = True
 
+        if LOCAL_MODELS_PRELOAD_ENABLED:
+            local_models_ready = bool(getattr(application.state, "local_models_ready", False))
+            local_models_error = getattr(application.state, "local_models_error", None)
+            components["localModels"] = {
+                "status": "ok" if local_models_ready else "error",
+                "preload": True,
+                "warmup": LOCAL_MODELS_WARMUP_ENABLED,
+            }
+            if local_models_error:
+                components["localModels"]["error"] = local_models_error
+            if not local_models_ready:
+                ready = False
+
         try:
             components.update(await asyncio.to_thread(_check_artifacts))
         except Exception as exc:
@@ -172,6 +187,8 @@ def create_app() -> FastAPI:
         return response
 
     def _initialize_runtime_components_sync() -> None:
+        application.state.local_models_ready = not LOCAL_MODELS_PRELOAD_ENABLED
+        application.state.local_models_error = None
         logger.info("Khởi tạo storage layer...")
         try:
             initialize_storage()
@@ -185,11 +202,41 @@ def create_app() -> FastAPI:
         except Exception as e:
             logger.error("Lỗi khởi tạo RAG Pipeline: %s", str(e))
             logger.warning("Backend sẽ tiếp tục chạy ở chế độ degraded; API có thể dùng fallback retrieval.")
+            if LOCAL_MODELS_PRELOAD_ENABLED:
+                application.state.local_models_error = type(e).__name__
+            return
+
+        if LOCAL_MODELS_PRELOAD_ENABLED:
+            import json
+            import time
+
+            start = time.perf_counter()
+            outcome = "success"
+            timings = {}
+            try:
+                timings = preload_local_models(warmup=LOCAL_MODELS_WARMUP_ENABLED)
+                application.state.local_models_ready = True
+            except Exception as exc:
+                outcome = "error"
+                application.state.local_models_ready = False
+                application.state.local_models_error = type(exc).__name__
+                logger.error("Local model preload failed: %s", type(exc).__name__)
+            finally:
+                timings["total_elapsed_ms"] = (time.perf_counter() - start) * 1000
+                logger.info(json.dumps({
+                    "event": "local_models_startup",
+                    "preload_enabled": LOCAL_MODELS_PRELOAD_ENABLED,
+                    "warmup_enabled": LOCAL_MODELS_WARMUP_ENABLED,
+                    "outcome": outcome,
+                    "durations_ms": {key: round(value, 3) for key, value in timings.items()},
+                }, ensure_ascii=False, sort_keys=True))
 
     # --- Startup Event ---
     @application.on_event("startup")
     async def startup_event():
         """Load document metadata before serving requests, then initialize heavy services."""
+        application.state.local_models_ready = not LOCAL_MODELS_PRELOAD_ENABLED
+        application.state.local_models_error = None
         await asyncio.to_thread(load_knowledge_base)
         asyncio.create_task(asyncio.to_thread(_initialize_runtime_components_sync))
         logger.info("Document metadata loaded; remaining initialization scheduled in background")

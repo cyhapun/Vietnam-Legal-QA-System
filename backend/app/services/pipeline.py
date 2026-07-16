@@ -570,6 +570,50 @@ def init_pipeline() -> None:
         _pipeline = None
 
 
+def preload_local_models(warmup: bool = False) -> dict:
+    """Load cached local embedding/reranker models, optionally running one synthetic warm-up."""
+    import time
+
+    from langchain_core.documents import Document
+
+    pipeline = get_pipeline()
+    timings = {
+        "embedding_load_ms": 0.0,
+        "reranker_load_ms": 0.0,
+        "embedding_warmup_ms": 0.0,
+        "reranker_warmup_ms": 0.0,
+    }
+
+    embedding = _get_embedding()
+    if embedding is not None and hasattr(embedding, "_get_local_engine"):
+        start = time.perf_counter()
+        embedding._get_local_engine()  # type: ignore[attr-defined]
+        timings["embedding_load_ms"] = (time.perf_counter() - start) * 1000
+
+    reranker = pipeline.reranker
+    if hasattr(reranker, "_load"):
+        start = time.perf_counter()
+        reranker._load()  # type: ignore[attr-defined]
+        timings["reranker_load_ms"] = (time.perf_counter() - start) * 1000
+
+    if warmup:
+        if embedding is not None:
+            start = time.perf_counter()
+            embedding.embed_query("kiểm tra hệ thống")
+            timings["embedding_warmup_ms"] = (time.perf_counter() - start) * 1000
+        if hasattr(reranker, "rerank"):
+            start = time.perf_counter()
+            reranker.rerank(
+                "kiểm tra hệ thống",
+                [Document(page_content="nội dung kiểm tra", metadata={"id": "warmup"})],
+                top_k=1,
+            )
+            timings["reranker_warmup_ms"] = (time.perf_counter() - start) * 1000
+
+    timings["total_startup_model_ms"] = sum(timings.values())
+    return timings
+
+
 def get_pipeline() -> RAGPipeline:
     """Trả về pipeline hiện tại, tự động khởi tạo nếu cần."""
     global _pipeline

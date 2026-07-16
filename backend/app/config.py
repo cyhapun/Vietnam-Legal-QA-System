@@ -57,6 +57,8 @@ EMBEDDING_DEVICE = os.getenv("EMBEDDING_DEVICE", "cpu").strip()
 EMBEDDING_DIMENSION = int(os.getenv("EMBEDDING_DIMENSION", "1024"))
 EMBEDDING_NORMALIZE = os.getenv("EMBEDDING_NORMALIZE", "true").strip().lower() == "true"
 LOCAL_MODELS_OFFLINE = os.getenv("LOCAL_MODELS_OFFLINE", "true").strip().lower() == "true"
+LOCAL_MODELS_PRELOAD_ENABLED = os.getenv("LOCAL_MODELS_PRELOAD_ENABLED", "false").strip().lower() == "true"
+LOCAL_MODELS_WARMUP_ENABLED = os.getenv("LOCAL_MODELS_WARMUP_ENABLED", "false").strip().lower() == "true"
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 OLLAMA_EMBEDDING_MODEL = os.getenv("OLLAMA_EMBEDDING_MODEL", "bge-m3")
 OLLAMA_EMBEDDING_TIMEOUT = float(os.getenv("OLLAMA_EMBEDDING_TIMEOUT", "300"))
