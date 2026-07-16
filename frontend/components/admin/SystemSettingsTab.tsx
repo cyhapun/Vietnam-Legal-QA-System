@@ -195,7 +195,7 @@ export default function SystemSettingsTab() {
             <div className="mb-4">
               <h3 className="text-sm font-bold text-gray-900 dark:text-white">Inference roles</h3>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Answer generation, query rewriting, and memory summarization can use separate provider models. Retrieval embeddings remain fixed to the server-managed fine-tuned local model.
+                Answer generation, query rewriting, and memory summarization can use separate provider models. Legal retrieval is managed by the server.
               </p>
             </div>
             <div className="space-y-3">

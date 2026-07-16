@@ -1,12 +1,14 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Send, PanelLeft, LibraryBig, Scale, Check, ChevronDown, Square, ArrowDown, X } from 'lucide-react';
+import { Send, PanelLeft, LibraryBig, Check, ChevronDown, Square, ArrowDown, X, SlidersHorizontal } from 'lucide-react';
 import { ProviderSelector } from './ProviderSelector';
 import { AdvancedSettings, AdvancedConfig } from './AdvancedSettings';
 import { InferenceSetupModal } from './InferenceSetupModal';
 import { ChatMessage } from './ChatMessage';
 import { Sidebar } from './Sidebar';
+import { ChatEmptyState } from './ChatEmptyState';
+import type { ChatProcessingStage } from './ChatProcessingTrace';
 import { useChatSessions } from '@/hooks/use-chat-sessions';
 import { useClickOutside } from '@/hooks/use-click-outside';
 import { useAISettings } from '@/hooks/use-ai-settings';
@@ -20,15 +22,6 @@ import {
   LAW_CATEGORIES,
 } from '@/lib/constants';
 import type { Message, DocumentChunk } from '@/lib/types';
-
-const PROMPT_STARTERS = [
-  { label: 'Thủ tục làm sổ đỏ', prompt: 'Thủ tục cấp giấy chứng nhận quyền sử dụng đất (sổ đỏ) như thế nào?' },
-  { label: 'Tài sản chung vợ chồng', prompt: 'Tài sản chung của vợ chồng bao gồm những gì theo Luật Hôn nhân gia đình?' },
-  { label: 'Thừa kế theo pháp luật', prompt: 'Thừa kế theo pháp luật được chia như thế nào khi không có di chúc?' },
-  { label: 'Hợp đồng lao động', prompt: 'Hợp đồng lao động phải có những điều khoản bắt buộc nào?' },
-  { label: 'Bồi thường tai nạn', prompt: 'Người gây tai nạn giao thông phải bồi thường những khoản nào?' },
-  { label: 'Thành lập công ty', prompt: 'Điều kiện và thủ tục thành lập công ty TNHH là gì?' },
-];
 
 export function ChatInterface() {
   const {
@@ -61,6 +54,7 @@ export function ChatInterface() {
     setAISettings(current => ({ ...current, ...config }));
   const [lawCategory, setLawCategory] = useState(ALL_LAWS_CATEGORY);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const [isComposerSettingsOpen, setIsComposerSettingsOpen] = useState(false);
   const categoryRef = useRef<HTMLDivElement>(null);
   const selectedLawCategory =
     LAW_CATEGORIES.find(category => category.id === lawCategory) ?? LAW_CATEGORIES[0];
@@ -69,6 +63,7 @@ export function ChatInterface() {
   // Streaming state
   const [streamingText, setStreamingText] = useState('');
   const [streamingContext, setStreamingContext] = useState<DocumentChunk[]>([]);
+  const [processingStage, setProcessingStage] = useState<ChatProcessingStage>('idle');
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -100,7 +95,7 @@ export function ChatInterface() {
 
   useEffect(() => {
     if (!scrollContainerRef.current) return;
-    
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach(entry => {
@@ -187,6 +182,7 @@ export function ChatInterface() {
   const handleAbort = () => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
+      setProcessingStage('cancelled');
     }
   };
 
@@ -202,7 +198,7 @@ export function ChatInterface() {
         break;
       }
     }
-    
+
     // Save locally immediately
     updateMessage(currentSessionId, messageId, { feedback: type });
 
@@ -251,6 +247,7 @@ export function ChatInterface() {
     setIsLoading(true);
     setStreamingText('');
     setStreamingContext([]);
+    setProcessingStage('analyzing');
 
     const controller = new AbortController();
     abortControllerRef.current = controller;
@@ -259,15 +256,17 @@ export function ChatInterface() {
     let fullContext: DocumentChunk[] = [];
     let contextUsed: DocumentChunk[] = [];
     let aborted = false;
+    let streamErrorMessage = '';
 
     try {
       const apiMessages = [...currentMessages, userMessage].map(m => ({ role: m.role, content: m.content }));
+      setProcessingStage('searching');
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          messages: apiMessages, 
-          model, 
+        body: JSON.stringify({
+          messages: apiMessages,
+          model,
           sessionId: currentSessionId || 'unknown',
           sessionTitle: currentMessages.length === 0 ? (userText.length > 40 ? userText.substring(0, 40) + '...' : userText) : (sessions.find(s => s.id === currentSessionId)?.title || 'Cuộc trò chuyện mới'),
           messageId: userMessage.id,
@@ -301,11 +300,13 @@ export function ChatInterface() {
         const data = await response.json();
         accumulated = data.text || '';
         contextUsed = (data.contextUsed || []).slice(0, aiSettings.maxCitations);
+        setProcessingStage('completed');
         addMessage({
           id: (Date.now() + 1).toString(),
           role: 'assistant',
           content: accumulated || 'Không có phản hồi từ AI.',
           contextUsed,
+          processingStage: 'completed',
         });
         return;
       }
@@ -332,12 +333,14 @@ export function ChatInterface() {
               fullContext = event.data || [];
               contextUsed = fullContext;
               setStreamingContext(fullContext);
+              setProcessingStage('selecting');
             } else if (event.type === 'token') {
               accumulated += event.text;
-              
+              setProcessingStage('generating');
+
               const citedIds = Array.from(accumulated.matchAll(/<cite\s+id=["']([^"']+)["']>/g)).map(m => m[1]).slice(0, aiSettings.maxCitations);
               if (citedIds.length > 0) {
-                const filteredContext = fullContext.filter(ctx => 
+                const filteredContext = fullContext.filter(ctx =>
                   ctx.metadata?.id && citedIds.includes(ctx.metadata.id as string)
                 );
                 if (filteredContext.length > 0) {
@@ -345,13 +348,13 @@ export function ChatInterface() {
                   contextUsed = filteredContext;
                 }
               }
-              
+
               setStreamingText(accumulated);
             } else if (event.type === 'done') {
-              // Stream hoan tat
+              setProcessingStage('completed');
             } else if (event.type === 'error') {
-              accumulated += '\n\nLỗi: ' + event.message;
-              setStreamingText(accumulated);
+              streamErrorMessage = event.message || 'stream-error';
+              setProcessingStage('error');
             }
           } catch {
             // Ignore JSON parse errors
@@ -361,55 +364,67 @@ export function ChatInterface() {
 
       // Flush vao messages
       const finalText = aborted
-        ? accumulated + '\n\n*[Đã dừng]*'
-        : accumulated;
+        ? `${accumulated}${accumulated ? '\n\n' : ''}Đã dừng yêu cầu.`
+        : streamErrorMessage
+          ? accumulated || (contextUsed.length > 0
+              ? 'Đã tìm thấy căn cứ pháp lý nhưng chưa thể tổng hợp câu trả lời. Bạn vẫn có thể xem các căn cứ bên dưới.'
+              : 'Không thể hoàn tất câu trả lời lúc này. Vui lòng thử lại.')
+          : accumulated;
 
       addMessage({
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: finalText || 'Không có phản hồi từ AI.',
         contextUsed,
+        processingStage: streamErrorMessage ? 'error' : aborted ? 'cancelled' : 'completed',
       });
 
-    } catch (error: any) {
-      if (error.name === 'AbortError') {
-        // Nguoi dung chu dong huy
+    } catch (error: unknown) {
+      const isAbort = error instanceof DOMException
+        ? error.name === 'AbortError'
+        : error instanceof Error && error.name === 'AbortError';
+
+      aborted = isAbort;
+      if (isAbort) {
+        setProcessingStage('cancelled');
         if (accumulated) {
           addMessage({
             id: (Date.now() + 1).toString(),
             role: 'assistant',
-            content: accumulated + '\n\n*[Đã dừng]*',
+            content: `${accumulated}\n\nĐã dừng yêu cầu.`,
             contextUsed,
+            processingStage: 'cancelled',
+          });
+        } else {
+          addMessage({
+            id: (Date.now() + 1).toString(),
+            role: 'assistant',
+            content: 'Đã dừng yêu cầu.',
+            contextUsed,
+            processingStage: 'cancelled',
           });
         }
       } else {
+        setProcessingStage('error');
+        const content = contextUsed.length > 0
+          ? 'Đã tìm thấy căn cứ pháp lý nhưng chưa thể tổng hợp câu trả lời. Bạn vẫn có thể xem các căn cứ bên dưới.'
+          : 'Không thể hoàn tất câu trả lời lúc này. Vui lòng thử lại.';
         addMessage({
           id: (Date.now() + 1).toString(),
           role: 'assistant',
-          content: 'Xin lỗi, đã có lỗi kết nối đến máy chủ. Vui lòng kiểm tra lại Backend.',
+          content,
+          contextUsed,
+          processingStage: 'error',
         });
       }
     } finally {
       setIsLoading(false);
       setStreamingText('');
       setStreamingContext([]);
+      setProcessingStage('idle');
       abortControllerRef.current = null;
     }
   };
-
-  const SkeletonLoader = () => (
-    <div className="py-5 px-4">
-      <div className="max-w-4xl mx-auto flex flex-row gap-4">
-        <div className="skeleton w-8 h-8 rounded-xl flex-shrink-0" />
-        <div className="flex-1 space-y-2.5 pt-1">
-          <div className="skeleton h-3.5 w-3/4" />
-          <div className="skeleton h-3.5 w-full" />
-          <div className="skeleton h-3.5 w-5/6" />
-          <div className="skeleton h-3.5 w-2/3" />
-        </div>
-      </div>
-    </div>
-  );
 
   const SessionSkeletonLoader = () => (
     <div className="animate-pulse flex flex-col gap-6 py-5 px-4 max-w-4xl mx-auto">
@@ -418,7 +433,7 @@ export function ChatInterface() {
         <div className="h-10 w-64 bg-gray-200/80 dark:bg-gray-800/80 rounded-2xl rounded-tr-sm"></div>
         <div className="h-8 w-8 bg-gray-200/80 dark:bg-gray-800/80 rounded-full flex-shrink-0"></div>
       </div>
-      
+
       {/* Fake AI Message */}
       <div className="flex justify-start gap-3 w-full">
         <div className="h-8 w-8 bg-blue-100/80 dark:bg-blue-900/40 rounded-full flex-shrink-0"></div>
@@ -432,12 +447,13 @@ export function ChatInterface() {
   );
 
   // Tin nhan dang stream (hien thi realtime)
-  const streamingMessage: Message | null = isLoading && streamingText
+  const streamingMessage: Message | null = isLoading
     ? {
         id: 'streaming',
         role: 'assistant',
         content: streamingText,
         contextUsed: streamingContext.length > 0 ? streamingContext : undefined,
+        processingStage,
       }
     : null;
 
@@ -456,19 +472,33 @@ export function ChatInterface() {
   }
 
   return (
-    <div 
-      className="flex h-screen overflow-hidden font-sans relative selection:bg-blue-100 dark:selection:bg-blue-500/30 transition-colors bg-slate-50 dark:bg-[#171717]" 
+    <div
+      className="flex h-screen overflow-hidden font-sans relative selection:bg-blue-100 dark:selection:bg-blue-500/30 transition-colors bg-slate-50 dark:bg-[#171717]"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      <div className={`flex-shrink-0 transition-all duration-300 ease-in-out overflow-hidden h-full z-20 ${isSidebarOpen ? 'w-64 opacity-100' : 'w-0 opacity-0'}`}>
-        <div className="w-64 h-full">
+      {isSidebarOpen && (
+        <button
+          type="button"
+          aria-label="Đóng danh sách hội thoại"
+          className="fixed inset-0 z-30 bg-slate-950/30 backdrop-blur-[1px] md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      <div className={`fixed inset-y-0 left-0 z-40 h-full w-72 overflow-hidden transition-transform duration-300 ease-in-out md:relative md:z-20 md:w-auto md:flex-shrink-0 md:transition-all ${
+        isSidebarOpen ? 'translate-x-0 md:w-64 md:opacity-100' : '-translate-x-full md:w-0 md:translate-x-0 md:opacity-0'
+      }`}>
+        <div className="h-full w-72 md:w-64">
           <Sidebar
             sessions={sessions}
             currentSessionId={currentSessionId}
             onNewChat={handleNewChat}
-            onSelectSession={handleSelectSession}
+            onSelectSession={(id) => {
+              handleSelectSession(id);
+              if (window.innerWidth < 768) setIsSidebarOpen(false);
+            }}
             onDeleteSession={handleDeleteSession}
             onCloseSidebar={() => setIsSidebarOpen(false)}
             isSessionsListLoading={isSessionsListLoading}
@@ -508,8 +538,8 @@ export function ChatInterface() {
                         document.getElementById(`message-${msg.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                       }}
                       className={`w-full text-left px-3 py-2.5 text-[13px] font-medium rounded-xl truncate transition-colors mb-0.5 last:mb-0 ${
-                        activeMessageId === msg.id 
-                          ? 'text-blue-700 bg-blue-50/80' 
+                        activeMessageId === msg.id
+                          ? 'text-blue-700 bg-blue-50/80'
                           : 'text-gray-700 hover:text-blue-700 hover:bg-blue-50/50'
                       }`}
                       title={msg.content}
@@ -528,13 +558,13 @@ export function ChatInterface() {
                 const isHovered = msg.id === hoveredMessageId;
                 const isHighlight = isActive || isHovered;
                 return (
-                  <div 
-                    key={msg.id} 
+                  <div
+                    key={msg.id}
                     className={`h-[2px] rounded-full transition-all duration-300 ${
-                      isHighlight 
-                        ? 'bg-blue-600 w-6' 
+                      isHighlight
+                        ? 'bg-blue-600 w-6'
                         : 'bg-gray-300 w-4 group-hover:bg-blue-300 group-hover:w-5'
-                    }`} 
+                    }`}
                   />
                 );
               })}
@@ -542,60 +572,45 @@ export function ChatInterface() {
           </div>
         )}
 
-        <div 
-          className="flex-1 overflow-y-auto pt-16 pb-40 custom-scrollbar" 
+        <div
+          className="flex-1 overflow-y-auto pt-16 pb-40 custom-scrollbar"
           ref={scrollContainerRef}
           onScroll={handleScroll}
         >
           {currentMessages.length === 0 && !streamingMessage && !isSessionLoading ? (
-            <div className="h-full flex flex-col items-center justify-center text-center px-4">
-              <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-6 shadow-lg shadow-blue-500/20" style={{ background: 'linear-gradient(135deg, #2563EB, #1D4ED8)' }}>
-                <Scale className="w-10 h-10 text-white" />
-              </div>
-              <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2 tracking-tight">VietLaw AI</h2>
-              <p className="text-gray-400 dark:text-gray-500 max-w-sm text-base mb-10 leading-relaxed">
-                Trợ lý pháp lý thông minh, sẵn sàng giải đáp mọi thắc mắc về pháp luật Việt Nam.
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 max-w-2xl w-full">
-                {PROMPT_STARTERS.map((s, i) => (
-                  <button
-                    key={i}
-                    onClick={() => handleSubmit(undefined, s.prompt)}
-                    className="prompt-starter text-left px-4 py-3 rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#171717] hover:border-blue-300 dark:hover:border-blue-500/50 hover:bg-blue-50/50 dark:hover:bg-blue-500/10 hover:shadow-sm transition-all duration-200 group"
-                  >
-                    <span className="text-[12.5px] font-semibold text-gray-700 dark:text-gray-300 group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors leading-snug block">
-                      {s.label}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
+            <ChatEmptyState onSelectSuggestion={prompt => setInput(prompt)} />
           ) : (
             <div className="pb-8">
               {isSessionLoading ? (
                 <SessionSkeletonLoader />
               ) : (
                 <>
-                  {currentMessages.map(msg => (
+                  {currentMessages.map((msg, index) => {
+                    const previousUser = msg.role === 'assistant'
+                      ? [...currentMessages.slice(0, index)].reverse().find(item => item.role === 'user')
+                      : undefined;
+                    return (
                     <ChatMessage
                       key={msg.id}
                       message={msg}
                       onRefine={(prompt) => handleSubmit(undefined, prompt)}
+                      onRetry={previousUser ? () => handleSubmit(undefined, previousUser.content) : undefined}
                       onOpenContext={setDrawerContext}
                       onFeedbackSubmit={handleFeedbackSubmit}
                     />
-                  ))}
+                    );
+                  })}
                   {/* Streaming message realtime */}
                   {streamingMessage && (
                     <ChatMessage
                       key="streaming"
                       message={streamingMessage}
                       isStreaming={true}
+                      onRefine={(prompt) => handleSubmit(undefined, prompt)}
                       onOpenContext={setDrawerContext}
+                      onCancel={handleAbort}
                     />
                   )}
-                  {/* Skeleton chi hien khi chua co text nao */}
-                  {isLoading && !streamingText && <SkeletonLoader />}
                 </>
               )}
               <div ref={messagesEndRef} />
@@ -650,11 +665,23 @@ export function ChatInterface() {
                     </div>
                   )}
                 </div>
-                <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsComposerSettingsOpen(current => !current)}
+                  className="ml-auto inline-flex items-center gap-1.5 rounded-xl border border-gray-100 bg-gray-50 px-3 py-1.5 text-[12px] font-bold text-gray-600 transition-colors hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10"
+                  aria-expanded={isComposerSettingsOpen}
+                >
+                  <SlidersHorizontal className="h-3.5 w-3.5 text-blue-600" />
+                  Tùy chọn
+                </button>
+              </div>
+
+              {isComposerSettingsOpen && (
+                <div className="flex flex-wrap items-center gap-2 border-t border-gray-100 px-3 py-2 dark:border-white/10">
                   <AdvancedSettings config={advancedConfig} setConfig={setAdvancedConfig} />
                   <ProviderSelector model={model} setModel={setModel} />
                 </div>
-              </div>
+              )}
 
               <textarea
                 ref={textareaRef}
@@ -666,7 +693,7 @@ export function ChatInterface() {
                     handleSubmit();
                   }
                 }}
-                placeholder={isLoading ? 'Nhấn Enter để dừng...' : 'Nhập câu hỏi pháp lý... (Shift + Enter xuống dòng)'}
+                placeholder={isLoading ? 'Đang xử lý yêu cầu...' : 'Hỏi về điều luật, quyền, nghĩa vụ hoặc thủ tục pháp lý...'}
                 className="w-full resize-none bg-transparent pl-5 pr-14 py-3 focus:outline-none text-gray-700 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 leading-relaxed rounded-b-3xl text-[15px] custom-scrollbar"
                 rows={1}
                 style={{ minHeight: '52px', maxHeight: '160px' }}
@@ -677,6 +704,7 @@ export function ChatInterface() {
                 <button
                   onClick={handleAbort}
                   title="Dừng tạo câu trả lời (Enter)"
+                  aria-label="Dừng trả lời"
                   className="absolute right-3 bottom-3 p-2.5 text-white rounded-2xl transition-all shadow-md active:scale-95 flex items-center justify-center animate-pulse"
                   style={{ background: 'linear-gradient(135deg, #EF4444, #DC2626)' }}
                 >
@@ -684,8 +712,9 @@ export function ChatInterface() {
                 </button>
               ) : (
                 <button
-                  onClick={(e) => handleSubmit(e as any)}
+                  onClick={() => handleSubmit()}
                   disabled={!input.trim()}
+                  aria-label="Gửi câu hỏi"
                   className={`absolute right-3 bottom-3 p-2.5 text-white rounded-2xl disabled:opacity-40 transition-all shadow-md active:scale-95 flex items-center justify-center ${input.trim() ? 'send-btn-ready' : ''}`}
                   style={{ background: 'linear-gradient(135deg, #2563EB, #1D4ED8)' }}
                 >
@@ -705,7 +734,7 @@ export function ChatInterface() {
       )}
 
       {/* Context Drawer */}
-      <div 
+      <div
         className={`absolute md:relative top-0 right-0 h-full bg-white dark:bg-[#171717] shadow-[0_0_40px_rgba(0,0,0,0.1)] dark:shadow-none transition-all duration-300 z-50 border-l border-gray-200/60 dark:border-white/10 flex-shrink-0 overflow-hidden
           ${drawerContext ? 'translate-x-0 md:w-[400px] w-full' : 'translate-x-full md:translate-x-0 md:w-0 w-full'}`}
       >
@@ -715,7 +744,7 @@ export function ChatInterface() {
               <span className="text-[11px] font-bold uppercase tracking-widest text-blue-700 dark:text-blue-400">
                 Văn bản pháp lý áp dụng
               </span>
-              <button 
+              <button
                 onClick={() => setDrawerContext(null)}
                 className="p-1.5 rounded-lg text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-white/8 transition-colors"
                 title="Đóng"

@@ -52,7 +52,7 @@ export function Sidebar({
   const groupOrder = ['Hôm nay', 'Hôm qua', '7 ngày trước', 'Tháng này', 'Cũ hơn'];
 
   return (
-    <div className="w-64 h-screen flex flex-col font-sans border-r border-gray-200 dark:border-gray-800 transition-colors bg-slate-50 dark:bg-[#171717]">
+    <div className="h-screen w-full flex flex-col font-sans border-r border-gray-200 dark:border-gray-800 transition-colors bg-slate-50 dark:bg-[#171717]">
 
       {/* Header with glassmorphism */}
       <div className="h-14 flex items-center justify-between px-4 mt-1 flex-shrink-0">
