@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, ChevronDown, Circle, Loader2, Square, XCircle } from 'lucide-react';
+import { Check, ChevronDown, Circle, Loader2, XCircle } from 'lucide-react';
 
 export type ChatProcessingStage =
   | 'idle'
@@ -16,14 +16,13 @@ interface ChatProcessingTraceProps {
   stage: ChatProcessingStage;
   collapsed?: boolean;
   onToggleCollapsed?: () => void;
-  onCancel?: () => void;
 }
 
-const STEPS: Array<{ key: ChatProcessingStage; label: string }> = [
-  { key: 'analyzing', label: 'Đang phân tích câu hỏi' },
-  { key: 'searching', label: 'Đang tra cứu căn cứ pháp lý' },
-  { key: 'selecting', label: 'Đang chọn lọc thông tin phù hợp' },
-  { key: 'generating', label: 'Đang tổng hợp câu trả lời' },
+const STEPS: Array<{ key: ChatProcessingStage; label: string; doneLabel: string; activeLabel: string }> = [
+  { key: 'analyzing', label: 'Phân tích câu hỏi', doneLabel: 'Đã phân tích câu hỏi', activeLabel: 'Đang phân tích câu hỏi' },
+  { key: 'searching', label: 'Tra cứu căn cứ pháp lý', doneLabel: 'Đã tra cứu căn cứ pháp lý', activeLabel: 'Đang tra cứu căn cứ pháp lý' },
+  { key: 'selecting', label: 'Chọn lọc thông tin phù hợp', doneLabel: 'Đã chọn lọc thông tin phù hợp', activeLabel: 'Đang chọn lọc thông tin phù hợp' },
+  { key: 'generating', label: 'Tổng hợp câu trả lời', doneLabel: 'Đã tổng hợp câu trả lời', activeLabel: 'Đang tổng hợp câu trả lời' },
 ];
 
 const ORDER: Record<ChatProcessingStage, number> = {
@@ -37,51 +36,57 @@ const ORDER: Record<ChatProcessingStage, number> = {
   error: -1,
 };
 
-function getTitle(stage: ChatProcessingStage): string {
+function getSummary(stage: ChatProcessingStage): string {
+  if (stage === 'analyzing') return 'Đang phân tích câu hỏi';
+  if (stage === 'searching') return 'Đang tra cứu pháp luật';
+  if (stage === 'selecting') return 'Đang kiểm tra thông tin phù hợp';
+  if (stage === 'generating') return 'Đang tổng hợp câu trả lời';
   if (stage === 'completed') return 'Tra cứu hoàn tất';
   if (stage === 'cancelled') return 'Đã dừng yêu cầu';
-  if (stage === 'error') return 'Không thể hoàn tất câu trả lời';
-  if (stage === 'generating') return 'Đang chuẩn bị câu trả lời';
+  if (stage === 'error') return 'Không thể hoàn tất yêu cầu';
   return 'Đang tra cứu pháp luật';
 }
 
-function getDescription(stage: ChatProcessingStage): string {
-  if (stage === 'completed') return 'Bạn có thể xem lại các bước xử lý khi cần.';
-  if (stage === 'cancelled') return 'Yêu cầu đã được dừng. Bạn có thể chỉnh sửa câu hỏi hoặc gửi câu hỏi mới.';
-  if (stage === 'error') return 'Vui lòng thử lại hoặc mô tả câu hỏi cụ thể hơn.';
-  return 'Quá trình này có thể mất thêm một chút thời gian.';
+function StatusIcon({ stage }: { stage: ChatProcessingStage }) {
+  if (stage === 'completed') return <Check className="h-4 w-4 text-emerald-600" />;
+  if (stage === 'cancelled' || stage === 'error') return <XCircle className="h-4 w-4 text-slate-500" />;
+  return <Loader2 className="h-4 w-4 animate-spin text-blue-600 motion-reduce:animate-none" aria-hidden="true" />;
 }
 
 export function ChatProcessingTrace({
   stage,
-  collapsed = false,
+  collapsed = true,
   onToggleCollapsed,
-  onCancel,
 }: ChatProcessingTraceProps) {
   if (stage === 'idle') return null;
 
   const activeIndex = ORDER[stage];
   const isDone = stage === 'completed';
   const isTerminal = isDone || stage === 'cancelled' || stage === 'error';
+  const detailsId = `processing-trace-${stage}`;
+  const toggleLabel = collapsed ? 'Xem quá trình' : 'Ẩn quá trình';
 
-  if (collapsed && isTerminal) {
+  if (collapsed) {
     return (
-      <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2 text-sm text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-slate-300">
-        <button
-          type="button"
-          onClick={onToggleCollapsed}
-          className="flex w-full items-center justify-between gap-3 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded-lg"
-          aria-expanded="false"
-        >
-          <span className="inline-flex items-center gap-2 font-medium">
-            {isDone ? <Check className="h-4 w-4 text-emerald-600" /> : <XCircle className="h-4 w-4 text-slate-500" />}
-            {getTitle(stage)}
+      <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2 text-sm text-slate-600 shadow-sm dark:border-white/10 dark:bg-white/5 dark:text-slate-300" aria-live="polite">
+        <div className="flex items-center justify-between gap-3">
+          <span className="inline-flex min-w-0 items-center gap-2 font-medium">
+            <StatusIcon stage={stage} />
+            <span className="truncate">{getSummary(stage)}</span>
           </span>
-          <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-700 dark:text-blue-300">
-            Xem quá trình
-            <ChevronDown className="h-3.5 w-3.5" />
-          </span>
-        </button>
+          {onToggleCollapsed && (
+            <button
+              type="button"
+              onClick={onToggleCollapsed}
+              className="inline-flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-blue-700 transition hover:bg-blue-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 dark:text-blue-300 dark:hover:bg-blue-500/20"
+              aria-expanded="false"
+              aria-controls={detailsId}
+            >
+              {toggleLabel}
+              <ChevronDown className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
       </div>
     );
   }
@@ -89,34 +94,30 @@ export function ChatProcessingTrace({
   return (
     <section
       className="mt-3 rounded-2xl border border-blue-100 bg-blue-50/60 p-4 shadow-sm dark:border-blue-500/20 dark:bg-blue-500/10"
-      aria-live={isTerminal ? 'polite' : 'polite'}
+      aria-live="polite"
       aria-label="Tiến trình xử lý"
+      id={detailsId}
     >
       <div className="flex items-start justify-between gap-4">
         <div>
           <h3 className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-slate-100">
-            {isDone ? (
-              <Check className="h-4 w-4 text-emerald-600" />
-            ) : stage === 'cancelled' || stage === 'error' ? (
-              <XCircle className="h-4 w-4 text-slate-500" />
-            ) : (
-              <Loader2 className="h-4 w-4 animate-spin text-blue-600 motion-reduce:animate-none" />
-            )}
-            {getTitle(stage)}
+            <StatusIcon stage={stage} />
+            {getSummary(stage)}
           </h3>
           <p className="mt-1 text-xs leading-5 text-slate-500 dark:text-slate-400">
-            {getDescription(stage)}
+            Quá trình này chỉ mô tả các bước xử lý tổng quan.
           </p>
         </div>
 
-        {isTerminal && onToggleCollapsed && (
+        {onToggleCollapsed && (
           <button
             type="button"
             onClick={onToggleCollapsed}
             className="shrink-0 rounded-lg px-2 py-1 text-xs font-semibold text-blue-700 transition hover:bg-blue-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 dark:text-blue-300 dark:hover:bg-blue-500/20"
             aria-expanded="true"
+            aria-controls={detailsId}
           >
-            Ẩn quá trình
+            {toggleLabel}
           </button>
         )}
       </div>
@@ -139,23 +140,12 @@ export function ChatProcessingTrace({
                 {complete ? <Check className="h-3 w-3" /> : active ? <Loader2 className="h-3 w-3 animate-spin motion-reduce:animate-none" /> : <Circle className="h-2 w-2 fill-current" />}
               </span>
               <span className={`${complete ? 'text-slate-700 dark:text-slate-200' : active ? 'font-semibold text-blue-800 dark:text-blue-200' : 'text-slate-500 dark:text-slate-400'}`}>
-                {complete ? step.label.replace('Đang ', 'Đã ') : step.label}
+                {complete ? step.doneLabel : active ? step.activeLabel : step.label}
               </span>
             </li>
           );
         })}
       </ol>
-
-      {!isTerminal && onCancel && (
-        <button
-          type="button"
-          onClick={onCancel}
-          className="mt-4 inline-flex items-center gap-2 rounded-xl border border-red-200 bg-white px-3 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-300 dark:border-red-500/30 dark:bg-slate-950 dark:text-red-300 dark:hover:bg-red-500/10"
-        >
-          <Square className="h-3.5 w-3.5 fill-current" />
-          Dừng trả lời
-        </button>
-      )}
     </section>
   );
 }

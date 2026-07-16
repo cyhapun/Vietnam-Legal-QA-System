@@ -15,12 +15,11 @@ interface ChatMessageProps {
   onRefine?: (prompt: string) => void;
   onOpenContext?: (context: DocumentChunk[]) => void;
   onFeedbackSubmit?: (messageId: string, type: 1 | -1, reason?: string, comment?: string) => void;
-  onCancel?: () => void;
   onRetry?: () => void;
   isSourcesPanelOpen?: boolean;
 }
 
-export function ChatMessage({ message, isStreaming = false, onRefine, onOpenContext, onFeedbackSubmit, onCancel, onRetry, isSourcesPanelOpen = false }: ChatMessageProps) {
+export function ChatMessage({ message, isStreaming = false, onRefine, onOpenContext, onFeedbackSubmit, onRetry, isSourcesPanelOpen = false }: ChatMessageProps) {
   const isUser = message.role === 'user';
   const [copied, setCopied] = useState(false);
   const [feedback, setFeedback] = useState<'up' | 'down' | null>(
@@ -145,7 +144,6 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
                 stage={message.processingStage}
                 collapsed={isProcessCollapsed}
                 onToggleCollapsed={() => setIsProcessCollapsed(current => !current)}
-                onCancel={isStreaming ? onCancel : undefined}
               />
             )}
           </div>

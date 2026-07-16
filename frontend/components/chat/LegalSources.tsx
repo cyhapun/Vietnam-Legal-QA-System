@@ -67,7 +67,13 @@ export function LegalSourcesTrigger({
       >
         <span className="inline-flex min-w-0 items-center gap-2">
           <BookOpen className="h-4 w-4 shrink-0" />
-          <span className="truncate">Căn cứ pháp lý {deduped.length}</span>
+          <span className="truncate">Căn cứ pháp lý</span>
+          <span
+            className="inline-flex h-6 min-w-6 shrink-0 items-center justify-center rounded-full border border-blue-300/40 bg-blue-500/15 px-1.5 text-xs font-semibold text-blue-800 dark:border-blue-400/30 dark:text-blue-200"
+            aria-hidden="true"
+          >
+            {deduped.length}
+          </span>
         </span>
         <ChevronDown className={`h-4 w-4 shrink-0 transition-transform ${expanded ? 'rotate-90' : '-rotate-90'}`} />
       </button>

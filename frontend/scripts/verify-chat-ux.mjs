@@ -17,7 +17,8 @@ for (const label of [
   'Đang chọn lọc thông tin phù hợp',
   'Đang tổng hợp câu trả lời',
   'Tra cứu hoàn tất',
-  'Dừng trả lời',
+  'Xem quá trình',
+  'Ẩn quá trình',
 ]) {
   if (!processingTrace.includes(label)) {
     throw new Error(`Missing processing label: ${label}`);
@@ -40,8 +41,12 @@ if (!chatInterface.includes('abortControllerRef.current.abort()') || !proxyRoute
   throw new Error('Cancel must abort the client stream and proxy fetch');
 }
 
-if (!chatMessage.includes('LegalSourcesTrigger') || !legalSources.includes('Căn cứ pháp lý {deduped.length}')) {
+if (!chatMessage.includes('LegalSourcesTrigger') || !legalSources.includes('{deduped.length}')) {
   throw new Error('Assistant messages must render compact legal source trigger with dynamic deduplicated count');
+}
+
+if (!legalSources.includes('rounded-full') || !legalSources.includes('min-w-6') || !legalSources.includes('h-6')) {
+  throw new Error('Legal source count must render as a centered rounded badge');
 }
 
 if (!legalSources.includes('dedupeLegalSources') || !legalSources.includes('LegalSourceList')) {
@@ -58,6 +63,18 @@ if (legalSources.includes('contextUsed.length') || legalSources.includes('retrie
 
 if (legalSources.includes('md:grid-cols-2') || legalSources.includes('Mở bảng bên')) {
   throw new Error('Legal source cards should not render as an inline grid or separate open-panel button');
+}
+
+if (!processingTrace.includes('collapsed = true') || !processingTrace.includes('aria-controls={detailsId}')) {
+  throw new Error('Processing trace must support collapsed-by-default expanded details');
+}
+
+if (processingTrace.includes('onCancel') || processingTrace.includes('Dừng trả lời')) {
+  throw new Error('Processing trace must not render a duplicate stop control');
+}
+
+if (!chatInterface.includes('abortControllerRef.current.abort()') || !chatInterface.includes('aria-label="Dừng trả lời"')) {
+  throw new Error('Composer stop control must remain available');
 }
 
 if (chatInterface.includes('Tùy chọn') || chatInterface.includes('isComposerSettingsOpen')) {

@@ -609,7 +609,6 @@ export function ChatInterface() {
                       isStreaming={true}
                       onRefine={(prompt) => handleSubmit(undefined, prompt)}
                       onOpenContext={setDrawerContext}
-                      onCancel={handleAbort}
                       isSourcesPanelOpen={drawerContext === streamingMessage.contextUsed}
                     />
                   )}
