@@ -14,7 +14,7 @@ from app.services.legal_quality_evaluation import (
     parse_quality_record,
     validate_dataset_sources,
 )
-from scripts.evaluate_legal_quality import _context_text_for_diagnostics
+from scripts.evaluate_legal_quality import _compute_answer_metrics, _context_text_for_diagnostics
 from scripts.audit_legal_corpus_integrity import audit_json_corpus
 
 
@@ -157,6 +157,37 @@ def test_answer_mode_can_override_failure_stage_for_citation_filtered_context():
     )
 
     assert trace.failure_stage == "unused_by_answer"
+
+
+def test_answer_metrics_are_reported_separately_from_retrieval_metrics():
+    record = parse_quality_record({
+        "id": "answer-metrics",
+        "question": "Điều kiện chuyển nhượng quyền sử dụng đất là gì?",
+        "required_source_ids": ["LDD_2024_D45_K1"],
+        "acceptable_source_ids": [],
+        "critical": True,
+        "category": "land",
+        "question_type": "natural_language",
+    })
+    cited = build_stage_trace(
+        record,
+        retrieved_source_ids=["LDD_2024_D45_K1"],
+        final_context_source_ids=["LDD_2024_D45_K1"],
+        citation_ids=["LDD_2024_D45_K1"],
+    )
+    unused = build_stage_trace(
+        record,
+        retrieved_source_ids=["LDD_2024_D28_K1"],
+        final_context_source_ids=["LDD_2024_D28_K1"],
+        citation_ids=["LDD_2024_D28_K1"],
+        failure_stage_override="unused_by_answer",
+    )
+
+    metrics = _compute_answer_metrics([cited, unused])
+
+    assert metrics["required_citation_presence_rate"] == 0.5
+    assert metrics["unused_by_answer_count"] == 1
+    assert metrics["invalid_citations_returned"] == 0
 
 
 def test_generated_report_helpers_do_not_require_answer_content():

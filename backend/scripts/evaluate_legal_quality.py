@@ -191,6 +191,21 @@ def _evaluate_answers(records, base_url: str, model: str, candidate_k: int, top_
     return traces, raw_results
 
 
+def _compute_answer_metrics(traces: list) -> dict:
+    total = len(traces)
+    invalid_count = sum(len(trace.invalid_citation_ids) for trace in traces)
+    unsupported_count = sum(len(trace.unsupported_legal_references) for trace in traces)
+    required_cited = sum(1 for trace in traces if trace.citation_presence)
+    return {
+        "count": total,
+        "required_citation_presence_rate": required_cited / total if total else 0.0,
+        "invalid_citations_returned": invalid_count,
+        "unsupported_legal_reference_count": unsupported_count,
+        "unused_by_answer_count": sum(1 for trace in traces if trace.failure_stage == "unused_by_answer"),
+        "invalid_model_citation_count": sum(1 for trace in traces if trace.failure_stage == "invalid_citation"),
+    }
+
+
 def _write_report(output: Path, payload: dict) -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -249,6 +264,7 @@ def main() -> int:
         "candidate_k": args.candidate_k,
         "top_k": args.top_k,
         "metrics": compute_quality_metrics(evaluated_records, traces),
+        "answer_metrics": _compute_answer_metrics(traces) if mode == "answer" else "not_applicable",
         "traces": [trace_to_dict(trace) for trace in traces],
         "raw_results": raw_results,
     }
