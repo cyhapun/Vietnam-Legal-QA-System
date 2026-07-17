@@ -2,7 +2,7 @@
 Base Protocol cho Reranking module.
 Mọi reranking strategy đều phải implement interface này.
 """
-from typing import Protocol, List, runtime_checkable
+from typing import Protocol, List, runtime_checkable, Optional
 
 from langchain_core.documents import Document
 
@@ -25,6 +25,7 @@ class BaseReranker(Protocol):
         query: str,
         documents: List[Document],
         top_k: int,
+        api_key: Optional[str] = None,
     ) -> List[Document]:
         """Xếp hạng lại danh sách documents theo độ liên quan với query.
 
@@ -32,6 +33,7 @@ class BaseReranker(Protocol):
             query: Câu hỏi gốc của người dùng.
             documents: Danh sách Document từ search step.
             top_k: Số lượng document trả về sau reranking.
+            api_key: API key tùy chọn (ví dụ HuggingFace token).
 
         Returns:
             Danh sách Document đã được xếp hạng lại, cắt tại top_k.

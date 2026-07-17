@@ -2,7 +2,7 @@
 No Reranker — Pass-through, giữ nguyên thứ tự từ search.
 Dùng làm baseline trong ablation study.
 """
-from typing import List
+from typing import List, Optional
 
 from langchain_core.documents import Document
 
@@ -23,6 +23,7 @@ class NoReranker:
         query: str,
         documents: List[Document],
         top_k: int,
+        api_key: Optional[str] = None,
     ) -> List[Document]:
         """Trả về documents giữ nguyên, chỉ cắt tại top_k."""
         return documents[:top_k]

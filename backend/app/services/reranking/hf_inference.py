@@ -58,7 +58,7 @@ class HuggingFaceInferenceReranker:
     def strategy_name(self) -> str:
         return f"hf_inference_reranker({self._model})"
 
-    def _call(self, query: str, text: str) -> float:
+    def _call(self, query: str, text: str, api_key: Optional[str] = None) -> float:
         payload = json.dumps(
             {
                 "inputs": {
@@ -75,7 +75,7 @@ class HuggingFaceInferenceReranker:
             self._endpoint_url,
             data=payload,
             headers={
-                "Authorization": f"Bearer {self._api_key}",
+                "Authorization": f"Bearer {api_key or self._api_key}",
                 "Content-Type": "application/json",
             },
             method="POST",
@@ -106,19 +106,19 @@ class HuggingFaceInferenceReranker:
             raise RuntimeError("Remote reranker returned NaN or Inf.")
         return score
 
-    def _score(self, query: str, documents: List[Document]) -> List[float]:
-        return [self._call(query, doc.page_content) for doc in documents]
+    def _score(self, query: str, documents: List[Document], api_key: Optional[str] = None) -> List[float]:
+        return [self._call(query, doc.page_content, api_key=api_key) for doc in documents]
 
     @staticmethod
     def _fail_open_result(documents: List[Document], top_k: int) -> List[Document]:
         return documents[:max(0, top_k)]
 
-    def rerank(self, query: str, documents: List[Document], top_k: int) -> List[Document]:
+    def rerank(self, query: str, documents: List[Document], top_k: int, api_key: Optional[str] = None) -> List[Document]:
         if not documents or top_k <= 0:
             return []
 
         try:
-            scores = self._score(query, documents)
+            scores = self._score(query, documents, api_key=api_key)
         except Exception as exc:
             if self._fail_open:
                 logger.warning("Remote reranker failed open; preserving original order: %s", exc)
