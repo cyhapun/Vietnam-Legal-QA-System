@@ -5,8 +5,10 @@ import math
 import os
 import threading
 import time
+import json
 from pathlib import Path
 from typing import List, Optional
+from urllib import request, error
 
 from langchain_huggingface import HuggingFaceEndpointEmbeddings
 
@@ -19,6 +21,9 @@ from app.config import (
     HUGGINGFACE_API_KEY,
     HUGGINGFACE_EMBEDDING_MODE,
     LOCAL_MODELS_OFFLINE,
+    OPENROUTER_API_KEY,
+    OPENROUTER_EMBEDDING_BASE_URL,
+    OPENROUTER_EMBEDDING_MODEL,
 )
 from app.services.embedding.errors import EmbeddingAuthError, EmbeddingServerError
 from app.services.pipeline_timing import current_timing
@@ -53,6 +58,48 @@ def _raise_huggingface_error(exc: Exception) -> None:
     raise EmbeddingServerError(
         f"Không thể tạo embedding bằng HuggingFace model đã cấu hình: {detail}"
     ) from exc
+
+
+class OpenRouterEmbeddingClient:
+    """Small OpenAI-compatible embedding client for OpenRouter."""
+
+    def __init__(self, api_key: str, model: str, base_url: str, timeout: float = 60.0):
+        self._api_key = api_key
+        self._model = model
+        self._url = f"{base_url}/embeddings"
+        self._timeout = timeout
+
+    def embed(self, texts: List[str]) -> List[List[float]]:
+        payload = json.dumps({"model": self._model, "input": texts}).encode("utf-8")
+        req = request.Request(
+            self._url,
+            data=payload,
+            headers={
+                "Authorization": f"Bearer {self._api_key}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://vietlaw.local",
+                "X-Title": "VietLaw RAG",
+            },
+            method="POST",
+        )
+        try:
+            with request.urlopen(req, timeout=self._timeout) as resp:
+                body = json.loads(resp.read().decode("utf-8"))
+        except error.HTTPError as exc:
+            detail = exc.read().decode("utf-8", errors="replace")
+            raise EmbeddingServerError(f"OpenRouter embedding request failed: HTTP {exc.code} {detail}") from exc
+        except Exception as exc:
+            raise EmbeddingServerError(f"OpenRouter embedding request failed: {exc}") from exc
+
+        data = body.get("data")
+        if not isinstance(data, list):
+            raise EmbeddingServerError(f"OpenRouter embedding response missing data: {body}")
+
+        ordered = sorted(data, key=lambda item: item.get("index", 0))
+        vectors = [item.get("embedding") for item in ordered]
+        if not all(isinstance(vector, list) for vector in vectors):
+            raise EmbeddingServerError(f"OpenRouter embedding response contains invalid vectors: {body}")
+        return vectors
 
 
 class HuggingFaceEndpointEmbedding:
@@ -96,6 +143,22 @@ class HuggingFaceEndpointEmbedding:
                 task="feature-extraction",
                 huggingfacehub_api_token=final_api_key,
             )
+        elif self._mode == "openrouter":
+            final_api_key = api_key or OPENROUTER_API_KEY
+            if not final_api_key:
+                raise EmbeddingAuthError(
+                    "Vui lòng cung cấp OPENROUTER_API_KEY để dùng embedding baai/bge-m3 khi deploy."
+                )
+            self._model_name = OPENROUTER_EMBEDDING_MODEL
+            logger.info(
+                "Đang kết nối embedding model %s qua OpenRouter...",
+                OPENROUTER_EMBEDDING_MODEL,
+            )
+            self._engine = OpenRouterEmbeddingClient(
+                api_key=final_api_key,
+                model=OPENROUTER_EMBEDDING_MODEL,
+                base_url=OPENROUTER_EMBEDDING_BASE_URL,
+            )
         elif self._mode == "local":
             self._validate_local_artifact()
             if LOCAL_MODELS_OFFLINE:
@@ -103,7 +166,7 @@ class HuggingFaceEndpointEmbedding:
                 os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
             logger.info("Local embedding configured: model=%s device=%s", model, device)
         else:
-            raise ValueError("HUGGINGFACE_EMBEDDING_MODE must be either 'api' or 'local'.")
+            raise ValueError("HUGGINGFACE_EMBEDDING_MODE must be 'api', 'local', or 'openrouter'.")
 
     @property
     def model_name(self) -> str:
@@ -203,6 +266,9 @@ class HuggingFaceEndpointEmbedding:
             return self._embed_local(texts)
 
         try:
+            if self._mode == "openrouter":
+                vectors = self._engine.embed(texts)
+                return self._validate_vectors(vectors, len(texts))
             vectors = self._engine.embed_documents(texts)
             return self._validate_vectors(vectors, len(texts))
         except Exception as exc:
@@ -215,6 +281,9 @@ class HuggingFaceEndpointEmbedding:
             return vectors[0]
 
         try:
+            if self._mode == "openrouter":
+                vector = self._engine.embed([text])[0]
+                return self._validate_vectors([vector], 1)[0]
             vector = self._engine.embed_query(text)
             return self._validate_vectors([vector], 1)[0]
         except Exception as exc:
