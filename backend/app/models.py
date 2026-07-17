@@ -35,6 +35,7 @@ class RuntimeProviderCredentials(BaseModel):
 
     google: Optional[RuntimeProviderCredential] = None
     huggingface: Optional[RuntimeProviderCredential] = None
+    openrouter: Optional[RuntimeProviderCredential] = None
 
     def get_api_key(self, provider: str) -> str:
         provider_id = normalize_provider_id(provider)

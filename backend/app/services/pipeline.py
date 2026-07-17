@@ -83,7 +83,8 @@ class RAGPipeline:
         queries: Optional[List[str]] = None,
         enable_reranker: bool = True,
         context_token_budget: Optional[int] = None,
-        api_key: Optional[str] = None,
+        embedding_api_key: Optional[str] = None,
+        reranker_api_key: Optional[str] = None,
     ) -> Tuple[List[Document], str]:
         """Thực hiện full retrieval pipeline: Search → Rerank → Context Build.
 
@@ -115,7 +116,7 @@ class RAGPipeline:
         # Truyền api_key xuống searcher nếu nó hỗ trợ
         import inspect
         if "api_key" in inspect.signature(self.searcher.search).parameters:
-            docs = self.searcher.search(queries, k=k, category=category, api_key=api_key)
+            docs = self.searcher.search(queries, k=k, category=category, api_key=embedding_api_key)
         else:
             docs = self.searcher.search(queries, k=k, category=category)
         retrieved_count = len(docs)
@@ -142,7 +143,7 @@ class RAGPipeline:
 
         # Step 2: Rerank or keep search order.
         if enable_reranker:
-            docs = self.reranker.rerank(query, docs, top_k=final_k, api_key=api_key)
+            docs = self.reranker.rerank(query, docs, top_k=final_k, api_key=reranker_api_key)
         else:
             docs = docs[:final_k]
         final_count = len(docs)
@@ -179,7 +180,8 @@ class RAGPipeline:
         queries: Optional[List[str]] = None,
         enable_reranker: bool = True,
         context_token_budget: Optional[int] = None,
-        api_key: Optional[str] = None,
+        embedding_api_key: Optional[str] = None,
+        reranker_api_key: Optional[str] = None,
     ) -> Tuple[List[Document], str]:
         """Async version của retrieve — dùng trong FastAPI endpoint."""
         final_k = rerank_top_k or RETRIEVER_K
@@ -196,27 +198,16 @@ class RAGPipeline:
             
         if not queries:
             queries = [query]
-
-        # Step 1: Async Search
+        # Step 1: Search
         import inspect
-        if hasattr(self.searcher, "asearch") and "api_key" in inspect.signature(self.searcher.asearch).parameters:
-            docs = await self.searcher.asearch(queries, k=k, category=category, api_key=api_key)
-        elif "api_key" in inspect.signature(self.searcher.search).parameters:
-            docs = await self.searcher.asearch(queries, k=k, category=category) # Wait, asearch might not support it
-            # Actually let's just pass it safely
-            if hasattr(self.searcher, "asearch"):
-                 # if asearch doesn't have it, we shouldn't pass it. But we just check signature.
-                 pass
-            # Just do dynamic check properly below:
-            
         if hasattr(self.searcher, "asearch"):
             if "api_key" in inspect.signature(self.searcher.asearch).parameters:
-                docs = await self.searcher.asearch(queries, k=k, category=category, api_key=api_key)
+                docs = await self.searcher.asearch(queries, k=k, category=category, api_key=embedding_api_key)
             else:
                 docs = await self.searcher.asearch(queries, k=k, category=category)
         else:
             if "api_key" in inspect.signature(self.searcher.search).parameters:
-                docs = self.searcher.search(queries, k=k, category=category, api_key=api_key)
+                docs = self.searcher.search(queries, k=k, category=category, api_key=embedding_api_key)
             else:
                 docs = self.searcher.search(queries, k=k, category=category)
         retrieved_count = len(docs)
@@ -243,7 +234,7 @@ class RAGPipeline:
 
         # Step 2: Rerank or keep search order.
         if enable_reranker:
-            docs = self.reranker.rerank(query, docs, top_k=final_k, api_key=api_key)
+            docs = self.reranker.rerank(query, docs, top_k=final_k, api_key=reranker_api_key)
         else:
             docs = docs[:final_k]
         final_count = len(docs)
