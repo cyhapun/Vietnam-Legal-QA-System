@@ -44,6 +44,7 @@ QDRANT_API_KEY = os.getenv("QDRANT_API_KEY", "")
 QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION", "vietlaw_clauses")
 DISABLE_AUTO_INGEST = os.getenv("DISABLE_AUTO_INGEST", "false").strip().lower() == "true"
 ENABLE_FAISS_FALLBACK = os.getenv("ENABLE_FAISS_FALLBACK", "false").strip().lower() == "true"
+PIPELINE_TIMING_ENABLED = os.getenv("PIPELINE_TIMING_ENABLED", "false").strip().lower() == "true"
 
 # --- THÔNG SỐ EMBEDDING ---
 DEFAULT_LOCAL_EMBEDDING_MODEL = "../models/embedding/vietlaw-bge-m3-finetuned/best"
@@ -56,6 +57,8 @@ EMBEDDING_DEVICE = os.getenv("EMBEDDING_DEVICE", "cpu").strip()
 EMBEDDING_DIMENSION = int(os.getenv("EMBEDDING_DIMENSION", "1024"))
 EMBEDDING_NORMALIZE = os.getenv("EMBEDDING_NORMALIZE", "true").strip().lower() == "true"
 LOCAL_MODELS_OFFLINE = os.getenv("LOCAL_MODELS_OFFLINE", "true").strip().lower() == "true"
+LOCAL_MODELS_PRELOAD_ENABLED = os.getenv("LOCAL_MODELS_PRELOAD_ENABLED", "true").strip().lower() == "true"
+LOCAL_MODELS_WARMUP_ENABLED = os.getenv("LOCAL_MODELS_WARMUP_ENABLED", "true").strip().lower() == "true"
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 OLLAMA_EMBEDDING_MODEL = os.getenv("OLLAMA_EMBEDDING_MODEL", "bge-m3")
 OLLAMA_EMBEDDING_TIMEOUT = float(os.getenv("OLLAMA_EMBEDDING_TIMEOUT", "300"))
@@ -71,8 +74,8 @@ EMBEDDING_RETRY_BASE_WAIT = float(os.getenv(
 ))
 
 # --- THÔNG SỐ RETRIEVAL ---
-RETRIEVER_K = 20
-RETRIEVER_CANDIDATE_K = int(os.getenv("RETRIEVER_CANDIDATE_K", "60"))
+RETRIEVER_K = 5
+RETRIEVER_CANDIDATE_K = int(os.getenv("RETRIEVER_CANDIDATE_K", "10"))
 RETRIEVER_FETCH_K = 20
 RETRIEVER_LAMBDA_MULT = 0.8
 
@@ -121,7 +124,7 @@ PIPELINE_CONFIG = {
 
     # --- Reranker model (chỉ dùng khi reranking="cross_encoder") ---
     "reranker_model": os.getenv("RERANKER_MODEL", DEFAULT_LOCAL_RERANKER_MODEL),
-    "reranker_max_candidates": int(os.getenv("RERANKER_MAX_CANDIDATES", "20")),
+    "reranker_max_candidates": int(os.getenv("RERANKER_MAX_CANDIDATES", "10")),
     "reranker_device": os.getenv("RERANKER_DEVICE", "cpu").strip(),
     "reranker_batch_size": int(os.getenv("RERANKER_BATCH_SIZE", "8")),
     "reranker_max_length": int(os.getenv("RERANKER_MAX_LENGTH", "512")),

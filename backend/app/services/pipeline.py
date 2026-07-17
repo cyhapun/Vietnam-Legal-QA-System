@@ -39,6 +39,7 @@ from app.services.reranking import (
     FallbackReranker,
 )
 from app.services.context_builder import NestedContextBuilder
+from app.services.pipeline_timing import current_timing
 from app.utils.logging import setup_logger
 
 logger = setup_logger("vietlaw.pipeline")
@@ -117,6 +118,10 @@ class RAGPipeline:
         else:
             docs = self.searcher.search(queries, k=k, category=category)
         retrieved_count = len(docs)
+        collector = current_timing()
+        if collector is not None:
+            collector.set_metric("requested_candidate_k", k)
+            collector.set_metric("retrieved_candidate_count", retrieved_count)
         
         # Deduplicate
         seen = set()
@@ -129,6 +134,8 @@ class RAGPipeline:
                 
         docs = unique_docs
         dedup_count = len(docs)
+        if collector is not None:
+            collector.set_metric("deduplicated_candidate_count", dedup_count)
 
         # Step 2: Rerank or keep search order.
         if enable_reranker:
@@ -136,6 +143,10 @@ class RAGPipeline:
         else:
             docs = docs[:final_k]
         final_count = len(docs)
+        if collector is not None:
+            collector.set_metric("requested_top_k", final_k)
+            collector.set_metric("final_context_count", final_count)
+            collector.set_metric("final_source_ids", [doc.metadata.get("id") for doc in docs if doc.metadata.get("id")])
         
         logger.info(
             "Pipeline retrieve (Sync) [domain=%s, rewritten=%d] -> Search: %d docs -> Dedup: %d docs -> Rerank: %d docs", 
@@ -143,7 +154,14 @@ class RAGPipeline:
         )
 
         # Step 3: Build context within the configured token budget.
-        docs, context = self._build_context_with_budget(docs, context_token_budget)
+        if collector is not None:
+            with collector.stage("context_building"):
+                docs, context = self._build_context_with_budget(docs, context_token_budget)
+        else:
+            docs, context = self._build_context_with_budget(docs, context_token_budget)
+        if collector is not None:
+            collector.set_metric("final_context_count", len(docs))
+            collector.set_metric("final_source_ids", [doc.metadata.get("id") for doc in docs if doc.metadata.get("id")])
 
         return docs, context
 
@@ -198,6 +216,10 @@ class RAGPipeline:
             else:
                 docs = self.searcher.search(queries, k=k, category=category)
         retrieved_count = len(docs)
+        collector = current_timing()
+        if collector is not None:
+            collector.set_metric("requested_candidate_k", k)
+            collector.set_metric("retrieved_candidate_count", retrieved_count)
         
         # Deduplicate
         seen = set()
@@ -210,6 +232,8 @@ class RAGPipeline:
                 
         docs = unique_docs
         dedup_count = len(docs)
+        if collector is not None:
+            collector.set_metric("deduplicated_candidate_count", dedup_count)
 
         # Step 2: Rerank or keep search order.
         if enable_reranker:
@@ -217,6 +241,10 @@ class RAGPipeline:
         else:
             docs = docs[:final_k]
         final_count = len(docs)
+        if collector is not None:
+            collector.set_metric("requested_top_k", final_k)
+            collector.set_metric("final_context_count", final_count)
+            collector.set_metric("final_source_ids", [doc.metadata.get("id") for doc in docs if doc.metadata.get("id")])
         
         logger.info(
             "Pipeline retrieve (Async) [domain=%s, rewritten=%d] -> Search: %d docs -> Dedup: %d docs -> Rerank: %d docs", 
@@ -224,7 +252,14 @@ class RAGPipeline:
         )
 
         # Step 3: Build context within the configured token budget.
-        docs, context = self._build_context_with_budget(docs, context_token_budget)
+        if collector is not None:
+            with collector.stage("context_building"):
+                docs, context = self._build_context_with_budget(docs, context_token_budget)
+        else:
+            docs, context = self._build_context_with_budget(docs, context_token_budget)
+        if collector is not None:
+            collector.set_metric("final_context_count", len(docs))
+            collector.set_metric("final_source_ids", [doc.metadata.get("id") for doc in docs if doc.metadata.get("id")])
 
         return docs, context
 
@@ -533,6 +568,50 @@ def init_pipeline() -> None:
         logger.error("Không thể khởi tạo pipeline đầy đủ: %s", exc)
         logger.warning("Sẽ giữ pipeline ở trạng thái không sẵn sàng cho đến khi request được xử lý.")
         _pipeline = None
+
+
+def preload_local_models(warmup: bool = False) -> dict:
+    """Load cached local embedding/reranker models, optionally running one synthetic warm-up."""
+    import time
+
+    from langchain_core.documents import Document
+
+    pipeline = get_pipeline()
+    timings = {
+        "embedding_load_ms": 0.0,
+        "reranker_load_ms": 0.0,
+        "embedding_warmup_ms": 0.0,
+        "reranker_warmup_ms": 0.0,
+    }
+
+    embedding = _get_embedding()
+    if embedding is not None and hasattr(embedding, "_get_local_engine"):
+        start = time.perf_counter()
+        embedding._get_local_engine()  # type: ignore[attr-defined]
+        timings["embedding_load_ms"] = (time.perf_counter() - start) * 1000
+
+    reranker = pipeline.reranker
+    if hasattr(reranker, "_load"):
+        start = time.perf_counter()
+        reranker._load()  # type: ignore[attr-defined]
+        timings["reranker_load_ms"] = (time.perf_counter() - start) * 1000
+
+    if warmup:
+        if embedding is not None:
+            start = time.perf_counter()
+            embedding.embed_query("kiểm tra hệ thống")
+            timings["embedding_warmup_ms"] = (time.perf_counter() - start) * 1000
+        if hasattr(reranker, "rerank"):
+            start = time.perf_counter()
+            reranker.rerank(
+                "kiểm tra hệ thống",
+                [Document(page_content="nội dung kiểm tra", metadata={"id": "warmup"})],
+                top_k=1,
+            )
+            timings["reranker_warmup_ms"] = (time.perf_counter() - start) * 1000
+
+    timings["total_startup_model_ms"] = sum(timings.values())
+    return timings
 
 
 def get_pipeline() -> RAGPipeline:

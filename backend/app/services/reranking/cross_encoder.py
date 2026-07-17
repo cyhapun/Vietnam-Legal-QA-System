@@ -4,12 +4,14 @@ from __future__ import annotations
 import math
 import os
 import threading
+import time
 from pathlib import Path
 from typing import List, Sequence
 
 from langchain_core.documents import Document
 
 from app.config import LOCAL_MODELS_OFFLINE, PIPELINE_CONFIG
+from app.services.pipeline_timing import current_timing
 from app.utils.logging import setup_logger
 
 logger = setup_logger("vietlaw.reranking.cross_encoder")
@@ -104,6 +106,7 @@ class CrossEncoderReranker:
                         ) from exc
 
                     logger.info("Loading local reranker from %s", self._model_path)
+                    load_start = time.perf_counter_ns()
                     tokenizer = AutoTokenizer.from_pretrained(
                         self._model_path,
                         local_files_only=self._local_files_only,
@@ -117,22 +120,41 @@ class CrossEncoderReranker:
                     self._torch = torch
                     self._tokenizer = tokenizer
                     self._model = model
+                    collector = current_timing()
+                    if collector is not None:
+                        collector.mark_reranker_model_load((time.perf_counter_ns() - load_start) / 1_000_000)
         return self._tokenizer, self._model, self._torch
 
     def _score_batch(self, query: str, texts: Sequence[str]) -> List[float]:
         tokenizer, model, torch = self._load()
-        encoded = tokenizer(
-            list(zip([query] * len(texts), texts)),
-            padding=True,
-            truncation=True,
-            max_length=self._max_length,
-            return_tensors="pt",
-        )
-        encoded = {key: value.to(self._device) for key, value in encoded.items()}
+        collector = current_timing()
+        if collector is not None:
+            with collector.stage("reranking"):
+                encoded = tokenizer(
+                    list(zip([query] * len(texts), texts)),
+                    padding=True,
+                    truncation=True,
+                    max_length=self._max_length,
+                    return_tensors="pt",
+                )
+                encoded = {key: value.to(self._device) for key, value in encoded.items()}
 
-        with torch.inference_mode():
-            outputs = model(**encoded)
-            logits = outputs.logits
+                with torch.inference_mode():
+                    outputs = model(**encoded)
+                    logits = outputs.logits
+        else:
+            encoded = tokenizer(
+                list(zip([query] * len(texts), texts)),
+                padding=True,
+                truncation=True,
+                max_length=self._max_length,
+                return_tensors="pt",
+            )
+            encoded = {key: value.to(self._device) for key, value in encoded.items()}
+
+            with torch.inference_mode():
+                outputs = model(**encoded)
+                logits = outputs.logits
 
         if logits.ndim == 1:
             logits = logits.unsqueeze(-1)
@@ -178,19 +200,34 @@ class CrossEncoderReranker:
                 return self._fail_open_result(documents, top_k)
             raise RuntimeError(f"Local cross-encoder reranking failed for {self._model_path}: {exc}") from exc
 
-        scored_docs = []
-        for index, (score, doc) in enumerate(zip(scores, documents)):
-            metadata = dict(doc.metadata or {})
-            metadata["rerank_score"] = score
-            scored_docs.append(
-                (
-                    score,
-                    index,
-                    Document(page_content=doc.page_content, metadata=metadata),
+        collector = current_timing()
+        if collector is not None:
+            with collector.stage("reranking"):
+                scored_docs = []
+                for index, (score, doc) in enumerate(zip(scores, documents)):
+                    metadata = dict(doc.metadata or {})
+                    metadata["rerank_score"] = score
+                    scored_docs.append(
+                        (
+                            score,
+                            index,
+                            Document(page_content=doc.page_content, metadata=metadata),
+                        )
+                    )
+                scored_docs.sort(key=lambda item: (-item[0], item[1]))
+        else:
+            scored_docs = []
+            for index, (score, doc) in enumerate(zip(scores, documents)):
+                metadata = dict(doc.metadata or {})
+                metadata["rerank_score"] = score
+                scored_docs.append(
+                    (
+                        score,
+                        index,
+                        Document(page_content=doc.page_content, metadata=metadata),
+                    )
                 )
-            )
-
-        scored_docs.sort(key=lambda item: (-item[0], item[1]))
+            scored_docs.sort(key=lambda item: (-item[0], item[1]))
         results = [doc for _, _, doc in scored_docs[:top_k]]
         logger.info(
             "Local CrossEncoder reranked %d -> %d documents (top score: %.4f)",

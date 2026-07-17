@@ -4,6 +4,7 @@ from __future__ import annotations
 import math
 import os
 import threading
+import time
 from pathlib import Path
 from typing import List, Optional
 
@@ -20,6 +21,7 @@ from app.config import (
     LOCAL_MODELS_OFFLINE,
 )
 from app.services.embedding.errors import EmbeddingAuthError, EmbeddingServerError
+from app.services.pipeline_timing import current_timing
 from app.utils.logging import setup_logger
 
 logger = setup_logger("vietlaw.embedding.hf_endpoint")
@@ -141,6 +143,7 @@ class HuggingFaceEndpointEmbedding:
                         ) from exc
 
                     logger.info("Loading local SentenceTransformer from %s", self._model_name)
+                    load_start = time.perf_counter_ns()
                     self._engine = SentenceTransformer(
                         self._model_name,
                         device=self._device,
@@ -148,6 +151,9 @@ class HuggingFaceEndpointEmbedding:
                     )
                     if hasattr(self._engine, "eval"):
                         self._engine.eval()
+                    collector = current_timing()
+                    if collector is not None:
+                        collector.mark_embedding_model_load((time.perf_counter_ns() - load_start) / 1_000_000)
         return self._engine
 
     def _validate_vectors(self, vectors: List[List[float]], expected_count: int) -> List[List[float]]:
@@ -169,13 +175,24 @@ class HuggingFaceEndpointEmbedding:
         if not texts:
             return []
         engine = self._get_local_engine()
-        vectors = engine.encode(
-            texts,
-            batch_size=self._batch_size,
-            normalize_embeddings=self._normalize_embeddings,
-            convert_to_numpy=True,
-            show_progress_bar=False,
-        )
+        collector = current_timing()
+        if collector is not None:
+            with collector.stage("query_embedding"):
+                vectors = engine.encode(
+                    texts,
+                    batch_size=self._batch_size,
+                    normalize_embeddings=self._normalize_embeddings,
+                    convert_to_numpy=True,
+                    show_progress_bar=False,
+                )
+        else:
+            vectors = engine.encode(
+                texts,
+                batch_size=self._batch_size,
+                normalize_embeddings=self._normalize_embeddings,
+                convert_to_numpy=True,
+                show_progress_bar=False,
+            )
         if hasattr(vectors, "tolist"):
             vectors = vectors.tolist()
         return self._validate_vectors(vectors, len(texts))

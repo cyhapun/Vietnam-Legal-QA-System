@@ -107,8 +107,8 @@ class ChatRequest(BaseModel):
     category: str = "all"  # Lĩnh vực pháp luật để lọc tài liệu
     temperature: Optional[float] = None
     maxTokens: Optional[int] = None
-    topK: Optional[int] = Field(default=None, ge=1, le=20)
-    candidateK: int = Field(default=60, ge=10, le=100)
+    topK: Optional[int] = Field(default=5, ge=1, le=20)
+    candidateK: int = Field(default=10, ge=10, le=100)
     cacheThreshold: float = Field(default=0.95, ge=0.8, le=0.99)
     maxSubqueries: int = Field(default=3, ge=1, le=5)
     historyMessages: int = Field(default=4, ge=0, le=10)
@@ -122,6 +122,13 @@ class ChatRequest(BaseModel):
     enableSemanticCache: bool = True
     enableMemory: bool = True
     inference_config: Optional[RuntimeInferenceConfig] = Field(default=None, alias="inferenceConfig")
+
+    @model_validator(mode="after")
+    def validate_candidate_window(self):
+        final_top_k = self.topK or 5
+        if self.candidateK < final_top_k:
+            raise ValueError("candidateK must be greater than or equal to topK")
+        return self
 
 
 class ChatResponse(BaseModel):

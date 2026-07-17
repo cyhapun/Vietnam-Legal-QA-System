@@ -58,3 +58,65 @@ def test_cross_encoder_wires_local_reranker_from_config(monkeypatch):
     assert reranker.batch_size == 4
     assert reranker.max_length == 256
     assert reranker.fail_open is True
+
+
+def test_preload_local_models_loads_singletons_without_warmup(monkeypatch):
+    calls = []
+
+    class FakeEmbedding:
+        def _get_local_engine(self):
+            calls.append("embedding_load")
+
+        def embed_query(self, query):
+            calls.append("embedding_warmup")
+            return [0.0]
+
+    class FakeReranker:
+        def _load(self):
+            calls.append("reranker_load")
+
+        def rerank(self, query, documents, top_k):
+            calls.append("reranker_warmup")
+            return documents[:top_k]
+
+    class FakePipeline:
+        reranker = FakeReranker()
+
+    monkeypatch.setattr(pipeline_module, "get_pipeline", lambda: FakePipeline())
+    monkeypatch.setattr(pipeline_module, "_get_embedding", lambda: FakeEmbedding())
+
+    timings = pipeline_module.preload_local_models(warmup=False)
+
+    assert calls == ["embedding_load", "reranker_load"]
+    assert "total_startup_model_ms" in timings
+
+
+def test_preload_local_models_warmup_uses_synthetic_inputs(monkeypatch):
+    calls = []
+
+    class FakeEmbedding:
+        def _get_local_engine(self):
+            calls.append(("embedding_load", None))
+
+        def embed_query(self, query):
+            calls.append(("embedding_warmup", query))
+            return [0.0]
+
+    class FakeReranker:
+        def _load(self):
+            calls.append(("reranker_load", None))
+
+        def rerank(self, query, documents, top_k):
+            calls.append(("reranker_warmup", query, documents[0].page_content, top_k))
+            return documents[:top_k]
+
+    class FakePipeline:
+        reranker = FakeReranker()
+
+    monkeypatch.setattr(pipeline_module, "get_pipeline", lambda: FakePipeline())
+    monkeypatch.setattr(pipeline_module, "_get_embedding", lambda: FakeEmbedding())
+
+    pipeline_module.preload_local_models(warmup=True)
+
+    assert ("embedding_warmup", "kiểm tra hệ thống") in calls
+    assert ("reranker_warmup", "kiểm tra hệ thống", "nội dung kiểm tra", 1) in calls
