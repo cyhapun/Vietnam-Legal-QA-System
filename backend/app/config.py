@@ -51,9 +51,16 @@ PIPELINE_TIMING_ENABLED = os.getenv("PIPELINE_TIMING_ENABLED", "false").strip().
 DEFAULT_LOCAL_EMBEDDING_MODEL = "../models/embedding/vietlaw-bge-m3-finetuned/best"
 DEFAULT_LOCAL_RERANKER_MODEL = "../models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/selected"
 
-EMBEDDING_MODEL = os.getenv("HUGGINGFACE_EMBEDDING_MODEL", DEFAULT_LOCAL_EMBEDDING_MODEL)
+IS_PROD = os.getenv("ENVIRONMENT", "").strip().lower() == "production" or os.getenv("VERCEL") == "1" or os.getenv("RENDER") == "true" or os.getenv("VERCEL_ENV") is not None
+DEFAULT_MODE = "api" if IS_PROD else "local"
+
+DEFAULT_API_EMBEDDING_MODEL = "BAAI/bge-m3"
+EMBEDDING_MODEL = os.getenv(
+    "HUGGINGFACE_EMBEDDING_MODEL", 
+    DEFAULT_API_EMBEDDING_MODEL if IS_PROD else DEFAULT_LOCAL_EMBEDDING_MODEL
+)
 # Hỗ trợ "api", "local", hoặc "openrouter"
-HUGGINGFACE_EMBEDDING_MODE = os.getenv("HUGGINGFACE_EMBEDDING_MODE", "local").strip().lower()
+HUGGINGFACE_EMBEDDING_MODE = os.getenv("HUGGINGFACE_EMBEDDING_MODE", DEFAULT_MODE).strip().lower()
 OPENROUTER_EMBEDDING_MODEL = os.getenv("OPENROUTER_EMBEDDING_MODEL", "baai/bge-m3").strip()
 OPENROUTER_EMBEDDING_BASE_URL = os.getenv(
     "OPENROUTER_EMBEDDING_BASE_URL",
@@ -119,7 +126,7 @@ PIPELINE_CONFIG = {
     "search": os.getenv("PIPELINE_SEARCH", "faiss"),
 
     # Reranking: "none" | "cross_encoder"
-    "reranking": os.getenv("PIPELINE_RERANKING", "none"),
+    "reranking": os.getenv("PIPELINE_RERANKING", "cross_encoder"),
 
     # Context builder: "nested"
     "context_builder": os.getenv("PIPELINE_CONTEXT_BUILDER", "nested"),
@@ -130,7 +137,7 @@ PIPELINE_CONFIG = {
 
     # --- Reranker model (chỉ dùng khi reranking="cross_encoder") ---
     "reranker_model": os.getenv("RERANKER_MODEL", DEFAULT_LOCAL_RERANKER_MODEL),
-    "reranker_mode": os.getenv("RERANKER_MODE", "local").strip().lower(),
+    "reranker_mode": os.getenv("RERANKER_MODE", DEFAULT_MODE).strip().lower(),
     "reranker_api_model": os.getenv("RERANKER_API_MODEL", "BAAI/bge-reranker-v2-m3").strip(),
     "reranker_api_url": os.getenv(
         "RERANKER_API_URL",
