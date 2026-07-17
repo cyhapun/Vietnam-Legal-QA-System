@@ -164,6 +164,12 @@ def _evaluate_answers(records, base_url: str, model: str, candidate_k: int, top_
         context_text = _context_text_for_diagnostics(context_items)
         answer_text = data.get("text", "")
         citation_ids = extract_citation_ids(answer_text)
+        relevant_ids = record.relevant_source_ids
+        failure_stage_override = None
+        if relevant_ids and not (set(final_ids) & relevant_ids):
+            # /chat returns contextUsed after citation filtering, not the raw retrieval trace.
+            # Do not label answer-mode misses as Qdrant retrieval failures.
+            failure_stage_override = "unused_by_answer"
         trace = build_stage_trace(
             record,
             retrieved_source_ids=final_ids,
@@ -172,6 +178,7 @@ def _evaluate_answers(records, base_url: str, model: str, candidate_k: int, top_
             final_context_text=context_text,
             answer_text=answer_text,
             total_ms=total_ms,
+            failure_stage_override=failure_stage_override,
         )
         traces.append(trace)
         raw_results.append({

@@ -179,6 +179,7 @@ def build_stage_trace(
     answer_text: str = "",
     total_ms: float | None = None,
     ttft_ms: float | None = None,
+    failure_stage_override: str | None = None,
 ) -> StageTrace:
     relevant = record.relevant_source_ids
     retrieval_rank = first_relevant_rank(retrieved_source_ids, relevant)
@@ -188,7 +189,9 @@ def build_stage_trace(
     invalid_ids = invalid_citation_ids(citation_ids, final_context_source_ids)
     unsupported_refs = detect_unsupported_legal_references(answer_text, final_context_text) if answer_text else []
 
-    if retrieval_rank is None:
+    if failure_stage_override:
+        failure_stage = failure_stage_override
+    elif retrieval_rank is None:
         failure_stage = "missing_from_qdrant_top10"
     elif not final_context_presence:
         failure_stage = "lost_during_reranking"

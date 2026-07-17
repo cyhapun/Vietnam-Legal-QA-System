@@ -137,6 +137,28 @@ def test_answer_diagnostic_context_includes_source_metadata():
     assert detect_unsupported_legal_references("Theo Điều 99 thì được áp dụng.", context) == ["Điều 99"]
 
 
+def test_answer_mode_can_override_failure_stage_for_citation_filtered_context():
+    record = parse_quality_record({
+        "id": "answer-trace",
+        "question": "Điều kiện chuyển nhượng quyền sử dụng đất là gì?",
+        "required_source_ids": ["LDD_2024_D45_K1"],
+        "acceptable_source_ids": [],
+        "critical": True,
+        "category": "land",
+        "question_type": "natural_language",
+    })
+
+    trace = build_stage_trace(
+        record,
+        retrieved_source_ids=["LDD_2024_D28_K1"],
+        final_context_source_ids=["LDD_2024_D28_K1"],
+        citation_ids=["LDD_2024_D28_K1"],
+        failure_stage_override="unused_by_answer",
+    )
+
+    assert trace.failure_stage == "unused_by_answer"
+
+
 def test_generated_report_helpers_do_not_require_answer_content():
     record = parse_quality_record({
         "id": "trace",
