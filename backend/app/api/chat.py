@@ -27,6 +27,7 @@ from app.services.pipeline_timing import (
     sanitize_request_id,
     set_current_timing,
 )
+from app.services.answer_validation import validate_generated_citations
 from app.utils.logging import setup_logger
 
 logger = setup_logger("vietlaw.api.chat")
@@ -279,6 +280,14 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
         logger.info("LLM response generated")
 
         output_text = _clean_chunk(output_text)
+        validation = validate_generated_citations(output_text, frontend_context)
+        if validation.invalid_citation_ids or validation.fallback_used:
+            logger.warning(
+                "Answer citation validation adjusted output: invalid=%s fallback=%s",
+                list(validation.invalid_citation_ids),
+                validation.fallback_used,
+            )
+        output_text = validation.text
 
         frontend_context = _filter_cited_context(
             output_text, frontend_context, request.maxCitations
@@ -495,6 +504,17 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
                             accumulated_text += cleaned
                             yield _sse({"type": "token", "text": cleaned})
 
+            frontend_context = _filter_cited_context(
+                accumulated_text, frontend_context, request.maxCitations
+            )
+            validation = validate_generated_citations(accumulated_text, frontend_context)
+            if validation.invalid_citation_ids or validation.fallback_used:
+                logger.warning(
+                    "Stream answer citation validation adjusted output: invalid=%s fallback=%s",
+                    list(validation.invalid_citation_ids),
+                    validation.fallback_used,
+                )
+            accumulated_text = validation.text
             frontend_context = _filter_cited_context(
                 accumulated_text, frontend_context, request.maxCitations
             )

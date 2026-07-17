@@ -3,7 +3,7 @@ import asyncio
 import pytest
 from langchain_core.documents import Document
 
-from app.services.search.qdrant_search import QdrantSearcher
+from app.services.search.qdrant_search import QdrantSearcher, contains_explicit_legal_citation
 
 
 class _FallbackSearcher:
@@ -120,6 +120,57 @@ def test_qdrant_factory_creates_faiss_fallback_when_enabled(monkeypatch):
     pipeline._create_searcher(None)
 
     assert isinstance(captured["fallback_searcher"], FakeFAISSSearcher)
+
+
+def test_qdrant_prefetch_widens_only_for_explicit_legal_citations():
+    assert QdrantSearcher._prefetch_limit_for_queries(["query"], 10) == 20
+    assert (
+        QdrantSearcher._prefetch_limit_for_queries(["Theo Điều 45 khoản 1 Luật Đất đai 2024"], 10)
+        == 40
+    )
+    assert QdrantSearcher._prefetch_limit_for_queries(["Đ45 K1"], 10) == 40
+    assert (
+        QdrantSearcher._prefetch_limit_for_queries(["Điều kiện chuyển nhượng quyền sử dụng đất là gì?"], 10)
+        == 20
+    )
+
+
+@pytest.mark.parametrize(
+    "query",
+    [
+        "Điều 45",
+        "Điều 45 khoản 1",
+        "Khoản 1 Điều 45",
+        "điều 45, khoản 1",
+        "Điều 45 Khoản 1 Luật Đất đai 2024",
+        "Điểm a Khoản 1 Điều 45",
+        "khoản 3 điều 27",
+        "Đ45 K1",
+        "Đ.45 K.1",
+        "Điều 123",
+        "Khoản 12 Điều 345",
+    ],
+)
+def test_explicit_legal_citation_detector_positive_cases(query):
+    assert contains_explicit_legal_citation(query)
+
+
+@pytest.mark.parametrize(
+    "query",
+    [
+        "Tôi có 45 ngày để nộp hồ sơ không?",
+        "Khoản tiền 45 triệu đồng",
+        "Diện tích đất là 45.1 mét vuông",
+        "Hồ sơ số 45/2024",
+        "Mức phạt từ 40 đến 45 triệu",
+        "Tôi có 1 khoản vay",
+        "Điểm thi của tôi là 8",
+        "Năm 2024 tôi mua đất",
+        "Chuyển nhượng đất cần điều kiện gì?",
+    ],
+)
+def test_explicit_legal_citation_detector_negative_cases(query):
+    assert not contains_explicit_legal_citation(query)
 
 
 def test_faiss_storage_backend_still_requires_vectorstore(monkeypatch):
