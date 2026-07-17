@@ -5,6 +5,7 @@ import pytest
 
 from app.services.legal_quality_evaluation import (
     build_stage_trace,
+    classify_insufficient_context_answer,
     compute_quality_metrics,
     detect_unsupported_legal_references,
     extract_citation_ids,
@@ -14,11 +15,12 @@ from app.services.legal_quality_evaluation import (
     parse_quality_record,
     validate_dataset_sources,
 )
-from scripts.evaluate_legal_quality import _compute_answer_metrics, _context_text_for_diagnostics
+from scripts.evaluate_legal_quality import _compute_answer_metrics, _context_text_for_diagnostics, _metrics_for_mode
 from scripts.audit_legal_corpus_integrity import audit_json_corpus
 
 
 FIXTURE = Path(__file__).parent / "fixtures" / "legal_retrieval_quality.jsonl"
+INSUFFICIENT_FIXTURE = Path(__file__).parent / "fixtures" / "legal_insufficient_context_quality.jsonl"
 
 
 def test_quality_dataset_schema_and_sources_are_valid():
@@ -42,6 +44,69 @@ def test_quality_record_requires_expected_sources():
             "category": "test",
             "question_type": "test",
         })
+
+
+def test_insufficient_context_fixture_schema_is_valid():
+    records = load_quality_dataset(INSUFFICIENT_FIXTURE)
+
+    assert len(records) == 4
+    assert all(record.is_insufficient_context for record in records)
+    assert all(not record.required_source_ids for record in records)
+    assert all(record.must_not_invent_citation for record in records)
+
+
+def test_insufficient_context_records_do_not_require_expected_sources():
+    record = parse_quality_record({
+        "id": "insufficient",
+        "question": "Điều 999 Luật Đất đai 2024 quy định gì?",
+        "required_source_ids": [],
+        "acceptable_source_ids": [],
+        "critical": True,
+        "category": "land",
+        "question_type": "insufficient_context",
+        "expected_behavior": "insufficient_context",
+        "must_not_invent_citation": True,
+    })
+
+    assert record.is_insufficient_context is True
+    assert record.relevant_source_ids == set()
+
+
+def test_insufficient_context_classifier_accepts_safe_fallback_and_cautious_guidance():
+    assert classify_insufficient_context_answer(
+        "Dữ liệu hiện có chưa cung cấp đủ căn cứ pháp lý để trả lời chắc chắn câu hỏi này.",
+        [],
+        [],
+        [],
+    ) == "PASS_SAFE_FALLBACK"
+    assert classify_insufficient_context_answer(
+        "Dữ liệu hiện có chưa đủ căn cứ để xác định Điều 999 trong tài liệu.",
+        [],
+        [],
+        ["Điều 999"],
+    ) == "PASS_SAFE_FALLBACK"
+    assert classify_insufficient_context_answer(
+        "Cần cung cấp thêm thông tin cá nhân; có thể tham khảo điều kiện chung tại nguồn đã trích dẫn.",
+        ["LNO_2023_D78_K1"],
+        [],
+        [],
+    ) == "PASS_CAUTIOUS_GUIDANCE"
+
+
+def test_insufficient_context_classifier_rejects_hallucinated_or_overconfident_answers():
+    assert classify_insufficient_context_answer(
+        "Theo Điều 999, bạn chắc chắn đủ điều kiện.",
+        ["FAKE_2024_D999"],
+        ["FAKE_2024_D999"],
+        [],
+    ) == "FAIL_HALLUCINATED_REFERENCE"
+    assert classify_insufficient_context_answer(
+        "Bạn đủ điều kiện được mua nhà ở xã hội.",
+        [],
+        [],
+        [],
+    ) == "FAIL_OVERCONFIDENT"
+    assert classify_insufficient_context_answer("", [], [], []) == "FAIL_EMPTY_OR_ERROR"
 
 
 def test_metrics_calculate_hits_recall_mrr_and_critical_misses():
@@ -113,6 +178,17 @@ def test_unsupported_legal_reference_detection_is_conservative():
 
     assert detect_unsupported_legal_references(answer, context) == []
     assert detect_unsupported_legal_references("Theo Điều 99 thì được miễn.", context) == ["Điều 99"]
+
+
+def test_unsupported_legal_reference_detection_handles_law_name_parentheses_and_markdown():
+    context = "Nguồn: Luật Nhà ở 2023 | Điều 78 | Nội dung..."
+    answer = "**Luật Nhà ở 2023 (Văn bản hợp nhất 132/VBHN-VPQH 2025)** cần thêm dữ kiện."
+
+    assert detect_unsupported_legal_references(answer, context) == []
+    assert detect_unsupported_legal_references(
+        'theo luật Việt Nam và <cite id="LTTPHS_2025_D3_K1">nguồn</cite>',
+        context,
+    ) == []
 
 
 def test_answer_diagnostic_context_includes_source_metadata():
@@ -188,6 +264,25 @@ def test_answer_metrics_are_reported_separately_from_retrieval_metrics():
     assert metrics["required_citation_presence_rate"] == 0.5
     assert metrics["unused_by_answer_count"] == 1
     assert metrics["invalid_citations_returned"] == 0
+    assert metrics["insufficient_context_count"] == 0
+
+
+def test_retrieval_mode_omits_answer_only_metrics():
+    record = parse_quality_record({
+        "id": "retrieval-metrics",
+        "question": "q",
+        "required_source_ids": ["A"],
+        "acceptable_source_ids": [],
+        "critical": False,
+        "category": "c",
+        "question_type": "direct",
+    })
+    trace = build_stage_trace(record, ["A"], ["A"])
+
+    metrics = _metrics_for_mode([record], [trace], "retrieval")
+
+    assert "invalid_citation_count" not in metrics
+    assert "unsupported_legal_reference_count" not in metrics
 
 
 def test_generated_report_helpers_do_not_require_answer_content():

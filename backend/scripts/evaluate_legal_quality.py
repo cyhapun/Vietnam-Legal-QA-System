@@ -196,6 +196,11 @@ def _compute_answer_metrics(traces: list) -> dict:
     invalid_count = sum(len(trace.invalid_citation_ids) for trace in traces)
     unsupported_count = sum(len(trace.unsupported_legal_references) for trace in traces)
     required_cited = sum(1 for trace in traces if trace.citation_presence)
+    insufficient_results = [
+        trace.insufficient_context_result
+        for trace in traces
+        if trace.insufficient_context_result
+    ]
     return {
         "count": total,
         "required_citation_presence_rate": required_cited / total if total else 0.0,
@@ -203,7 +208,19 @@ def _compute_answer_metrics(traces: list) -> dict:
         "unsupported_legal_reference_count": unsupported_count,
         "unused_by_answer_count": sum(1 for trace in traces if trace.failure_stage == "unused_by_answer"),
         "invalid_model_citation_count": sum(1 for trace in traces if trace.failure_stage == "invalid_citation"),
+        "insufficient_context_count": len(insufficient_results),
+        "insufficient_context_pass_count": sum(
+            1 for result in insufficient_results if result.startswith("PASS_")
+        ),
     }
+
+
+def _metrics_for_mode(records: list, traces: list, mode: str) -> dict:
+    metrics = compute_quality_metrics(records, traces)
+    if mode == "retrieval":
+        metrics.pop("invalid_citation_count", None)
+        metrics.pop("unsupported_legal_reference_count", None)
+    return metrics
 
 
 def _write_report(output: Path, payload: dict) -> None:
@@ -263,7 +280,7 @@ def main() -> int:
         "mode": mode,
         "candidate_k": args.candidate_k,
         "top_k": args.top_k,
-        "metrics": compute_quality_metrics(evaluated_records, traces),
+        "metrics": _metrics_for_mode(evaluated_records, traces, mode),
         "answer_metrics": _compute_answer_metrics(traces) if mode == "answer" else "not_applicable",
         "traces": [trace_to_dict(trace) for trace in traces],
         "raw_results": raw_results,
