@@ -156,7 +156,7 @@ from app.services.pipeline import get_pipeline
 
 docs, _ = get_pipeline().retrieve(
     "Điều kiện chuyển nhượng quyền sử dụng đất là gì?",
-    k=20,
+    k=10,
     rerank_top_k=5,
     enable_reranker=True,
 )
@@ -193,10 +193,13 @@ scope.
 ## CPU and GPU Notes
 
 CPU inference works but can be slow, especially reranking with
-`candidateK=60`. Lower `RERANKER_BATCH_SIZE`, `RERANKER_MAX_LENGTH`, or the
-retrieval candidate count if latency or RAM usage is too high. GPU can be used
-by changing `EMBEDDING_DEVICE` and `RERANKER_DEVICE`, but Docker images should
-not pin CUDA-specific local builds in the shared dependency manifest.
+the local cross-encoder. The runtime default retrieves and reranks 10
+candidates, then keeps the top 5 final contexts. CPU thread and batch-size
+screening on the baseline machine did not outperform the existing
+`RERANKER_BATCH_SIZE=8` configuration, so no thread or batch tuning is retained.
+GPU can be used by changing `EMBEDDING_DEVICE` and `RERANKER_DEVICE`, but
+Docker images should not pin CUDA-specific local builds in the shared
+dependency manifest.
 
 ## Rollback
 

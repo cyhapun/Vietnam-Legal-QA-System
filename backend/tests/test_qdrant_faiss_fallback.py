@@ -55,7 +55,11 @@ def test_qdrant_success_does_not_call_fallback(monkeypatch):
 
 
 def test_async_qdrant_error_reraises_when_fallback_disabled(monkeypatch):
+    async def immediate_to_thread(func, /, *args, **kwargs):
+        return func(*args, **kwargs)
+
     searcher = QdrantSearcher(vectorstore=None, fallback_searcher=None, collection_name="vietlaw_clauses")
+    monkeypatch.setattr(asyncio, "to_thread", immediate_to_thread)
     monkeypatch.setattr(searcher, "_search_qdrant", lambda *args, **kwargs: (_ for _ in ()).throw(RuntimeError("auth failed")))
 
     with pytest.raises(RuntimeError, match="FAISS fallback is disabled"):
@@ -63,8 +67,12 @@ def test_async_qdrant_error_reraises_when_fallback_disabled(monkeypatch):
 
 
 def test_async_qdrant_error_uses_fallback_only_when_enabled(monkeypatch):
+    async def immediate_to_thread(func, /, *args, **kwargs):
+        return func(*args, **kwargs)
+
     fallback = _AsyncFallbackSearcher()
     searcher = QdrantSearcher(vectorstore=None, fallback_searcher=fallback, collection_name="vietlaw_clauses")
+    monkeypatch.setattr(asyncio, "to_thread", immediate_to_thread)
     monkeypatch.setattr(searcher, "_search_qdrant", lambda *args, **kwargs: (_ for _ in ()).throw(RuntimeError("qdrant down")))
 
     docs = asyncio.run(searcher.asearch("query"))

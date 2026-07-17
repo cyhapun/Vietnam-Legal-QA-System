@@ -107,7 +107,7 @@ class ChatRequest(BaseModel):
     category: str = "all"  # Lĩnh vực pháp luật để lọc tài liệu
     temperature: Optional[float] = None
     maxTokens: Optional[int] = None
-    topK: Optional[int] = Field(default=None, ge=1, le=20)
+    topK: Optional[int] = Field(default=5, ge=1, le=20)
     candidateK: int = Field(default=10, ge=10, le=100)
     cacheThreshold: float = Field(default=0.95, ge=0.8, le=0.99)
     maxSubqueries: int = Field(default=3, ge=1, le=5)

@@ -1,7 +1,9 @@
 # Pipeline Latency Measurement
 
-This instrumentation measures the current chat pipeline without changing retrieval,
-reranking, model loading, prompts, semantic cache, or provider configuration.
+This instrumentation measures the current chat pipeline without exposing user
+content or credentials in logs. It was used to compare the previous effective
+20-candidate retrieval/reranking workload with the final 10-candidate runtime
+default.
 
 ## Enable Timing Logs
 
@@ -62,11 +64,15 @@ Keep the baseline configuration unchanged:
 - local fine-tuned embedding;
 - Qdrant Cloud collection;
 - local fine-tuned reranker;
-- retrieve 20 candidates;
-- rerank 20 candidates;
+- retrieve 10 candidates by default;
+- rerank at most 10 candidates by default;
 - top 5 final contexts;
 - semantic cache disabled;
 - FAISS fallback disabled.
+
+For historical comparison, the measured optimization baseline used an explicit
+`candidateK=20` request payload. The accepted runtime default is now
+`candidateK=10`, while final `topK` remains 5.
 
 ## Client Benchmark
 
@@ -82,6 +88,32 @@ cd backend
 
 The script prints request IDs. Correlate them with backend log lines where
 `event` is `pipeline_timing`.
+
+Use `--candidate-k 20` only when reproducing the historical baseline. The
+default benchmark payload uses the final runtime candidate count of 10.
+
+## Measured Optimization Summary
+
+Candidate reduction was the source of the warm latency improvement:
+
+- warm reranking median: 59.54s -> 40.30s;
+- warm total median: 73.89s -> 51.47s;
+- warm TTFT median: 73.01s -> 50.94s.
+
+Preload/warm-up moves local model initialization into startup/readiness. It
+does not materially improve already-warm reranking latency. On the baseline CPU
+environment, readiness took about 82.8s and the first request after readiness
+reported `model_load_ms=0`.
+
+CPU thread and reranker batch screening did not outperform the existing
+threads 4 / interop 4 / batch 8 behavior, so no thread or batch tuning code is
+retained.
+
+Quality smoke checks are not a formal retrieval evaluation. The optimized
+configuration retained `LDD_2024_D27_K3` for the land-transfer notarization
+question, and top-5 overlap was 0.80 on two smoke queries. `LDD_2024_D45_K1`
+was still missed by both the measured 20-candidate baseline and the final
+10-candidate configuration.
 
 ## Log Safety
 

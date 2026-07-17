@@ -82,7 +82,7 @@ def test_chat_request_defaults_candidate_k_to_reduced_workload():
     })
 
     assert request.candidateK == 10
-    assert request.topK is None
+    assert request.topK == 5
 
 
 def test_chat_request_rejects_candidate_k_below_top_k():

@@ -1,13 +1,35 @@
-from fastapi.testclient import TestClient
+import asyncio
+
+from fastapi import HTTPException
 
 import app.main as main_module
 
 
-def _app_without_startup_side_effects(monkeypatch):
+def _app_without_startup_side_effects(monkeypatch, *, preload_enabled=False, warmup_enabled=False):
+    async def immediate_to_thread(func, /, *args, **kwargs):
+        return func(*args, **kwargs)
+
+    monkeypatch.setattr(main_module, "LOCAL_MODELS_PRELOAD_ENABLED", preload_enabled)
+    monkeypatch.setattr(main_module, "LOCAL_MODELS_WARMUP_ENABLED", warmup_enabled)
+    monkeypatch.setattr(main_module.asyncio, "to_thread", immediate_to_thread)
     monkeypatch.setattr(main_module, "load_knowledge_base", lambda: None)
     monkeypatch.setattr(main_module, "initialize_storage", lambda: None)
     monkeypatch.setattr(main_module, "init_pipeline", lambda: None)
-    return main_module.create_app()
+    monkeypatch.setattr(main_module, "preload_local_models", lambda warmup=False: {})
+    app = main_module.create_app()
+    app.router.on_startup.clear()
+    return app
+
+
+def _route_endpoint(app, path):
+    for route in app.routes:
+        if getattr(route, "path", None) == path:
+            return route.endpoint
+    raise AssertionError(f"route {path} not found")
+
+
+def _call_route(app, path):
+    return asyncio.run(_route_endpoint(app, path)())
 
 
 def test_health_is_fast_and_does_not_call_dependencies(monkeypatch):
@@ -20,11 +42,9 @@ def test_health_is_fast_and_does_not_call_dependencies(monkeypatch):
     monkeypatch.setattr(main_module, "_check_postgres", fail_if_called)
     monkeypatch.setattr(main_module, "_check_qdrant", fail_if_called)
 
-    with TestClient(app) as client:
-        response = client.get("/health")
+    response = _call_route(app, "/health")
 
-    assert response.status_code == 200
-    assert response.json() == {"status": "ok"}
+    assert response == {"status": "ok"}
 
 
 def test_readiness_success_with_mocked_dependencies(monkeypatch):
@@ -54,11 +74,8 @@ def test_readiness_success_with_mocked_dependencies(monkeypatch):
         },
     )
 
-    with TestClient(app) as client:
-        response = client.get("/readiness")
+    body = _call_route(app, "/readiness")
 
-    assert response.status_code == 200
-    body = response.json()
     assert body["status"] == "ready"
     assert body["components"]["embedding"]["status"] == "ok"
     assert body["components"]["qdrant"]["denseVector"]["dimension"] == 1024
@@ -81,49 +98,42 @@ def test_readiness_returns_503_when_required_dependency_fails(monkeypatch):
 
     monkeypatch.setattr(main_module, "_check_qdrant", qdrant_down)
 
-    with TestClient(app) as client:
-        response = client.get("/readiness")
-
-    assert response.status_code == 503
-    detail = response.json()["detail"]
+    try:
+        _call_route(app, "/readiness")
+    except HTTPException as exc:
+        assert exc.status_code == 503
+        detail = exc.detail
+    else:  # pragma: no cover - defensive assertion
+        raise AssertionError("readiness should raise HTTPException")
     assert detail["status"] == "not_ready"
     assert detail["components"]["qdrant"]["status"] == "error"
 
 
 def test_readiness_waits_for_local_model_preload(monkeypatch):
-    monkeypatch.setattr(main_module, "LOCAL_MODELS_PRELOAD_ENABLED", True)
-    monkeypatch.setattr(main_module, "LOCAL_MODELS_WARMUP_ENABLED", True)
-    monkeypatch.setattr(main_module, "preload_local_models", lambda warmup=False: {})
-    monkeypatch.setattr(main_module.asyncio, "create_task", lambda coro: coro.close())
-    app = _app_without_startup_side_effects(monkeypatch)
+    app = _app_without_startup_side_effects(monkeypatch, preload_enabled=True, warmup_enabled=True)
     monkeypatch.setattr(main_module, "_check_artifacts", lambda: {"embedding": {"status": "ok"}, "reranker": {"status": "ok"}})
     monkeypatch.setattr(main_module, "_check_postgres", lambda: {"status": "ok"})
     monkeypatch.setattr(main_module, "_check_qdrant", lambda: {"status": "ok", "denseVector": {"dimension": 1024}})
 
-    with TestClient(app) as client:
-        app.state.local_models_ready = False
-        response = client.get("/readiness")
-
-    assert response.status_code == 503
-    detail = response.json()["detail"]
+    app.state.local_models_ready = False
+    try:
+        _call_route(app, "/readiness")
+    except HTTPException as exc:
+        assert exc.status_code == 503
+        detail = exc.detail
+    else:  # pragma: no cover - defensive assertion
+        raise AssertionError("readiness should raise HTTPException")
     assert detail["components"]["localModels"]["status"] == "error"
     assert detail["components"]["localModels"]["preload"] is True
 
 
 def test_readiness_allows_ready_local_model_preload(monkeypatch):
-    monkeypatch.setattr(main_module, "LOCAL_MODELS_PRELOAD_ENABLED", True)
-    monkeypatch.setattr(main_module, "LOCAL_MODELS_WARMUP_ENABLED", True)
-    monkeypatch.setattr(main_module, "preload_local_models", lambda warmup=False: {})
-    monkeypatch.setattr(main_module.asyncio, "create_task", lambda coro: coro.close())
-    app = _app_without_startup_side_effects(monkeypatch)
+    app = _app_without_startup_side_effects(monkeypatch, preload_enabled=True, warmup_enabled=True)
     monkeypatch.setattr(main_module, "_check_artifacts", lambda: {"embedding": {"status": "ok"}, "reranker": {"status": "ok"}})
     monkeypatch.setattr(main_module, "_check_postgres", lambda: {"status": "ok"})
     monkeypatch.setattr(main_module, "_check_qdrant", lambda: {"status": "ok", "denseVector": {"dimension": 1024}})
 
-    with TestClient(app) as client:
-        app.state.local_models_ready = True
-        response = client.get("/readiness")
+    app.state.local_models_ready = True
+    body = _call_route(app, "/readiness")
 
-    assert response.status_code == 200
-    body = response.json()
     assert body["components"]["localModels"]["status"] == "ok"
