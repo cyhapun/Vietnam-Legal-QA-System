@@ -14,6 +14,7 @@ from app.config import (
     EMBEDDING_DIMENSION,
     EMBEDDING_PROVIDER,
     POSTGRES_DSN,
+    CHAT_STORAGE_MODE,
     QDRANT_API_KEY,
     QDRANT_COLLECTION,
     QDRANT_URL,
@@ -23,6 +24,11 @@ from app.config import (
 from app.utils.logging import setup_logger
 
 logger = setup_logger("vietlaw.storage")
+
+
+def is_chat_persistence_enabled() -> bool:
+    """Return whether user conversation data may be persisted server-side."""
+    return CHAT_STORAGE_MODE == "postgres"
 
 
 class StorageInitializationError(RuntimeError):
@@ -528,6 +534,8 @@ def ingest_documents(records: List[Dict[str, Any]]) -> int:
 
 def get_session_summary(session_id: str) -> Optional[Dict[str, Any]]:
     """Retrieve the conversation summary and turn count for a given session."""
+    if not is_chat_persistence_enabled():
+        return None
     try:
         import psycopg
     except ImportError:
@@ -553,6 +561,8 @@ def get_session_summary(session_id: str) -> Optional[Dict[str, Any]]:
 
 def upsert_session_summary(session_id: str, summary: str, turn_count: int) -> None:
     """Insert or update the session summary and turn count."""
+    if not is_chat_persistence_enabled():
+        return
     try:
         import psycopg
     except ImportError:
@@ -578,6 +588,8 @@ def upsert_session_summary(session_id: str, summary: str, turn_count: int) -> No
 
 def ensure_session_exists(session_id: str, title: str = "Cuộc trò chuyện mới") -> None:
     """Create a chat_sessions row if it doesn't exist yet."""
+    if not is_chat_persistence_enabled():
+        return
     try:
         import psycopg
     except ImportError:
@@ -599,6 +611,8 @@ def ensure_session_exists(session_id: str, title: str = "Cuộc trò chuyện m�
 
 def update_session_title(session_id: str, title: str) -> None:
     """Update the display title for a session."""
+    if not is_chat_persistence_enabled():
+        return
     try:
         import psycopg
     except ImportError:
@@ -623,6 +637,8 @@ def save_chat_message(
     created_at: Optional[datetime] = None,
 ) -> None:
     """Persist a single chat message (user or assistant) to PostgreSQL."""
+    if not is_chat_persistence_enabled():
+        return
     try:
         import psycopg
     except ImportError:
@@ -649,6 +665,8 @@ def save_chat_message(
 
 def get_session_messages(session_id: str) -> List[Dict[str, Any]]:
     """Return all messages for a session ordered by creation time."""
+    if not is_chat_persistence_enabled():
+        return []
     try:
         import psycopg
     except ImportError:
@@ -683,6 +701,8 @@ def get_session_messages(session_id: str) -> List[Dict[str, Any]]:
 
 def list_sessions() -> List[Dict[str, Any]]:
     """Return all sessions ordered by most recent activity."""
+    if not is_chat_persistence_enabled():
+        return []
     try:
         import psycopg
     except ImportError:
@@ -717,6 +737,8 @@ def list_sessions() -> List[Dict[str, Any]]:
 
 def delete_session_summary(session_id: str) -> None:
     """Delete a session and ALL associated data (messages, feedbacks) from PostgreSQL."""
+    if not is_chat_persistence_enabled():
+        return
     try:
         import psycopg
     except ImportError:
@@ -736,6 +758,8 @@ def delete_session_summary(session_id: str) -> None:
 
 def get_all_chat_messages() -> List[Dict[str, Any]]:
     """Get all chat messages from PostgreSQL for analytics."""
+    if not is_chat_persistence_enabled():
+        return []
     try:
         import psycopg
     except ImportError:

@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from app.services.storage import is_database_backend_enabled, _ensure_schema
-from app.config import POSTGRES_DSN
+from app.config import CHAT_STORAGE_MODE, POSTGRES_DSN
 from app.utils.logging import setup_logger
 
 logger = setup_logger("vietlaw.api.feedback")
@@ -24,6 +24,12 @@ class FeedbackRequest(BaseModel):
 
 @router.post("")
 async def submit_feedback(request: FeedbackRequest):
+    if CHAT_STORAGE_MODE == "browser":
+        return {
+            "status": "skipped",
+            "storageMode": "browser",
+            "message": "Feedback is kept in browser-local state and is not persisted server-side.",
+        }
     if not is_database_backend_enabled():
         # Fallback or soft-fail if database is not configured.
         # We don't want to crash the UI just because Postgres isn't running.

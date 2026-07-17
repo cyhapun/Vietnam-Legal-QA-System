@@ -44,6 +44,13 @@ RUNTIME_PROFILE = _runtime_profile_env or (
 )
 SUPPORTED_RUNTIME_PROFILES = frozenset({"local", "serverless"})
 
+# Conversation storage is intentionally separate from STORAGE_BACKEND:
+# PostgreSQL/Qdrant may remain shared for the legal corpus while chat data is
+# kept in the user's browser.
+CHAT_STORAGE_MODE = os.getenv("CHAT_STORAGE_MODE", "postgres").strip().lower()
+FRONTEND_CHAT_STORAGE_MODE = os.getenv("NEXT_PUBLIC_CHAT_STORAGE_MODE", "").strip().lower()
+SUPPORTED_CHAT_STORAGE_MODES = frozenset({"postgres", "browser"})
+
 # --- STORAGE BACKEND ---
 STORAGE_BACKEND = os.getenv("STORAGE_BACKEND", "faiss").strip().lower()
 POSTGRES_DSN = os.getenv("POSTGRES_DSN", "postgresql://postgres:postgres@localhost:5432/vietlaw")
@@ -171,6 +178,20 @@ INFERENCE_STRATEGY = os.getenv("INFERENCE_STRATEGY", "remote_first").strip().low
 
 def validate_runtime_configuration() -> None:
     """Validate profile/provider combinations without loading model weights."""
+    if CHAT_STORAGE_MODE not in SUPPORTED_CHAT_STORAGE_MODES:
+        raise ValueError(
+            f"CHAT_STORAGE_MODE must be one of {sorted(SUPPORTED_CHAT_STORAGE_MODES)}; "
+            f"got {CHAT_STORAGE_MODE!r}."
+        )
+    if FRONTEND_CHAT_STORAGE_MODE and FRONTEND_CHAT_STORAGE_MODE not in SUPPORTED_CHAT_STORAGE_MODES:
+        raise ValueError(
+            "NEXT_PUBLIC_CHAT_STORAGE_MODE must be one of "
+            f"{sorted(SUPPORTED_CHAT_STORAGE_MODES)}; got {FRONTEND_CHAT_STORAGE_MODE!r}."
+        )
+    if FRONTEND_CHAT_STORAGE_MODE and FRONTEND_CHAT_STORAGE_MODE != CHAT_STORAGE_MODE:
+        raise ValueError(
+            "CHAT_STORAGE_MODE and NEXT_PUBLIC_CHAT_STORAGE_MODE must match."
+        )
     if RUNTIME_PROFILE not in SUPPORTED_RUNTIME_PROFILES:
         raise ValueError(
             f"RUNTIME_PROFILE must be one of {sorted(SUPPORTED_RUNTIME_PROFILES)}; "
@@ -209,6 +230,8 @@ def runtime_profile_summary() -> dict:
     """Return safe profile diagnostics for readiness and startup logs."""
     return {
         "profile": RUNTIME_PROFILE,
+        "chatStorageMode": CHAT_STORAGE_MODE,
+        "frontendChatStorageMode": FRONTEND_CHAT_STORAGE_MODE or None,
         "embeddingMode": HUGGINGFACE_EMBEDDING_MODE,
         "embeddingModel": EMBEDDING_MODEL,
         "reranking": PIPELINE_CONFIG["reranking"],

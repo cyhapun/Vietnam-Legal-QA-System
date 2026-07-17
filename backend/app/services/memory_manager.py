@@ -3,6 +3,7 @@ from typing import List
 from app.services.llm import get_llm
 from app.services.provider_registry import SUMMARIZER_ROLE
 from app.services.storage import get_session_summary, upsert_session_summary
+from app.config import CHAT_STORAGE_MODE
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
@@ -33,6 +34,9 @@ async def summarize_session(session_id: str, new_user_msg: str, new_ai_msg: str,
     combining it with the latest turn, and saving it back.
     """
     try:
+        if CHAT_STORAGE_MODE != "postgres":
+            logger.debug("Skipping memory summarization in browser chat storage mode.")
+            return
         if not session_id or session_id == "unknown":
             logger.debug("Skipping memory summarization for unknown session_id.")
             return

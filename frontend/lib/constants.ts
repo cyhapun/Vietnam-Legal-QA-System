@@ -11,6 +11,13 @@ export interface LawCategory {
 
 export const ALL_LAWS_CATEGORY = 'all';
 
+export type ChatStorageMode = 'postgres' | 'browser';
+
+export const CHAT_STORAGE_MODE: ChatStorageMode =
+  process.env.NEXT_PUBLIC_CHAT_STORAGE_MODE?.trim().toLowerCase() === 'browser'
+    ? 'browser'
+    : 'postgres';
+
 // Các lĩnh vực pháp luật được tách từ ba nhóm nghiệp vụ.
 export const LAW_CATEGORIES = [
   {
