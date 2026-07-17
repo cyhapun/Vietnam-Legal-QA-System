@@ -8,8 +8,8 @@ interface ChatEmptyStateProps {
 
 const SUGGESTIONS = [
   'Hợp đồng chuyển nhượng quyền sử dụng đất có cần công chứng không?',
-  'Người lao động được nghỉ phép năm bao nhiêu ngày?',
-  'Điều kiện đăng ký thành lập doanh nghiệp là gì?',
+  'Điều kiện để được cấp sổ đỏ (Giấy chứng nhận quyền sử dụng đất) là gì?',
+  'Cần chuẩn bị giấy tờ gì khi đi công chứng hợp đồng mua bán nhà đất?',
 ];
 
 export function ChatEmptyState({ onSelectSuggestion }: ChatEmptyStateProps) {
