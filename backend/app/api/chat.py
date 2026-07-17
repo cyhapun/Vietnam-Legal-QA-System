@@ -59,16 +59,6 @@ def _embedding_auth_detail() -> str:
     )
 
 
-def _embedding_api_key() -> None:
-    """Use server-side embedding credentials only.
-
-    Browser HuggingFace keys are for runtime LLM choices; retrieval embeddings
-    must stay fixed to the backend deployment config so a bad user key cannot
-    break Qdrant search for the whole request.
-    """
-    return None
-
-
 def _llm_error_detail(model_name: str, exc: Exception) -> str:
     """Return a user-safe LLM error message without exposing credentials."""
     text = str(exc)
