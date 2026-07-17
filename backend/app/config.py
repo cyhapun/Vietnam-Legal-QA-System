@@ -34,6 +34,7 @@ TRACKING_FILE = os.getenv(
 
 # --- API KEYS ---
 HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY", "")
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
 
 # --- STORAGE BACKEND ---
@@ -51,8 +52,13 @@ DEFAULT_LOCAL_EMBEDDING_MODEL = "../models/embedding/vietlaw-bge-m3-finetuned/be
 DEFAULT_LOCAL_RERANKER_MODEL = "../models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/selected"
 
 EMBEDDING_MODEL = os.getenv("HUGGINGFACE_EMBEDDING_MODEL", DEFAULT_LOCAL_EMBEDDING_MODEL)
-# Hỗ trợ "api" hoặc "local"
+# Hỗ trợ "api", "local", hoặc "openrouter"
 HUGGINGFACE_EMBEDDING_MODE = os.getenv("HUGGINGFACE_EMBEDDING_MODE", "local").strip().lower()
+OPENROUTER_EMBEDDING_MODEL = os.getenv("OPENROUTER_EMBEDDING_MODEL", "baai/bge-m3").strip()
+OPENROUTER_EMBEDDING_BASE_URL = os.getenv(
+    "OPENROUTER_EMBEDDING_BASE_URL",
+    "https://openrouter.ai/api/v1",
+).strip().rstrip("/")
 EMBEDDING_DEVICE = os.getenv("EMBEDDING_DEVICE", "cpu").strip()
 EMBEDDING_DIMENSION = int(os.getenv("EMBEDDING_DIMENSION", "1024"))
 EMBEDDING_NORMALIZE = os.getenv("EMBEDDING_NORMALIZE", "true").strip().lower() == "true"
@@ -124,6 +130,12 @@ PIPELINE_CONFIG = {
 
     # --- Reranker model (chỉ dùng khi reranking="cross_encoder") ---
     "reranker_model": os.getenv("RERANKER_MODEL", DEFAULT_LOCAL_RERANKER_MODEL),
+    "reranker_mode": os.getenv("RERANKER_MODE", "local").strip().lower(),
+    "reranker_api_model": os.getenv("RERANKER_API_MODEL", "BAAI/bge-reranker-v2-m3").strip(),
+    "reranker_api_url": os.getenv(
+        "RERANKER_API_URL",
+        "https://api-inference.huggingface.co/models/BAAI/bge-reranker-v2-m3",
+    ).strip(),
     "reranker_max_candidates": int(os.getenv("RERANKER_MAX_CANDIDATES", "10")),
     "reranker_device": os.getenv("RERANKER_DEVICE", "cpu").strip(),
     "reranker_batch_size": int(os.getenv("RERANKER_BATCH_SIZE", "8")),
