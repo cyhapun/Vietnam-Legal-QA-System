@@ -17,7 +17,7 @@ from app.config import (
     CORS_ORIGINS,
     EMBEDDING_DIMENSION,
     EMBEDDING_MODEL,
-    HUGGINGFACE_EMBEDDING_MODE,
+    HUGGINGFACE_API_KEY,
     LOCAL_MODELS_PRELOAD_ENABLED,
     LOCAL_MODELS_WARMUP_ENABLED,
     PIPELINE_CONFIG,
@@ -25,6 +25,9 @@ from app.config import (
     QDRANT_API_KEY,
     QDRANT_COLLECTION,
     QDRANT_URL,
+    RUNTIME_PROFILE,
+    runtime_profile_summary,
+    validate_runtime_configuration,
 )
 from app.api.chat import router as chat_router
 from app.api.documents import router as documents_router
@@ -46,16 +49,28 @@ def _resolve_runtime_path(path_value: str) -> Path:
 
 
 def _check_artifacts() -> dict:
-    embedding_local = HUGGINGFACE_EMBEDDING_MODE == "local"
-    embedding_path = _resolve_runtime_path(EMBEDDING_MODEL) if embedding_local else Path("")
-    embedding_ok = (
-        not embedding_local
-        or (embedding_path.exists() and (embedding_path / "model.safetensors").exists())
-    )
+    validate_runtime_configuration()
+    if RUNTIME_PROFILE == "serverless":
+        return {
+            "embedding": {
+                "status": "ok" if HUGGINGFACE_API_KEY else "configured",
+                "configured": bool(EMBEDDING_MODEL),
+                "mode": "api",
+                "weights": False,
+            },
+            "reranker": {
+                "status": "ok",
+                "enabled": PIPELINE_CONFIG.get("reranking") not in {"none", ""},
+                "mode": "remote",
+                "weights": False,
+            },
+        }
+
+    embedding_path = _resolve_runtime_path(EMBEDDING_MODEL)
+    embedding_ok = embedding_path.exists() and (embedding_path / "model.safetensors").exists()
 
     reranker_strategy = PIPELINE_CONFIG.get("reranking", "none")
-    reranker_mode = PIPELINE_CONFIG.get("reranker_mode", "local")
-    reranker_required = reranker_strategy == "cross_encoder" and reranker_mode == "local"
+    reranker_required = reranker_strategy == "cross_encoder"
     reranker_model = PIPELINE_CONFIG.get("reranker_model", "")
     reranker_path = _resolve_runtime_path(reranker_model) if reranker_model else Path("")
     reranker_ok = (
@@ -67,13 +82,12 @@ def _check_artifacts() -> dict:
         "embedding": {
             "status": "ok" if embedding_ok else "error",
             "configured": bool(EMBEDDING_MODEL),
-            "mode": HUGGINGFACE_EMBEDDING_MODE,
+            "mode": "local",
             "weights": embedding_ok,
         },
         "reranker": {
             "status": "ok" if reranker_ok else "error",
-            "enabled": reranker_strategy == "cross_encoder",
-            "mode": reranker_mode,
+            "enabled": reranker_required,
             "weights": reranker_ok,
         },
     }
@@ -155,8 +169,18 @@ def create_app() -> FastAPI:
 
     @application.get("/readiness")
     async def readiness():
-        components = {"config": {"status": "ok"}}
+        components = {"config": {"status": "ok", **runtime_profile_summary()}}
         ready = True
+
+        try:
+            validate_runtime_configuration()
+        except Exception as exc:
+            ready = False
+            components["config"] = {
+                "status": "error",
+                **runtime_profile_summary(),
+                "error": str(exc),
+            }
 
         if LOCAL_MODELS_PRELOAD_ENABLED:
             local_models_ready = bool(getattr(application.state, "local_models_ready", False))
@@ -197,6 +221,13 @@ def create_app() -> FastAPI:
     def _initialize_runtime_components_sync() -> None:
         application.state.local_models_ready = not LOCAL_MODELS_PRELOAD_ENABLED
         application.state.local_models_error = None
+        try:
+            validate_runtime_configuration()
+        except Exception as exc:
+            application.state.runtime_config_error = str(exc)
+            logger.error("Runtime configuration validation failed: %s", exc)
+            return
+        application.state.runtime_config_error = None
         logger.info("Khởi tạo storage layer...")
         try:
             initialize_storage()
@@ -245,6 +276,7 @@ def create_app() -> FastAPI:
         """Load document metadata before serving requests, then initialize heavy services."""
         application.state.local_models_ready = not LOCAL_MODELS_PRELOAD_ENABLED
         application.state.local_models_error = None
+        application.state.runtime_config_error = None
         await asyncio.to_thread(load_knowledge_base)
         asyncio.create_task(asyncio.to_thread(_initialize_runtime_components_sync))
         logger.info("Document metadata loaded; remaining initialization scheduled in background")

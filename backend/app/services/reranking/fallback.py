@@ -14,7 +14,13 @@ class FallbackReranker(BaseReranker):
         self.primary = primary
         self.secondary = secondary
 
-    def rerank(self, query: str, documents: List[Document], top_k: int = 5, api_key: Optional[str] = None) -> List[Document]:
+    def rerank(
+        self,
+        query: str,
+        documents: List[Document],
+        top_k: int = 5,
+        api_key: Optional[str] = None,
+    ) -> List[Document]:
         try:
             return self.primary.rerank(query, documents, top_k, api_key=api_key)
         except Exception as e:

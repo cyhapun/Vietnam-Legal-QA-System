@@ -52,14 +52,6 @@ def _embedding_error_status(exc: EmbeddingServiceError) -> int:
     return 401 if isinstance(exc, EmbeddingAuthError) else 503
 
 
-def _embedding_auth_detail() -> str:
-    return (
-        "API key embedding phía server không hợp lệ hoặc đã hết hạn. "
-        "Vui lòng kiểm tra cấu hình deployment cho HuggingFace/OpenRouter."
-    )
-
-
-
 def _llm_error_detail(model_name: str, exc: Exception) -> str:
     """Return a user-safe LLM error message without exposing credentials."""
     text = str(exc)
@@ -199,13 +191,16 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
             queries = (queries or [last_message])[:request.maxSubqueries]
         logger.info("Rewriter enabled=%s, domain=%s, queries=%s", request.enableQueryRewriter, domain, queries)
         
-        api_key = request.inference_config.api_key_for("huggingface") if request.inference_config else None
+        hf_api_key = request.inference_config.api_key_for("huggingface") if request.inference_config else None
+        from app.config import HUGGINGFACE_EMBEDDING_MODE
+        embedding_api_key = hf_api_key if HUGGINGFACE_EMBEDDING_MODE == "api" else None
+        reranker_api_key = embedding_api_key if request.enableReranker else None
         
         try:
             query_vector = None
             if request.enableSemanticCache and domain != "chitchat":
                 rewritten_query = queries[0] if queries else last_message
-                embedding = _get_embedding(api_key)
+                embedding = _get_embedding(embedding_api_key)
                 if embedding:
                     try:
                         # Sinh embedding cho câu hỏi đã được viết lại
@@ -235,7 +230,7 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
                     except Exception as e:
                         logger.warning("Cache check failed: %s", e)
                         if "401" in str(e) or "Unauthorized" in str(e) or "Invalid token" in str(e):
-                            raise ValueError(_embedding_auth_detail())
+                            raise ValueError("API Key HuggingFace không hợp lệ hoặc đã hết hạn.")
 
             retrieved_docs, context_text = await pipeline.aretrieve(
                 query=last_message,
@@ -246,7 +241,8 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
                 queries=queries,
                 enable_reranker=request.enableReranker,
                 context_token_budget=request.contextTokenBudget,
-                api_key=api_key
+                embedding_api_key=embedding_api_key,
+                reranker_api_key=reranker_api_key,
             )
         except EmbeddingServiceError as e:
             raise HTTPException(status_code=_embedding_error_status(e), detail=str(e))
@@ -254,7 +250,7 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
             raise HTTPException(status_code=400, detail=str(e))
         except Exception as e:
             if "401" in str(e) or "Unauthorized" in str(e) or "Invalid token" in str(e):
-                raise HTTPException(status_code=401, detail=_embedding_auth_detail())
+                raise HTTPException(status_code=401, detail="API Key HuggingFace không hợp lệ hoặc đã hết hạn.")
             raise
 
         with timing.stage("context_building"):
@@ -409,13 +405,16 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
                 queries = (queries or [last_message])[:request.maxSubqueries]
             logger.info("Stream rewriter enabled=%s, domain=%s, queries=%s", request.enableQueryRewriter, domain, queries)
             
-            api_key = request.inference_config.api_key_for("huggingface") if request.inference_config else None
+            hf_api_key = request.inference_config.api_key_for("huggingface") if request.inference_config else None
+            from app.config import HUGGINGFACE_EMBEDDING_MODE
+            embedding_api_key = hf_api_key if HUGGINGFACE_EMBEDDING_MODE == "api" else None
+            reranker_api_key = embedding_api_key if request.enableReranker else None
             
             try:
                 query_vector = None
                 if request.enableSemanticCache and domain != "chitchat":
                     rewritten_query = queries[0] if queries else last_message
-                    embedding = _get_embedding(api_key)
+                    embedding = _get_embedding(embedding_api_key)
                     if embedding:
                         try:
                             query_vector = await asyncio.to_thread(embedding.embed_query, rewritten_query)
@@ -448,7 +447,7 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
                         except Exception as e:
                             logger.warning("Stream Cache check failed: %s", e)
                             if "401" in str(e) or "Unauthorized" in str(e) or "Invalid token" in str(e):
-                                raise ValueError(_embedding_auth_detail())
+                                raise ValueError("API Key HuggingFace không hợp lệ hoặc đã hết hạn.")
 
                 retrieved_docs, context_text = await pipeline.aretrieve(
                     query=last_message,
@@ -459,7 +458,8 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
                     queries=queries,
                     enable_reranker=request.enableReranker,
                     context_token_budget=request.contextTokenBudget,
-                    api_key=api_key
+                    embedding_api_key=embedding_api_key,
+                    reranker_api_key=reranker_api_key,
                 )
             except EmbeddingServiceError as e:
                 outcome = "error"
@@ -472,7 +472,7 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
             except Exception as e:
                 if "401" in str(e) or "Unauthorized" in str(e) or "Invalid token" in str(e):
                     outcome = "error"
-                    yield _sse({"type": "error", "message": _embedding_auth_detail()})
+                    yield _sse({"type": "error", "message": "API Key HuggingFace không hợp lệ hoặc đã hết hạn."})
                     return
                 raise
             with timing.stage("context_building"):

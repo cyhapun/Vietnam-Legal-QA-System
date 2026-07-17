@@ -6,7 +6,7 @@ import os
 import threading
 import time
 from pathlib import Path
-from typing import List, Sequence, Optional
+from typing import List, Optional, Sequence
 
 from langchain_core.documents import Document
 

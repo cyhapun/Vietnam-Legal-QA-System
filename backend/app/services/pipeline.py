@@ -10,6 +10,8 @@ import os
 import json
 import glob
 import time
+import hashlib
+import inspect
 from typing import List, Dict, Any, Optional, Tuple
 
 from langchain_core.documents import Document
@@ -17,11 +19,11 @@ from langchain_community.vectorstores import FAISS
 from langchain_community.vectorstores.utils import DistanceStrategy
 
 from app.config import (
-    FAISS_INDEX_PATH, JSON_DATA_PATH, TRACKING_FILE,
+    FAISS_INDEX_PATH, JSON_DATA_PATH, TRACKING_FILE, EMBEDDING_MODEL,
     EMBEDDING_BATCH_SIZE, EMBEDDING_MAX_RETRIES,
     EMBEDDING_SLEEP_BETWEEN_BATCHES, EMBEDDING_RETRY_BASE_WAIT,
     EMBEDDING_PROVIDER, ENABLE_FAISS_FALLBACK, PIPELINE_CONFIG,
-    RETRIEVER_CANDIDATE_K, RETRIEVER_K, STORAGE_BACKEND,
+    RETRIEVER_CANDIDATE_K, RETRIEVER_K, STORAGE_BACKEND, RUNTIME_PROFILE,
 )
 from app.services.knowledge_base import load_knowledge_base
 from app.services.embedding import (
@@ -30,12 +32,12 @@ from app.services.embedding import (
     OllamaEmbedding,
     FallbackEmbedding,
 )
+from app.services.embedding.errors import EmbeddingServiceError
 from app.services.chunking import ClauseChunker
 from app.services.search import FAISSSearcher, QdrantSearcher
 from app.services.reranking import (
     NoReranker,
     CrossEncoderReranker,
-    HuggingFaceInferenceReranker,
     HuggingFaceEmbeddingSimilarityReranker,
     FallbackReranker,
 )
@@ -83,7 +85,8 @@ class RAGPipeline:
         queries: Optional[List[str]] = None,
         enable_reranker: bool = True,
         context_token_budget: Optional[int] = None,
-        api_key: Optional[str] = None,
+        embedding_api_key: Optional[str] = None,
+        reranker_api_key: Optional[str] = None,
     ) -> Tuple[List[Document], str]:
         """Thực hiện full retrieval pipeline: Search → Rerank → Context Build.
 
@@ -115,7 +118,12 @@ class RAGPipeline:
         # Truyền api_key xuống searcher nếu nó hỗ trợ
         import inspect
         if "api_key" in inspect.signature(self.searcher.search).parameters:
-            docs = self.searcher.search(queries, k=k, category=category, api_key=api_key)
+            docs = self.searcher.search(
+                queries,
+                k=k,
+                category=category,
+                api_key=embedding_api_key,
+            )
         else:
             docs = self.searcher.search(queries, k=k, category=category)
         retrieved_count = len(docs)
@@ -142,7 +150,16 @@ class RAGPipeline:
 
         # Step 2: Rerank or keep search order.
         if enable_reranker:
-            docs = self.reranker.rerank(query, docs, top_k=final_k, api_key=api_key)
+            rerank_parameters = inspect.signature(self.reranker.rerank).parameters
+            if "api_key" in rerank_parameters:
+                docs = self.reranker.rerank(
+                    query,
+                    docs,
+                    top_k=final_k,
+                    api_key=reranker_api_key,
+                )
+            else:
+                docs = self.reranker.rerank(query, docs, top_k=final_k)
         else:
             docs = docs[:final_k]
         final_count = len(docs)
@@ -179,7 +196,8 @@ class RAGPipeline:
         queries: Optional[List[str]] = None,
         enable_reranker: bool = True,
         context_token_budget: Optional[int] = None,
-        api_key: Optional[str] = None,
+        embedding_api_key: Optional[str] = None,
+        reranker_api_key: Optional[str] = None,
     ) -> Tuple[List[Document], str]:
         """Async version của retrieve — dùng trong FastAPI endpoint."""
         final_k = rerank_top_k or RETRIEVER_K
@@ -199,26 +217,32 @@ class RAGPipeline:
 
         # Step 1: Async Search
         import inspect
-        if hasattr(self.searcher, "asearch") and "api_key" in inspect.signature(self.searcher.asearch).parameters:
-            docs = await self.searcher.asearch(queries, k=k, category=category, api_key=api_key)
-        elif "api_key" in inspect.signature(self.searcher.search).parameters:
-            docs = await self.searcher.asearch(queries, k=k, category=category) # Wait, asearch might not support it
-            # Actually let's just pass it safely
-            if hasattr(self.searcher, "asearch"):
-                 # if asearch doesn't have it, we shouldn't pass it. But we just check signature.
-                 pass
-            # Just do dynamic check properly below:
-            
         if hasattr(self.searcher, "asearch"):
             if "api_key" in inspect.signature(self.searcher.asearch).parameters:
-                docs = await self.searcher.asearch(queries, k=k, category=category, api_key=api_key)
+                docs = await self.searcher.asearch(
+                    queries,
+                    k=k,
+                    category=category,
+                    api_key=embedding_api_key,
+                )
             else:
                 docs = await self.searcher.asearch(queries, k=k, category=category)
         else:
             if "api_key" in inspect.signature(self.searcher.search).parameters:
-                docs = self.searcher.search(queries, k=k, category=category, api_key=api_key)
+                docs = await asyncio.to_thread(
+                    self.searcher.search,
+                    queries,
+                    k=k,
+                    category=category,
+                    api_key=embedding_api_key,
+                )
             else:
-                docs = self.searcher.search(queries, k=k, category=category)
+                docs = await asyncio.to_thread(
+                    self.searcher.search,
+                    queries,
+                    k=k,
+                    category=category,
+                )
         retrieved_count = len(docs)
         collector = current_timing()
         if collector is not None:
@@ -243,7 +267,16 @@ class RAGPipeline:
 
         # Step 2: Rerank or keep search order.
         if enable_reranker:
-            docs = self.reranker.rerank(query, docs, top_k=final_k, api_key=api_key)
+            rerank_parameters = inspect.signature(self.reranker.rerank).parameters
+            if "api_key" in rerank_parameters:
+                docs = self.reranker.rerank(
+                    query,
+                    docs,
+                    top_k=final_k,
+                    api_key=reranker_api_key,
+                )
+            else:
+                docs = self.reranker.rerank(query, docs, top_k=final_k)
         else:
             docs = docs[:final_k]
         final_count = len(docs)
@@ -344,7 +377,12 @@ def _get_embedding(api_key: str = None) -> Optional[BaseEmbedding]:
     """Lazy init embedding model, cached by api_key."""
     global _embedding_cache
     
-    cache_key = api_key or "default"
+    credential_key = (
+        hashlib.sha256(api_key.encode("utf-8")).hexdigest()[:16]
+        if api_key
+        else "default"
+    )
+    cache_key = f"{RUNTIME_PROFILE}:{credential_key}"
     if cache_key in _embedding_cache:
         return _embedding_cache[cache_key]
         
@@ -360,6 +398,8 @@ def _get_embedding(api_key: str = None) -> Optional[BaseEmbedding]:
             
         _embedding_cache[cache_key] = emb
         return emb
+    except EmbeddingServiceError:
+        raise
     except Exception as exc:
         logger.warning("Embedding backend unavailable: %s", exc)
         return None
@@ -507,22 +547,20 @@ def _create_reranker():
     """Tạo reranker dựa trên config, tích hợp Fallback."""
     strategy = PIPELINE_CONFIG.get("reranking", "none")
     max_candidates = PIPELINE_CONFIG.get("reranker_max_candidates", 20)
+    if RUNTIME_PROFILE == "serverless" and strategy == "cross_encoder":
+        logger.warning(
+            "Serverless runtime does not support local cross_encoder; "
+            "using embedding_similarity reranking instead."
+        )
+        strategy = "embedding_similarity"
     if strategy == "none":
         return NoReranker()
     elif strategy in {"embedding_similarity", "remote_embedding_similarity"}:
-        return HuggingFaceEmbeddingSimilarityReranker(max_candidates=max_candidates)
+        return HuggingFaceEmbeddingSimilarityReranker(
+            model=EMBEDDING_MODEL,
+            max_candidates=max_candidates,
+        )
     elif strategy == "cross_encoder":
-        reranker_mode = PIPELINE_CONFIG.get("reranker_mode", "local")
-        if reranker_mode == "api":
-            return HuggingFaceInferenceReranker(
-                model=PIPELINE_CONFIG.get("reranker_api_model", "BAAI/bge-reranker-v2-m3"),
-                endpoint_url=PIPELINE_CONFIG.get("reranker_api_url"),
-                batch_size=PIPELINE_CONFIG.get("reranker_batch_size", 8),
-                max_length=PIPELINE_CONFIG.get("reranker_max_length", 512),
-                fail_open=PIPELINE_CONFIG.get("reranker_fail_open", False),
-            )
-        if reranker_mode != "local":
-            raise ValueError("RERANKER_MODE must be either 'local' or 'api'.")
         model = PIPELINE_CONFIG.get(
             "reranker_model",
             "../models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/selected",

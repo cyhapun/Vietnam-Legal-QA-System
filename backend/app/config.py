@@ -34,8 +34,15 @@ TRACKING_FILE = os.getenv(
 
 # --- API KEYS ---
 HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY", "")
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
+
+# Native/Docker runs keep local models by default; Vercel can opt into the
+# deployment-safe profile through its built-in environment marker.
+_runtime_profile_env = os.getenv("RUNTIME_PROFILE", "").strip().lower()
+RUNTIME_PROFILE = _runtime_profile_env or (
+    "serverless" if os.getenv("VERCEL") or os.getenv("VERCEL_ENV") else "local"
+)
+SUPPORTED_RUNTIME_PROFILES = frozenset({"local", "serverless"})
 
 # --- STORAGE BACKEND ---
 STORAGE_BACKEND = os.getenv("STORAGE_BACKEND", "faiss").strip().lower()
@@ -51,32 +58,28 @@ PIPELINE_TIMING_ENABLED = os.getenv("PIPELINE_TIMING_ENABLED", "false").strip().
 DEFAULT_LOCAL_EMBEDDING_MODEL = "../models/embedding/vietlaw-bge-m3-finetuned/best"
 DEFAULT_LOCAL_RERANKER_MODEL = "../models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/selected"
 
-IS_PROD = os.getenv("ENVIRONMENT", "").strip().lower() == "production" or os.getenv("VERCEL") == "1" or os.getenv("RENDER") == "true" or os.getenv("VERCEL_ENV") is not None
-DEFAULT_MODE = "api" if IS_PROD else "local"
+DEFAULT_REMOTE_EMBEDDING_MODEL = "BAAI/bge-m3"
 
-DEFAULT_API_EMBEDDING_MODEL = "BAAI/bge-m3"
-EMBEDDING_MODEL = os.getenv(
-    "HUGGINGFACE_EMBEDDING_MODEL", 
-    DEFAULT_API_EMBEDDING_MODEL if IS_PROD else DEFAULT_LOCAL_EMBEDDING_MODEL
+_default_embedding_mode = "api" if RUNTIME_PROFILE == "serverless" else "local"
+HUGGINGFACE_EMBEDDING_MODE = os.getenv(
+    "HUGGINGFACE_EMBEDDING_MODE",
+    _default_embedding_mode,
+).strip().lower()
+_default_embedding_model = (
+    DEFAULT_REMOTE_EMBEDDING_MODEL
+    if HUGGINGFACE_EMBEDDING_MODE == "api"
+    else DEFAULT_LOCAL_EMBEDDING_MODEL
 )
-# Hỗ trợ "api", "local", hoặc "openrouter"
-REQUESTED_HUGGINGFACE_EMBEDDING_MODE = os.getenv("HUGGINGFACE_EMBEDDING_MODE", DEFAULT_MODE).strip().lower()
-OPENROUTER_EMBEDDING_MODEL = os.getenv("OPENROUTER_EMBEDDING_MODEL", "baai/bge-m3").strip()
-OPENROUTER_EMBEDDING_BASE_URL = os.getenv(
-    "OPENROUTER_EMBEDDING_BASE_URL",
-    "https://openrouter.ai/api/v1",
-).strip().rstrip("/")
-HUGGINGFACE_EMBEDDING_MODE = (
-    "openrouter"
-    if IS_PROD and OPENROUTER_API_KEY and REQUESTED_HUGGINGFACE_EMBEDDING_MODE != "openrouter"
-    else REQUESTED_HUGGINGFACE_EMBEDDING_MODE
-)
+EMBEDDING_MODEL = os.getenv("HUGGINGFACE_EMBEDDING_MODEL", _default_embedding_model)
+# Hỗ trợ "api" hoặc "local"
 EMBEDDING_DEVICE = os.getenv("EMBEDDING_DEVICE", "cpu").strip()
 EMBEDDING_DIMENSION = int(os.getenv("EMBEDDING_DIMENSION", "1024"))
 EMBEDDING_NORMALIZE = os.getenv("EMBEDDING_NORMALIZE", "true").strip().lower() == "true"
 LOCAL_MODELS_OFFLINE = os.getenv("LOCAL_MODELS_OFFLINE", "true").strip().lower() == "true"
-LOCAL_MODELS_PRELOAD_ENABLED = os.getenv("LOCAL_MODELS_PRELOAD_ENABLED", "true").strip().lower() == "true"
-LOCAL_MODELS_WARMUP_ENABLED = os.getenv("LOCAL_MODELS_WARMUP_ENABLED", "true").strip().lower() == "true"
+_local_preload_requested = os.getenv("LOCAL_MODELS_PRELOAD_ENABLED", "true").strip().lower() == "true"
+_local_warmup_requested = os.getenv("LOCAL_MODELS_WARMUP_ENABLED", "true").strip().lower() == "true"
+LOCAL_MODELS_PRELOAD_ENABLED = _local_preload_requested and RUNTIME_PROFILE == "local"
+LOCAL_MODELS_WARMUP_ENABLED = _local_warmup_requested and RUNTIME_PROFILE == "local"
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 OLLAMA_EMBEDDING_MODEL = os.getenv("OLLAMA_EMBEDDING_MODEL", "bge-m3")
 OLLAMA_EMBEDDING_TIMEOUT = float(os.getenv("OLLAMA_EMBEDDING_TIMEOUT", "300"))
@@ -130,8 +133,11 @@ PIPELINE_CONFIG = {
     # Search: "faiss" | "bm25" | "hybrid"
     "search": os.getenv("PIPELINE_SEARCH", "faiss"),
 
-    # Reranking: "none" | "cross_encoder"
-    "reranking": os.getenv("PIPELINE_RERANKING", "cross_encoder"),
+    # Reranking: "none" | "cross_encoder" | "embedding_similarity"
+    "reranking": os.getenv(
+        "PIPELINE_RERANKING",
+        "embedding_similarity" if RUNTIME_PROFILE == "serverless" else "none",
+    ).strip().lower(),
 
     # Context builder: "nested"
     "context_builder": os.getenv("PIPELINE_CONTEXT_BUILDER", "nested"),
@@ -142,12 +148,6 @@ PIPELINE_CONFIG = {
 
     # --- Reranker model (chỉ dùng khi reranking="cross_encoder") ---
     "reranker_model": os.getenv("RERANKER_MODEL", DEFAULT_LOCAL_RERANKER_MODEL),
-    "reranker_mode": os.getenv("RERANKER_MODE", DEFAULT_MODE).strip().lower(),
-    "reranker_api_model": os.getenv("RERANKER_API_MODEL", "BAAI/bge-reranker-v2-m3").strip(),
-    "reranker_api_url": os.getenv(
-        "RERANKER_API_URL",
-        "https://api-inference.huggingface.co/models/BAAI/bge-reranker-v2-m3",
-    ).strip(),
     "reranker_max_candidates": int(os.getenv("RERANKER_MAX_CANDIDATES", "10")),
     "reranker_device": os.getenv("RERANKER_DEVICE", "cpu").strip(),
     "reranker_batch_size": int(os.getenv("RERANKER_BATCH_SIZE", "8")),
@@ -167,6 +167,53 @@ SEMANTIC_CACHE_COLLECTION = os.getenv("SEMANTIC_CACHE_COLLECTION", "semantic_cac
 
 # --- FALLBACK STRATEGY ---
 INFERENCE_STRATEGY = os.getenv("INFERENCE_STRATEGY", "remote_first").strip().lower()
+
+
+def validate_runtime_configuration() -> None:
+    """Validate profile/provider combinations without loading model weights."""
+    if RUNTIME_PROFILE not in SUPPORTED_RUNTIME_PROFILES:
+        raise ValueError(
+            f"RUNTIME_PROFILE must be one of {sorted(SUPPORTED_RUNTIME_PROFILES)}; "
+            f"got {RUNTIME_PROFILE!r}."
+        )
+    if HUGGINGFACE_EMBEDDING_MODE not in {"api", "local"}:
+        raise ValueError("HUGGINGFACE_EMBEDDING_MODE must be either 'api' or 'local'.")
+    if RUNTIME_PROFILE == "serverless" and HUGGINGFACE_EMBEDDING_MODE != "api":
+        raise ValueError("RUNTIME_PROFILE=serverless requires HUGGINGFACE_EMBEDDING_MODE=api.")
+    if RUNTIME_PROFILE == "local" and HUGGINGFACE_EMBEDDING_MODE != "local":
+        raise ValueError("RUNTIME_PROFILE=local requires HUGGINGFACE_EMBEDDING_MODE=local.")
+    if RUNTIME_PROFILE == "local" and (
+        not Path(EMBEDDING_MODEL).is_absolute()
+        and not EMBEDDING_MODEL.startswith((".", "~"))
+    ):
+        raise ValueError(
+            "Local embedding mode requires HUGGINGFACE_EMBEDDING_MODEL to be a filesystem path."
+        )
+    if RUNTIME_PROFILE == "serverless" and (
+        Path(EMBEDDING_MODEL).is_absolute()
+        or EMBEDDING_MODEL.startswith((".", "~"))
+    ):
+        raise ValueError(
+            "Serverless embedding mode requires HUGGINGFACE_EMBEDDING_MODEL to be a Hub model id."
+        )
+    if RUNTIME_PROFILE == "local" and PIPELINE_CONFIG["reranking"] in {
+        "embedding_similarity",
+        "remote_embedding_similarity",
+    }:
+        raise ValueError(
+            "Local runtime must use cross_encoder or none for reranking."
+        )
+
+
+def runtime_profile_summary() -> dict:
+    """Return safe profile diagnostics for readiness and startup logs."""
+    return {
+        "profile": RUNTIME_PROFILE,
+        "embeddingMode": HUGGINGFACE_EMBEDDING_MODE,
+        "embeddingModel": EMBEDDING_MODEL,
+        "reranking": PIPELINE_CONFIG["reranking"],
+        "localModelsPreload": LOCAL_MODELS_PRELOAD_ENABLED,
+    }
 
 
 def _validate_positive_int(name: str, value: int) -> None:

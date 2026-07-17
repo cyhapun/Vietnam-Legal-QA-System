@@ -1,4 +1,12 @@
 {
+  "env": {
+    "RUNTIME_PROFILE": "serverless",
+    "HUGGINGFACE_EMBEDDING_MODE": "api",
+    "HUGGINGFACE_EMBEDDING_MODEL": "BAAI/bge-m3",
+    "PIPELINE_RERANKING": "embedding_similarity",
+    "LOCAL_MODELS_PRELOAD_ENABLED": "false",
+    "LOCAL_MODELS_WARMUP_ENABLED": "false"
+  },
   "experimentalServices": {
     "frontend": {
       "entrypoint": "frontend",
