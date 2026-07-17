@@ -59,15 +59,6 @@ def _embedding_auth_detail() -> str:
     )
 
 
-def _embedding_api_key() -> None:
-    """Use server-side embedding credentials only.
-
-    Browser HuggingFace keys are for runtime LLM choices; retrieval embeddings
-    must stay fixed to the backend deployment config so a bad user key cannot
-    break Qdrant search for the whole request.
-    """
-    return None
-
 
 def _llm_error_detail(model_name: str, exc: Exception) -> str:
     """Return a user-safe LLM error message without exposing credentials."""
@@ -208,7 +199,7 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
             queries = (queries or [last_message])[:request.maxSubqueries]
         logger.info("Rewriter enabled=%s, domain=%s, queries=%s", request.enableQueryRewriter, domain, queries)
         
-        api_key = _embedding_api_key()
+        api_key = request.inference_config.api_key_for("huggingface") if request.inference_config else None
         
         try:
             query_vector = None
@@ -418,7 +409,7 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
                 queries = (queries or [last_message])[:request.maxSubqueries]
             logger.info("Stream rewriter enabled=%s, domain=%s, queries=%s", request.enableQueryRewriter, domain, queries)
             
-            api_key = _embedding_api_key()
+            api_key = request.inference_config.api_key_for("huggingface") if request.inference_config else None
             
             try:
                 query_vector = None

@@ -142,7 +142,7 @@ class RAGPipeline:
 
         # Step 2: Rerank or keep search order.
         if enable_reranker:
-            docs = self.reranker.rerank(query, docs, top_k=final_k)
+            docs = self.reranker.rerank(query, docs, top_k=final_k, api_key=api_key)
         else:
             docs = docs[:final_k]
         final_count = len(docs)
@@ -243,7 +243,7 @@ class RAGPipeline:
 
         # Step 2: Rerank or keep search order.
         if enable_reranker:
-            docs = self.reranker.rerank(query, docs, top_k=final_k)
+            docs = self.reranker.rerank(query, docs, top_k=final_k, api_key=api_key)
         else:
             docs = docs[:final_k]
         final_count = len(docs)

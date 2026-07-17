@@ -8,7 +8,7 @@ remote-only when Ollama is unavailable.
 from __future__ import annotations
 
 import math
-from typing import List
+from typing import List, Optional
 
 from langchain_core.documents import Document
 
@@ -61,6 +61,7 @@ class HuggingFaceEmbeddingSimilarityReranker:
         query: str,
         documents: List[Document],
         top_k: int,
+        api_key: Optional[str] = None,
     ) -> List[Document]:
         if not documents:
             return []
