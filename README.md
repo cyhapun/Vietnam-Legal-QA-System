@@ -1,6 +1,6 @@
 # VietLaw AI - Hệ thống Hỏi đáp Pháp luật Việt Nam
 
-Chatbot tra cứu pháp luật Việt Nam sử dụng kỹ thuật **RAG (Retrieval-Augmented Generation)**.  
+Chatbot tra cứu pháp luật Việt Nam sử dụng kỹ thuật **RAG (Retrieval-Augmented Generation)**.
 Hệ thống tách dữ liệu pháp luật thành các điều khoản, lập chỉ mục dense/sparse trong Qdrant, truy xuất các căn cứ liên quan và dùng Gemini hoặc provider từ xa được cấu hình để sinh câu trả lời tiếng Việt có citation.
 
 > **Lưu ý pháp lý:** Đây là hệ thống phục vụ nghiên cứu/đồ án sinh viên, không phải dịch vụ tư vấn pháp lý chuyên nghiệp. Người dùng cần kiểm tra lại văn bản pháp luật chính thức hoặc hỏi chuyên gia trước khi ra quyết định.
