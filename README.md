@@ -1,7 +1,9 @@
 # VietLaw AI - Hệ thống Hỏi đáp Pháp luật Việt Nam
 
 Chatbot tra cứu pháp luật Việt Nam sử dụng kỹ thuật **RAG (Retrieval-Augmented Generation)**.  
-Hệ thống truy xuất các điều khoản pháp luật liên quan từ cơ sở dữ liệu vector, sau đó dùng LLM để sinh câu trả lời có trích dẫn căn cứ pháp lý chính xác.
+Hệ thống truy xuất các điều khoản pháp luật liên quan từ cơ sở dữ liệu vector, sau đó dùng Gemini hoặc provider remote được cấu hình để sinh câu trả lời có trích dẫn nguồn.
+
+> **Lưu ý pháp lý:** Đây là hệ thống phục vụ nghiên cứu/đồ án sinh viên, không phải dịch vụ tư vấn pháp lý chuyên nghiệp. Người dùng cần kiểm tra lại văn bản pháp luật chính thức hoặc hỏi chuyên gia trước khi ra quyết định.
 
 > **Project môn học:** Introduction to Machine Learning
 
@@ -24,8 +26,11 @@ Hệ thống truy xuất các điều khoản pháp luật liên quan từ cơ s
 - [Hướng dẫn cài đặt và chạy](#hướng-dẫn-cài-đặt-và-chạy)
 - [Kỹ thuật sử dụng](#kỹ-thuật-sử-dụng)
 - [Tính năng](#tính-năng)
+- [Quality evaluation](#quality-evaluation)
 - [Dữ liệu pháp luật](#dữ-liệu-pháp-luật)
 - [Công nghệ](#công-nghệ)
+- [Testing](#testing)
+- [Known limitations](#known-limitations)
 - [Local model integration](docs/local_model_integration.md)
 
 ---
@@ -60,13 +65,14 @@ Hệ thống theo mô hình **Client-Server** với 2 thành phần chính giao 
 │  │ app/services/pipeline.py → RAG Orchestrator     │    │
 │  │ app/services/search/     → FAISS, BM25, Hybrid  │    │
 │  │ app/services/reranking/  → CrossEncoder         │    │
-│  │ app/config.py            → Cấu hình Ablation    │    │
+│  │ app/config.py            → Cấu hình pipeline     │    │
 │  └─────────────────────────────────────────────────┘    │
 │       │                                                 │
 │       │ Local fine-tuned embedding + Qdrant Cloud       │
 │       ▼                                                 │
 │  ┌─────────────────────────────────────────────┐        │
 │  │ Embedding: fine-tuned BGE-M3 local artifact │        │
+│  │ Retrieval: Qdrant dense/sparse hybrid search│        │
 │  │ Reranker: fine-tuned local cross-encoder    │        │
 │  │ LLM: Gemini / configured remote provider    │        │
 │  └─────────────────────────────────────────────┘        │
@@ -77,12 +83,28 @@ Hệ thống theo mô hình **Client-Server** với 2 thành phần chính giao 
 
 1. **User** nhập câu hỏi pháp lý → Frontend gửi `POST /api/chat`
 2. **Next.js API Route** (proxy) chuyển tiếp request đến Backend FastAPI
-3. **Backend** dùng Qdrant Hybrid Search (Dense Vector + Sparse Vector BM25) với RRF để tìm các điều khoản liên quan
-4. Hàm `build_nested_context()` xây dựng **context 2 cấp** (dẫn chiếu đệ quy giữa các điều luật)
-5. Context + **Tóm tắt bối cảnh cũ** (từ Memory Manager) + lịch sử chat ngắn + câu hỏi → **System Prompt** → gọi LLM qua HuggingFace API
-6. The LLM generates the answer, then the backend persists the complete `user/assistant` message pair to PostgreSQL before the turn is considered complete.
-7. The backend returns `{text, contextUsed}` or emits the final SSE `done` event; the frontend renders Markdown and legal context references.
-8. A background task only summarizes conversation memory after the completed turn has been persisted.
+3. **Backend** tạo embedding bằng fine-tuned local embedding model
+4. **Qdrant** chạy dense/sparse hybrid retrieval với RRF để lấy candidate sources
+5. Fine-tuned local **cross-encoder reranker** xếp hạng lại tối đa 10 candidates
+6. Context builder serialize final top 5 nguồn với source ID và metadata pháp lý
+7. Gemini/provider remote sinh answer, backend validate citation ID theo final context
+8. Backend trả `{text, contextUsed}` hoặc SSE `done`; final accumulated answer và persisted answer dùng bản citation đã sanitize.
+9. Background task tóm tắt memory sau khi lượt chat hoàn tất và đã persist.
+
+Final runtime defaults:
+
+- `candidateK=10`
+- reranker input count tối đa 10
+- final `topK=5`
+- normal dense/sparse prefetch multiplier = 2
+- explicit `Điều`/`Khoản`/`Điểm` citation queries dùng internal prefetch multiplier = 4
+- widened prefetch chỉ tăng recall trước fusion, không tăng reranker workload hoặc final topK
+
+Tài liệu chi tiết:
+
+- [Pipeline latency measurement](docs/pipeline_latency_measurement.md)
+- [Legal answer quality evaluation](docs/legal_answer_quality_evaluation.md)
+- [Local model integration](docs/local_model_integration.md)
 
 ---
 
@@ -121,7 +143,7 @@ Vietnam-Legal-QA-System/
 │   │   │   ├── context_builder/ # Context building (Nested 2-level)
 │   │   │   ├── chunking/        # Document chunking (Clause-based)
 │   │   │   ├── sparse_vector.py # Sinh Sparse Vectors cho BM25 (TF) tiếng Việt
-│   │   │   └── embedding/       # Text Embedding (HuggingFace API)
+│   │   │   └── embedding/       # Fine-tuned local text embedding
 │   │   │
 │   │   └── utils/               # Utilities
 │   │       └── logging.py       # Logging chuẩn
@@ -234,16 +256,16 @@ cp .env.example .env
 # Di chuyển vào thư mục backend
 cd backend
 
-# (Tùy chọn) Tạo virtual environment
-python -m venv venv
-# Windows: venv\Scripts\activate
-# Linux/Mac: source venv/bin/activate
+# Tạo virtual environment
+python -m venv .venv
+# Windows: .venv\Scripts\activate
+# Linux/Mac: source .venv/bin/activate
 
 # Cài đặt dependencies
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 
 # Khởi chạy server
-python main.py
+.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 1
 # Server chạy tại: http://localhost:8000
 ```
 
@@ -257,11 +279,12 @@ docker compose up -d postgres qdrant
 # .env
 # STORAGE_BACKEND=qdrant_postgres
 
-# Sau đó chạy ingestion một lần
+# Chỉ chạy ingestion thủ công khi bạn đang xây dựng local collection mới.
+# Không chạy ingestion/re-index vào Qdrant Cloud đã có dữ liệu production.
 python scripts/ingest_to_storage.py
 ```
 
-> Nếu dịch vụ database chưa sẵn sàng, backend vẫn sẽ khởi động bằng fallback FAISS và ghi log cảnh báo. Nếu Docker Desktop hoặc Docker Engine chưa chạy, lệnh `docker compose up -d postgres qdrant` sẽ thất bại trước khi backend có thể dùng PostgreSQL/Qdrant.
+> Nếu dịch vụ database chưa sẵn sàng, `/readiness` sẽ trả `503` cho đến khi PostgreSQL, Qdrant và local models sẵn sàng. FAISS fallback đang tắt mặc định để tránh truy vấn index cũ ngoài ý muốn.
 > **Lưu ý quan trọng:** Phải chạy từ **thư mục `backend/`**, không phải từ thư mục root!
 
 ### Bước 3: Chạy Frontend (Terminal 2)
@@ -282,7 +305,7 @@ npm run dev
 
 ```bash
 # Từ thư mục root project
-docker-compose up --build
+docker compose up --build
 
 # Backend: http://localhost:8000
 # Frontend: http://localhost:3000
@@ -291,11 +314,28 @@ docker-compose up --build
 ### Lưu ý khi chạy
 
 - **Backend phải chạy TRƯỚC Frontend** — Frontend proxy request đến Backend.
-- **FAISS index đã có sẵn** trong repo (22.5 MB) — không cần re-embed dữ liệu.
-- **Lần đầu khởi động** Backend sẽ nạp 8 file JSON vào RAM + tải FAISS index (~5-10 giây).
-- Khi bật `STORAGE_BACKEND=qdrant_postgres`, backend sẽ tạo schema PostgreSQL và collection Qdrant tại startup.
+- **Runtime chính** dùng PostgreSQL + Qdrant. FAISS chỉ là fallback legacy và đang tắt mặc định.
+- **Lần đầu khởi động** với preload/warm-up local models có thể mất khoảng 80-90 giây trên CPU baseline.
+- Khi bật `STORAGE_BACKEND=qdrant_postgres`, backend kiểm tra PostgreSQL và Qdrant trong `/readiness`.
 - Dữ liệu sẽ **không tự động được nhúng (embed)** khi khởi động backend để tăng tốc độ.
 - Để **nạp dữ liệu ban đầu hoặc nạp lại (re-embed) dữ liệu mới**, bạn PHẢI chạy script thủ công: `python scripts/ingest_to_storage.py`.
+
+### Biến môi trường quan trọng
+
+Không commit file `.env`. Các nhóm biến chính:
+
+- Runtime: `POSTGRES_DSN`, `QDRANT_URL`, `QDRANT_API_KEY`, `QDRANT_COLLECTION`, provider API keys.
+- Local models: `HUGGINGFACE_EMBEDDING_MODEL`, `RERANKER_MODEL`, `EMBEDDING_DIMENSION=1024`.
+- Retrieval: `RETRIEVER_CANDIDATE_K=10`, `RERANKER_MAX_CANDIDATES=10`, final `topK` mặc định là 5 trong request schema.
+- Startup: `LOCAL_MODELS_PRELOAD_ENABLED=true`, `LOCAL_MODELS_WARMUP_ENABLED=true`.
+- Observability: `PIPELINE_TIMING_ENABLED=false` mặc định.
+
+Preload/warm-up giúp request đầu tiên ổn định hơn nhưng làm `/readiness` lâu hơn. Với CPU baseline, cấu hình deployment nên đặt startup/readiness timeout lớn hơn 120 giây.
+
+### Health và readiness
+
+- `GET /health`: liveness của process, trả nhanh và không chờ model/dependency.
+- `GET /readiness`: chỉ ready khi config, PostgreSQL, Qdrant, local model artifacts và preload/warm-up đã sẵn sàng.
 
 ---
 
@@ -309,7 +349,7 @@ Kỹ thuật cốt lõi của hệ thống — **kết hợp truy xuất thông 
 Câu hỏi → [Retriever] → Điều khoản liên quan → [LLM] → Câu trả lời có trích dẫn
 ```
 
-**Tại sao dùng RAG?** LLM đơn thuần có thể tạo ra thông tin pháp lý không chính xác. RAG buộc LLM chỉ trả lời dựa trên dữ liệu thực tế được cung cấp, đảm bảo tính chính xác.
+**Tại sao dùng RAG?** LLM đơn thuần có thể tạo ra thông tin pháp lý không chính xác. RAG giúp ràng buộc câu trả lời vào nguồn đã truy xuất và làm citation dễ kiểm chứng hơn, nhưng không bảo đảm độ chính xác tuyệt đối.
 
 ### 2. Qdrant Hybrid Search (Native Sparse Vectors)
 
@@ -321,19 +361,13 @@ Hệ thống sử dụng cơ sở dữ liệu vector tiên tiến (Qdrant) để
 
 ### 3. Cross-Encoder Reranking
 
-Sau bước Search, kết quả có thể được xếp hạng lại (Reranking) để tăng độ chính xác:
+Sau bước Search, kết quả có thể được xếp hạng lại (Reranking) để cải thiện mức liên quan của final context:
 - **CrossEncoderReranker**: Dùng fine-tuned BGE reranker local để đánh giá chi tiết (joint encoding) giữa Query và Document.
 - Có thể bật/tắt dễ dàng qua config `PIPELINE_RERANKING=cross_encoder|none`.
 
-### 4. MMR Retrieval (Maximal Marginal Relevance)
+### 4. Legacy FAISS/MMR fallback
 
-Thay vì chỉ lấy top-K kết quả giống nhau nhất, MMR **cân bằng giữa độ liên quan và đa dạng**:
-
-| Tham số | Giá trị | Ý nghĩa |
-|---|---|---|
-| `k` | 6 | Trả về 6 điều khoản liên quan nhất |
-| `fetch_k` | 20 | Lấy 20 ứng viên ban đầu rồi chọn 6 |
-| `lambda_mult` | 0.8 | 80% ưu tiên liên quan, 20% ưu tiên đa dạng |
+FAISS/MMR vẫn tồn tại cho môi trường phát triển cũ, nhưng runtime chính của quality branch là Qdrant hybrid retrieval. `ENABLE_FAISS_FALLBACK=false` theo mặc định để tránh âm thầm dùng index không cùng embedding space.
 
 ### 5. Nested Context Building (Dẫn chiếu 2 cấp)
 
@@ -349,7 +383,7 @@ Tính năng nổi bật — xây dựng **context đệ quy** giúp LLM hiểu l
 
 ### 6. Category-based Filtering
 
-Lọc kết quả truy xuất theo **lĩnh vực pháp luật** để tăng độ chính xác:
+Lọc kết quả truy xuất theo **lĩnh vực pháp luật** để thu hẹp phạm vi tìm kiếm:
 
 - Tất cả các luật
 - Dân sự
@@ -363,13 +397,16 @@ Lọc kết quả truy xuất theo **lĩnh vực pháp luật** để tăng đ�
 Metadata `law_id` và `category` được dùng để lọc document trước khi tìm kiếm.
 Mỗi lựa chọn trên giao diện có thêm mô tả ngắn về phạm vi pháp luật tương ứng.
 
-### 7. Prompt Engineering
+### 7. Answer grounding và citation validation
 
-System prompt được thiết kế với **4 quy tắc bắt buộc** cho LLM:
-1. **Trích dẫn rõ ràng:** Luôn nêu tên Luật, Chương, Điều, Khoản.
-2. **Xử lý dẫn chiếu:** Dùng nội dung dẫn chiếu để giải thích thuật ngữ.
-3. **Không suy đoán:** Chỉ trả lời dựa trên dữ liệu được cung cấp.
-4. **Ngôn ngữ:** Trả lời bằng tiếng Việt chuyên nghiệp, khách quan.
+Prompt yêu cầu LLM trả lời bằng tiếng Việt, dựa trên context được cung cấp và dùng source ID hợp lệ. Sau khi model sinh câu trả lời, backend validate citation ID theo final context:
+
+- citation ID có trong final context được giữ;
+- citation ID không tồn tại trong final context bị loại khỏi final accumulated answer;
+- persisted/history answer dùng bản đã sanitize;
+- nếu một answer pháp lý chỉ còn citation không hợp lệ, backend dùng fallback thiếu căn cứ ngắn gọn.
+
+Với SSE streaming, token chunks có thể đã được emit trước final validation. Final `done` event, accumulated response và persisted answer dùng bản sanitized; token-level chunks đã emit không thể được thu hồi.
 
 ### 8. Cơ sở dữ liệu Persistent (Qdrant & PostgreSQL)
 
@@ -414,11 +451,12 @@ Kỹ thuật này giúp tiết kiệm lượng lớn token API, giảm thiểu �
 - **Hỏi đáp pháp lý** bằng ngôn ngữ tự nhiên tiếng Việt.
 - **Trích dẫn căn cứ pháp lý** — mỗi câu trả lời kèm nguồn điều khoản cụ thể.
 - **Dẫn chiếu chéo tự động** — hệ thống tự tìm và đính kèm các điều luật liên quan.
-- **Lọc theo lĩnh vực** — chọn chuyên ngành luật để tăng độ chính xác.
+- **Lọc theo lĩnh vực** — chọn chuyên ngành luật để thu hẹp phạm vi truy xuất.
 
 ### Đa model AI
-- **4 model LLM** lựa chọn: Gemma4-31B, Qwen3.5-9B, Llama3.1-8B, DeepSeek-R1-7B.
-- **Chuyển đổi model** ngay trong giao diện — so sánh chất lượng câu trả lời.
+- **Provider/model BYOK**: Google Gemini, HuggingFace Router và Ollama local theo catalog trong frontend.
+- **Model mặc định**: Gemini 3.1 Flash-Lite.
+- **Chuyển đổi model** ngay trong giao diện để so sánh hành vi trả lời trên cùng pipeline retrieval.
 
 ### Giao diện hiện đại
 - **UI chuyên nghiệp** — thiết kế tối giản, responsive, animations mượt.
@@ -427,11 +465,94 @@ Kỹ thuật này giúp tiết kiệm lượng lớn token API, giảm thiểu �
 - **Phím tắt** — Enter gửi, Shift+Enter xuống dòng.
 - **Render Markdown** — câu trả lời hiển thị với format (heading, bold, list...).
 
-### Pipeline dữ liệu & Ablation Study
-- **Kiến trúc Modular** — Pipeline tách biệt thành 5 module: Embedding, Chunking, Search, Reranking, ContextBuilder.
-- **Ablation Study** — Thay đổi thuật toán Search/Rerank linh hoạt chỉ bằng cấu hình `.env` mà không cần sửa code.
+### Pipeline dữ liệu & Evaluation
+- **Kiến trúc Modular** — Pipeline tách biệt thành Embedding, Search, Reranking, ContextBuilder và Answer Generation.
+- **Quality evaluation tooling** — có fixture retrieval, insufficient-context fixture, evaluator theo stage và manual review rubric.
 - **Embedding incremental** — chỉ embed file mới, bỏ qua file đã xử lý.
 - **Dữ liệu lớn** — 5.756 điều khoản, 843 dẫn chiếu chéo từ 8 bộ luật quan trọng.
+
+---
+
+## Quality Evaluation
+
+Evaluation hiện tại gồm:
+
+- 20-record legal retrieval fixture: `backend/tests/fixtures/legal_retrieval_quality.jsonl`
+- 4-record insufficient-context fixture: `backend/tests/fixtures/legal_insufficient_context_quality.jsonl`
+- automated evaluator: `backend/scripts/evaluate_legal_quality.py`
+- deterministic source/citation metrics và một manual answer review nhỏ.
+
+Ví dụ chạy retrieval evaluation từ `backend/`:
+
+```bash
+.venv/bin/python scripts/evaluate_legal_quality.py \
+  --dataset tests/fixtures/legal_retrieval_quality.jsonl \
+  --retrieval-only \
+  --candidate-k 10 \
+  --top-k 5 \
+  --output /tmp/vietlaw-quality-evaluation.json
+```
+
+Ví dụ chạy insufficient-context answer evaluation khi backend đã ready:
+
+```bash
+.venv/bin/python scripts/evaluate_legal_quality.py \
+  --dataset tests/fixtures/legal_insufficient_context_quality.jsonl \
+  --answer-evaluation \
+  --base-url http://127.0.0.1:8000 \
+  --candidate-k 10 \
+  --top-k 5 \
+  --output /tmp/vietlaw-insufficient-context-evaluation.json
+```
+
+Generated reports nên đặt ngoài repository, ví dụ `/tmp`.
+
+### Measured fixture results
+
+Retrieval evaluation trên 20 fixture records:
+
+| Metric | Result |
+|---|---:|
+| Retrieval Hit@10 | 1.00 |
+| Retrieval Recall@10 | 1.00 |
+| Reranker Hit@5 | 1.00 |
+| Reranker Recall@5 | 1.00 |
+| MRR@10 | 0.6108 |
+| Critical retrieval misses | 0 |
+| Empty contexts | 0 |
+| Duplicate contexts | 0 |
+
+Answer evaluation:
+
+| Metric | Result |
+|---|---:|
+| Evaluated answer requests | 16 |
+| Required citation presence | 0.9375 |
+| Invalid citations in final answer | 0 |
+| Unused-by-answer | 0 |
+| Unsupported detector findings in final regular answer set | 0 |
+
+Insufficient-context evaluation:
+
+| Metric | Result |
+|---|---:|
+| Fixture records | 4 |
+| Service-level runs | 8 |
+| Safe fallback or cautious guidance | 8/8 |
+| Invented citations returned | 0 |
+| Overconfident outputs | 0 |
+
+Manual review:
+
+| Metric | Result |
+|---|---:|
+| Reviewed answers | 18 |
+| Score 0 | 0 |
+| Score 1 | 1 |
+| Score 2 | 17 |
+| Average score | 1.94/2 |
+
+These figures describe the current small evaluation fixtures and must not be interpreted as system-wide legal accuracy.
 
 ---
 
@@ -500,7 +621,7 @@ Mỗi file JSON trong `data/processed/` có cấu trúc:
 | **LLM Framework** | LangChain (core, community, huggingface) | Orchestration |
 | **Embedding** | Fine-tuned BGE-M3 local artifact | Multilingual, 1024 dims |
 | **Vector DB** | Qdrant (Native Hybrid Search) | Cấu hình Named Vectors |
-| **LLM Models** | Gemini Flash-Lite, Gemma, Qwen, Llama, DeepSeek | Browser-configured providers |
+| **LLM Models** | Gemini Flash-Lite, HuggingFace Router models, Ollama local models | Browser-configured providers |
 
 ## Deployed Inference Setup
 
@@ -512,7 +633,7 @@ request and does not persist them.
 Inference roles:
 
 - `answer`: final legal answer generation.
-- `rewriter`: query classification and rewrite before retrieval.
+- `rewriter`: optional query rewrite role; the accepted quality configuration keeps `PIPELINE_REWRITER=none`.
 - `summarizer`: background memory summary updates.
 
 Recommended first setup:
@@ -549,3 +670,45 @@ Environment file roles:
 Rollback: ignore browser `inferenceConfig` payloads and rely on server-side
 environment defaults such as `HUGGINGFACE_API_KEY`, `GOOGLE_API_KEY`,
 `ENABLE_GOOGLE_FALLBACK`, and `INFERENCE_STRATEGY`.
+
+---
+
+## Testing
+
+Backend:
+
+```bash
+cd backend
+.venv/bin/python -m pytest tests -q
+.venv/bin/python -m compileall app scripts tests -q
+.venv/bin/python -m pip check
+```
+
+Frontend:
+
+```bash
+cd frontend
+npm run lint
+npm run build
+npm run verify:models
+npm run verify:inference-settings
+```
+
+If Ruff is installed in the backend virtual environment, it can also be run with:
+
+```bash
+cd backend
+.venv/bin/python -m ruff check app scripts tests
+```
+
+---
+
+## Known Limitations
+
+- Evaluation fixtures are intentionally small and do not represent system-wide legal accuracy.
+- The indexed corpus does not cover all Vietnamese legal documents or future legal updates.
+- Answers depend on the indexed text and can miss conditions, exceptions, or practical procedural details.
+- Unsupported-reference detection is diagnostic-only; findings are not automatically hallucination counts.
+- Token-level SSE chunks can be emitted before final citation validation; final accumulated, completion, persisted, and history answers are sanitized.
+- CPU local embedding/reranking inference is slower than GPU inference.
+- The system is a research/student project and does not replace professional legal advice.
