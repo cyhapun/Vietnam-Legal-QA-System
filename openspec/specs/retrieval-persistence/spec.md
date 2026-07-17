@@ -1,7 +1,7 @@
 # Capability: Retrieval Persistence
 
 ## Purpose
-TBD
+This capability defines persistent hybrid legal retrieval, multi-query orchestration, and resilient fallback behavior.
 
 ## Requirements
 
@@ -11,6 +11,10 @@ The system MUST support legal retrieval through the new persistent storage layer
 #### Scenario: Successful hybrid retrieval with multiple queries
 - **WHEN** the query rewriter outputs an array of search queries
 - **THEN** the system MUST execute a `query_points` request with dual prefetch for each query, pool the results, remove duplicates, and pass the unique documents to the reranker
+
+#### Scenario: Async retrieval is not duplicated
+- **WHEN** an async chat request invokes persistent retrieval for one or more rewritten queries
+- **THEN** each rewritten query is embedded and searched once, and the pipeline does not repeat the same `asearch()` or synchronous fallback dispatch for capability detection
 
 #### Scenario: Bypassing retrieval for chitchat
 - **WHEN** the query rewriter classifies the input as "chitchat"
