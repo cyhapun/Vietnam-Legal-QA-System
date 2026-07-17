@@ -199,13 +199,15 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
             queries = (queries or [last_message])[:request.maxSubqueries]
         logger.info("Rewriter enabled=%s, domain=%s, queries=%s", request.enableQueryRewriter, domain, queries)
         
-        api_key = request.inference_config.api_key_for("huggingface") if request.inference_config else None
+        hf_api_key = request.inference_config.api_key_for("huggingface") if request.inference_config else None
+        from app.config import HUGGINGFACE_EMBEDDING_MODE
+        embedding_api_key = hf_api_key if HUGGINGFACE_EMBEDDING_MODE == "api" else None
         
         try:
             query_vector = None
             if request.enableSemanticCache and domain != "chitchat":
                 rewritten_query = queries[0] if queries else last_message
-                embedding = _get_embedding(api_key)
+                embedding = _get_embedding(embedding_api_key)
                 if embedding:
                     try:
                         # Sinh embedding cho câu hỏi đã được viết lại
@@ -246,7 +248,8 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
                 queries=queries,
                 enable_reranker=request.enableReranker,
                 context_token_budget=request.contextTokenBudget,
-                api_key=api_key
+                embedding_api_key=embedding_api_key,
+                reranker_api_key=hf_api_key
             )
         except EmbeddingServiceError as e:
             raise HTTPException(status_code=_embedding_error_status(e), detail=str(e))
@@ -409,13 +412,15 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
                 queries = (queries or [last_message])[:request.maxSubqueries]
             logger.info("Stream rewriter enabled=%s, domain=%s, queries=%s", request.enableQueryRewriter, domain, queries)
             
-            api_key = request.inference_config.api_key_for("huggingface") if request.inference_config else None
+            hf_api_key = request.inference_config.api_key_for("huggingface") if request.inference_config else None
+            from app.config import HUGGINGFACE_EMBEDDING_MODE
+            embedding_api_key = hf_api_key if HUGGINGFACE_EMBEDDING_MODE == "api" else None
             
             try:
                 query_vector = None
                 if request.enableSemanticCache and domain != "chitchat":
                     rewritten_query = queries[0] if queries else last_message
-                    embedding = _get_embedding(api_key)
+                    embedding = _get_embedding(embedding_api_key)
                     if embedding:
                         try:
                             query_vector = await asyncio.to_thread(embedding.embed_query, rewritten_query)
@@ -459,7 +464,8 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
                     queries=queries,
                     enable_reranker=request.enableReranker,
                     context_token_budget=request.contextTokenBudget,
-                    api_key=api_key
+                    embedding_api_key=embedding_api_key,
+                    reranker_api_key=hf_api_key
                 )
             except EmbeddingServiceError as e:
                 outcome = "error"
