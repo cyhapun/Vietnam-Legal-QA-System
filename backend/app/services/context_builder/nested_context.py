@@ -119,6 +119,43 @@ class NestedContextBuilder:
 
         return header + "\n\n".join(context_blocks)
 
+    def build_compact(self, documents: List[Document]) -> str:
+        """Build a compact context that preserves source IDs, legal metadata, and main text."""
+        context_blocks = []
+        used_law_ids = set()
+
+        for doc in documents:
+            clause_id = doc.metadata.get("id")
+            clause_data = KNOWLEDGE_BASE.get(clause_id)
+            if not clause_data:
+                continue
+
+            law_id = clause_data["law_id"]
+            used_law_ids.add(law_id)
+            pos = clause_data["position"]
+            law_name = LAW_METADATA[law_id]["law_name"]
+            article_val = pos.get("article", "")
+            article_title = pos.get("article_title", "")
+            clause_val = pos.get("clause", "")
+
+            block = f"[CĂN CỨ ID: {clause_id}]\n"
+            block += f"- Văn bản: {law_name}\n"
+            block += f"- Điều: {article_val}\n"
+            if clause_val != "":
+                block += f"- Khoản: {clause_val}\n"
+            if article_title:
+                block += f"- Tiêu đề: {article_title}\n"
+            block += f"- Nội dung: \"{clause_data['content']}\"\n"
+            context_blocks.append(block)
+
+        header = "--- THÔNG TIN CÁC VĂN BẢN ĐƯỢC SỬ DỤNG ---\n"
+        for law_id in used_law_ids:
+            meta = LAW_METADATA.get(law_id)
+            if meta:
+                header += f"- {meta['law_name']}: {meta['summary']}\n"
+        header += "\n--- CHI TIẾT CĂN CỨ ---\n"
+        return header + "\n\n".join(context_blocks)
+
     def format_for_frontend(self, documents: List[Document]) -> List[Dict[str, Any]]:
         """Định dạng lại dữ liệu trả về để Frontend dễ dàng hiển thị lên UI."""
         formatted = []

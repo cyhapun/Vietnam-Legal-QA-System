@@ -36,6 +36,19 @@ class _ContextBuilder:
         return []
 
 
+class _BudgetContextBuilder:
+    strategy_name = "budget_context"
+
+    def build(self, docs):
+        return "x" * 100
+
+    def build_compact(self, docs):
+        return "\n".join(f"[CĂN CỨ ID: {doc.metadata['id']}]\n{doc.page_content}" for doc in docs)
+
+    def format_for_frontend(self, docs):
+        return []
+
+
 def test_request_disable_reranker_does_not_call_inference():
     reranker = _Reranker()
     pipeline = RAGPipeline(
@@ -50,3 +63,22 @@ def test_request_disable_reranker_does_not_call_inference():
     assert len(docs) == 1
     assert context == "a"
     assert reranker.calls == 0
+
+
+def test_context_budget_uses_compact_context_to_preserve_final_sources():
+    pipeline = RAGPipeline(
+        rewriter=_NoOpRewriter(),
+        searcher=_Searcher(),
+        reranker=_Reranker(),
+        context_builder=_BudgetContextBuilder(),
+    )
+    docs = [
+        Document(page_content="nội dung 1", metadata={"id": "A"}),
+        Document(page_content="nội dung 2", metadata={"id": "B"}),
+    ]
+
+    selected, context = pipeline._build_context_with_budget(docs, token_budget=20)
+
+    assert [doc.metadata["id"] for doc in selected] == ["A", "B"]
+    assert "[CĂN CỨ ID: A]" in context
+    assert "[CĂN CỨ ID: B]" in context

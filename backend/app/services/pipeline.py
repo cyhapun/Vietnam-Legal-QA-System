@@ -278,6 +278,32 @@ class RAGPipeline:
         if not docs or token_budget is None:
             return docs, self.context_builder.build(docs)
 
+        full_context = self.context_builder.build(docs)
+        full_tokens = max(1, (len(full_context) + 3) // 4)
+        if full_tokens <= token_budget:
+            logger.info(
+                "Context budget %d tokens kept %d/%d documents (estimated=%d)",
+                token_budget,
+                len(docs),
+                len(docs),
+                full_tokens,
+            )
+            return docs, full_context
+
+        compact_builder = getattr(self.context_builder, "build_compact", None)
+        if callable(compact_builder):
+            compact_context = compact_builder(docs)
+            compact_tokens = max(1, (len(compact_context) + 3) // 4)
+            if compact_tokens <= token_budget:
+                logger.info(
+                    "Context budget %d tokens kept %d/%d documents using compact context (estimated=%d)",
+                    token_budget,
+                    len(docs),
+                    len(docs),
+                    compact_tokens,
+                )
+                return docs, compact_context
+
         selected: List[Document] = []
         context = ""
         for doc in docs:
