@@ -15,7 +15,6 @@ import {
 import { AI_MODELS, AI_PROVIDERS } from '@/lib/constants';
 import { AISettings, DEFAULT_AI_SETTINGS, setRoleByModel } from '@/lib/ai-settings';
 import { useAISettings } from '@/hooks/use-ai-settings';
-import type { InferenceProviderId } from '@/lib/types';
 
 const SYSTEM_FEATURES = [
   {
@@ -59,7 +58,7 @@ export default function SystemSettingsTab() {
     setSaved(false);
   };
 
-  const updateProviderKey = (provider: InferenceProviderId, apiKey: string) => {
+  const updateProviderKey = (provider: 'google' | 'huggingface', apiKey: string) => {
     setDraft(current => ({
       ...current,
       providerCredentials: {
@@ -73,7 +72,7 @@ export default function SystemSettingsTab() {
     setSaved(false);
   };
 
-  const updateProviderRemember = (provider: InferenceProviderId, remember: boolean) => {
+  const updateProviderRemember = (provider: 'google' | 'huggingface', remember: boolean) => {
     setDraft(current => ({
       ...current,
       providerCredentials: {
@@ -175,7 +174,7 @@ export default function SystemSettingsTab() {
                   <input
                     type="password"
                     value={draft.providerCredentials[provider.id]?.apiKey ?? ''}
-                    onChange={event => updateProviderKey(provider.id as InferenceProviderId, event.target.value)}
+                    onChange={event => updateProviderKey(provider.id as 'google' | 'huggingface', event.target.value)}
                     className="mt-2 w-full rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:border-indigo-500"
                     placeholder="API key"
                   />
@@ -183,7 +182,7 @@ export default function SystemSettingsTab() {
                     <input
                       type="checkbox"
                       checked={draft.providerCredentials[provider.id]?.remember ?? true}
-                      onChange={event => updateProviderRemember(provider.id as InferenceProviderId, event.target.checked)}
+                      onChange={event => updateProviderRemember(provider.id as 'google' | 'huggingface', event.target.checked)}
                     />
                     Remember on this device
                   </label>

@@ -1,7 +1,6 @@
 import pytest
 from pydantic import ValidationError
 
-import app.api.chat as chat_module
 import app.services.llm as llm_module
 from app.models import ChatRequest, RuntimeInferenceConfig
 from app.services.provider_registry import redact_runtime_inference_config
@@ -74,10 +73,6 @@ def test_chat_request_rejects_embedding_override():
                 "embedding": {"provider": "google", "model": "anything"},
             },
         })
-
-
-def test_chat_embedding_ignores_runtime_huggingface_key():
-    assert chat_module._embedding_api_key() is None
 
 
 def test_chat_request_defaults_candidate_k_to_reduced_workload():

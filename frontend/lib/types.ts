@@ -41,7 +41,7 @@ export interface AIModel {
   provider: InferenceProviderId;
 }
 
-export type InferenceProviderId = 'google' | 'huggingface' | 'ollama' | 'openrouter';
+export type InferenceProviderId = 'google' | 'huggingface' | 'ollama';
 export type InferenceRoleId = 'answer' | 'rewriter' | 'summarizer';
 
 export interface InferenceProvider {
