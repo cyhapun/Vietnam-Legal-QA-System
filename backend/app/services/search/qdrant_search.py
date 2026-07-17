@@ -30,9 +30,16 @@ from app.utils.logging import setup_logger
 
 logger = setup_logger("vietlaw.search.qdrant")
 
+NORMAL_PREFETCH_MULTIPLIER = 2
+EXPLICIT_CITATION_PREFETCH_MULTIPLIER = 4
 _EXPLICIT_LEGAL_CITATION_RE = re.compile(
-    r"(?i)(?:\bđiều\s*\d+|\bkhoản\s*\d+|\bđiểm\s*[a-zA-Z0-9]+|\bđ\s*\d+|\bk\s*\d+)"
+    r"(?i)(?:\bđiều\s*\.?\s*\d+|\bkhoản\s*\.?\s*\d+|\bđiểm\s*\.?\s*[a-zA-Z0-9]\b|\bđ\s*\.?\s*\d+|\bk\s*\.?\s*\d+)"
 )
+
+
+def contains_explicit_legal_citation(query: str) -> bool:
+    """Return true for high-confidence Vietnamese legal article/clause references."""
+    return bool(_EXPLICIT_LEGAL_CITATION_RE.search(query or ""))
 
 
 class QdrantSearcher:
@@ -55,9 +62,9 @@ class QdrantSearcher:
 
     @staticmethod
     def _prefetch_limit_for_queries(queries: List[str], k: int) -> int:
-        base_limit = k * 2
-        if any(_EXPLICIT_LEGAL_CITATION_RE.search(query or "") for query in queries):
-            return max(base_limit, 40)
+        base_limit = max(k, k * NORMAL_PREFETCH_MULTIPLIER)
+        if any(contains_explicit_legal_citation(query) for query in queries):
+            return max(base_limit, k * EXPLICIT_CITATION_PREFETCH_MULTIPLIER)
         return base_limit
 
     def _get_embedding_backend(self, api_key: Optional[str] = None):
