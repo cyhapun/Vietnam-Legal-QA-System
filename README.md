@@ -300,6 +300,7 @@ python -m venv .venv
 
 # Cài đặt dependencies
 python -m pip install -r requirements.txt
+python -m pip install -r requirements-local.txt  # local/Docker fine-tuned models
 
 # Khởi chạy server
 .venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 1

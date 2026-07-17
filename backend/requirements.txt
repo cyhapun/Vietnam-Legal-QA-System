@@ -24,10 +24,6 @@ psycopg[binary]
 huggingface_hub>=0.24.0
 
 # === Local Model Runtime ===
-torch>=2.1.0
-transformers>=4.40.0
-sentence-transformers>=3.0.0
-safetensors>=0.4.0
 
 # === Ingestion & Local Tools ===
 # faiss-cpu # (Ẩn khi deploy Vercel: Chỉ cần nếu dùng FAISS local fallback)
