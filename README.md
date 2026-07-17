@@ -77,6 +77,8 @@ Hệ thống theo mô hình **Client-Server** với 2 thành phần chính giao 
 └─────────────────────────────────────────────────────────┘
 ```
 
+![Sơ đồ pipeline RAG của VietLaw AI](overview.png)
+
 ### Luồng xử lý chính
 
 1. Người dùng nhập câu hỏi; `frontend/app/api/chat/route.ts` proxy request đến FastAPI.
