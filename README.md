@@ -26,12 +26,12 @@ Hệ thống truy xuất các điều khoản pháp luật liên quan từ cơ s
 - [Hướng dẫn cài đặt và chạy](#hướng-dẫn-cài-đặt-và-chạy)
 - [Kỹ thuật sử dụng](#kỹ-thuật-sử-dụng)
 - [Tính năng](#tính-năng)
-- [Quality evaluation](#quality-evaluation)
+- [Đánh giá chất lượng](#đánh-giá-chất-lượng)
 - [Dữ liệu pháp luật](#dữ-liệu-pháp-luật)
 - [Công nghệ](#công-nghệ)
-- [Testing](#testing)
-- [Known limitations](#known-limitations)
-- [Local model integration](docs/local_model_integration.md)
+- [Kiểm thử](#kiểm-thử)
+- [Hạn chế đã biết](#hạn-chế-đã-biết)
+- [Tích hợp mô hình cục bộ](docs/local_model_integration.md)
 
 ---
 
@@ -81,30 +81,30 @@ Hệ thống theo mô hình **Client-Server** với 2 thành phần chính giao 
 
 ### Luồng xử lý chính
 
-1. **User** nhập câu hỏi pháp lý → Frontend gửi `POST /api/chat`
+1. **Người dùng** nhập câu hỏi pháp lý → Frontend gửi `POST /api/chat`
 2. **Next.js API Route** (proxy) chuyển tiếp request đến Backend FastAPI
 3. **Backend** tạo embedding bằng fine-tuned local embedding model
-4. **Qdrant** chạy dense/sparse hybrid retrieval với RRF để lấy candidate sources
-5. Fine-tuned local **cross-encoder reranker** xếp hạng lại tối đa 10 candidates
-6. Context builder serialize final top 5 nguồn với source ID và metadata pháp lý
-7. Gemini/provider remote sinh answer, backend validate citation ID theo final context
-8. Backend trả `{text, contextUsed}` hoặc SSE `done`; final accumulated answer và persisted answer dùng bản citation đã sanitize.
-9. Background task tóm tắt memory sau khi lượt chat hoàn tất và đã persist.
+4. **Qdrant** chạy dense/sparse hybrid retrieval với RRF để lấy các nguồn ứng viên
+5. Fine-tuned local **Cross-Encoder reranker** xếp hạng lại tối đa 10 nguồn ứng viên
+6. Context builder tuần tự hóa 5 nguồn được chọn cuối cùng, kèm source ID và metadata pháp lý
+7. Gemini hoặc provider từ xa sinh câu trả lời; backend kiểm tra các citation ID dựa trên final context
+8. Backend trả `{text, contextUsed}` hoặc SSE `done`; câu trả lời tổng hợp cuối cùng và câu trả lời được lưu đều dùng bản citation đã được làm sạch.
+9. Tác vụ nền cập nhật phần tóm tắt bộ nhớ hội thoại sau khi lượt chat đã hoàn tất và được lưu.
 
-Final runtime defaults:
+Cấu hình runtime mặc định:
 
 - `candidateK=10`
-- reranker input count tối đa 10
+- số nguồn đưa vào reranker tối đa 10
 - final `topK=5`
-- normal dense/sparse prefetch multiplier = 2
-- explicit `Điều`/`Khoản`/`Điểm` citation queries dùng internal prefetch multiplier = 4
-- widened prefetch chỉ tăng recall trước fusion, không tăng reranker workload hoặc final topK
+- dense/sparse prefetch multiplier thông thường = 2
+- truy vấn có citation rõ ràng dạng `Điều`/`Khoản`/`Điểm` dùng internal prefetch multiplier = 4
+- prefetch mở rộng chỉ tăng recall trước fusion, không tăng workload của reranker hoặc final topK
 
 Tài liệu chi tiết:
 
-- [Pipeline latency measurement](docs/pipeline_latency_measurement.md)
-- [Legal answer quality evaluation](docs/legal_answer_quality_evaluation.md)
-- [Local model integration](docs/local_model_integration.md)
+- [Đo độ trễ pipeline](docs/pipeline_latency_measurement.md)
+- [Đánh giá chất lượng câu trả lời pháp luật](docs/legal_answer_quality_evaluation.md)
+- [Tích hợp mô hình cục bộ](docs/local_model_integration.md)
 
 ---
 
@@ -113,39 +113,39 @@ Tài liệu chi tiết:
 ```text
 Vietnam-Legal-QA-System/
 │
-├── .env.example                 # Template biến môi trường
-├── .gitignore                   # Git ignore rules
+├── .env.example                 # Mẫu biến môi trường
+├── .gitignore                   # Quy tắc Git ignore
 ├── README.md                    # Tài liệu dự án (file này)
 ├── docker-compose.yml           # Docker Compose cho phát triển
 │
 ├── backend/                     # === BACKEND (Python + FastAPI) ===
-│   ├── main.py                  # Entry point — chạy: python main.py
-│   ├── rag_service.py           # Backward-compatible shim
+│   ├── main.py                  # Điểm vào — chạy: python main.py
+│   ├── rag_service.py           # Shim tương thích ngược
 │   ├── requirements.txt         # Dependencies Python
-│   ├── embedded_files.json      # Tracking các file đã embedding
+│   ├── embedded_files.json      # Theo dõi các file đã embedding
 │   │
 │   ├── app/                     # Package chính (modular)
 │   │   ├── __init__.py
-│   │   ├── main.py              # FastAPI app factory + startup events
+│   │   ├── main.py              # Tạo FastAPI app + sự kiện startup
 │   │   ├── config.py            # Cấu hình tập trung (paths, API keys, constants)
-│   │   ├── models.py            # Pydantic schemas (ChatRequest, ChatResponse)
+│   │   ├── models.py            # Pydantic schema (ChatRequest, ChatResponse)
 │   │   │
-│   │   ├── api/                 # API Layer
+│   │   ├── api/                 # Lớp API
 │   │   │   └── chat.py          # Router POST /chat — xử lý request/response
 │   │   │
-│   │   ├── services/            # Business Logic Layer
-│   │   │   ├── pipeline.py      # Orchestrator kết nối các module (Ablation study)
+│   │   ├── services/            # Lớp business logic
+│   │   │   ├── pipeline.py      # Orchestrator kết nối các module
 │   │   │   ├── storage.py       # Quản lý Database (PostgreSQL + Qdrant)
-│   │   │   ├── knowledge_base.py# In-memory KB fallback
-│   │   │   ├── llm.py           # Kết nối LLM (HuggingFace) + System Prompt
-│   │   │   ├── search/          # Search modules: Qdrant, FAISS fallback
-│   │   │   ├── reranking/       # Reranking modules: NoRerank, CrossEncoder
-│   │   │   ├── context_builder/ # Context building (Nested 2-level)
-│   │   │   ├── chunking/        # Document chunking (Clause-based)
+│   │   │   ├── knowledge_base.py# Fallback KB trong bộ nhớ
+│   │   │   ├── llm.py           # Kết nối LLM + System Prompt
+│   │   │   ├── search/          # Module search: Qdrant, FAISS fallback
+│   │   │   ├── reranking/       # Module reranking: NoRerank, CrossEncoder
+│   │   │   ├── context_builder/ # Xây dựng context dạng nested 2 cấp
+│   │   │   ├── chunking/        # Chia tài liệu theo clause
 │   │   │   ├── sparse_vector.py # Sinh Sparse Vectors cho BM25 (TF) tiếng Việt
 │   │   │   └── embedding/       # Fine-tuned local text embedding
 │   │   │
-│   │   └── utils/               # Utilities
+│   │   └── utils/               # Tiện ích dùng chung
 │   │       └── logging.py       # Logging chuẩn
 │   │
 │   ├── data/
@@ -153,7 +153,7 @@ Vietnam-Legal-QA-System/
 │   │   └── raw/                 # Dữ liệu thô (chưa có)
 │   │
 │   └── vietlaw_faiss_index/     # FAISS vector index (22.5 MB)
-│       ├── index.faiss          # Vector data
+│       ├── index.faiss          # Dữ liệu vector
 │       └── index.pkl            # Metadata
 │
 ├── frontend/                    # === FRONTEND (Next.js 15 + React 19) ===
@@ -163,13 +163,13 @@ Vietnam-Legal-QA-System/
 │   ├── postcss.config.mjs       # PostCSS + TailwindCSS
 │   │
 │   ├── app/                     # Next.js App Router
-│   │   ├── layout.tsx           # Root layout (metadata, global styles)
+│   │   ├── layout.tsx           # Root layout (metadata, style toàn cục)
 │   │   ├── page.tsx             # Trang chính — render ChatInterface
-│   │   ├── globals.css          # CSS toàn cục + custom scrollbar
+│   │   ├── globals.css          # CSS toàn cục + scrollbar tùy chỉnh
 │   │   └── api/chat/
 │   │       └── route.ts         # API Route Proxy → chuyển tiếp đến Backend
 │   │
-│   ├── components/              # React Components
+│   ├── components/              # React components
 │   │   ├── chat/
 │   │   │   ├── ChatInterface.tsx    # Giao diện chat chính
 │   │   │   ├── ChatMessage.tsx      # Hiển thị tin nhắn + căn cứ pháp lý
@@ -178,15 +178,15 @@ Vietnam-Legal-QA-System/
 │   │   └── ui/
 │   │       └── LoadingSpinner.tsx   # Animation loading khi chờ LLM
 │   │
-│   ├── hooks/                   # Custom React Hooks
+│   ├── hooks/                   # Custom React hooks
 │   │   ├── use-chat-sessions.ts # Quản lý sessions
 │   │   ├── use-click-outside.ts # Đóng dropdown khi click ngoài
 │   │   └── use-mobile.ts        # Phát hiện thiết bị mobile
 │   │
-│   └── lib/                     # Shared Utilities
-│       ├── types.ts             # TypeScript interfaces
+│   └── lib/                     # Tiện ích dùng chung
+│       ├── types.ts             # Interface TypeScript
 │       ├── constants.ts         # Hằng số (models, categories, storage keys)
-│       └── utils.ts             # Hàm tiện ích (class merging)
+│       └── utils.ts             # Hàm tiện ích (gộp class)
 │
 └── notebooks/                   # === JUPYTER NOTEBOOKS ===
     └── embedding_model.ipynb    # Notebook thử nghiệm embedding model
@@ -196,16 +196,16 @@ Vietnam-Legal-QA-System/
 
 | Layer | Vai trò | Files |
 |---|---|---|
-| **API Layer** | Nhận HTTP request, validate, trả response | `api/chat.py`, `models.py` |
-| **Service Layer** | Business logic: RAG, LLM, Vector DB | `services/llm.py`, `pipeline.py`, `storage.py` |
-| **Config Layer** | Quản lý cấu hình, env, paths | `config.py` |
+| **API Layer** | Nhận HTTP request, validate và trả response | `api/chat.py`, `models.py` |
+| **Service Layer** | Xử lý business logic: RAG, LLM, Vector DB | `services/llm.py`, `pipeline.py`, `storage.py` |
+| **Config Layer** | Quản lý cấu hình, env và paths | `config.py` |
 | **Utils Layer** | Tiện ích dùng chung | `utils/logging.py` |
 
 > **Nguyên tắc:** Mỗi file **một nhiệm vụ duy nhất** (Single Responsibility). API layer không chứa business logic, service layer không biết về HTTP.
 
 ---
 
-## Hướng dẫn Cài đặt và Chạy
+## Hướng dẫn cài đặt và chạy
 
 ### Yêu cầu hệ thống
 
@@ -226,28 +226,29 @@ cd Vietnam-Legal-QA-System
 # Tạo file biến môi trường từ template
 cp .env.example .env
 
-# .env contains server defaults and infrastructure settings.
-# Runtime provider/model API keys are configured in the web UI.
+# .env chứa cấu hình mặc định của server và hạ tầng.
+# API key của provider/model khi chạy runtime được cấu hình trong giao diện web.
 #
-# Query embeddings are generated by the fine-tuned local model for retrieval consistency:
+# Query embedding được tạo bằng fine-tuned local model để bảo đảm
+# đồng nhất với không gian embedding của dữ liệu đã index:
 # EMBEDDING_PROVIDER=huggingface
 # HUGGINGFACE_EMBEDDING_MODE=local
 # HUGGINGFACE_EMBEDDING_MODEL=../models/embedding/vietlaw-bge-m3-finetuned/best
-# HUGGINGFACE_API_KEY can stay empty in local embedding/reranking mode.
+# HUGGINGFACE_API_KEY có thể để trống khi dùng embedding/reranking cục bộ.
 #
-# PostgreSQL is local; Qdrant may be Qdrant Cloud if the collection was
-# already built with the same fine-tuned embedding model:
+# PostgreSQL chạy local; Qdrant có thể dùng Qdrant Cloud nếu collection
+# đã được tạo bằng cùng fine-tuned embedding model:
 # STORAGE_BACKEND=qdrant_postgres
 # POSTGRES_DSN=postgresql://postgres:postgres@localhost:15432/vietlaw
 # QDRANT_URL=
 # QDRANT_API_KEY=
 # QDRANT_COLLECTION=vietlaw_clauses
 #
-# Optional server fallback defaults:
+# Cấu hình fallback tùy chọn ở server:
 # GOOGLE_API_KEY=
 # ENABLE_GOOGLE_FALLBACK=false
 # INFERENCE_STRATEGY=remote_first
-# remote_first never falls back to local Ollama.
+# remote_first không tự fallback sang Ollama local.
 ```
 
 ### Bước 2: Chạy Backend (Terminal 1)
@@ -275,7 +276,7 @@ python -m pip install -r requirements.txt
 # Từ thư mục root project
 docker compose up -d postgres qdrant
 
-# Trong backend, dùng storage backend database-backed
+# Trong backend, dùng storage backend dựa trên database
 # .env
 # STORAGE_BACKEND=qdrant_postgres
 
@@ -314,7 +315,7 @@ docker compose up --build
 ### Lưu ý khi chạy
 
 - **Backend phải chạy TRƯỚC Frontend** — Frontend proxy request đến Backend.
-- **Runtime chính** dùng PostgreSQL + Qdrant. FAISS chỉ là fallback legacy và đang tắt mặc định.
+- **Runtime chính** dùng PostgreSQL + Qdrant. FAISS chỉ là fallback kế thừa và đang tắt mặc định.
 - **Lần đầu khởi động** với preload/warm-up local models có thể mất khoảng 80-90 giây trên CPU baseline.
 - Khi bật `STORAGE_BACKEND=qdrant_postgres`, backend kiểm tra PostgreSQL và Qdrant trong `/readiness`.
 - Dữ liệu sẽ **không tự động được nhúng (embed)** khi khởi động backend để tăng tốc độ.
@@ -351,7 +352,7 @@ Câu hỏi → [Retriever] → Điều khoản liên quan → [LLM] → Câu tr�
 
 **Tại sao dùng RAG?** LLM đơn thuần có thể tạo ra thông tin pháp lý không chính xác. RAG giúp ràng buộc câu trả lời vào nguồn đã truy xuất và làm citation dễ kiểm chứng hơn, nhưng không bảo đảm độ chính xác tuyệt đối.
 
-### 2. Qdrant Hybrid Search (Native Sparse Vectors)
+### 2. Tìm kiếm hybrid trên Qdrant (Native Sparse Vectors)
 
 Hệ thống sử dụng cơ sở dữ liệu vector tiên tiến (Qdrant) để thực hiện tìm kiếm kết hợp:
 - **Dense Vector Search**: Semantic search qua fine-tuned BGE-M3 embedding local (1024 chiều), truy vấn collection Qdrant đã index cùng embedding space.
@@ -359,17 +360,17 @@ Hệ thống sử dụng cơ sở dữ liệu vector tiên tiến (Qdrant) để
 - **Reciprocal Rank Fusion (RRF)**: Trộn 2 kết quả trực tiếp bên trong engine của Qdrant qua hàm `query_points` với nhiều khối `prefetch`, tối đa hóa tốc độ truy xuất và giải phóng hoàn toàn RAM.
 - *(Dự phòng: Vẫn hỗ trợ FAISS cục bộ cho hệ thống không có Qdrant)*.
 
-### 3. Cross-Encoder Reranking
+### 3. Reranking bằng Cross-Encoder
 
 Sau bước Search, kết quả có thể được xếp hạng lại (Reranking) để cải thiện mức liên quan của final context:
 - **CrossEncoderReranker**: Dùng fine-tuned BGE reranker local để đánh giá chi tiết (joint encoding) giữa Query và Document.
 - Có thể bật/tắt dễ dàng qua config `PIPELINE_RERANKING=cross_encoder|none`.
 
-### 4. Legacy FAISS/MMR fallback
+### 4. Fallback FAISS/MMR kế thừa
 
 FAISS/MMR vẫn tồn tại cho môi trường phát triển cũ, nhưng runtime chính của quality branch là Qdrant hybrid retrieval. `ENABLE_FAISS_FALLBACK=false` theo mặc định để tránh âm thầm dùng index không cùng embedding space.
 
-### 5. Nested Context Building (Dẫn chiếu 2 cấp)
+### 5. Xây dựng nested context (dẫn chiếu 2 cấp)
 
 Tính năng nổi bật — xây dựng **context đệ quy** giúp LLM hiểu liên kết giữa các điều luật:
 
@@ -381,7 +382,7 @@ Tính năng nổi bật — xây dựng **context đệ quy** giúp LLM hiểu l
 
 **Ví dụ:** Điều 137 Luật Đất đai dẫn chiếu đến Điều 45 → hệ thống tự động lấy nội dung Điều 45 đưa vào context cho LLM.
 
-### 6. Category-based Filtering
+### 6. Lọc theo lĩnh vực pháp luật
 
 Lọc kết quả truy xuất theo **lĩnh vực pháp luật** để thu hẹp phạm vi tìm kiếm:
 
@@ -397,18 +398,18 @@ Lọc kết quả truy xuất theo **lĩnh vực pháp luật** để thu hẹp 
 Metadata `law_id` và `category` được dùng để lọc document trước khi tìm kiếm.
 Mỗi lựa chọn trên giao diện có thêm mô tả ngắn về phạm vi pháp luật tương ứng.
 
-### 7. Answer grounding và citation validation
+### 7. Grounding câu trả lời và kiểm tra citation
 
-Prompt yêu cầu LLM trả lời bằng tiếng Việt, dựa trên context được cung cấp và dùng source ID hợp lệ. Sau khi model sinh câu trả lời, backend validate citation ID theo final context:
+Prompt yêu cầu LLM trả lời bằng tiếng Việt, dựa trên context được cung cấp và dùng source ID hợp lệ. Sau khi model sinh câu trả lời, backend kiểm tra các citation ID theo final context:
 
 - citation ID có trong final context được giữ;
-- citation ID không tồn tại trong final context bị loại khỏi final accumulated answer;
-- persisted/history answer dùng bản đã sanitize;
+- citation ID không tồn tại trong final context bị loại khỏi câu trả lời tổng hợp cuối cùng;
+- câu trả lời được lưu và lịch sử hội thoại dùng bản đã được làm sạch;
 - nếu một answer pháp lý chỉ còn citation không hợp lệ, backend dùng fallback thiếu căn cứ ngắn gọn.
 
-Với SSE streaming, token chunks có thể đã được emit trước final validation. Final `done` event, accumulated response và persisted answer dùng bản sanitized; token-level chunks đã emit không thể được thu hồi.
+Với SSE streaming, các token chunk có thể đã được phát trước bước kiểm tra cuối cùng. Sự kiện `done`, câu trả lời tổng hợp cuối cùng và câu trả lời được lưu đều dùng bản đã được làm sạch; các token chunk đã phát trước đó không thể được thu hồi.
 
-### 8. Cơ sở dữ liệu Persistent (Qdrant & PostgreSQL)
+### 8. Cơ sở dữ liệu lưu trữ lâu dài (Qdrant & PostgreSQL)
 
 Thay vì tải toàn bộ index vào RAM, phiên bản mới nhất sử dụng kiến trúc lưu trữ vĩnh viễn:
 - **PostgreSQL**: Lưu trữ metadata và nội dung nguyên bản của văn bản pháp luật, trạng thái ingest.
@@ -416,27 +417,27 @@ Thay vì tải toàn bộ index vào RAM, phiên bản mới nhất sử dụng 
 
 Đảm bảo hệ thống có thể mở rộng lên hàng triệu điều luật mà không gây tràn bộ nhớ (OOM). Khởi động siêu tốc vì bỏ qua việc rebuild BM25 Index.
 
-### Chat session persistence and refresh behavior
+### Lưu phiên chat và hành vi khi tải lại trang
 
-- `chat_sessions` and `chat_messages` are stored in PostgreSQL; browser storage is only used for active-session identity and fast UI recovery.
-- A first visit without an active session opens a blank new-chat frame that is not persisted until the user sends a message.
-- Refreshing while viewing an existing conversation restores that active session and keeps follow-up messages under the same `sessionId`.
-- Historical conversations are lazy-loaded from PostgreSQL when selected in the sidebar.
-- If browser cache is stale, the frontend reconciles it with PostgreSQL whenever `/chat/sessions` reports a larger `message_count`.
-- The backend persists the complete user/assistant turn before returning `/chat` or emitting `/chat/stream` `done`, so immediate refreshes should still show both the question and response.
+- `chat_sessions` và `chat_messages` được lưu trong PostgreSQL; bộ nhớ trình duyệt chỉ lưu ID phiên đang hoạt động và cache để phục hồi giao diện nhanh.
+- Lần truy cập đầu tiên khi chưa có phiên hoạt động sẽ mở khung chat mới trống; phiên này chưa được lưu cho đến khi người dùng gửi tin nhắn.
+- Khi tải lại trang trong một cuộc trò chuyện đã tồn tại, frontend khôi phục đúng phiên đó và giữ các tin nhắn tiếp theo dưới cùng `sessionId`.
+- Các cuộc trò chuyện cũ được lazy-load từ PostgreSQL khi người dùng chọn trong sidebar.
+- Nếu cache trong trình duyệt bị cũ, frontend đối chiếu lại với PostgreSQL khi `/chat/sessions` trả về `message_count` lớn hơn.
+- Backend lưu đầy đủ lượt `user/assistant` trước khi trả `/chat` hoặc phát SSE `/chat/stream` `done`, nên tải lại trang ngay sau đó vẫn hiển thị cả câu hỏi và câu trả lời.
 
-### 9. Hybrid Inference Policy
+### 9. Chính sách suy luận hybrid
 
 Hệ thống dùng biến môi trường `INFERENCE_STRATEGY` để chọn thứ tự provider:
 - `remote_first`: chỉ dùng provider remote và các remote fallback đã cấu hình; không khởi tạo hoặc fallback sang Ollama local.
 - `local_first`: dùng Ollama local trước, sau đó mới fallback sang provider remote nếu cấu hình cho phép.
 
 Các lớp chính:
-- **LLM Layer**: trong `remote_first`, chạy runtime/provider remote và Google fallback nếu bật; trong `local_first`, Ollama được dùng trước.
-- **Embedding Layer**: với `HUGGINGFACE_EMBEDDING_MODE=local`, retrieval dùng fine-tuned embedding artifact trên filesystem. Lỗi artifact, dimension, Qdrant auth/schema hoặc missing collection được báo rõ; backend không fallback sang Hugging Face embedding API hoặc FAISS trừ khi được bật tường minh.
-- **Reranking Layer**: với `PIPELINE_RERANKING=cross_encoder`, backend dùng fine-tuned cross-encoder local từ `RERANKER_MODEL`. Nếu artifact lỗi, request fail rõ hoặc fail-open theo `RERANKER_FAIL_OPEN`; không fallback sang Hugging Face reranking API.
+- **LLM Layer**: trong `remote_first`, backend dùng runtime/provider từ xa và Google fallback nếu được bật; trong `local_first`, Ollama được dùng trước.
+- **Embedding Layer**: với `HUGGINGFACE_EMBEDDING_MODE=local`, retrieval dùng fine-tuned embedding artifact trên filesystem. Lỗi artifact, dimension, Qdrant auth/schema hoặc thiếu collection được báo rõ; backend không fallback sang Hugging Face embedding API hoặc FAISS trừ khi được bật tường minh.
+- **Reranking Layer**: với `PIPELINE_RERANKING=cross_encoder`, backend dùng fine-tuned Cross-Encoder cục bộ từ `RERANKER_MODEL`. Nếu artifact lỗi, request fail rõ hoặc fail-open theo `RERANKER_FAIL_OPEN`; không fallback sang Hugging Face reranking API.
 
-### 10. Conversational Memory Manager (Trí nhớ hội thoại lai)
+### 10. Quản lý bộ nhớ hội thoại lai
 
 Để tránh hiện tượng tràn ngữ cảnh (Context Bloat) và suy giảm độ tập trung của LLM khi cuộc hội thoại kéo dài:
 - **Tóm tắt tịnh tiến (Incremental Summarization):** Chạy ngầm một model nhẹ (ví dụ `qwen2.5:1.5b`) thông qua `asyncio.create_task` ngay sau khi trả lời xong để nén các lượt chat cũ thành một đoạn tóm tắt ngắn gọn.
@@ -465,22 +466,22 @@ Kỹ thuật này giúp tiết kiệm lượng lớn token API, giảm thiểu �
 - **Phím tắt** — Enter gửi, Shift+Enter xuống dòng.
 - **Render Markdown** — câu trả lời hiển thị với format (heading, bold, list...).
 
-### Pipeline dữ liệu & Evaluation
+### Pipeline dữ liệu và đánh giá
 - **Kiến trúc Modular** — Pipeline tách biệt thành Embedding, Search, Reranking, ContextBuilder và Answer Generation.
-- **Quality evaluation tooling** — có fixture retrieval, insufficient-context fixture, evaluator theo stage và manual review rubric.
+- **Công cụ đánh giá chất lượng** — có retrieval fixture, insufficient-context fixture, evaluator theo từng stage và rubric đánh giá thủ công.
 - **Embedding incremental** — chỉ embed file mới, bỏ qua file đã xử lý.
 - **Dữ liệu lớn** — 5.756 điều khoản, 843 dẫn chiếu chéo từ 8 bộ luật quan trọng.
 
 ---
 
-## Quality Evaluation
+## Đánh giá chất lượng
 
-Evaluation hiện tại gồm:
+Hệ thống hiện có bộ công cụ đánh giá tự động cho retrieval, citation và các trường hợp không đủ căn cứ. Phạm vi hiện tại gồm:
 
-- 20-record legal retrieval fixture: `backend/tests/fixtures/legal_retrieval_quality.jsonl`
-- 4-record insufficient-context fixture: `backend/tests/fixtures/legal_insufficient_context_quality.jsonl`
-- automated evaluator: `backend/scripts/evaluate_legal_quality.py`
-- deterministic source/citation metrics và một manual answer review nhỏ.
+- bộ fixture retrieval pháp luật gồm 20 bản ghi: `backend/tests/fixtures/legal_retrieval_quality.jsonl`
+- bộ fixture gồm 4 trường hợp không đủ ngữ cảnh: `backend/tests/fixtures/legal_insufficient_context_quality.jsonl`
+- công cụ đánh giá tự động: `backend/scripts/evaluate_legal_quality.py`
+- các metric xác định về nguồn/citation và một đợt đánh giá thủ công nhỏ.
 
 Ví dụ chạy retrieval evaluation từ `backend/`:
 
@@ -505,13 +506,13 @@ Ví dụ chạy insufficient-context answer evaluation khi backend đã ready:
   --output /tmp/vietlaw-insufficient-context-evaluation.json
 ```
 
-Generated reports nên đặt ngoài repository, ví dụ `/tmp`.
+Các report được sinh ra nên đặt ngoài repository, ví dụ `/tmp`.
 
-### Measured fixture results
+### Kết quả đánh giá trên bộ dữ liệu kiểm thử
 
-Retrieval evaluation trên 20 fixture records:
+Đánh giá retrieval trên 20 bản ghi fixture:
 
-| Metric | Result |
+| Metric | Kết quả |
 |---|---:|
 | Retrieval Hit@10 | 1.00 |
 | Retrieval Recall@10 | 1.00 |
@@ -522,37 +523,37 @@ Retrieval evaluation trên 20 fixture records:
 | Empty contexts | 0 |
 | Duplicate contexts | 0 |
 
-Answer evaluation:
+Đánh giá câu trả lời:
 
-| Metric | Result |
+| Metric | Kết quả |
 |---|---:|
-| Evaluated answer requests | 16 |
+| Số request câu trả lời được đánh giá | 16 |
 | Required citation presence | 0.9375 |
 | Invalid citations in final answer | 0 |
 | Unused-by-answer | 0 |
 | Unsupported detector findings in final regular answer set | 0 |
 
-Insufficient-context evaluation:
+Đánh giá trường hợp không đủ ngữ cảnh:
 
-| Metric | Result |
+| Metric | Kết quả |
 |---|---:|
-| Fixture records | 4 |
-| Service-level runs | 8 |
+| Số bản ghi fixture | 4 |
+| Số lần chạy service-level | 8 |
 | Safe fallback or cautious guidance | 8/8 |
 | Invented citations returned | 0 |
 | Overconfident outputs | 0 |
 
-Manual review:
+Đánh giá thủ công:
 
-| Metric | Result |
+| Metric | Kết quả |
 |---|---:|
-| Reviewed answers | 18 |
+| Số câu trả lời được review | 18 |
 | Score 0 | 0 |
 | Score 1 | 1 |
 | Score 2 | 17 |
 | Average score | 1.94/2 |
 
-These figures describe the current small evaluation fixtures and must not be interpreted as system-wide legal accuracy.
+Các số liệu trên chỉ phản ánh kết quả trên các bộ fixture nhỏ hiện tại và không được hiểu là độ chính xác pháp lý tổng quát của toàn hệ thống.
 
 ---
 
@@ -615,28 +616,28 @@ Mỗi file JSON trong `data/processed/` có cấu trúc:
 |---|---|---|
 | **Frontend** | Next.js 15, React 19, TypeScript 5.9 | App Router |
 | **Styling** | TailwindCSS 4.1, tw-animate-css | Responsive |
-| **UI** | lucide-react, react-markdown, motion | Icons + Markdown + Animation |
-| **Backend** | FastAPI, Uvicorn, Python | Async API |
-| **Database** | PostgreSQL, Qdrant | Persistent Storage |
-| **LLM Framework** | LangChain (core, community, huggingface) | Orchestration |
-| **Embedding** | Fine-tuned BGE-M3 local artifact | Multilingual, 1024 dims |
+| **UI** | lucide-react, react-markdown, motion | Icon + Markdown + animation |
+| **Backend** | FastAPI, Uvicorn, Python | API bất đồng bộ |
+| **Database** | PostgreSQL, Qdrant | Lưu trữ lâu dài |
+| **LLM Framework** | LangChain (core, community, huggingface) | Điều phối LLM |
+| **Embedding** | Fine-tuned BGE-M3 local artifact | Đa ngôn ngữ, 1024 chiều |
 | **Vector DB** | Qdrant (Native Hybrid Search) | Cấu hình Named Vectors |
-| **LLM Models** | Gemini Flash-Lite, HuggingFace Router models, Ollama local models | Browser-configured providers |
+| **LLM Models** | Gemini Flash-Lite, HuggingFace Router models, Ollama local models | Provider cấu hình từ trình duyệt |
 
-## Deployed Inference Setup
+## Cấu hình suy luận khi triển khai
 
-For deployed usage, users configure LLM providers from the browser configuration screen.
-API keys entered by users are stored only in the current browser profile, then sent
-to the backend per chat request. The backend uses those keys in memory for that
-request and does not persist them.
+Khi triển khai, người dùng cấu hình LLM provider từ màn hình cấu hình trong trình duyệt.
+API key do người dùng nhập chỉ được lưu trong profile trình duyệt hiện tại, sau đó được gửi
+đến backend theo từng request chat. Backend chỉ dùng các key này trong bộ nhớ cho request
+tương ứng và không lưu chúng.
 
-Inference roles:
+Các vai trò suy luận:
 
-- `answer`: final legal answer generation.
-- `rewriter`: optional query rewrite role; the accepted quality configuration keeps `PIPELINE_REWRITER=none`.
-- `summarizer`: background memory summary updates.
+- `answer`: sinh câu trả lời pháp lý cuối cùng.
+- `rewriter`: vai trò rewrite query tùy chọn; cấu hình quality đã chấp nhận giữ `PIPELINE_REWRITER=none`.
+- `summarizer`: cập nhật tóm tắt bộ nhớ hội thoại ở tác vụ nền.
 
-Recommended first setup:
+Cấu hình khuyến nghị ban đầu:
 
 ```text
 Provider: Google AI Studio
@@ -645,35 +646,34 @@ Rewriter model: Gemini 3.1 Flash-Lite
 Summarizer model: Gemini 3.1 Flash-Lite
 ```
 
-Embeddings are not user-configurable at runtime. The retrieval stack uses the
-server-managed fine-tuned local embedding model so queries use the same
-embedding space as the indexed legal corpus. In `remote_first`, LLM provider
-ordering is remote-first, but query embedding still comes from the local
-fine-tuned artifact. Embedding failures are surfaced to the client and do not
-fall back to Ollama, Hugging Face API, or stale FAISS results.
+Embedding không được cấu hình bởi người dùng ở runtime. Retrieval stack dùng
+fine-tuned local embedding model do server quản lý, để query dùng cùng không gian
+embedding với corpus pháp luật đã index. Trong `remote_first`, thứ tự LLM provider
+ưu tiên provider từ xa, nhưng query embedding vẫn đến từ artifact fine-tuned cục bộ.
+Lỗi embedding được trả rõ cho client và không fallback sang Ollama, Hugging Face API
+hoặc kết quả FAISS cũ.
 
-Deploy-safe reranking:
+Reranking an toàn khi triển khai:
 
-- `PIPELINE_RERANKING=cross_encoder`: local fine-tuned cross-encoder reranking
-  from `RERANKER_MODEL`. It scores up to `RERANKER_MAX_CANDIDATES` retrieved
-  documents per request.
-- `PIPELINE_RERANKING=none`: disables reranking for rollback or latency
-  troubleshooting.
+- `PIPELINE_RERANKING=cross_encoder`: reranking bằng fine-tuned Cross-Encoder cục bộ
+  từ `RERANKER_MODEL`. Mỗi request chấm điểm tối đa `RERANKER_MAX_CANDIDATES`
+  tài liệu đã retrieval.
+- `PIPELINE_RERANKING=none`: tắt reranking để khôi phục cấu hình hoặc kiểm tra vấn đề
+  độ trễ.
 
-Environment file roles:
+Vai trò của các file môi trường:
 
-- `.env`: local/server defaults, storage URLs, pipeline knobs, and optional
-  server fallback API keys.
-- `.env.example`: public template with all supported keys and safe defaults.
-- Browser storage: per-user BYOK API keys and selected provider/model per role.
+- `.env`: cấu hình mặc định cho local/server, storage URL, tham số pipeline và API key fallback tùy chọn ở server.
+- `.env.example`: template công khai với các key được hỗ trợ và giá trị mặc định an toàn.
+- Bộ nhớ trình duyệt (browser storage): lưu BYOK API key của từng người dùng và provider/model đã chọn cho từng vai trò.
 
-Rollback: ignore browser `inferenceConfig` payloads and rely on server-side
-environment defaults such as `HUGGINGFACE_API_KEY`, `GOOGLE_API_KEY`,
-`ENABLE_GOOGLE_FALLBACK`, and `INFERENCE_STRATEGY`.
+Khôi phục cấu hình: bỏ qua payload `inferenceConfig` từ trình duyệt và dùng cấu hình
+mặc định phía server như `HUGGINGFACE_API_KEY`, `GOOGLE_API_KEY`,
+`ENABLE_GOOGLE_FALLBACK` và `INFERENCE_STRATEGY`.
 
 ---
 
-## Testing
+## Kiểm thử
 
 Backend:
 
@@ -694,7 +694,7 @@ npm run verify:models
 npm run verify:inference-settings
 ```
 
-If Ruff is installed in the backend virtual environment, it can also be run with:
+Nếu Ruff đã được cài trong virtual environment của backend, có thể chạy thêm lệnh sau:
 
 ```bash
 cd backend
@@ -703,12 +703,12 @@ cd backend
 
 ---
 
-## Known Limitations
+## Hạn chế đã biết
 
-- Evaluation fixtures are intentionally small and do not represent system-wide legal accuracy.
-- The indexed corpus does not cover all Vietnamese legal documents or future legal updates.
-- Answers depend on the indexed text and can miss conditions, exceptions, or practical procedural details.
-- Unsupported-reference detection is diagnostic-only; findings are not automatically hallucination counts.
-- Token-level SSE chunks can be emitted before final citation validation; final accumulated, completion, persisted, and history answers are sanitized.
-- CPU local embedding/reranking inference is slower than GPU inference.
-- The system is a research/student project and does not replace professional legal advice.
+- Các bộ fixture đánh giá hiện còn nhỏ và không đại diện cho độ chính xác pháp lý tổng quát của toàn hệ thống.
+- Corpus đã index chưa bao phủ toàn bộ văn bản pháp luật Việt Nam hoặc các thay đổi pháp luật trong tương lai.
+- Câu trả lời phụ thuộc vào nội dung đã được index và vẫn có thể bỏ sót điều kiện, ngoại lệ hoặc chi tiết thủ tục thực tế.
+- Bộ phát hiện tham chiếu không được hỗ trợ chỉ phục vụ mục đích diagnostic; số finding không đồng nghĩa với số lần hallucination.
+- Các token SSE có thể được gửi trước bước kiểm tra citation cuối cùng; câu trả lời tổng hợp, sự kiện hoàn tất, dữ liệu đã lưu và lịch sử hội thoại đều dùng bản đã được làm sạch.
+- Quá trình embedding và reranking chạy cục bộ trên CPU chậm hơn so với GPU.
+- Đây là hệ thống nghiên cứu/đồ án sinh viên và không thay thế tư vấn pháp lý chuyên nghiệp.
