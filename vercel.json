@@ -1,6 +1,8 @@
 {
   "env": {
     "RUNTIME_PROFILE": "serverless",
+    "CHAT_STORAGE_MODE": "browser",
+    "NEXT_PUBLIC_CHAT_STORAGE_MODE": "browser",
     "HUGGINGFACE_EMBEDDING_MODE": "api",
     "HUGGINGFACE_EMBEDDING_MODEL": "BAAI/bge-m3",
     "PIPELINE_RERANKING": "embedding_similarity",

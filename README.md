@@ -794,3 +794,18 @@ cd backend
 - Các token SSE có thể được gửi trước bước kiểm tra citation cuối cùng; câu trả lời tổng hợp, sự kiện hoàn tất, dữ liệu đã lưu và lịch sử hội thoại đều dùng bản đã được làm sạch.
 - Quá trình embedding và reranking chạy cục bộ trên CPU chậm hơn so với GPU.
 - Đây là hệ thống nghiên cứu/đồ án sinh viên và không thay thế tư vấn pháp lý chuyên nghiệp.
+## Chat history storage modes
+
+Chat history storage is configured separately from `STORAGE_BACKEND`.
+
+For deployments without authentication:
+
+```env
+CHAT_STORAGE_MODE=browser
+NEXT_PUBLIC_CHAT_STORAGE_MODE=browser
+STORAGE_BACKEND=qdrant_postgres
+```
+
+Browser mode keeps sessions, messages, summaries, and feedback in the current
+browser instead of shared PostgreSQL tables. PostgreSQL chat mode is intended
+only for trusted deployments because its history is shared without auth.
