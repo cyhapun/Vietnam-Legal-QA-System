@@ -1,7 +1,14 @@
 # VietLaw AI - Hệ thống Hỏi đáp Pháp luật Việt Nam
 
-Chatbot tra cứu pháp luật Việt Nam sử dụng kỹ thuật **RAG (Retrieval-Augmented Generation)**.  
-Hệ thống truy xuất các điều khoản pháp luật liên quan từ cơ sở dữ liệu vector, sau đó dùng LLM để sinh câu trả lời có trích dẫn căn cứ pháp lý chính xác.
+Chatbot tra cứu pháp luật Việt Nam sử dụng kỹ thuật **RAG (Retrieval-Augmented Generation)**.
+Hệ thống tách dữ liệu pháp luật thành các điều khoản, lập chỉ mục dense/sparse trong Qdrant,
+truy xuất các căn cứ liên quan và dùng LLM để sinh câu trả lời tiếng Việt có citation.
+
+Luồng triển khai chính dùng **PostgreSQL + Qdrant**. FAISS vẫn được hỗ trợ cho chạy local hoặc
+làm fallback khi Qdrant không sẵn sàng. Các thành phần retrieval, reranking, query rewriting,
+context building và inference được ghép theo cấu hình để phục vụ ablation study.
+
+![Sơ đồ pipeline RAG của VietLaw AI](overview.png)
 
 > **Project môn học:** Introduction to Machine Learning
 
@@ -25,6 +32,7 @@ Hệ thống truy xuất các điều khoản pháp luật liên quan từ cơ s
 - [Kỹ thuật sử dụng](#kỹ-thuật-sử-dụng)
 - [Tính năng](#tính-năng)
 - [Dữ liệu pháp luật](#dữ-liệu-pháp-luật)
+- [Fine-tuning và đánh giá](#fine-tuning-và-đánh-giá)
 - [Công nghệ](#công-nghệ)
 - [Local model integration](docs/local_model_integration.md)
 
@@ -66,23 +74,46 @@ Hệ thống theo mô hình **Client-Server** với 2 thành phần chính giao 
 │       │ Local fine-tuned embedding + Qdrant Cloud       │
 │       ▼                                                 │
 │  ┌─────────────────────────────────────────────┐        │
-│  │ Embedding: fine-tuned BGE-M3 local artifact │        │
-│  │ Reranker: fine-tuned local cross-encoder    │        │
-│  │ LLM: Gemini / configured remote provider    │        │
+│  │ Embedding: BAAI/bge-m3 (multilingual)       │        │
+│  │ LLM: Gemini / Gemma / Qwen / Llama / DeepSeek │       │
 │  └─────────────────────────────────────────────┘        │
 └─────────────────────────────────────────────────────────┘
 ```
 
 ### Luồng xử lý chính
 
-1. **User** nhập câu hỏi pháp lý → Frontend gửi `POST /api/chat`
-2. **Next.js API Route** (proxy) chuyển tiếp request đến Backend FastAPI
-3. **Backend** dùng Qdrant Hybrid Search (Dense Vector + Sparse Vector BM25) với RRF để tìm các điều khoản liên quan
-4. Hàm `build_nested_context()` xây dựng **context 2 cấp** (dẫn chiếu đệ quy giữa các điều luật)
-5. Context + **Tóm tắt bối cảnh cũ** (từ Memory Manager) + lịch sử chat ngắn + câu hỏi → **System Prompt** → gọi LLM qua HuggingFace API
-6. The LLM generates the answer, then the backend persists the complete `user/assistant` message pair to PostgreSQL before the turn is considered complete.
-7. The backend returns `{text, contextUsed}` or emits the final SSE `done` event; the frontend renders Markdown and legal context references.
-8. A background task only summarizes conversation memory after the completed turn has been persisted.
+1. Người dùng nhập câu hỏi; `frontend/app/api/chat/route.ts` proxy request đến FastAPI.
+2. Mặc định frontend dùng `POST /chat/stream` và nhận Server-Sent Events; có thể tắt streaming để gọi `POST /chat`.
+3. Backend lấy summary của session và một cửa sổ lịch sử chat gần nhất.
+4. Query Rewriter tùy chọn phân loại `legal/chitchat`, chuẩn hóa câu hỏi và tách sub-query.
+5. Semantic Cache kiểm tra câu hỏi tương tự; cache hit được trả về ngay.
+6. RAG Pipeline thực hiện search, loại trùng, reranking và dựng context dẫn chiếu hai cấp.
+7. Context + memory + câu hỏi được đưa vào prompt, sau đó gọi LLM theo role `answer`.
+8. Backend lọc citation, stream câu trả lời hoặc trả `{text, contextUsed}`.
+9. Cặp `user/assistant` được lưu vào PostgreSQL trước khi trả response/emit SSE `done`; summary được cập nhật nền.
+
+### Hai pipeline dữ liệu
+
+```text
+INGESTION
+data/processed/*.json
+  → load Knowledge Base
+  → ClauseChunker
+  → dense embedding (BAAI/bge-m3) + sparse BM25 vector
+  → PostgreSQL (law/clause metadata, content)
+  → Qdrant (text-dense, text-sparse, payload)
+
+ONLINE QA
+question
+  → rewrite/route + semantic cache
+  → Qdrant hybrid search + RRF (hoặc FAISS fallback)
+  → deduplicate → optional reranking
+  → NestedContextBuilder + token budget
+  → LLM → citation filtering → stream/JSON response
+```
+
+Ingestion không nên chạy lại ở mỗi lần khởi động. Với Docker, backend đặt
+`DISABLE_AUTO_INGEST=true` và việc nạp dữ liệu được thực hiện bằng service `ingest`.
 
 ---
 
@@ -127,10 +158,10 @@ Vietnam-Legal-QA-System/
 │   │       └── logging.py       # Logging chuẩn
 │   │
 │   ├── data/
-│   │   ├── processed/           # 8 file JSON dữ liệu pháp luật đã tiền xử lý
+│   │   ├── processed/           # 9 JSON: 8 bộ luật chính + dữ liệu mẫu
 │   │   └── raw/                 # Dữ liệu thô (chưa có)
 │   │
-│   └── vietlaw_faiss_index/     # FAISS vector index (22.5 MB)
+│   └── vietlaw_faiss_index/     # FAISS index local/fallback (nếu có)
 │       ├── index.faiss          # Vector data
 │       └── index.pkl            # Metadata
 │
@@ -166,8 +197,10 @@ Vietnam-Legal-QA-System/
 │       ├── constants.ts         # Hằng số (models, categories, storage keys)
 │       └── utils.ts             # Hàm tiện ích (class merging)
 │
-└── notebooks/                   # === JUPYTER NOTEBOOKS ===
-    └── embedding_model.ipynb    # Notebook thử nghiệm embedding model
+├── fine-tuning/                 # Fine-tune embedding/reranker và artifact đánh giá
+│   ├── embedding/notebooks/
+│   └── reranking/notebooks/
+└── backend/evaluation/          # Chuẩn bị dataset và đánh giá Ragas
 ```
 
 ### Giải thích thiết kế
@@ -194,6 +227,10 @@ Vietnam-Legal-QA-System/
 | npm | 9+ |
 | Google/OpenAI-compatible LLM key | Dùng cho phần sinh câu trả lời từ provider remote |
 
+`requirements.txt` hỗ trợ embedding qua HuggingFace API. Nếu muốn chạy embedding
+local với `HUGGINGFACE_EMBEDDING_MODE=local`, cần cài thêm `sentence-transformers`
+và PyTorch; Dockerfile đã cài sẵn các gói này.
+
 ### Bước 1: Clone và cấu hình
 
 ```bash
@@ -204,28 +241,21 @@ cd Vietnam-Legal-QA-System
 # Tạo file biến môi trường từ template
 cp .env.example .env
 
-# .env contains server defaults and infrastructure settings.
-# Runtime provider/model API keys are configured in the web UI.
+# `.env` chứa cấu hình server, storage và pipeline. API key/model của người dùng
+# được cấu hình trong giao diện web và truyền theo từng request.
 #
-# Query embeddings are generated by the fine-tuned local model for retrieval consistency:
+# Cấu hình mặc định nên giữ:
 # EMBEDDING_PROVIDER=huggingface
-# HUGGINGFACE_EMBEDDING_MODE=local
-# HUGGINGFACE_EMBEDDING_MODEL=../models/embedding/vietlaw-bge-m3-finetuned/best
-# HUGGINGFACE_API_KEY can stay empty in local embedding/reranking mode.
-#
-# PostgreSQL is local; Qdrant may be Qdrant Cloud if the collection was
-# already built with the same fine-tuned embedding model:
+# HUGGINGFACE_EMBEDDING_MODEL=BAAI/bge-m3
+# HUGGINGFACE_EMBEDDING_MODE=api
 # STORAGE_BACKEND=qdrant_postgres
-# POSTGRES_DSN=postgresql://postgres:postgres@localhost:15432/vietlaw
-# QDRANT_URL=
-# QDRANT_API_KEY=
-# QDRANT_COLLECTION=vietlaw_clauses
 #
-# Optional server fallback defaults:
-# GOOGLE_API_KEY=
-# ENABLE_GOOGLE_FALLBACK=false
-# INFERENCE_STRATEGY=remote_first
-# remote_first never falls back to local Ollama.
+# Khi chạy backend trực tiếp trên host, dùng localhost cho PostgreSQL/Qdrant.
+# Khi chạy bằng Docker Compose, đổi host thành tên service:
+# POSTGRES_DSN=postgresql://postgres:postgres@postgres:5432/vietlaw
+# QDRANT_URL=http://qdrant:6333
+#
+# `remote_first` chỉ dùng remote providers; `local_first` dùng Ollama trước.
 ```
 
 ### Bước 2: Chạy Backend (Terminal 1)
@@ -247,17 +277,20 @@ python main.py
 # Server chạy tại: http://localhost:8000
 ```
 
-### Bước 2a: Chạy với PostgreSQL + Qdrant (tùy chọn)
+### Bước 2a: Chạy với PostgreSQL + Qdrant
 
 ```bash
 # Từ thư mục root project
 docker compose up -d postgres qdrant
 
-# Trong backend, dùng storage backend database-backed
-# .env
+# Trong .env, dùng storage backend database-backed và hostname của host
+# nếu chạy script ingest từ máy local:
 # STORAGE_BACKEND=qdrant_postgres
+# POSTGRES_DSN=postgresql://postgres:postgres@localhost:5432/vietlaw
+# QDRANT_URL=http://localhost:6333
 
-# Sau đó chạy ingestion một lần
+# Chạy từ thư mục backend
+cd backend
 python scripts/ingest_to_storage.py
 ```
 
@@ -278,24 +311,36 @@ npm run dev
 # Mở trình duyệt tại: http://localhost:3000
 ```
 
-### Chạy bằng Docker (Tùy chọn)
+### Chạy toàn bộ bằng Docker
 
 ```bash
-# Từ thư mục root project
-docker-compose up --build
+# Từ thư mục root project; backend cố ý không auto-ingest
+docker compose up --build -d
+
+# Nạp dữ liệu sau khi PostgreSQL và Qdrant đã sẵn sàng
+docker compose --profile tools run --rm ingest
 
 # Backend: http://localhost:8000
 # Frontend: http://localhost:3000
 ```
 
+Khi chạy toàn bộ bằng Docker, `.env` phải dùng hostname nội bộ:
+
+```dotenv
+POSTGRES_DSN=postgresql://postgres:postgres@postgres:5432/vietlaw
+QDRANT_URL=http://qdrant:6333
+```
+
 ### Lưu ý khi chạy
 
 - **Backend phải chạy TRƯỚC Frontend** — Frontend proxy request đến Backend.
-- **FAISS index đã có sẵn** trong repo (22.5 MB) — không cần re-embed dữ liệu.
-- **Lần đầu khởi động** Backend sẽ nạp 8 file JSON vào RAM + tải FAISS index (~5-10 giây).
-- Khi bật `STORAGE_BACKEND=qdrant_postgres`, backend sẽ tạo schema PostgreSQL và collection Qdrant tại startup.
-- Dữ liệu sẽ **không tự động được nhúng (embed)** khi khởi động backend để tăng tốc độ.
-- Để **nạp dữ liệu ban đầu hoặc nạp lại (re-embed) dữ liệu mới**, bạn PHẢI chạy script thủ công: `python scripts/ingest_to_storage.py`.
+- Khi dùng FAISS, backend tải index local và dùng Knowledge Base trong RAM để dựng context.
+- Khi dùng `qdrant_postgres`, startup tạo schema PostgreSQL và collection Qdrant nếu cần.
+- Docker đặt `DISABLE_AUTO_INGEST=true`; native execution có thể bật auto-ingest bằng `false`.
+- Để nạp dữ liệu ban đầu hoặc re-embed dữ liệu mới, chạy `python scripts/ingest_to_storage.py`
+  từ `backend/`, hoặc chạy service `ingest` trong Docker Compose.
+- Nếu Qdrant không truy cập được, `QdrantSearcher` cố gắng fallback sang FAISS; embedding
+  HuggingFace lỗi xác thực/server được trả về rõ ràng để tránh truy vấn bằng vector space khác.
 
 ---
 
@@ -316,14 +361,14 @@ Câu hỏi → [Retriever] → Điều khoản liên quan → [LLM] → Câu tr�
 Hệ thống sử dụng cơ sở dữ liệu vector tiên tiến (Qdrant) để thực hiện tìm kiếm kết hợp:
 - **Dense Vector Search**: Semantic search qua fine-tuned BGE-M3 embedding local (1024 chiều), truy vấn collection Qdrant đã index cùng embedding space.
 - **Sparse Vector Search (BM25)**: Tìm kiếm từ khóa chính xác (Exact Keyword Match) thông qua thuật toán sinh vector thưa tự xây dựng cho tiếng Việt.
-- **Reciprocal Rank Fusion (RRF)**: Trộn 2 kết quả trực tiếp bên trong engine của Qdrant qua hàm `query_points` với nhiều khối `prefetch`, tối đa hóa tốc độ truy xuất và giải phóng hoàn toàn RAM.
+- **Reciprocal Rank Fusion (RRF)**: Qdrant nhận các truy vấn dense/sparse qua nhiều khối `prefetch`; backend dùng `query_batch_points` và hợp nhất thứ hạng bằng RRF để tương thích với các phiên bản Qdrant khác nhau.
 - *(Dự phòng: Vẫn hỗ trợ FAISS cục bộ cho hệ thống không có Qdrant)*.
 
 ### 3. Cross-Encoder Reranking
 
 Sau bước Search, kết quả có thể được xếp hạng lại (Reranking) để tăng độ chính xác:
-- **CrossEncoderReranker**: Dùng fine-tuned BGE reranker local để đánh giá chi tiết (joint encoding) giữa Query và Document.
-- Có thể bật/tắt dễ dàng qua config `PIPELINE_RERANKING=cross_encoder|none`.
+- **CrossEncoderReranker**: Dùng model `BAAI/bge-reranker-v2-m3` để đánh giá chi tiết (joint encoding) giữa Query và Document.
+- Có thể bật/tắt qua `PIPELINE_RERANKING=none|embedding_similarity|cross_encoder`. Trong `remote_first`, `cross_encoder` tự chuyển sang embedding-similarity để tương thích với HuggingFace Inference Providers.
 
 ### 4. MMR Retrieval (Maximal Marginal Relevance)
 
@@ -331,8 +376,8 @@ Thay vì chỉ lấy top-K kết quả giống nhau nhất, MMR **cân bằng gi
 
 | Tham số | Giá trị | Ý nghĩa |
 |---|---|---|
-| `k` | 6 | Trả về 6 điều khoản liên quan nhất |
-| `fetch_k` | 20 | Lấy 20 ứng viên ban đầu rồi chọn 6 |
+| `k` | 60 | Số ứng viên tối đa lấy từ API trước các bước lọc/rerank |
+| `fetch_k` | `max(20, k)` | Số ứng viên FAISS dùng cho MMR |
 | `lambda_mult` | 0.8 | 80% ưu tiên liên quan, 20% ưu tiên đa dạng |
 
 ### 5. Nested Context Building (Dẫn chiếu 2 cấp)
@@ -408,6 +453,29 @@ Kỹ thuật này giúp tiết kiệm lượng lớn token API, giảm thiểu �
 
 ---
 
+## Fine-tuning và đánh giá
+
+Thư mục `fine-tuning/` chứa các notebook cho hai hướng thử nghiệm:
+
+- `embedding/`: sinh dữ liệu query–điều khoản, fine-tune bi-encoder và so sánh embedding.
+- `reranking/`: tạo hard negatives, fine-tune cross-encoder và đánh giá reranker.
+
+Đánh giá end-to-end nằm trong `backend/evaluation/`. Dataset được chuẩn bị từ
+`VLSP2025-LegalSML`, sau đó script gọi API `/chat` và tính các metric Ragas:
+`context_precision`, `context_recall`, `faithfulness` và `answer_relevancy`.
+
+```bash
+cd backend
+pip install -r evaluation/requirements.txt
+python evaluation/prepare_dataset.py
+python evaluation/evaluate.py
+```
+
+Backend phải đang chạy tại `http://localhost:8000`; kết quả chi tiết được ghi vào
+`backend/evaluation/results.csv`.
+
+---
+
 ## Tính năng
 
 ### Chatbot Pháp luật
@@ -417,7 +485,7 @@ Kỹ thuật này giúp tiết kiệm lượng lớn token API, giảm thiểu �
 - **Lọc theo lĩnh vực** — chọn chuyên ngành luật để tăng độ chính xác.
 
 ### Đa model AI
-- **4 model LLM** lựa chọn: Gemma4-31B, Qwen3.5-9B, Llama3.1-8B, DeepSeek-R1-7B.
+- **Nhiều provider/model**: Google AI Studio, HuggingFace Router và Ollama; danh sách model hợp lệ được kiểm soát trong `provider_registry.py`.
 - **Chuyển đổi model** ngay trong giao diện — so sánh chất lượng câu trả lời.
 
 ### Giao diện hiện đại
@@ -430,8 +498,8 @@ Kỹ thuật này giúp tiết kiệm lượng lớn token API, giảm thiểu �
 ### Pipeline dữ liệu & Ablation Study
 - **Kiến trúc Modular** — Pipeline tách biệt thành 5 module: Embedding, Chunking, Search, Reranking, ContextBuilder.
 - **Ablation Study** — Thay đổi thuật toán Search/Rerank linh hoạt chỉ bằng cấu hình `.env` mà không cần sửa code.
-- **Embedding incremental** — chỉ embed file mới, bỏ qua file đã xử lý.
-- **Dữ liệu lớn** — 5.756 điều khoản, 843 dẫn chiếu chéo từ 8 bộ luật quan trọng.
+- **Ingestion idempotent** — bỏ qua khi database đã có đủ điều khoản; chạy lại script khi thêm/sửa dữ liệu để upsert và invalidate cache.
+- **Dữ liệu** — 5.756 điều khoản và 843 dẫn chiếu chéo từ 8 bộ luật chính; thư mục hiện có thêm một JSON mẫu kiểm thử.
 
 ---
 
