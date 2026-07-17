@@ -19,7 +19,7 @@ export function InferenceSetupModal() {
 
         <div className="mt-4 rounded-xl border border-emerald-100 bg-emerald-50 p-3 text-xs leading-5 text-emerald-800 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-300">
           <ShieldCheck className="mr-2 inline h-4 w-4" />
-          Retrieval embeddings are server-managed and fixed to HuggingFace BAAI/bge-m3.
+          Tra cứu căn cứ pháp lý được quản lý an toàn bởi máy chủ.
         </div>
 
         <div className="mt-5 flex justify-end">

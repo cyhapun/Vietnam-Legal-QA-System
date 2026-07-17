@@ -6,18 +6,26 @@ import re
 import json
 import time
 import traceback
+import asyncio
 from typing import AsyncGenerator
 from datetime import datetime, timedelta
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 
+from app.config import PIPELINE_TIMING_ENABLED
 from app.models import ChatRequest
 from app.services.pipeline import get_pipeline
 from app.services.llm import get_llm, CHAT_PROMPT, get_output_parser
 from app.services.embedding.errors import (
     EmbeddingAuthError,
     EmbeddingServiceError,
+)
+from app.services.pipeline_timing import (
+    PipelineTimingCollector,
+    reset_current_timing,
+    sanitize_request_id,
+    set_current_timing,
 )
 from app.utils.logging import setup_logger
 
@@ -41,6 +49,20 @@ def _sse(data: dict) -> str:
 
 def _embedding_error_status(exc: EmbeddingServiceError) -> int:
     return 401 if isinstance(exc, EmbeddingAuthError) else 503
+
+
+def _llm_error_detail(model_name: str, exc: Exception) -> str:
+    """Return a user-safe LLM error message without exposing credentials."""
+    text = str(exc)
+    lowered = text.lower()
+    if "unsupported google model" in lowered:
+        return text
+    if "404" in lowered or "not_found" in lowered or "no longer available" in lowered:
+        return (
+            f"LLM provider rejected model '{model_name}'. "
+            "Choose a currently supported model and retry."
+        )
+    return "Tất cả các dịch vụ suy luận (LLM) đều không khả dụng. Vui lòng thử lại sau."
 
 
 def _recent_messages(request: ChatRequest):
@@ -105,9 +127,21 @@ async def _persist_completed_turn(request: ChatRequest, session_id: str, user_co
     )
 
 
+def _new_timing(http_request: Request, endpoint: str, streaming: bool) -> PipelineTimingCollector:
+    return PipelineTimingCollector(
+        request_id=sanitize_request_id(http_request.headers.get("x-request-id")),
+        endpoint=endpoint,
+        streaming=streaming,
+        enabled=PIPELINE_TIMING_ENABLED,
+    )
+
+
 @router.post("/chat")
-async def chat_endpoint(request: ChatRequest):
+async def chat_endpoint(request: ChatRequest, http_request: Request):
     """Endpoint non-streaming: nhan cau hoi -> truy xuat -> goi LLM -> tra JSON."""
+    timing = _new_timing(http_request, "/chat", streaming=False)
+    timing_token = set_current_timing(timing if PIPELINE_TIMING_ENABLED else None)
+    outcome = "success"
     try:
         last_message = request.messages[-1].content
 
@@ -132,7 +166,6 @@ async def chat_endpoint(request: ChatRequest):
 
         pipeline = get_pipeline()
         
-        import asyncio
         from app.services.pipeline import _get_embedding
         
         # Lịch sử ngắn gọn cho rewriter (sliding window: 2 turns = 4 messages)
@@ -215,12 +248,12 @@ async def chat_endpoint(request: ChatRequest):
                 raise HTTPException(status_code=401, detail="API Key HuggingFace không hợp lệ hoặc đã hết hạn.")
             raise
 
-        frontend_context = pipeline.format_for_frontend(retrieved_docs)
+        with timing.stage("context_building"):
+            frontend_context = pipeline.format_for_frontend(retrieved_docs)
 
         logger.info("Đã chuẩn bị %d ký tự context (từ %d tài liệu) cho LLM", len(context_text), len(retrieved_docs))
         logger.debug("CONTEXT TEXT:\n%s", context_text)
 
-        start_time = time.time()
         try:
             llm = get_llm(
                 model_name=request.model, 
@@ -232,17 +265,18 @@ async def chat_endpoint(request: ChatRequest):
             )
             rag_chain = CHAT_PROMPT | llm | get_output_parser()
 
-            output_text = await rag_chain.ainvoke({
-                "context": context_text,
-                "chat_history_str": chat_history_str,
-                "question": last_message
-            })
+            with timing.stage("llm_generation"):
+                output_text = await rag_chain.ainvoke({
+                    "context": context_text,
+                    "chat_history_str": chat_history_str,
+                    "question": last_message
+                })
         except Exception as llm_exc:
             logger.error("All LLM providers failed: %s", llm_exc)
-            raise HTTPException(status_code=503, detail="Tất cả các dịch vụ suy luận (LLM) đều không khả dụng. Vui lòng thử lại sau.")
+            outcome = "error"
+            raise HTTPException(status_code=503, detail=_llm_error_detail(request.model, llm_exc))
 
-        execution_time = time.time() - start_time
-        logger.info("LLM tra loi trong %.2fs", execution_time)
+        logger.info("LLM response generated")
 
         output_text = _clean_chunk(output_text)
 
@@ -289,18 +323,26 @@ async def chat_endpoint(request: ChatRequest):
         }
 
     except HTTPException:
+        outcome = "error"
         raise
     except Exception as e:
+        outcome = "error"
         logger.error("Loi xu ly chat: %s", str(e))
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        timing.emit_once(outcome)
+        reset_current_timing(timing_token)
 
 
 @router.post("/chat/stream")
-async def chat_stream_endpoint(request: ChatRequest):
+async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
     """Endpoint streaming: tra token theo tung chunk qua Server-Sent Events."""
+    timing = _new_timing(http_request, "/chat/stream", streaming=True)
 
     async def event_generator() -> AsyncGenerator[str, None]:
+        timing_token = set_current_timing(timing if PIPELINE_TIMING_ENABLED else None)
+        outcome = "success"
         try:
             last_message = request.messages[-1].content
 
@@ -328,7 +370,6 @@ async def chat_stream_endpoint(request: ChatRequest):
 
             pipeline = get_pipeline()
             
-            import asyncio
             from app.services.pipeline import _get_embedding
             
             recent_history_lines = []
@@ -404,17 +445,21 @@ async def chat_stream_endpoint(request: ChatRequest):
                     api_key=api_key
                 )
             except EmbeddingServiceError as e:
+                outcome = "error"
                 yield _sse({"type": "error", "message": str(e)})
                 return
             except ValueError as e:
+                outcome = "error"
                 yield _sse({"type": "error", "message": str(e)})
                 return
             except Exception as e:
                 if "401" in str(e) or "Unauthorized" in str(e) or "Invalid token" in str(e):
+                    outcome = "error"
                     yield _sse({"type": "error", "message": "API Key HuggingFace không hợp lệ hoặc đã hết hạn."})
                     return
                 raise
-            frontend_context = pipeline.format_for_frontend(retrieved_docs)
+            with timing.stage("context_building"):
+                frontend_context = pipeline.format_for_frontend(retrieved_docs)
 
             yield _sse({"type": "context", "data": frontend_context})
 
@@ -429,16 +474,26 @@ async def chat_stream_endpoint(request: ChatRequest):
             rag_chain = CHAT_PROMPT | llm | get_output_parser()
 
             accumulated_text = ""
-            async for chunk in rag_chain.astream({
-                "context": context_text,
-                "chat_history_str": chat_history_str,
-                "question": last_message,
-            }):
-                if chunk:
-                    cleaned = _clean_chunk(chunk)
-                    if cleaned:
-                        accumulated_text += cleaned
-                        yield _sse({"type": "token", "text": cleaned})
+            llm_start_ns = time.perf_counter_ns()
+            first_token_seen = False
+            with timing.stage("llm_generation"):
+                async for chunk in rag_chain.astream({
+                    "context": context_text,
+                    "chat_history_str": chat_history_str,
+                    "question": last_message,
+                }):
+                    if chunk:
+                        cleaned = _clean_chunk(chunk)
+                        if cleaned:
+                            if not first_token_seen:
+                                first_token_seen = True
+                                timing.add_duration(
+                                    "llm_time_to_first_token",
+                                    (time.perf_counter_ns() - llm_start_ns) / 1_000_000,
+                                )
+                                timing.mark_first_token()
+                            accumulated_text += cleaned
+                            yield _sse({"type": "token", "text": cleaned})
 
             frontend_context = _filter_cited_context(
                 accumulated_text, frontend_context, request.maxCitations
@@ -480,10 +535,17 @@ async def chat_stream_endpoint(request: ChatRequest):
 
             yield _sse({"type": "done"})
 
+        except asyncio.CancelledError:
+            outcome = "cancelled"
+            raise
         except Exception as e:
+            outcome = "error"
             logger.error("Loi streaming chat: %s", str(e))
             traceback.print_exc()
-            yield _sse({"type": "error", "message": "Dịch vụ suy luận gặp sự cố: " + str(e)})
+            yield _sse({"type": "error", "message": _llm_error_detail(request.model, e)})
+        finally:
+            timing.emit_once(outcome)
+            reset_current_timing(timing_token)
 
     return StreamingResponse(
         event_generator(),

@@ -34,6 +34,7 @@ context building và inference được ghép theo cấu hình để phục vụ
 - [Dữ liệu pháp luật](#dữ-liệu-pháp-luật)
 - [Fine-tuning và đánh giá](#fine-tuning-và-đánh-giá)
 - [Công nghệ](#công-nghệ)
+- [Local model integration](docs/local_model_integration.md)
 
 ---
 
@@ -70,7 +71,7 @@ Hệ thống theo mô hình **Client-Server** với 2 thành phần chính giao 
 │  │ app/config.py            → Cấu hình Ablation    │    │
 │  └─────────────────────────────────────────────────┘    │
 │       │                                                 │
-│       │ HuggingFace Inference API                       │
+│       │ Local fine-tuned embedding + Qdrant Cloud       │
 │       ▼                                                 │
 │  ┌─────────────────────────────────────────────┐        │
 │  │ Embedding: BAAI/bge-m3 (multilingual)       │        │
@@ -224,7 +225,7 @@ Vietnam-Legal-QA-System/
 | Python | 3.10+ |
 | Node.js | 18+ |
 | npm | 9+ |
-| HuggingFace API key | Miễn phí — [Lấy tại đây](https://huggingface.co/settings/tokens) |
+| Google/OpenAI-compatible LLM key | Dùng cho phần sinh câu trả lời từ provider remote |
 
 `requirements.txt` hỗ trợ embedding qua HuggingFace API. Nếu muốn chạy embedding
 local với `HUGGINGFACE_EMBEDDING_MODE=local`, cần cài thêm `sentence-transformers`
@@ -358,7 +359,7 @@ Câu hỏi → [Retriever] → Điều khoản liên quan → [LLM] → Câu tr�
 ### 2. Qdrant Hybrid Search (Native Sparse Vectors)
 
 Hệ thống sử dụng cơ sở dữ liệu vector tiên tiến (Qdrant) để thực hiện tìm kiếm kết hợp:
-- **Dense Vector Search**: Semantic search qua model đa ngôn ngữ `BAAI/bge-m3` (1024 chiều).
+- **Dense Vector Search**: Semantic search qua fine-tuned BGE-M3 embedding local (1024 chiều), truy vấn collection Qdrant đã index cùng embedding space.
 - **Sparse Vector Search (BM25)**: Tìm kiếm từ khóa chính xác (Exact Keyword Match) thông qua thuật toán sinh vector thưa tự xây dựng cho tiếng Việt.
 - **Reciprocal Rank Fusion (RRF)**: Qdrant nhận các truy vấn dense/sparse qua nhiều khối `prefetch`; backend dùng `query_batch_points` và hợp nhất thứ hạng bằng RRF để tương thích với các phiên bản Qdrant khác nhau.
 - *(Dự phòng: Vẫn hỗ trợ FAISS cục bộ cho hệ thống không có Qdrant)*.
@@ -440,8 +441,8 @@ Hệ thống dùng biến môi trường `INFERENCE_STRATEGY` để chọn thứ
 
 Các lớp chính:
 - **LLM Layer**: trong `remote_first`, chạy runtime/provider remote và Google fallback nếu bật; trong `local_first`, Ollama được dùng trước.
-- **Embedding Layer**: retrieval triển khai cố định trên HuggingFace `BAAI/bge-m3` để đồng nhất với vector đã index. Nếu HuggingFace embedding trả `401` hoặc `500`, API trả lỗi rõ cho người dùng thay vì âm thầm dùng local hoặc trả kết quả rỗng.
-- **Reranking Layer**: `PIPELINE_RERANKING=embedding_similarity` dùng HuggingFace `BAAI/bge-m3` remote để cosine rerank candidate docs trên deploy. Nếu cấu hình `cross_encoder` trong `remote_first`, backend tự chuyển sang embedding-similarity reranker vì HuggingFace Inference Providers không expose ổn định query/passage pair cho `BAAI/bge-reranker-v2-m3`.
+- **Embedding Layer**: với `HUGGINGFACE_EMBEDDING_MODE=local`, retrieval dùng fine-tuned embedding artifact trên filesystem. Lỗi artifact, dimension, Qdrant auth/schema hoặc missing collection được báo rõ; backend không fallback sang Hugging Face embedding API hoặc FAISS trừ khi được bật tường minh.
+- **Reranking Layer**: với `PIPELINE_RERANKING=cross_encoder`, backend dùng fine-tuned cross-encoder local từ `RERANKER_MODEL`. Nếu artifact lỗi, request fail rõ hoặc fail-open theo `RERANKER_FAIL_OPEN`; không fallback sang Hugging Face reranking API.
 
 ### 10. Conversational Memory Manager (Trí nhớ hội thoại lai)
 
@@ -565,7 +566,7 @@ Mỗi file JSON trong `data/processed/` có cấu trúc:
 | **Backend** | FastAPI, Uvicorn, Python | Async API |
 | **Database** | PostgreSQL, Qdrant | Persistent Storage |
 | **LLM Framework** | LangChain (core, community, huggingface) | Orchestration |
-| **Embedding** | HuggingFace BAAI/bge-m3 | Multilingual, 1024 dims |
+| **Embedding** | Fine-tuned BGE-M3 local artifact | Multilingual, 1024 dims |
 | **Vector DB** | Qdrant (Native Hybrid Search) | Cấu hình Named Vectors |
 | **LLM Models** | Gemini Flash-Lite, Gemma, Qwen, Llama, DeepSeek | Browser-configured providers |
 
@@ -586,27 +587,25 @@ Recommended first setup:
 
 ```text
 Provider: Google AI Studio
-Answer model: Gemini 2.5 Flash-Lite
-Rewriter model: Gemini 2.5 Flash-Lite
-Summarizer model: Gemini 2.5 Flash-Lite
+Answer model: Gemini 3.1 Flash-Lite
+Rewriter model: Gemini 3.1 Flash-Lite
+Summarizer model: Gemini 3.1 Flash-Lite
 ```
 
-Embeddings are not user-configurable at runtime. The deployed retrieval stack
-stays fixed to HuggingFace `BAAI/bge-m3` so queries use the same embedding space
-as the indexed legal corpus. In `remote_first`, embedding failures are surfaced
-to the client: invalid HuggingFace credentials return an authentication error,
-and HuggingFace server failures return an embedding-service error. The deployed
-path does not fall back to local Ollama.
+Embeddings are not user-configurable at runtime. The retrieval stack uses the
+server-managed fine-tuned local embedding model so queries use the same
+embedding space as the indexed legal corpus. In `remote_first`, LLM provider
+ordering is remote-first, but query embedding still comes from the local
+fine-tuned artifact. Embedding failures are surfaced to the client and do not
+fall back to Ollama, Hugging Face API, or stale FAISS results.
 
 Deploy-safe reranking:
 
-- `PIPELINE_RERANKING=embedding_similarity`: remote-only reranking using
-  HuggingFace `BAAI/bge-m3` feature extraction and cosine similarity. It scores
-  up to `RERANKER_MAX_CANDIDATES` retrieved documents per request to keep deploy
-  latency bounded.
-- `PIPELINE_RERANKING=cross_encoder`: kept for local/experimental use. In
-  `remote_first`, it resolves to embedding-similarity reranking to avoid the
-  unsupported HuggingFace text-classification query/passage pair format.
+- `PIPELINE_RERANKING=cross_encoder`: local fine-tuned cross-encoder reranking
+  from `RERANKER_MODEL`. It scores up to `RERANKER_MAX_CANDIDATES` retrieved
+  documents per request.
+- `PIPELINE_RERANKING=none`: disables reranking for rollback or latency
+  troubleshooting.
 
 Environment file roles:
 

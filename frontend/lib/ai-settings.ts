@@ -45,7 +45,7 @@ export const DEFAULT_AI_SETTINGS: AISettings = {
   temperature: 0.3,
   maxTokens: 1024,
   topK: 5,
-  candidateK: 60,
+  candidateK: 10,
   cacheThreshold: 0.95,
   maxSubqueries: 3,
   historyMessages: 4,

@@ -11,11 +11,13 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from app.config import (
+    EMBEDDING_DIMENSION,
     EMBEDDING_PROVIDER,
     POSTGRES_DSN,
     QDRANT_API_KEY,
     QDRANT_COLLECTION,
     QDRANT_URL,
+    SEMANTIC_CACHE_COLLECTION,
     STORAGE_BACKEND,
 )
 from app.utils.logging import setup_logger
@@ -30,6 +32,25 @@ class StorageInitializationError(RuntimeError):
 def is_database_backend_enabled() -> bool:
     """Return True when the runtime is configured to use the database-backed storage layer."""
     return STORAGE_BACKEND.lower() in {"qdrant_postgres", "postgres", "postgresql", "qdrant"}
+
+
+def _named_vector_size(collection_info, vector_name: str) -> Optional[int]:
+    vectors = collection_info.config.params.vectors
+    if isinstance(vectors, dict):
+        vector_config = vectors.get(vector_name)
+        return getattr(vector_config, "size", None) if vector_config is not None else None
+    if vector_name == "":
+        return getattr(vectors, "size", None)
+    return None
+
+
+def _ensure_collection_dimension(collection_info, collection_name: str, vector_name: str, expected_size: int) -> None:
+    actual_size = _named_vector_size(collection_info, vector_name)
+    if actual_size != expected_size:
+        raise StorageInitializationError(
+            f"Qdrant collection '{collection_name}' vector '{vector_name}' has dimension {actual_size}; "
+            f"expected {expected_size}. Re-index the collection with the configured embedding model before use."
+        )
 
 
 def _ensure_schema() -> None:
@@ -213,25 +234,35 @@ def initialize_storage() -> Dict[str, Any]:
 
     qdrant_client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY or None)
     
-    # Check if Qdrant collection exists before recreating
+    # Check if Qdrant collection exists before creating a new one. Existing
+    # collections are never recreated here because that would delete index data.
     try:
         collection_info = qdrant_client.get_collection(QDRANT_COLLECTION)
         
-        # Enforce recreation if the collection uses the old single-vector schema
         if not collection_info.config.params.sparse_vectors or "text-sparse" not in collection_info.config.params.sparse_vectors:
-            logger.info("Qdrant collection '%s' exists but lacks named/sparse vectors. Forcing recreation.", QDRANT_COLLECTION)
-            raise ValueError("Schema mismatch, recreate collection")
+            raise StorageInitializationError(
+                f"Qdrant collection '{QDRANT_COLLECTION}' lacks required sparse vector 'text-sparse'. "
+                "Create a migrated collection and re-index before enabling this backend."
+            )
+        _ensure_collection_dimension(
+            collection_info,
+            QDRANT_COLLECTION,
+            "text-dense",
+            EMBEDDING_DIMENSION,
+        )
             
         logger.info("Qdrant collection '%s' already exists with %d points and proper schema.", 
                     QDRANT_COLLECTION, collection_info.points_count)
+    except StorageInitializationError:
+        raise
     except Exception:
         # Collection doesn't exist or schema mismatch - create it
         logger.info("Creating new Qdrant collection '%s' with Named Vectors (text-dense and text-sparse)", QDRANT_COLLECTION)
-        qdrant_client.recreate_collection(
+        qdrant_client.create_collection(
             collection_name=QDRANT_COLLECTION,
             vectors_config={
                 "": qdrant_models.VectorParams(size=1, distance=qdrant_models.Distance.COSINE), # Dummy default vector to bypass Qdrant FusionQuery validation bug
-                "text-dense": qdrant_models.VectorParams(size=1024, distance=qdrant_models.Distance.COSINE),
+                "text-dense": qdrant_models.VectorParams(size=EMBEDDING_DIMENSION, distance=qdrant_models.Distance.COSINE),
             },
             sparse_vectors_config={
                 "text-sparse": qdrant_models.SparseVectorParams(),
@@ -240,15 +271,23 @@ def initialize_storage() -> Dict[str, Any]:
 
     from app.config import ENABLE_SEMANTIC_CACHE
     if ENABLE_SEMANTIC_CACHE:
-        cache_collection = "semantic_cache"
+        cache_collection = SEMANTIC_CACHE_COLLECTION
         try:
-            qdrant_client.get_collection(cache_collection)
+            cache_info = qdrant_client.get_collection(cache_collection)
+            _ensure_collection_dimension(
+                cache_info,
+                cache_collection,
+                "",
+                EMBEDDING_DIMENSION,
+            )
             logger.info("Qdrant collection '%s' already exists.", cache_collection)
+        except StorageInitializationError:
+            raise
         except Exception:
             logger.info("Creating new Qdrant collection '%s'", cache_collection)
             qdrant_client.create_collection(
                 collection_name=cache_collection,
-                vectors_config=qdrant_models.VectorParams(size=1024, distance=qdrant_models.Distance.COSINE),
+                vectors_config=qdrant_models.VectorParams(size=EMBEDDING_DIMENSION, distance=qdrant_models.Distance.COSINE),
             )
 
     run_id = _start_indexing_run("startup", {"backend": STORAGE_BACKEND, "collection": QDRANT_COLLECTION})

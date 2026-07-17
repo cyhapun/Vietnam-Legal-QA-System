@@ -11,14 +11,12 @@ from typing import List, Dict, Any, Optional
 from langchain_core.documents import Document
 from langchain_community.vectorstores import FAISS
 from langchain_community.vectorstores.utils import DistanceStrategy
-from langchain_huggingface import HuggingFaceEndpointEmbeddings, HuggingFaceEmbeddings
-
 from app.config import (
     FAISS_INDEX_PATH, JSON_DATA_PATH, TRACKING_FILE,
-    HUGGINGFACE_API_KEY, EMBEDDING_MODEL, HUGGINGFACE_EMBEDDING_MODE,
     EMBEDDING_BATCH_SIZE, EMBEDDING_MAX_RETRIES,
     EMBEDDING_SLEEP_BETWEEN_BATCHES, EMBEDDING_RETRY_BASE_WAIT,
 )
+from app.services.embedding.hf_endpoint import HuggingFaceEndpointEmbedding
 from app.services.knowledge_base import determine_category
 from app.utils.logging import setup_logger
 
@@ -26,30 +24,16 @@ logger = setup_logger("vietlaw.vectorstore")
 
 # --- BIẾN TOÀN CỤC ---
 vectorstore: Optional[FAISS] = None
+embeddings = None
 KNOWLEDGE_BASE: Dict[str, Any] = {}
 LAW_METADATA: Dict[str, Any] = {}
 
-# --- KHỞI TẠO EMBEDDING MODEL ---
-if HUGGINGFACE_EMBEDDING_MODE == "api":
-    if not HUGGINGFACE_API_KEY:
-        raise ValueError(
-            "Không tìm thấy HUGGINGFACE_API_KEY. "
-            "Vui lòng kiểm tra lại file .env của bạn nhé."
-        )
 
-    logger.info("Đang kết nối mô hình %s qua Hugging Face API...", EMBEDDING_MODEL)
-    embeddings = HuggingFaceEndpointEmbeddings(
-        model=EMBEDDING_MODEL,
-        task="feature-extraction",
-        huggingfacehub_api_token=HUGGINGFACE_API_KEY,
-    )
-else:
-    logger.info("Đang tải mô hình %s chạy TRỰC TIẾP (Local) qua sentence-transformers...", EMBEDDING_MODEL)
-    embeddings = HuggingFaceEmbeddings(
-        model_name=EMBEDDING_MODEL,
-        model_kwargs={'device': 'cpu'},
-        encode_kwargs={'normalize_embeddings': True}
-    )
+def _get_embeddings():
+    global embeddings
+    if embeddings is None:
+        embeddings = HuggingFaceEndpointEmbedding().langchain_embeddings
+    return embeddings
 
 
 def load_knowledge_base_to_ram() -> None:
@@ -140,7 +124,7 @@ def _embed_single_file(file_path: str) -> None:
                 # Nếu vectorstore chưa có, tạo mới. Nếu có rồi thì thêm vào.
                 if vectorstore is None:
                     vectorstore = FAISS.from_documents(
-                        batch, embeddings,
+                        batch, _get_embeddings(),
                         distance_strategy=DistanceStrategy.COSINE
                     )
                 else:
@@ -179,7 +163,7 @@ def init_vector_db() -> None:
         logger.info("Đang tải FAISS Index từ ổ cứng...")
         vectorstore = FAISS.load_local(
             FAISS_INDEX_PATH,
-            embeddings,
+            _get_embeddings(),
             allow_dangerous_deserialization=True
         )
     else:

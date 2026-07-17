@@ -1,8 +1,8 @@
 """
 Qdrant-backed searcher for legal clause retrieval.
 
-This implementation uses Qdrant when available and falls back to the existing
-FAISS-based retriever if the database-backed service is unavailable.
+This implementation uses Qdrant. A FAISS fallback can be injected explicitly,
+but the default runtime should fail clearly instead of querying a stale index.
 """
 from __future__ import annotations
 
@@ -19,6 +19,7 @@ from app.config import (
 from app.services.embedding.hf_endpoint import HuggingFaceEndpointEmbedding
 from app.services.embedding.ollama import OllamaEmbedding
 from app.services.embedding.errors import EmbeddingServiceError
+from app.services.pipeline_timing import current_timing
 from app.services.knowledge_base import (
     ALL_LAWS_CATEGORY,
     document_matches_category,
@@ -30,7 +31,7 @@ logger = setup_logger("vietlaw.search.qdrant")
 
 
 class QdrantSearcher:
-    """Vector search using Qdrant with a FAISS fallback for local resilience."""
+    """Vector search using Qdrant with an optional explicitly configured fallback."""
 
     def __init__(
         self,
@@ -153,6 +154,18 @@ class QdrantSearcher:
                 except Exception as exc:
                     logger.warning("Sparse vector generation failed for query '%s': %s", q, exc)
 
+        collector = current_timing()
+        stage = collector.stage("qdrant_search") if collector is not None else None
+        if stage is None:
+            results = self._execute_qdrant_query(client, qdrant_models, prefetch, query, k, query_filter, embedding_backend)
+            documents = self._points_to_documents(results)
+        else:
+            with stage:
+                results = self._execute_qdrant_query(client, qdrant_models, prefetch, query, k, query_filter, embedding_backend)
+                documents = self._points_to_documents(results)
+        return documents
+
+    def _execute_qdrant_query(self, client, qdrant_models, prefetch, query, k, query_filter, embedding_backend):
         try:
             # Bypass Qdrant 1.10 query_points Fusion bug by using query_batch_points and manual RRF
             if len(prefetch) > 1:
@@ -166,12 +179,12 @@ class QdrantSearcher:
                         with_payload=True
                     )
                     requests.append(req)
-                    
+
                 batch_results = client.query_batch_points(
                     collection_name=self._collection_name,
                     requests=requests
                 )
-                
+
                 # Manual RRF Fusion
                 rrf_scores = {}
                 doc_map = {}
@@ -179,14 +192,14 @@ class QdrantSearcher:
                     for rank, point in enumerate(response.points):
                         doc_map[point.id] = point
                         rrf_scores[point.id] = rrf_scores.get(point.id, 0.0) + 1.0 / (60 + rank + 1)
-                        
+
                 # Sort by score descending and take top k
                 sorted_ids = sorted(rrf_scores.keys(), key=lambda x: rrf_scores[x], reverse=True)[:k]
-                results = [doc_map[doc_id] for doc_id in sorted_ids]
-                
-            elif len(prefetch) == 1:
+                return [doc_map[doc_id] for doc_id in sorted_ids]
+
+            if len(prefetch) == 1:
                 p = prefetch[0]
-                results = client.query_points(
+                return client.query_points(
                     collection_name=self._collection_name,
                     query=p.query,
                     using=p.using,
@@ -194,14 +207,14 @@ class QdrantSearcher:
                     limit=p.limit,
                     with_payload=True
                 ).points
-            else:
-                return []
+
+            return []
         except AttributeError:
             # Fallback for older qdrant-client versions
             if not isinstance(query, str):
                 query = query[0] if query else ""
             query_dense_vector = embedding_backend.embed_query(query)
-            results = client.search(
+            return client.search(
                 collection_name=self._collection_name,
                 query_vector=("text-dense", query_dense_vector),
                 limit=k,
@@ -209,6 +222,8 @@ class QdrantSearcher:
                 with_payload=True,
             )
 
+    @staticmethod
+    def _points_to_documents(results) -> List[Document]:
         documents: List[Document] = []
         for point in results:
             payload = point.payload or {}
@@ -234,13 +249,25 @@ class QdrantSearcher:
         except EmbeddingServiceError:
             raise
         except Exception as exc:
-            logger.warning("Qdrant retrieval failed, falling back to FAISS: %s", exc)
             if self._fallback_searcher is not None:
+                logger.warning(
+                    "Qdrant retrieval failed for collection %s; FAISS fallback is explicitly enabled: %s",
+                    self._collection_name,
+                    type(exc).__name__,
+                )
                 import inspect
                 if "api_key" in inspect.signature(self._fallback_searcher.search).parameters:
                     return self._fallback_searcher.search(query, k=k, category=category, api_key=api_key)
                 return self._fallback_searcher.search(query, k=k, category=category)
-            return []
+            logger.error(
+                "Qdrant retrieval failed for collection %s and FAISS fallback is disabled: %s",
+                self._collection_name,
+                type(exc).__name__,
+            )
+            raise RuntimeError(
+                f"Qdrant retrieval failed for collection {self._collection_name}; "
+                "FAISS fallback is disabled."
+            ) from exc
 
     async def asearch(
         self,
@@ -255,8 +282,12 @@ class QdrantSearcher:
         except EmbeddingServiceError:
             raise
         except Exception as exc:
-            logger.warning("Qdrant async retrieval failed, falling back to fallback searcher: %s", exc)
             if self._fallback_searcher is not None:
+                logger.warning(
+                    "Qdrant async retrieval failed for collection %s; FAISS fallback is explicitly enabled: %s",
+                    self._collection_name,
+                    type(exc).__name__,
+                )
                 import inspect
                 if hasattr(self._fallback_searcher, "asearch"):
                     if "api_key" in inspect.signature(self._fallback_searcher.asearch).parameters:
@@ -265,4 +296,12 @@ class QdrantSearcher:
                 if "api_key" in inspect.signature(self._fallback_searcher.search).parameters:
                     return self._fallback_searcher.search(query, k=k, category=category, api_key=api_key)
                 return self._fallback_searcher.search(query, k=k, category=category)
-            return []
+            logger.error(
+                "Qdrant async retrieval failed for collection %s and FAISS fallback is disabled: %s",
+                self._collection_name,
+                type(exc).__name__,
+            )
+            raise RuntimeError(
+                f"Qdrant retrieval failed for collection {self._collection_name}; "
+                "FAISS fallback is disabled."
+            ) from exc

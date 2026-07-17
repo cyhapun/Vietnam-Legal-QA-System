@@ -20,7 +20,7 @@ from app.config import (
     FAISS_INDEX_PATH, JSON_DATA_PATH, TRACKING_FILE,
     EMBEDDING_BATCH_SIZE, EMBEDDING_MAX_RETRIES,
     EMBEDDING_SLEEP_BETWEEN_BATCHES, EMBEDDING_RETRY_BASE_WAIT,
-    EMBEDDING_PROVIDER, PIPELINE_CONFIG,
+    EMBEDDING_PROVIDER, ENABLE_FAISS_FALLBACK, PIPELINE_CONFIG,
     RETRIEVER_CANDIDATE_K, RETRIEVER_K, STORAGE_BACKEND,
 )
 from app.services.knowledge_base import load_knowledge_base
@@ -39,6 +39,7 @@ from app.services.reranking import (
     FallbackReranker,
 )
 from app.services.context_builder import NestedContextBuilder
+from app.services.pipeline_timing import current_timing
 from app.utils.logging import setup_logger
 
 logger = setup_logger("vietlaw.pipeline")
@@ -117,6 +118,10 @@ class RAGPipeline:
         else:
             docs = self.searcher.search(queries, k=k, category=category)
         retrieved_count = len(docs)
+        collector = current_timing()
+        if collector is not None:
+            collector.set_metric("requested_candidate_k", k)
+            collector.set_metric("retrieved_candidate_count", retrieved_count)
         
         # Deduplicate
         seen = set()
@@ -129,6 +134,8 @@ class RAGPipeline:
                 
         docs = unique_docs
         dedup_count = len(docs)
+        if collector is not None:
+            collector.set_metric("deduplicated_candidate_count", dedup_count)
 
         # Step 2: Rerank or keep search order.
         if enable_reranker:
@@ -136,6 +143,10 @@ class RAGPipeline:
         else:
             docs = docs[:final_k]
         final_count = len(docs)
+        if collector is not None:
+            collector.set_metric("requested_top_k", final_k)
+            collector.set_metric("final_context_count", final_count)
+            collector.set_metric("final_source_ids", [doc.metadata.get("id") for doc in docs if doc.metadata.get("id")])
         
         logger.info(
             "Pipeline retrieve (Sync) [domain=%s, rewritten=%d] -> Search: %d docs -> Dedup: %d docs -> Rerank: %d docs", 
@@ -143,7 +154,14 @@ class RAGPipeline:
         )
 
         # Step 3: Build context within the configured token budget.
-        docs, context = self._build_context_with_budget(docs, context_token_budget)
+        if collector is not None:
+            with collector.stage("context_building"):
+                docs, context = self._build_context_with_budget(docs, context_token_budget)
+        else:
+            docs, context = self._build_context_with_budget(docs, context_token_budget)
+        if collector is not None:
+            collector.set_metric("final_context_count", len(docs))
+            collector.set_metric("final_source_ids", [doc.metadata.get("id") for doc in docs if doc.metadata.get("id")])
 
         return docs, context
 
@@ -198,6 +216,10 @@ class RAGPipeline:
             else:
                 docs = self.searcher.search(queries, k=k, category=category)
         retrieved_count = len(docs)
+        collector = current_timing()
+        if collector is not None:
+            collector.set_metric("requested_candidate_k", k)
+            collector.set_metric("retrieved_candidate_count", retrieved_count)
         
         # Deduplicate
         seen = set()
@@ -210,6 +232,8 @@ class RAGPipeline:
                 
         docs = unique_docs
         dedup_count = len(docs)
+        if collector is not None:
+            collector.set_metric("deduplicated_candidate_count", dedup_count)
 
         # Step 2: Rerank or keep search order.
         if enable_reranker:
@@ -217,6 +241,10 @@ class RAGPipeline:
         else:
             docs = docs[:final_k]
         final_count = len(docs)
+        if collector is not None:
+            collector.set_metric("requested_top_k", final_k)
+            collector.set_metric("final_context_count", final_count)
+            collector.set_metric("final_source_ids", [doc.metadata.get("id") for doc in docs if doc.metadata.get("id")])
         
         logger.info(
             "Pipeline retrieve (Async) [domain=%s, rewritten=%d] -> Search: %d docs -> Dedup: %d docs -> Rerank: %d docs", 
@@ -224,7 +252,14 @@ class RAGPipeline:
         )
 
         # Step 3: Build context within the configured token budget.
-        docs, context = self._build_context_with_budget(docs, context_token_budget)
+        if collector is not None:
+            with collector.stage("context_building"):
+                docs, context = self._build_context_with_budget(docs, context_token_budget)
+        else:
+            docs, context = self._build_context_with_budget(docs, context_token_budget)
+        if collector is not None:
+            collector.set_metric("final_context_count", len(docs))
+            collector.set_metric("final_source_ids", [doc.metadata.get("id") for doc in docs if doc.metadata.get("id")])
 
         return docs, context
 
@@ -411,7 +446,15 @@ def _create_searcher(embedding) -> Any:
     strategy = PIPELINE_CONFIG.get("search", "faiss")
 
     if STORAGE_BACKEND.lower() in {"qdrant_postgres", "qdrant"}:
-        faiss_searcher = FAISSSearcher(vectorstore=_faiss_vectorstore)
+        faiss_searcher = FAISSSearcher(vectorstore=_faiss_vectorstore) if ENABLE_FAISS_FALLBACK else None
+        if faiss_searcher is None:
+            logger.info("FAISS fallback disabled for %s storage backend.", STORAGE_BACKEND)
+        else:
+            logger.warning(
+                "FAISS fallback explicitly enabled for %s. Ensure the FAISS index was built "
+                "with the same embedding model as the active Qdrant collection.",
+                STORAGE_BACKEND,
+            )
         return QdrantSearcher(vectorstore=_faiss_vectorstore, fallback_searcher=faiss_searcher)
 
     # FAISS searcher luôn cần (dùng cho cả hybrid)
@@ -436,18 +479,17 @@ def _create_reranker():
     elif strategy in {"embedding_similarity", "remote_embedding_similarity"}:
         return HuggingFaceEmbeddingSimilarityReranker(max_candidates=max_candidates)
     elif strategy == "cross_encoder":
-        model = PIPELINE_CONFIG.get("reranker_model", "BAAI/bge-reranker-v2-m3")
-        from app.config import INFERENCE_STRATEGY
-        if INFERENCE_STRATEGY == "remote_first":
-            logger.warning(
-                "Remote HuggingFace text-classification does not reliably support query/passage pairs for %s; "
-                "using embedding_similarity reranker on remote_first.",
-                model,
-            )
-            return HuggingFaceEmbeddingSimilarityReranker(max_candidates=max_candidates)
-        primary_reranker = CrossEncoderReranker(model=model)
-        fallback_reranker = HuggingFaceEmbeddingSimilarityReranker(max_candidates=max_candidates)
-        return FallbackReranker(primary=primary_reranker, secondary=fallback_reranker)
+        model = PIPELINE_CONFIG.get(
+            "reranker_model",
+            "../models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/selected",
+        )
+        return CrossEncoderReranker(
+            model=model,
+            device=PIPELINE_CONFIG.get("reranker_device", "cpu"),
+            batch_size=PIPELINE_CONFIG.get("reranker_batch_size", 8),
+            max_length=PIPELINE_CONFIG.get("reranker_max_length", 512),
+            fail_open=PIPELINE_CONFIG.get("reranker_fail_open", False),
+        )
     else:
         raise ValueError(
             f"Unknown reranking strategy: {strategy} "
@@ -526,6 +568,50 @@ def init_pipeline() -> None:
         logger.error("Không thể khởi tạo pipeline đầy đủ: %s", exc)
         logger.warning("Sẽ giữ pipeline ở trạng thái không sẵn sàng cho đến khi request được xử lý.")
         _pipeline = None
+
+
+def preload_local_models(warmup: bool = False) -> dict:
+    """Load cached local embedding/reranker models, optionally running one synthetic warm-up."""
+    import time
+
+    from langchain_core.documents import Document
+
+    pipeline = get_pipeline()
+    timings = {
+        "embedding_load_ms": 0.0,
+        "reranker_load_ms": 0.0,
+        "embedding_warmup_ms": 0.0,
+        "reranker_warmup_ms": 0.0,
+    }
+
+    embedding = _get_embedding()
+    if embedding is not None and hasattr(embedding, "_get_local_engine"):
+        start = time.perf_counter()
+        embedding._get_local_engine()  # type: ignore[attr-defined]
+        timings["embedding_load_ms"] = (time.perf_counter() - start) * 1000
+
+    reranker = pipeline.reranker
+    if hasattr(reranker, "_load"):
+        start = time.perf_counter()
+        reranker._load()  # type: ignore[attr-defined]
+        timings["reranker_load_ms"] = (time.perf_counter() - start) * 1000
+
+    if warmup:
+        if embedding is not None:
+            start = time.perf_counter()
+            embedding.embed_query("kiểm tra hệ thống")
+            timings["embedding_warmup_ms"] = (time.perf_counter() - start) * 1000
+        if hasattr(reranker, "rerank"):
+            start = time.perf_counter()
+            reranker.rerank(
+                "kiểm tra hệ thống",
+                [Document(page_content="nội dung kiểm tra", metadata={"id": "warmup"})],
+                top_k=1,
+            )
+            timings["reranker_warmup_ms"] = (time.perf_counter() - start) * 1000
+
+    timings["total_startup_model_ms"] = sum(timings.values())
+    return timings
 
 
 def get_pipeline() -> RAGPipeline:

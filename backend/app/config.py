@@ -43,11 +43,22 @@ QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY", "")
 QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION", "vietlaw_clauses")
 DISABLE_AUTO_INGEST = os.getenv("DISABLE_AUTO_INGEST", "false").strip().lower() == "true"
+ENABLE_FAISS_FALLBACK = os.getenv("ENABLE_FAISS_FALLBACK", "false").strip().lower() == "true"
+PIPELINE_TIMING_ENABLED = os.getenv("PIPELINE_TIMING_ENABLED", "false").strip().lower() == "true"
 
 # --- THÔNG SỐ EMBEDDING ---
-EMBEDDING_MODEL = os.getenv("HUGGINGFACE_EMBEDDING_MODEL", "BAAI/bge-m3")
+DEFAULT_LOCAL_EMBEDDING_MODEL = "../models/embedding/vietlaw-bge-m3-finetuned/best"
+DEFAULT_LOCAL_RERANKER_MODEL = "../models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/selected"
+
+EMBEDDING_MODEL = os.getenv("HUGGINGFACE_EMBEDDING_MODEL", DEFAULT_LOCAL_EMBEDDING_MODEL)
 # Hỗ trợ "api" hoặc "local"
 HUGGINGFACE_EMBEDDING_MODE = os.getenv("HUGGINGFACE_EMBEDDING_MODE", "local").strip().lower()
+EMBEDDING_DEVICE = os.getenv("EMBEDDING_DEVICE", "cpu").strip()
+EMBEDDING_DIMENSION = int(os.getenv("EMBEDDING_DIMENSION", "1024"))
+EMBEDDING_NORMALIZE = os.getenv("EMBEDDING_NORMALIZE", "true").strip().lower() == "true"
+LOCAL_MODELS_OFFLINE = os.getenv("LOCAL_MODELS_OFFLINE", "true").strip().lower() == "true"
+LOCAL_MODELS_PRELOAD_ENABLED = os.getenv("LOCAL_MODELS_PRELOAD_ENABLED", "true").strip().lower() == "true"
+LOCAL_MODELS_WARMUP_ENABLED = os.getenv("LOCAL_MODELS_WARMUP_ENABLED", "true").strip().lower() == "true"
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 OLLAMA_EMBEDDING_MODEL = os.getenv("OLLAMA_EMBEDDING_MODEL", "bge-m3")
 OLLAMA_EMBEDDING_TIMEOUT = float(os.getenv("OLLAMA_EMBEDDING_TIMEOUT", "300"))
@@ -63,8 +74,8 @@ EMBEDDING_RETRY_BASE_WAIT = float(os.getenv(
 ))
 
 # --- THÔNG SỐ RETRIEVAL ---
-RETRIEVER_K = 20
-RETRIEVER_CANDIDATE_K = int(os.getenv("RETRIEVER_CANDIDATE_K", "60"))
+RETRIEVER_K = 5
+RETRIEVER_CANDIDATE_K = int(os.getenv("RETRIEVER_CANDIDATE_K", "10"))
 RETRIEVER_FETCH_K = 20
 RETRIEVER_LAMBDA_MULT = 0.8
 
@@ -112,8 +123,12 @@ PIPELINE_CONFIG = {
     "hybrid_bm25_weight": float(os.getenv("HYBRID_BM25_WEIGHT", "0.5")),
 
     # --- Reranker model (chỉ dùng khi reranking="cross_encoder") ---
-    "reranker_model": os.getenv("RERANKER_MODEL", "BAAI/bge-reranker-v2-m3"),
-    "reranker_max_candidates": int(os.getenv("RERANKER_MAX_CANDIDATES", "20")),
+    "reranker_model": os.getenv("RERANKER_MODEL", DEFAULT_LOCAL_RERANKER_MODEL),
+    "reranker_max_candidates": int(os.getenv("RERANKER_MAX_CANDIDATES", "10")),
+    "reranker_device": os.getenv("RERANKER_DEVICE", "cpu").strip(),
+    "reranker_batch_size": int(os.getenv("RERANKER_BATCH_SIZE", "8")),
+    "reranker_max_length": int(os.getenv("RERANKER_MAX_LENGTH", "512")),
+    "reranker_fail_open": os.getenv("RERANKER_FAIL_OPEN", "false").strip().lower() == "true",
 
     # --- Query Rewriter ---
     "rewriter": os.getenv("PIPELINE_REWRITER", "none"),
@@ -124,6 +139,25 @@ PIPELINE_CONFIG = {
 # --- SEMANTIC CACHE ---
 ENABLE_SEMANTIC_CACHE = os.getenv("ENABLE_SEMANTIC_CACHE", "true").strip().lower() == "true"
 SEMANTIC_CACHE_THRESHOLD = float(os.getenv("SEMANTIC_CACHE_THRESHOLD", "0.95"))
+SEMANTIC_CACHE_COLLECTION = os.getenv("SEMANTIC_CACHE_COLLECTION", "semantic_cache")
 
 # --- FALLBACK STRATEGY ---
 INFERENCE_STRATEGY = os.getenv("INFERENCE_STRATEGY", "remote_first").strip().lower()
+
+
+def _validate_positive_int(name: str, value: int) -> None:
+    if value <= 0:
+        raise ValueError(f"{name} must be greater than 0; got {value}.")
+
+
+def _validate_non_empty(name: str, value: str) -> None:
+    if not value.strip():
+        raise ValueError(f"{name} must not be empty.")
+
+
+_validate_positive_int("EMBEDDING_BATCH_SIZE", EMBEDDING_BATCH_SIZE)
+_validate_positive_int("EMBEDDING_DIMENSION", EMBEDDING_DIMENSION)
+_validate_positive_int("RERANKER_BATCH_SIZE", PIPELINE_CONFIG["reranker_batch_size"])
+_validate_positive_int("RERANKER_MAX_LENGTH", PIPELINE_CONFIG["reranker_max_length"])
+_validate_non_empty("QDRANT_COLLECTION", QDRANT_COLLECTION)
+_validate_non_empty("SEMANTIC_CACHE_COLLECTION", SEMANTIC_CACHE_COLLECTION)

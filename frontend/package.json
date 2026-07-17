@@ -9,7 +9,8 @@
     "lint": "eslint",
     "clean": "next clean",
     "verify:models": "node scripts/verify-ai-models.mjs",
-    "verify:inference-settings": "node scripts/verify-inference-settings.mjs"
+    "verify:inference-settings": "node scripts/verify-inference-settings.mjs",
+    "verify:chat-ux": "node scripts/verify-chat-ux.mjs"
   },
   "dependencies": {
     "autoprefixer": "^10.4.21",

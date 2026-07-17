@@ -27,7 +27,6 @@ class ProviderDefinition:
 
 GOOGLE_CHAT_MODELS = frozenset({
     "gemini-3.1-flash-lite",
-    "gemini-2.5-flash-lite",
 })
 
 HUGGINGFACE_CHAT_MODELS = frozenset({
