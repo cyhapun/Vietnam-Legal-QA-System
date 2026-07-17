@@ -6,7 +6,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import type { ChatSession, Message } from '@/lib/types';
-import { STORAGE_KEYS } from '@/lib/constants';
+import { CHAT_STORAGE_MODE, STORAGE_KEYS } from '@/lib/constants';
 
 const createSessionId = () => {
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
@@ -131,6 +131,10 @@ export function useChatSessions() {
     setCurrentSessionId(id);
     localStorage.setItem(STORAGE_KEYS.activeSessionId, id);
 
+    if (CHAT_STORAGE_MODE === 'browser') {
+      return;
+    }
+
     const cachedMessages = messagesBySession[id];
     if (!cachedMessages) {
       setIsSessionLoading(true);
@@ -163,6 +167,7 @@ export function useChatSessions() {
 
   // --- Xóa session ---
   const handleDeleteSession = useCallback((id: string) => {
+    if (CHAT_STORAGE_MODE === 'postgres') {
     // Gọi API xóa ở backend không đồng bộ
     fetch(`/api/chat/session/${id}`, { method: 'DELETE' })
       .then(res => {
@@ -173,6 +178,8 @@ export function useChatSessions() {
       });
 
     // Cập nhật đồng thời cả sessions và messages trong cùng một lần render
+    }
+
     const { currentSessionId, sessions, messagesBySession } = stateRef.current;
     const remaining = sessions.filter(s => s.id !== id);
 
@@ -278,6 +285,14 @@ export function useChatSessions() {
 
     const loadFromDB = async () => {
       const localSnapshot = readLocalChatSnapshot();
+
+      if (CHAT_STORAGE_MODE === 'browser') {
+        restoreLocalSnapshot(localSnapshot);
+        setIsSessionLoading(false);
+        setIsSessionsListLoading(false);
+        return;
+      }
+
       try {
         const res = await fetch('/api/chat/sessions');
         if (!res.ok) {

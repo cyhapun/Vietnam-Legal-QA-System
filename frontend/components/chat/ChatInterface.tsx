@@ -21,6 +21,7 @@ import {
 } from '@/lib/ai-settings';
 import {
   ALL_LAWS_CATEGORY,
+  CHAT_STORAGE_MODE,
   LAW_CATEGORIES,
 } from '@/lib/constants';
 import type { Message, DocumentChunk } from '@/lib/types';
@@ -202,6 +203,10 @@ export function ChatInterface() {
 
     // Save locally immediately
     updateMessage(currentSessionId, messageId, { feedback: type });
+
+    if (CHAT_STORAGE_MODE === 'browser') {
+      return;
+    }
 
     try {
       await fetch('/api/feedback', {
@@ -520,6 +525,11 @@ export function ChatInterface() {
           <div className="text-[10.5px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest px-3 py-1 rounded-full md:block hidden bg-blue-50 dark:bg-blue-500/10">
             Hệ thống tra cứu pháp luật thông minh
           </div>
+          {CHAT_STORAGE_MODE === 'browser' && (
+            <div className="text-[10px] font-medium text-slate-500 dark:text-slate-400 px-2 py-1 rounded-full bg-slate-100 dark:bg-white/10">
+              Lá»‹ch sá»­ chá»‰ lÆ°u trÃªn thiáº¿t bá»‹ nÃ y
+            </div>
+          )}
         </div>
 
         {/* History Mini-map Stack */}

@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 
-from app.config import PIPELINE_TIMING_ENABLED
+from app.config import CHAT_STORAGE_MODE, PIPELINE_TIMING_ENABLED
 from app.models import ChatRequest
 from app.services.pipeline import get_pipeline
 from app.services.llm import get_llm, CHAT_PROMPT, get_output_parser
@@ -106,7 +106,7 @@ async def _persist_turn(session_id: str, session_title: str, user_msg_id: str, u
 
 async def _persist_completed_turn(request: ChatRequest, session_id: str, user_content: str, ai_content: str, ai_context: list):
     """Persist a finished turn before the client treats it as complete."""
-    if session_id == "unknown":
+    if CHAT_STORAGE_MODE != "postgres" or session_id == "unknown":
         return
 
     import uuid as _uuid
@@ -152,7 +152,11 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
         from app.services.storage import get_session_summary
         from app.services.memory_manager import summarize_session
 
-        session_data = get_session_summary(session_id) if request.enableMemory and session_id != "unknown" else None
+        session_data = (
+            get_session_summary(session_id)
+            if CHAT_STORAGE_MODE == "postgres" and request.enableMemory and session_id != "unknown"
+            else None
+        )
         summary = session_data.get("summary", "") if session_data else ""
 
         history_lines = []
@@ -322,7 +326,7 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
         )
 
         # Summarize memory asynchronously
-        if request.enableMemory and session_id != "unknown":
+        if CHAT_STORAGE_MODE == "postgres" and request.enableMemory and session_id != "unknown":
             asyncio.create_task(summarize_session(
                 session_id,
                 last_message,
@@ -365,7 +369,11 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
             from app.services.storage import get_session_summary
             from app.services.memory_manager import summarize_session
 
-            session_data = get_session_summary(session_id) if request.enableMemory and session_id != "unknown" else None
+            session_data = (
+                get_session_summary(session_id)
+                if CHAT_STORAGE_MODE == "postgres" and request.enableMemory and session_id != "unknown"
+                else None
+            )
             summary = session_data.get("summary", "") if session_data else ""
 
             history_lines = []
@@ -553,7 +561,7 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
             )
 
             # Summarize memory asynchronously
-            if request.enableMemory and session_id != "unknown":
+            if CHAT_STORAGE_MODE == "postgres" and request.enableMemory and session_id != "unknown":
                 asyncio.create_task(summarize_session(
                     session_id,
                     last_message,
@@ -587,6 +595,8 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
 
 @router.get("/chat/sessions")
 async def get_sessions():
+    if CHAT_STORAGE_MODE == "browser":
+        return {"storageMode": "browser", "sessions": []}
     """Trả về danh sách tất cả sessions từ PostgreSQL."""
     from app.services.storage import list_sessions
     return list_sessions()
@@ -594,6 +604,8 @@ async def get_sessions():
 
 @router.get("/chat/session/{session_id}/messages")
 async def get_session_messages(session_id: str):
+    if CHAT_STORAGE_MODE == "browser":
+        return {"storageMode": "browser", "messages": []}
     """Trả về tất cả tin nhắn của một session từ PostgreSQL."""
     from app.services.storage import get_session_messages
     return get_session_messages(session_id)
@@ -601,6 +613,10 @@ async def get_session_messages(session_id: str):
 
 @router.delete("/chat/session/{session_id}")
 async def delete_session(session_id: str):
+    if not session_id or session_id == "unknown":
+        raise HTTPException(status_code=400, detail="Invalid session_id")
+    if CHAT_STORAGE_MODE == "browser":
+        return {"status": "skipped", "storageMode": "browser"}
     """Xóa lịch sử trò chuyện của một session cụ thể khỏi hệ thống."""
     if not session_id or session_id == "unknown":
         raise HTTPException(status_code=400, detail="Invalid session_id")

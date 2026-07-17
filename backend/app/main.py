@@ -14,6 +14,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import (
+    CHAT_STORAGE_MODE,
     CORS_ORIGINS,
     EMBEDDING_DIMENSION,
     EMBEDDING_MODEL,
@@ -39,6 +40,23 @@ from app.services.storage import initialize_storage
 from app.utils.logging import setup_logger
 
 logger = setup_logger("vietlaw.main")
+
+
+def _chat_storage_diagnostics() -> dict:
+    if CHAT_STORAGE_MODE == "postgres":
+        return {
+            "mode": "postgres",
+            "scope": "shared",
+            "warning": (
+                "Chat sessions and feedback are shared across users because "
+                "authentication/row ownership is not configured."
+            ),
+        }
+    return {
+        "mode": "browser",
+        "scope": "browser-local",
+        "warning": None,
+    }
 
 
 def _resolve_runtime_path(path_value: str) -> Path:
@@ -169,7 +187,13 @@ def create_app() -> FastAPI:
 
     @application.get("/readiness")
     async def readiness():
-        components = {"config": {"status": "ok", **runtime_profile_summary()}}
+        components = {
+            "config": {
+                "status": "ok",
+                **runtime_profile_summary(),
+                "chatStorage": _chat_storage_diagnostics(),
+            }
+        }
         ready = True
 
         try:
@@ -179,6 +203,7 @@ def create_app() -> FastAPI:
             components["config"] = {
                 "status": "error",
                 **runtime_profile_summary(),
+                "chatStorage": _chat_storage_diagnostics(),
                 "error": str(exc),
             }
 
@@ -277,6 +302,10 @@ def create_app() -> FastAPI:
         application.state.local_models_ready = not LOCAL_MODELS_PRELOAD_ENABLED
         application.state.local_models_error = None
         application.state.runtime_config_error = None
+        if CHAT_STORAGE_MODE == "postgres":
+            logger.warning(
+                "CHAT_STORAGE_MODE=postgres uses shared unauthenticated conversation storage."
+            )
         await asyncio.to_thread(load_knowledge_base)
         asyncio.create_task(asyncio.to_thread(_initialize_runtime_components_sync))
         logger.info("Document metadata loaded; remaining initialization scheduled in background")

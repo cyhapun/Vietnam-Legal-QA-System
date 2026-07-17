@@ -1,10 +1,7 @@
-## Purpose
-
-Ensure chat sessions and their related messages are persisted to PostgreSQL in a sequential, consistent, and refresh-safe way. Each completed turn must contain both the user message and the assistant response before the client treats the turn as complete.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Sequential turn persistence
+
 When `CHAT_STORAGE_MODE=postgres`, the system SHALL persist each chat turn to PostgreSQL in this order: `ensure_session_exists` -> `save_chat_message(user)` -> `save_chat_message(assistant)`. The system MUST NOT dispatch those three operations as independent parallel tasks. When `CHAT_STORAGE_MODE=browser`, the backend MUST skip all three operations.
 
 #### Scenario: Successful turn persist on stream endpoint
@@ -33,6 +30,7 @@ When `CHAT_STORAGE_MODE=postgres`, the system SHALL persist each chat turn to Po
 - **AND** no foreign key violation is logged.
 
 ### Requirement: Refresh-safe turn completion
+
 The chat API SHALL persist the complete user/assistant turn before the client is allowed to treat the turn as finished when `CHAT_STORAGE_MODE=postgres`. For non-streaming `/chat`, the response MUST NOT be returned until the turn has been written. For streaming `/chat/stream`, the final `done` SSE event MUST NOT be emitted until the turn has been written. In browser mode, completion MUST depend only on successful inference and local frontend persistence.
 
 #### Scenario: User refreshes immediately after streaming completes
