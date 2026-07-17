@@ -81,7 +81,9 @@ class QdrantSearcher:
         from app.services.pipeline import _get_embedding
         emb = _get_embedding(api_key)
         if emb is None:
-            return HuggingFaceEndpointEmbedding(api_key=api_key)
+            raise EmbeddingServiceError(
+                "Embedding backend is unavailable for the active runtime profile."
+            )
         return emb
 
     def _get_client(self):
