@@ -7,8 +7,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     HF_INFERENCE_ENDPOINT="https://router.huggingface.co/hf-inference"
 
 COPY requirements.txt ./
+COPY requirements-local.txt ./
 RUN pip install uv && \
     uv pip install --system --no-cache-dir -r requirements.txt && \
+    uv pip install --system --no-cache-dir -r requirements-local.txt && \
     uv pip install --system --no-cache-dir faiss-cpu
 
 RUN echo "bust cache 2"
