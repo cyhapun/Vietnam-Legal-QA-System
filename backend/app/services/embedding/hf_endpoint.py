@@ -41,22 +41,22 @@ _LOCAL_REQUIRED_FILES = (
 )
 
 
-def _raise_huggingface_error(exc: Exception) -> None:
+def _raise_huggingface_error(exc: Exception, provider: str = "HuggingFace") -> None:
     detail = str(exc)
     if "401" in detail or "Unauthorized" in detail or "Invalid username or password" in detail:
         raise EmbeddingAuthError(
-            "API Key HuggingFace không hợp lệ, đã hết hạn, hoặc không có quyền dùng embedding đã cấu hình. "
-            "Vui lòng kiểm tra lại HuggingFace API key trong phần cấu hình."
+            f"API key {provider} không hợp lệ, đã hết hạn, hoặc không có quyền dùng embedding đã cấu hình. "
+            f"Vui lòng kiểm tra lại {provider} API key trong phần cấu hình deployment."
         ) from exc
 
     if "500" in detail or "Internal Server Error" in detail or "Server error" in detail:
         raise EmbeddingServerError(
-            "Dịch vụ HuggingFace embedding đang lỗi phía máy chủ khi gọi model đã cấu hình. "
+            f"Dịch vụ {provider} embedding đang lỗi phía máy chủ khi gọi model đã cấu hình. "
             "Vui lòng thử lại sau hoặc chọn cấu hình embedding ổn định hơn."
         ) from exc
 
     raise EmbeddingServerError(
-        f"Không thể tạo embedding bằng HuggingFace model đã cấu hình: {detail}"
+        f"Không thể tạo embedding bằng {provider} model đã cấu hình: {detail}"
     ) from exc
 
 
@@ -272,7 +272,7 @@ class HuggingFaceEndpointEmbedding:
             vectors = self._engine.embed_documents(texts)
             return self._validate_vectors(vectors, len(texts))
         except Exception as exc:
-            _raise_huggingface_error(exc)
+            _raise_huggingface_error(exc, "OpenRouter" if self._mode == "openrouter" else "HuggingFace")
 
     def embed_query(self, text: str) -> List[float]:
         """Nhúng một câu truy vấn."""
@@ -287,4 +287,4 @@ class HuggingFaceEndpointEmbedding:
             vector = self._engine.embed_query(text)
             return self._validate_vectors([vector], 1)[0]
         except Exception as exc:
-            _raise_huggingface_error(exc)
+            _raise_huggingface_error(exc, "OpenRouter" if self._mode == "openrouter" else "HuggingFace")

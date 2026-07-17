@@ -52,6 +52,23 @@ def _embedding_error_status(exc: EmbeddingServiceError) -> int:
     return 401 if isinstance(exc, EmbeddingAuthError) else 503
 
 
+def _embedding_auth_detail() -> str:
+    return (
+        "API key embedding phía server không hợp lệ hoặc đã hết hạn. "
+        "Vui lòng kiểm tra cấu hình deployment cho HuggingFace/OpenRouter."
+    )
+
+
+def _embedding_api_key() -> None:
+    """Use server-side embedding credentials only.
+
+    Browser HuggingFace keys are for runtime LLM choices; retrieval embeddings
+    must stay fixed to the backend deployment config so a bad user key cannot
+    break Qdrant search for the whole request.
+    """
+    return None
+
+
 def _llm_error_detail(model_name: str, exc: Exception) -> str:
     """Return a user-safe LLM error message without exposing credentials."""
     text = str(exc)
@@ -191,7 +208,7 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
             queries = (queries or [last_message])[:request.maxSubqueries]
         logger.info("Rewriter enabled=%s, domain=%s, queries=%s", request.enableQueryRewriter, domain, queries)
         
-        api_key = request.inference_config.api_key_for("huggingface") if request.inference_config else None
+        api_key = _embedding_api_key()
         
         try:
             query_vector = None
@@ -227,7 +244,7 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
                     except Exception as e:
                         logger.warning("Cache check failed: %s", e)
                         if "401" in str(e) or "Unauthorized" in str(e) or "Invalid token" in str(e):
-                            raise ValueError("API Key HuggingFace không hợp lệ hoặc đã hết hạn.")
+                            raise ValueError(_embedding_auth_detail())
 
             retrieved_docs, context_text = await pipeline.aretrieve(
                 query=last_message,
@@ -246,7 +263,7 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
             raise HTTPException(status_code=400, detail=str(e))
         except Exception as e:
             if "401" in str(e) or "Unauthorized" in str(e) or "Invalid token" in str(e):
-                raise HTTPException(status_code=401, detail="API Key HuggingFace không hợp lệ hoặc đã hết hạn.")
+                raise HTTPException(status_code=401, detail=_embedding_auth_detail())
             raise
 
         with timing.stage("context_building"):
@@ -401,7 +418,7 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
                 queries = (queries or [last_message])[:request.maxSubqueries]
             logger.info("Stream rewriter enabled=%s, domain=%s, queries=%s", request.enableQueryRewriter, domain, queries)
             
-            api_key = request.inference_config.api_key_for("huggingface") if request.inference_config else None
+            api_key = _embedding_api_key()
             
             try:
                 query_vector = None
@@ -440,7 +457,7 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
                         except Exception as e:
                             logger.warning("Stream Cache check failed: %s", e)
                             if "401" in str(e) or "Unauthorized" in str(e) or "Invalid token" in str(e):
-                                raise ValueError("API Key HuggingFace không hợp lệ hoặc đã hết hạn.")
+                                raise ValueError(_embedding_auth_detail())
 
                 retrieved_docs, context_text = await pipeline.aretrieve(
                     query=last_message,
@@ -464,7 +481,7 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
             except Exception as e:
                 if "401" in str(e) or "Unauthorized" in str(e) or "Invalid token" in str(e):
                     outcome = "error"
-                    yield _sse({"type": "error", "message": "API Key HuggingFace không hợp lệ hoặc đã hết hạn."})
+                    yield _sse({"type": "error", "message": _embedding_auth_detail()})
                     return
                 raise
             with timing.stage("context_building"):
