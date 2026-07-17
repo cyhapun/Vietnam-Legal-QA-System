@@ -61,6 +61,7 @@ export const DEFAULT_AI_SETTINGS: AISettings = {
   providerCredentials: {
     google: { apiKey: '', remember: true },
     huggingface: { apiKey: '', remember: true },
+    openrouter: { apiKey: '', remember: true },
   },
   roles: {
     answer: { ...DEFAULT_ROLE },
@@ -106,6 +107,10 @@ function normalizeCredentials(value: Partial<ProviderCredentialSettings> | null 
     huggingface: {
       apiKey: typeof value?.huggingface?.apiKey === 'string' ? value.huggingface.apiKey : '',
       remember: value?.huggingface?.remember ?? true,
+    },
+    openrouter: {
+      apiKey: typeof value?.openrouter?.apiKey === 'string' ? value.openrouter.apiKey : '',
+      remember: value?.openrouter?.remember ?? true,
     },
   };
 }
