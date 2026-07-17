@@ -60,34 +60,6 @@ def test_cross_encoder_wires_local_reranker_from_config(monkeypatch):
     assert reranker.fail_open is True
 
 
-def test_cross_encoder_wires_remote_reranker_from_config(monkeypatch):
-    class FakeRemoteReranker:
-        def __init__(self, model, endpoint_url, batch_size, max_length, fail_open):
-            self.model = model
-            self.endpoint_url = endpoint_url
-            self.batch_size = batch_size
-            self.max_length = max_length
-            self.fail_open = fail_open
-
-    monkeypatch.setitem(pipeline_module.PIPELINE_CONFIG, "reranking", "cross_encoder")
-    monkeypatch.setitem(pipeline_module.PIPELINE_CONFIG, "reranker_mode", "api")
-    monkeypatch.setitem(pipeline_module.PIPELINE_CONFIG, "reranker_api_model", "BAAI/bge-reranker-v2-m3")
-    monkeypatch.setitem(pipeline_module.PIPELINE_CONFIG, "reranker_api_url", "https://hf.example/reranker")
-    monkeypatch.setitem(pipeline_module.PIPELINE_CONFIG, "reranker_batch_size", 4)
-    monkeypatch.setitem(pipeline_module.PIPELINE_CONFIG, "reranker_max_length", 256)
-    monkeypatch.setitem(pipeline_module.PIPELINE_CONFIG, "reranker_fail_open", True)
-    monkeypatch.setattr(pipeline_module, "HuggingFaceInferenceReranker", FakeRemoteReranker)
-
-    reranker = pipeline_module._create_reranker()
-
-    assert isinstance(reranker, FakeRemoteReranker)
-    assert reranker.model == "BAAI/bge-reranker-v2-m3"
-    assert reranker.endpoint_url == "https://hf.example/reranker"
-    assert reranker.batch_size == 4
-    assert reranker.max_length == 256
-    assert reranker.fail_open is True
-
-
 def test_preload_local_models_loads_singletons_without_warmup(monkeypatch):
     calls = []
 

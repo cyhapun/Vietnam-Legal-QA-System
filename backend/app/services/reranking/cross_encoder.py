@@ -6,7 +6,7 @@ import os
 import threading
 import time
 from pathlib import Path
-from typing import List, Sequence, Optional
+from typing import List, Sequence
 
 from langchain_core.documents import Document
 
@@ -186,7 +186,6 @@ class CrossEncoderReranker:
         query: str,
         documents: List[Document],
         top_k: int,
-        api_key: Optional[str] = None,
     ) -> List[Document]:
         if not documents:
             return []

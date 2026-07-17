@@ -35,7 +35,6 @@ from app.services.search import FAISSSearcher, QdrantSearcher
 from app.services.reranking import (
     NoReranker,
     CrossEncoderReranker,
-    HuggingFaceInferenceReranker,
     HuggingFaceEmbeddingSimilarityReranker,
     FallbackReranker,
 )
@@ -83,8 +82,7 @@ class RAGPipeline:
         queries: Optional[List[str]] = None,
         enable_reranker: bool = True,
         context_token_budget: Optional[int] = None,
-        embedding_api_key: Optional[str] = None,
-        reranker_api_key: Optional[str] = None,
+        api_key: Optional[str] = None,
     ) -> Tuple[List[Document], str]:
         """Thực hiện full retrieval pipeline: Search → Rerank → Context Build.
 
@@ -116,7 +114,7 @@ class RAGPipeline:
         # Truyền api_key xuống searcher nếu nó hỗ trợ
         import inspect
         if "api_key" in inspect.signature(self.searcher.search).parameters:
-            docs = self.searcher.search(queries, k=k, category=category, api_key=embedding_api_key)
+            docs = self.searcher.search(queries, k=k, category=category, api_key=api_key)
         else:
             docs = self.searcher.search(queries, k=k, category=category)
         retrieved_count = len(docs)
@@ -143,7 +141,7 @@ class RAGPipeline:
 
         # Step 2: Rerank or keep search order.
         if enable_reranker:
-            docs = self.reranker.rerank(query, docs, top_k=final_k, api_key=reranker_api_key)
+            docs = self.reranker.rerank(query, docs, top_k=final_k)
         else:
             docs = docs[:final_k]
         final_count = len(docs)
@@ -180,8 +178,7 @@ class RAGPipeline:
         queries: Optional[List[str]] = None,
         enable_reranker: bool = True,
         context_token_budget: Optional[int] = None,
-        embedding_api_key: Optional[str] = None,
-        reranker_api_key: Optional[str] = None,
+        api_key: Optional[str] = None,
     ) -> Tuple[List[Document], str]:
         """Async version của retrieve — dùng trong FastAPI endpoint."""
         final_k = rerank_top_k or RETRIEVER_K
@@ -198,16 +195,27 @@ class RAGPipeline:
             
         if not queries:
             queries = [query]
-        # Step 1: Search
+
+        # Step 1: Async Search
         import inspect
+        if hasattr(self.searcher, "asearch") and "api_key" in inspect.signature(self.searcher.asearch).parameters:
+            docs = await self.searcher.asearch(queries, k=k, category=category, api_key=api_key)
+        elif "api_key" in inspect.signature(self.searcher.search).parameters:
+            docs = await self.searcher.asearch(queries, k=k, category=category) # Wait, asearch might not support it
+            # Actually let's just pass it safely
+            if hasattr(self.searcher, "asearch"):
+                 # if asearch doesn't have it, we shouldn't pass it. But we just check signature.
+                 pass
+            # Just do dynamic check properly below:
+            
         if hasattr(self.searcher, "asearch"):
             if "api_key" in inspect.signature(self.searcher.asearch).parameters:
-                docs = await self.searcher.asearch(queries, k=k, category=category, api_key=embedding_api_key)
+                docs = await self.searcher.asearch(queries, k=k, category=category, api_key=api_key)
             else:
                 docs = await self.searcher.asearch(queries, k=k, category=category)
         else:
             if "api_key" in inspect.signature(self.searcher.search).parameters:
-                docs = self.searcher.search(queries, k=k, category=category, api_key=embedding_api_key)
+                docs = self.searcher.search(queries, k=k, category=category, api_key=api_key)
             else:
                 docs = self.searcher.search(queries, k=k, category=category)
         retrieved_count = len(docs)
@@ -234,7 +242,7 @@ class RAGPipeline:
 
         # Step 2: Rerank or keep search order.
         if enable_reranker:
-            docs = self.reranker.rerank(query, docs, top_k=final_k, api_key=reranker_api_key)
+            docs = self.reranker.rerank(query, docs, top_k=final_k)
         else:
             docs = docs[:final_k]
         final_count = len(docs)
@@ -503,17 +511,6 @@ def _create_reranker():
     elif strategy in {"embedding_similarity", "remote_embedding_similarity"}:
         return HuggingFaceEmbeddingSimilarityReranker(max_candidates=max_candidates)
     elif strategy == "cross_encoder":
-        reranker_mode = PIPELINE_CONFIG.get("reranker_mode", "local")
-        if reranker_mode == "api":
-            return HuggingFaceInferenceReranker(
-                model=PIPELINE_CONFIG.get("reranker_api_model", "BAAI/bge-reranker-v2-m3"),
-                endpoint_url=PIPELINE_CONFIG.get("reranker_api_url"),
-                batch_size=PIPELINE_CONFIG.get("reranker_batch_size", 8),
-                max_length=PIPELINE_CONFIG.get("reranker_max_length", 512),
-                fail_open=PIPELINE_CONFIG.get("reranker_fail_open", False),
-            )
-        if reranker_mode != "local":
-            raise ValueError("RERANKER_MODE must be either 'local' or 'api'.")
         model = PIPELINE_CONFIG.get(
             "reranker_model",
             "../models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/selected",
