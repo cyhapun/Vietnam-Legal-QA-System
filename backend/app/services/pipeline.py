@@ -122,6 +122,7 @@ class RAGPipeline:
         if collector is not None:
             collector.set_metric("requested_candidate_k", k)
             collector.set_metric("retrieved_candidate_count", retrieved_count)
+            collector.set_metric("retrieved_source_ids", [doc.metadata.get("id") for doc in docs if doc.metadata.get("id")])
         
         # Deduplicate
         seen = set()
@@ -136,6 +137,7 @@ class RAGPipeline:
         dedup_count = len(docs)
         if collector is not None:
             collector.set_metric("deduplicated_candidate_count", dedup_count)
+            collector.set_metric("deduplicated_source_ids", [doc.metadata.get("id") for doc in docs if doc.metadata.get("id")])
 
         # Step 2: Rerank or keep search order.
         if enable_reranker:
@@ -145,6 +147,7 @@ class RAGPipeline:
         final_count = len(docs)
         if collector is not None:
             collector.set_metric("requested_top_k", final_k)
+            collector.set_metric("reranked_source_ids", [doc.metadata.get("id") for doc in docs if doc.metadata.get("id")])
             collector.set_metric("final_context_count", final_count)
             collector.set_metric("final_source_ids", [doc.metadata.get("id") for doc in docs if doc.metadata.get("id")])
         
@@ -220,6 +223,7 @@ class RAGPipeline:
         if collector is not None:
             collector.set_metric("requested_candidate_k", k)
             collector.set_metric("retrieved_candidate_count", retrieved_count)
+            collector.set_metric("retrieved_source_ids", [doc.metadata.get("id") for doc in docs if doc.metadata.get("id")])
         
         # Deduplicate
         seen = set()
@@ -234,6 +238,7 @@ class RAGPipeline:
         dedup_count = len(docs)
         if collector is not None:
             collector.set_metric("deduplicated_candidate_count", dedup_count)
+            collector.set_metric("deduplicated_source_ids", [doc.metadata.get("id") for doc in docs if doc.metadata.get("id")])
 
         # Step 2: Rerank or keep search order.
         if enable_reranker:
@@ -243,6 +248,7 @@ class RAGPipeline:
         final_count = len(docs)
         if collector is not None:
             collector.set_metric("requested_top_k", final_k)
+            collector.set_metric("reranked_source_ids", [doc.metadata.get("id") for doc in docs if doc.metadata.get("id")])
             collector.set_metric("final_context_count", final_count)
             collector.set_metric("final_source_ids", [doc.metadata.get("id") for doc in docs if doc.metadata.get("id")])
         
