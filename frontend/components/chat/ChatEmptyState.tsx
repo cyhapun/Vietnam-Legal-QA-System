@@ -9,7 +9,7 @@ interface ChatEmptyStateProps {
 const SUGGESTIONS = [
   'Hợp đồng chuyển nhượng quyền sử dụng đất có cần công chứng không?',
   'Điều kiện để được cấp sổ đỏ (Giấy chứng nhận quyền sử dụng đất) là gì?',
-  'Những hành vi nào bị nghiêm cấm trong hoạt động bảo vệ môi trường?',
+  'Cần chuẩn bị giấy tờ gì khi đi công chứng hợp đồng mua bán nhà đất?',
 ];
 
 export function ChatEmptyState({ onSelectSuggestion }: ChatEmptyStateProps) {
