@@ -8,6 +8,8 @@ Luồng triển khai chính dùng **PostgreSQL + Qdrant**. FAISS vẫn được 
 làm fallback khi Qdrant không sẵn sàng. Các thành phần retrieval, reranking, query rewriting,
 context building và inference được ghép theo cấu hình để phục vụ ablation study.
 
+![Sơ đồ pipeline RAG của VietLaw AI](overview.png)
+
 > **Project môn học:** Introduction to Machine Learning
 
 ## Danh sách thành viên
@@ -76,8 +78,6 @@ Hệ thống theo mô hình **Client-Server** với 2 thành phần chính giao 
 │  └─────────────────────────────────────────────┘        │
 └─────────────────────────────────────────────────────────┘
 ```
-
-![Sơ đồ pipeline RAG của VietLaw AI](overview.png)
 
 ### Luồng xử lý chính
 
