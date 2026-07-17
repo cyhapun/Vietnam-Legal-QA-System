@@ -12,7 +12,7 @@ from typing import Any, Iterable, Sequence
 _CITE_ID_RE = re.compile(r"<cite\s+id=[\"']([^\"']+)[\"']>", re.IGNORECASE)
 _SOURCE_ID_RE = re.compile(r"\b[A-Z][A-Z0-9]+_\d{4}_D\d+(?:_K\d+)?\b")
 _LEGAL_REF_RE = re.compile(
-    r"(?:Điều\s+\d+|Khoản\s+\d+|Luật\s+[^,.;\n]+)",
+    r"(?:Điều\s+\d+|Khoản\s+\d+|Luật\s+.+?(?=\s+(?:Điều|Khoản|Điểm)\s+\d+|[,.;\n]|$))",
     re.IGNORECASE,
 )
 

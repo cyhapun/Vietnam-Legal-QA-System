@@ -14,6 +14,7 @@ from app.services.legal_quality_evaluation import (
     parse_quality_record,
     validate_dataset_sources,
 )
+from scripts.evaluate_legal_quality import _context_text_for_diagnostics
 from scripts.audit_legal_corpus_integrity import audit_json_corpus
 
 
@@ -112,6 +113,28 @@ def test_unsupported_legal_reference_detection_is_conservative():
 
     assert detect_unsupported_legal_references(answer, context) == []
     assert detect_unsupported_legal_references("Theo Điều 99 thì được miễn.", context) == ["Điều 99"]
+
+
+def test_answer_diagnostic_context_includes_source_metadata():
+    context = _context_text_for_diagnostics([
+        {
+            "content": "Nội dung điều khoản.",
+            "metadata": {
+                "source": "Luật Đất đai 2024",
+                "dieu": 45,
+                "khoan": 1,
+            },
+        }
+    ])
+
+    assert "Luật Đất đai 2024" in context
+    assert "Điều 45" in context
+    assert "Khoản 1" in context
+    assert detect_unsupported_legal_references(
+        "Theo Luật Đất đai 2024 Điều 45 Khoản 1 thì được áp dụng.",
+        context,
+    ) == []
+    assert detect_unsupported_legal_references("Theo Điều 99 thì được áp dụng.", context) == ["Điều 99"]
 
 
 def test_generated_report_helpers_do_not_require_answer_content():

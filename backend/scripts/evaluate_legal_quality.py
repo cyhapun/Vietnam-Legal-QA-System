@@ -66,6 +66,30 @@ def _post_json(base_url: str, endpoint: str, payload: dict, timeout: float) -> t
     return data, (time.perf_counter() - start) * 1000
 
 
+def _context_text_for_diagnostics(context_items: list[dict]) -> str:
+    parts: list[str] = []
+    for item in context_items:
+        if not isinstance(item, dict):
+            continue
+        metadata = item.get("metadata", {}) if isinstance(item.get("metadata"), dict) else {}
+        source = metadata.get("source") or metadata.get("law")
+        article = metadata.get("dieu")
+        clause = metadata.get("khoan")
+        header_parts = []
+        if source:
+            header_parts.append(str(source))
+        if article:
+            header_parts.append(f"Điều {article}")
+        if clause:
+            header_parts.append(f"Khoản {clause}")
+        if header_parts:
+            parts.append(" | ".join(header_parts))
+        content = item.get("content", "")
+        if isinstance(content, str) and content:
+            parts.append(content)
+    return "\n".join(parts)
+
+
 async def _evaluate_retrieval(records, candidate_k: int, top_k: int, max_questions: int | None) -> tuple[list, list]:
     load_knowledge_base()
     init_pipeline()
@@ -137,11 +161,7 @@ def _evaluate_answers(records, base_url: str, model: str, candidate_k: int, top_
             for item in context_items
             if isinstance(item, dict) and item.get("metadata", {}).get("id")
         ]
-        context_text = "\n".join(
-            item.get("content", "")
-            for item in context_items
-            if isinstance(item, dict)
-        )
+        context_text = _context_text_for_diagnostics(context_items)
         answer_text = data.get("text", "")
         citation_ids = extract_citation_ids(answer_text)
         trace = build_stage_trace(
