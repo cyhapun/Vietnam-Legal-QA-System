@@ -703,7 +703,7 @@ cd backend
 
 ---
 
-## Hạn chế đã biết
+## Hạn chế
 
 - Các bộ fixture đánh giá hiện còn nhỏ và không đại diện cho độ chính xác pháp lý tổng quát của toàn hệ thống.
 - Corpus đã index chưa bao phủ toàn bộ văn bản pháp luật Việt Nam hoặc các thay đổi pháp luật trong tương lai.
