@@ -13,11 +13,13 @@ from app.services.reranking.no_reranker import NoReranker
 from app.services.reranking.cross_encoder import CrossEncoderReranker
 from app.services.reranking.embedding_similarity import HuggingFaceEmbeddingSimilarityReranker
 from app.services.reranking.fallback import FallbackReranker
+from app.services.reranking.hf_inference import HuggingFaceInferenceReranker
 
 __all__ = [
     "BaseReranker",
     "NoReranker",
     "CrossEncoderReranker",
     "HuggingFaceEmbeddingSimilarityReranker",
+    "HuggingFaceInferenceReranker",
     "FallbackReranker",
 ]
