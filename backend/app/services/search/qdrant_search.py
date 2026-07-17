@@ -6,6 +6,7 @@ but the default runtime should fail clearly instead of querying a stale index.
 """
 from __future__ import annotations
 
+import re
 from typing import List, Optional, Union
 
 from langchain_core.documents import Document
@@ -29,6 +30,10 @@ from app.utils.logging import setup_logger
 
 logger = setup_logger("vietlaw.search.qdrant")
 
+_EXPLICIT_LEGAL_CITATION_RE = re.compile(
+    r"(?i)(?:\bđiều\s*\d+|\bkhoản\s*\d+|\bđiểm\s*[a-zA-Z0-9]+|\bđ\s*\d+|\bk\s*\d+)"
+)
+
 
 class QdrantSearcher:
     """Vector search using Qdrant with an optional explicitly configured fallback."""
@@ -47,6 +52,13 @@ class QdrantSearcher:
     @property
     def strategy_name(self) -> str:
         return "qdrant"
+
+    @staticmethod
+    def _prefetch_limit_for_queries(queries: List[str], k: int) -> int:
+        base_limit = k * 2
+        if any(_EXPLICIT_LEGAL_CITATION_RE.search(query or "") for query in queries):
+            return max(base_limit, 40)
+        return base_limit
 
     def _get_embedding_backend(self, api_key: Optional[str] = None):
         from app.config import EMBEDDING_PROVIDER, INFERENCE_STRATEGY
@@ -125,13 +137,14 @@ class QdrantSearcher:
         queries = [query] if isinstance(query, str) else query
         
         prefetch = []
+        prefetch_limit = self._prefetch_limit_for_queries(queries, k)
         for q in queries:
             query_dense_vector = embedding_backend.embed_query(q)
             prefetch.append(
                 qdrant_models.Prefetch(
                     query=query_dense_vector,
                     using="text-dense",
-                    limit=k * 2,
+                    limit=prefetch_limit,
                     filter=query_filter,
                 )
             )
@@ -147,7 +160,7 @@ class QdrantSearcher:
                                     values=query_sparse_dict["values"]
                                 ),
                                 using="text-sparse",
-                                limit=k * 2,
+                                limit=prefetch_limit,
                                 filter=query_filter,
                             )
                         )

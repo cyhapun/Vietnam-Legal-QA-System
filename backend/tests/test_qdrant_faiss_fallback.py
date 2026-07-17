@@ -122,6 +122,19 @@ def test_qdrant_factory_creates_faiss_fallback_when_enabled(monkeypatch):
     assert isinstance(captured["fallback_searcher"], FakeFAISSSearcher)
 
 
+def test_qdrant_prefetch_widens_only_for_explicit_legal_citations():
+    assert QdrantSearcher._prefetch_limit_for_queries(["query"], 10) == 20
+    assert (
+        QdrantSearcher._prefetch_limit_for_queries(["Theo Điều 45 khoản 1 Luật Đất đai 2024"], 10)
+        == 40
+    )
+    assert QdrantSearcher._prefetch_limit_for_queries(["Đ45 K1"], 10) == 40
+    assert (
+        QdrantSearcher._prefetch_limit_for_queries(["Điều kiện chuyển nhượng quyền sử dụng đất là gì?"], 10)
+        == 20
+    )
+
+
 def test_faiss_storage_backend_still_requires_vectorstore(monkeypatch):
     from app.services import pipeline
 
