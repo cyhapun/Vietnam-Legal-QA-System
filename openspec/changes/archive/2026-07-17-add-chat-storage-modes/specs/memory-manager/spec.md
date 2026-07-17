@@ -1,9 +1,7 @@
-# Memory Manager
+## MODIFIED Requirements
 
-## Purpose
-TBD: The conversational memory manager reduces LLM context window bloat and latency by maintaining a compressed session summary in PostgreSQL and fetching it on-the-fly, rather than passing raw interaction histories to the RAG LLM.
-## Requirements
 ### Requirement: Session Summary Storage
+
 The system SHALL store and update a summary of the conversation context for a given `session_id` only when `CHAT_STORAGE_MODE=postgres`. In browser mode, the backend MUST NOT read or write a PostgreSQL session summary.
 
 #### Scenario: New session
@@ -19,6 +17,7 @@ The system SHALL store and update a summary of the conversation context for a gi
 - **THEN** the backend skips session-summary reads and writes and does not create a PostgreSQL chat session
 
 ### Requirement: Sliding Window Context Construction
+
 The system SHALL combine the stored session summary with a sliding window of the most recent messages in PostgreSQL mode. In browser mode, it SHALL construct context from the request's client-provided message history without fetching a server-side summary.
 
 #### Scenario: Summarized context injection
@@ -30,6 +29,7 @@ The system SHALL combine the stored session summary with a sliding window of the
 - **THEN** it does not query PostgreSQL for a summary and uses the request's recent messages for the configured context window
 
 ### Requirement: Asynchronous Summarizer Task
+
 The system SHALL automatically summarize past conversation history asynchronously without blocking the user response only when `CHAT_STORAGE_MODE=postgres`. When a runtime summarizer provider/model is configured in the chat request, the summarizer SHALL use that runtime role configuration for the background summarization task. In browser mode, the backend MUST skip the summarizer task because no server-side summary is persisted.
 
 #### Scenario: Triggering summarization
@@ -47,4 +47,3 @@ The system SHALL automatically summarize past conversation history asynchronousl
 #### Scenario: Summarizer role is unavailable
 - **WHEN** memory is enabled but no summarizer role can be created from runtime or server fallback configuration in PostgreSQL mode
 - **THEN** the system logs a non-secret warning and skips summary update without failing the user response.
-
