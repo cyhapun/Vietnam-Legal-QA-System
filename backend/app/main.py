@@ -17,6 +17,7 @@ from app.config import (
     CORS_ORIGINS,
     EMBEDDING_DIMENSION,
     EMBEDDING_MODEL,
+    HUGGINGFACE_EMBEDDING_MODE,
     LOCAL_MODELS_PRELOAD_ENABLED,
     LOCAL_MODELS_WARMUP_ENABLED,
     PIPELINE_CONFIG,
@@ -45,11 +46,16 @@ def _resolve_runtime_path(path_value: str) -> Path:
 
 
 def _check_artifacts() -> dict:
-    embedding_path = _resolve_runtime_path(EMBEDDING_MODEL)
-    embedding_ok = embedding_path.exists() and (embedding_path / "model.safetensors").exists()
+    embedding_local = HUGGINGFACE_EMBEDDING_MODE == "local"
+    embedding_path = _resolve_runtime_path(EMBEDDING_MODEL) if embedding_local else Path("")
+    embedding_ok = (
+        not embedding_local
+        or (embedding_path.exists() and (embedding_path / "model.safetensors").exists())
+    )
 
     reranker_strategy = PIPELINE_CONFIG.get("reranking", "none")
-    reranker_required = reranker_strategy == "cross_encoder"
+    reranker_mode = PIPELINE_CONFIG.get("reranker_mode", "local")
+    reranker_required = reranker_strategy == "cross_encoder" and reranker_mode == "local"
     reranker_model = PIPELINE_CONFIG.get("reranker_model", "")
     reranker_path = _resolve_runtime_path(reranker_model) if reranker_model else Path("")
     reranker_ok = (
@@ -61,11 +67,13 @@ def _check_artifacts() -> dict:
         "embedding": {
             "status": "ok" if embedding_ok else "error",
             "configured": bool(EMBEDDING_MODEL),
+            "mode": HUGGINGFACE_EMBEDDING_MODE,
             "weights": embedding_ok,
         },
         "reranker": {
             "status": "ok" if reranker_ok else "error",
-            "enabled": reranker_required,
+            "enabled": reranker_strategy == "cross_encoder",
+            "mode": reranker_mode,
             "weights": reranker_ok,
         },
     }

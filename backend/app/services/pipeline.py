@@ -35,6 +35,7 @@ from app.services.search import FAISSSearcher, QdrantSearcher
 from app.services.reranking import (
     NoReranker,
     CrossEncoderReranker,
+    HuggingFaceInferenceReranker,
     HuggingFaceEmbeddingSimilarityReranker,
     FallbackReranker,
 )
@@ -511,6 +512,17 @@ def _create_reranker():
     elif strategy in {"embedding_similarity", "remote_embedding_similarity"}:
         return HuggingFaceEmbeddingSimilarityReranker(max_candidates=max_candidates)
     elif strategy == "cross_encoder":
+        reranker_mode = PIPELINE_CONFIG.get("reranker_mode", "local")
+        if reranker_mode == "api":
+            return HuggingFaceInferenceReranker(
+                model=PIPELINE_CONFIG.get("reranker_api_model", "BAAI/bge-reranker-v2-m3"),
+                endpoint_url=PIPELINE_CONFIG.get("reranker_api_url"),
+                batch_size=PIPELINE_CONFIG.get("reranker_batch_size", 8),
+                max_length=PIPELINE_CONFIG.get("reranker_max_length", 512),
+                fail_open=PIPELINE_CONFIG.get("reranker_fail_open", False),
+            )
+        if reranker_mode != "local":
+            raise ValueError("RERANKER_MODE must be either 'local' or 'api'.")
         model = PIPELINE_CONFIG.get(
             "reranker_model",
             "../models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/selected",

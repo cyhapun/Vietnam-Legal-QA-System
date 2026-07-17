@@ -489,8 +489,8 @@ Hệ thống dùng biến môi trường `INFERENCE_STRATEGY` để chọn thứ
 
 Các lớp chính:
 - **LLM Layer**: trong `remote_first`, backend dùng runtime/provider từ xa và Google fallback nếu được bật; trong `local_first`, Ollama được dùng trước.
-- **Embedding Layer**: với `HUGGINGFACE_EMBEDDING_MODE=local`, retrieval dùng fine-tuned embedding artifact trên filesystem. Lỗi artifact, dimension, Qdrant auth/schema hoặc thiếu collection được báo rõ; backend không fallback sang Hugging Face embedding API hoặc FAISS trừ khi được bật tường minh.
-- **Reranking Layer**: với `PIPELINE_RERANKING=cross_encoder`, backend dùng fine-tuned Cross-Encoder cục bộ từ `RERANKER_MODEL`. Nếu artifact lỗi, request fail rõ hoặc fail-open theo `RERANKER_FAIL_OPEN`; không fallback sang Hugging Face reranking API.
+- **Embedding Layer**: local mặc định dùng fine-tuned embedding artifact qua `HUGGINGFACE_EMBEDDING_MODE=local`. Khi deploy không có artifact, đặt `HUGGINGFACE_EMBEDDING_MODE=openrouter`, `OPENROUTER_EMBEDDING_MODEL=baai/bge-m3` và `OPENROUTER_API_KEY` để gọi OpenRouter embeddings API 1024 chiều.
+- **Reranking Layer**: local mặc định dùng fine-tuned Cross-Encoder cục bộ từ `RERANKER_MODEL`. Khi deploy không có artifact, đặt `RERANKER_MODE=api`, `RERANKER_API_MODEL=BAAI/bge-reranker-v2-m3` và `HUGGINGFACE_API_KEY` để gọi Hugging Face Inference API; `RERANKER_FAIL_OPEN` vẫn quyết định có giữ thứ tự search khi API lỗi hay không.
 
 ### 10. Quản lý bộ nhớ hội thoại lai
 
