@@ -55,6 +55,7 @@ export const LAW_CATEGORIES = [
 export const AI_PROVIDERS: InferenceProvider[] = [
   { id: 'google', name: 'Google AI Studio', requiresApiKey: true, deploymentSupported: true },
   { id: 'huggingface', name: 'HuggingFace Router', requiresApiKey: true, deploymentSupported: true },
+  { id: 'openrouter', name: 'OpenRouter', requiresApiKey: true, deploymentSupported: true },
   { id: 'ollama', name: 'Ollama', requiresApiKey: false, deploymentSupported: false },
 ];
 

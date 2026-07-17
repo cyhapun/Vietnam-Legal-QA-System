@@ -200,8 +200,10 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
         logger.info("Rewriter enabled=%s, domain=%s, queries=%s", request.enableQueryRewriter, domain, queries)
         
         hf_api_key = request.inference_config.api_key_for("huggingface") if request.inference_config else None
+        openrouter_api_key = request.inference_config.api_key_for("openrouter") if request.inference_config else None
+        
         from app.config import HUGGINGFACE_EMBEDDING_MODE
-        embedding_api_key = hf_api_key if HUGGINGFACE_EMBEDDING_MODE == "api" else None
+        embedding_api_key = hf_api_key if HUGGINGFACE_EMBEDDING_MODE == "api" else (openrouter_api_key if HUGGINGFACE_EMBEDDING_MODE == "openrouter" else None)
         
         try:
             query_vector = None
@@ -413,8 +415,10 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
             logger.info("Stream rewriter enabled=%s, domain=%s, queries=%s", request.enableQueryRewriter, domain, queries)
             
             hf_api_key = request.inference_config.api_key_for("huggingface") if request.inference_config else None
+            openrouter_api_key = request.inference_config.api_key_for("openrouter") if request.inference_config else None
+            
             from app.config import HUGGINGFACE_EMBEDDING_MODE
-            embedding_api_key = hf_api_key if HUGGINGFACE_EMBEDDING_MODE == "api" else None
+            embedding_api_key = hf_api_key if HUGGINGFACE_EMBEDDING_MODE == "api" else (openrouter_api_key if HUGGINGFACE_EMBEDDING_MODE == "openrouter" else None)
             
             try:
                 query_vector = None
