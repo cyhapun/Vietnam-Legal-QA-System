@@ -22,10 +22,31 @@ quality metric.
 
 ## Dataset
 
-The initial verified dataset is:
+The verified retrieval dataset is:
 
 ```text
 backend/tests/fixtures/legal_retrieval_quality.jsonl
+```
+
+It currently contains 20 records with verified source IDs. Keep this dataset
+focused on questions that have known corpus support so retrieval metrics remain
+interpretable.
+
+Insufficient-context answer cases are tracked separately:
+
+```text
+backend/tests/fixtures/legal_insufficient_context_quality.jsonl
+```
+
+Those records intentionally have no required source ID and use:
+
+```json
+{
+  "required_source_ids": [],
+  "acceptable_source_ids": [],
+  "expected_behavior": "insufficient_context",
+  "must_not_invent_citation": true
+}
 ```
 
 Each record has this shape:
@@ -50,6 +71,7 @@ Ground-truth rules:
 - Natural-language examples must be manually checked against clause text.
 - Do not use Gemini or another model to generate ground truth.
 - Do not include user logs or sensitive data.
+- Do not add fake source IDs for insufficient-context cases.
 
 The initial dataset includes the known land cases:
 
@@ -58,7 +80,7 @@ The initial dataset includes the known land cases:
 
 ## Metrics
 
-The evaluator reports:
+Retrieval-only reports cover only retrieval/reranking/context metrics:
 
 - Retrieval Hit@10
 - Retrieval Recall@10
@@ -68,10 +90,19 @@ The evaluator reports:
 - critical miss count
 - empty-context count
 - duplicate final source count
-- invalid citation count
-- unsupported legal-reference count
 - median total latency
 - median TTFT when available
+
+Answer reports additionally include:
+
+- required citation presence rate
+- invalid citations returned in the final answer
+- unused-by-answer count
+- unsupported-reference detector findings
+- insufficient-context pass count
+
+Citation metrics are `not_applicable` for retrieval-only runs. Do not interpret
+retrieval-only `0` values as answer quality.
 
 Failure stage values:
 
@@ -81,7 +112,14 @@ Failure stage values:
 - `lost_during_context_building`
 - `unused_by_answer`
 - `invalid_citation`
+- `fail_hallucinated_reference`
+- `fail_overconfident`
+- `fail_empty_or_error`
 - `passed`
+
+Unsupported-reference detection is diagnostic-only. Findings are conservative
+string matches, not a hallucination count, and must be manually reviewed before
+being used as evidence of answer correctness.
 
 ## Running Retrieval Evaluation
 
@@ -125,6 +163,51 @@ limited to representative questions to control provider cost:
 The evaluator stores IDs, counts, stage traces, and timing values. It does not
 write full answers or passages to tracked paths.
 
+For insufficient-context cases:
+
+```bash
+.venv/bin/python scripts/evaluate_legal_quality.py \
+  --dataset tests/fixtures/legal_insufficient_context_quality.jsonl \
+  --answer-evaluation \
+  --base-url http://127.0.0.1:8000 \
+  --output /tmp/vietlaw-quality-improvements/insufficient-context.json
+```
+
+Expected passing classifications are:
+
+- `PASS_SAFE_FALLBACK`: answer clearly says available data is insufficient and
+  does not invent a source.
+- `PASS_CAUTIOUS_GUIDANCE`: answer gives general cited guidance but does not
+  conclude the user's personal/legal outcome.
+
+Failing classifications include hallucinated references, unrelated citations,
+overconfident conclusions, and empty/error answers.
+
+## Citation Sanitation
+
+Generated citations are validated deterministically after the model response:
+
+- valid source IDs present in final context are preserved;
+- invalid citation markers are removed from final accumulated answers;
+- mixed valid/invalid answers keep valid citations;
+- all-invalid grounded legal claims use a short insufficient-context fallback.
+
+For streaming responses, token-level chunks may already have been emitted before
+final validation. The final accumulated response, final context payload, persisted
+assistant message, and chat history retrieval use the sanitized answer. The SSE
+schema is unchanged.
+
+## Manual Review
+
+Manual review is a small qualitative sample, not system-wide accuracy. Use:
+
+- `0`: incorrect, unsupported, invented, or dangerously overconfident;
+- `1`: mostly correct but missing important citation/condition/exception;
+- `2`: grounded, cited, clear, and not overconfident.
+
+Report the sample size and score distribution. Do not claim the manual average
+is the full system accuracy.
+
 ## Corpus Integrity Audit
 
 Run the read-only corpus audit from `backend/`:
@@ -155,9 +238,21 @@ For behavior-changing phases:
 Generated reports belong under `/tmp/vietlaw-quality-improvements/` and should
 not be committed.
 
-## Known Limitation
+## Current Scope And Limitations
 
-The known `LDD_2024_D45_K1` miss is a tracked retrieval-quality limitation.
-This evaluation workflow makes that miss measurable, but it does not claim to
-fix it unless a later accepted phase demonstrates improvement without
-regression.
+The quality branch keeps the existing models and pipeline architecture. It does
+not re-index Qdrant, mutate PostgreSQL, add a new model call, or change API/SSE
+schemas.
+
+The current retrieval fixture has reached full hit/recall on the 20 verified
+records, including `LDD_2024_D27_K3` and `LDD_2024_D45_K1`. This is not a claim
+of general legal-answer accuracy. It only describes the tracked fixture.
+
+Remaining limitations:
+
+- answer quality is still evaluated on a small sample;
+- unsupported-reference detector findings can be false positives;
+- token-level streaming cannot retract chunks that were emitted before final
+  validation;
+- insufficient-context behavior is covered by four fixture records and unit
+  tests, not exhaustive real-world coverage.
