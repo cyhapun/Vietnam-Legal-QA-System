@@ -13,7 +13,23 @@ from datetime import datetime, timedelta
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 
-from app.config import CHAT_STORAGE_MODE, PIPELINE_TIMING_ENABLED
+from app.config import (
+    CHAT_STORAGE_MODE,
+    CONTEXT_TOKEN_BUDGET,
+    ENABLE_SEMANTIC_CACHE,
+    GOOGLE_FALLBACK_MODEL,
+    HISTORY_MESSAGES,
+    LLM_MAX_NEW_TOKENS,
+    LLM_TEMPERATURE,
+    LLM_TIMEOUT,
+    MAX_CITATIONS,
+    MAX_SUBQUERIES,
+    PIPELINE_CONFIG,
+    PIPELINE_TIMING_ENABLED,
+    RETRIEVER_CANDIDATE_K,
+    RETRIEVER_K,
+    SEMANTIC_CACHE_THRESHOLD,
+)
 from app.models import ChatRequest
 from app.services.pipeline import get_pipeline
 from app.services.llm import get_llm, CHAT_PROMPT, get_output_parser
@@ -68,11 +84,11 @@ def _llm_error_detail(model_name: str, exc: Exception) -> str:
 
 def _recent_messages(request: ChatRequest):
     """Return the configured messages immediately before the latest user message."""
-    limit = request.historyMessages
+    limit = HISTORY_MESSAGES
     return request.messages[-(limit + 1):-1] if limit > 0 else []
 
 
-def _filter_cited_context(output_text: str, context: list, max_citations: int) -> list:
+def _filter_cited_context(output_text: str, context: list, max_citations: int = MAX_CITATIONS) -> list:
     """Return cited contexts in citation order, capped for the client payload."""
     cited_ids = list(dict.fromkeys(re.findall(r'<cite\s+id=["\']([^"\']+)["\']>', output_text)))
     if not cited_ids:
@@ -85,11 +101,11 @@ def _filter_cited_context(output_text: str, context: list, max_citations: int) -
     return valid_citations
 
 
-def _rewrite_query(rewriter, query: str, history: str, runtime_config):
+def _rewrite_query(rewriter, query: str, history: str):
     try:
-        return rewriter.rewrite(query, history, runtime_config)
-    except TypeError:
         return rewriter.rewrite(query, history)
+    except TypeError:
+        return rewriter.rewrite(query)
 
 
 async def _persist_turn(session_id: str, session_title: str, user_msg_id: str, user_content: str, ai_msg_id: str, ai_content: str, ai_context: list, user_time: datetime, ai_time: datetime):
@@ -145,8 +161,6 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
     outcome = "success"
     try:
         last_message = request.messages[-1].content
-
-        last_message = request.messages[-1].content
         session_id = request.sessionId
 
         from app.services.storage import get_session_summary
@@ -154,7 +168,7 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
 
         session_data = (
             get_session_summary(session_id)
-            if CHAT_STORAGE_MODE == "postgres" and request.enableMemory and session_id != "unknown"
+            if CHAT_STORAGE_MODE == "postgres" and session_id != "unknown"
             else None
         )
         summary = session_data.get("summary", "") if session_data else ""
@@ -163,7 +177,7 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
         if summary:
             history_lines.append(f"=== BỐI CẢNH TRƯỚC ĐÓ ===\n{summary}\n\n=== HỘI THOẠI GẦN NHẤT ===")
             
-        for msg in _recent_messages(request): # Chỉ lấy 4 tin nhắn gần nhất
+        for msg in _recent_messages(request):
             role_name = "USER" if msg.role == "user" else "AI"
             history_lines.append(f"{role_name}: {msg.content}")
             
@@ -175,34 +189,33 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
         
         # Lịch sử ngắn gọn cho rewriter (sliding window: 2 turns = 4 messages)
         recent_history_lines = []
-        for msg in _recent_messages(request): # Lấy tối đa 4 tin nhắn gần nhất
+        for msg in _recent_messages(request):
             role_name = "USER" if msg.role == "user" else "AI"
             recent_history_lines.append(f"{role_name}: {msg.content}")
-        recent_history_str = "\n".join(recent_history_lines) if request.useHistoryForRewriter else ""
+        recent_history_str = "\n".join(recent_history_lines)
         
-        # Gọi rewriter trước để lấy rewritten query
-        if request.enableQueryRewriter:
+        # Cấu hình query rewriter từ server config
+        enable_query_rewriter = PIPELINE_CONFIG.get("rewriter", "none") != "none"
+        if enable_query_rewriter:
             domain, queries = await asyncio.to_thread(
                 _rewrite_query,
                 pipeline.rewriter,
                 last_message,
                 recent_history_str,
-                request.inference_config,
             )
         else:
             domain, queries = "legal", [last_message]
         if domain != "chitchat":
-            queries = (queries or [last_message])[:request.maxSubqueries]
-        logger.info("Rewriter enabled=%s, domain=%s, queries=%s", request.enableQueryRewriter, domain, queries)
+            queries = (queries or [last_message])[:MAX_SUBQUERIES]
+        logger.info("Rewriter enabled=%s, domain=%s, queries=%s", enable_query_rewriter, domain, queries)
         
-        hf_api_key = request.inference_config.api_key_for("huggingface") if request.inference_config else None
-        from app.config import HUGGINGFACE_EMBEDDING_MODE
-        embedding_api_key = hf_api_key if HUGGINGFACE_EMBEDDING_MODE == "api" else None
-        reranker_api_key = embedding_api_key if request.enableReranker else None
+        embedding_api_key = None
+        enable_reranker = PIPELINE_CONFIG.get("reranking", "none") != "none"
+        reranker_api_key = None
         
         try:
             query_vector = None
-            if request.enableSemanticCache and domain != "chitchat":
+            if ENABLE_SEMANTIC_CACHE and domain != "chitchat":
                 rewritten_query = queries[0] if queries else last_message
                 embedding = _get_embedding(embedding_api_key)
                 if embedding:
@@ -212,7 +225,7 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
                         
                         # Kiểm tra cache
                         from app.services.semantic_cache import check_cache
-                        cached_response = await asyncio.to_thread(check_cache, query_vector, request.cacheThreshold)
+                        cached_response = await asyncio.to_thread(check_cache, query_vector, SEMANTIC_CACHE_THRESHOLD)
                         if cached_response:
                             logger.info("Phản hồi được lấy từ Semantic Cache.")
                             cached_text = cached_response.get("response_text", "")
@@ -238,13 +251,13 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
 
             retrieved_docs, context_text = await pipeline.aretrieve(
                 query=last_message,
-                k=request.candidateK,
+                k=RETRIEVER_CANDIDATE_K,
                 category=request.category,
-                rerank_top_k=request.topK,
+                rerank_top_k=RETRIEVER_K,
                 domain=domain,
                 queries=queries,
-                enable_reranker=request.enableReranker,
-                context_token_budget=request.contextTokenBudget,
+                enable_reranker=enable_reranker,
+                context_token_budget=CONTEXT_TOKEN_BUDGET,
                 embedding_api_key=embedding_api_key,
                 reranker_api_key=reranker_api_key,
             )
@@ -263,13 +276,13 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
         logger.info("Đã chuẩn bị %d ký tự context (từ %d tài liệu) cho LLM", len(context_text), len(retrieved_docs))
         logger.debug("CONTEXT TEXT:\n%s", context_text)
 
+        model_name = request.model or GOOGLE_FALLBACK_MODEL
         try:
             llm = get_llm(
-                model_name=request.model, 
-                temperature=request.temperature, 
-                max_tokens=request.maxTokens,
-                timeout=request.llmTimeout,
-                runtime_config=request.inference_config,
+                model_name=model_name, 
+                temperature=LLM_TEMPERATURE, 
+                max_tokens=LLM_MAX_NEW_TOKENS,
+                timeout=LLM_TIMEOUT,
                 role="answer",
             )
             rag_chain = CHAT_PROMPT | llm | get_output_parser()
@@ -283,7 +296,7 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
         except Exception as llm_exc:
             logger.error("All LLM providers failed: %s", llm_exc)
             outcome = "error"
-            raise HTTPException(status_code=503, detail=_llm_error_detail(request.model, llm_exc))
+            raise HTTPException(status_code=503, detail=_llm_error_detail(model_name, llm_exc))
 
         logger.info("LLM response generated")
 
@@ -298,7 +311,7 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
         output_text = validation.text
 
         frontend_context = _filter_cited_context(
-            output_text, frontend_context, request.maxCitations
+            output_text, frontend_context, MAX_CITATIONS
         )
 
         if query_vector and domain != "chitchat" and "Hiện tại hệ thống chưa thể gọi mô hình" not in output_text:
@@ -326,12 +339,11 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
         )
 
         # Summarize memory asynchronously
-        if CHAT_STORAGE_MODE == "postgres" and request.enableMemory and session_id != "unknown":
+        if CHAT_STORAGE_MODE == "postgres" and session_id != "unknown":
             asyncio.create_task(summarize_session(
                 session_id,
                 last_message,
                 output_text,
-                runtime_config=request.inference_config,
             ))
 
         return {
@@ -362,8 +374,6 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
         outcome = "success"
         try:
             last_message = request.messages[-1].content
-
-            last_message = request.messages[-1].content
             session_id = request.sessionId
             
             from app.services.storage import get_session_summary
@@ -371,7 +381,7 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
 
             session_data = (
                 get_session_summary(session_id)
-                if CHAT_STORAGE_MODE == "postgres" and request.enableMemory and session_id != "unknown"
+                if CHAT_STORAGE_MODE == "postgres" and session_id != "unknown"
                 else None
             )
             summary = session_data.get("summary", "") if session_data else ""
@@ -397,37 +407,36 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
             for msg in _recent_messages(request):
                 role_name = "USER" if msg.role == "user" else "AI"
                 recent_history_lines.append(f"{role_name}: {msg.content}")
-            recent_history_str = "\n".join(recent_history_lines) if request.useHistoryForRewriter else ""
+            recent_history_str = "\n".join(recent_history_lines)
             
-            if request.enableQueryRewriter:
+            enable_query_rewriter = PIPELINE_CONFIG.get("rewriter", "none") != "none"
+            if enable_query_rewriter:
                 domain, queries = await asyncio.to_thread(
                     _rewrite_query,
                     pipeline.rewriter,
                     last_message,
                     recent_history_str,
-                    request.inference_config,
                 )
             else:
                 domain, queries = "legal", [last_message]
             if domain != "chitchat":
-                queries = (queries or [last_message])[:request.maxSubqueries]
-            logger.info("Stream rewriter enabled=%s, domain=%s, queries=%s", request.enableQueryRewriter, domain, queries)
+                queries = (queries or [last_message])[:MAX_SUBQUERIES]
+            logger.info("Stream rewriter enabled=%s, domain=%s, queries=%s", enable_query_rewriter, domain, queries)
             
-            hf_api_key = request.inference_config.api_key_for("huggingface") if request.inference_config else None
-            from app.config import HUGGINGFACE_EMBEDDING_MODE
-            embedding_api_key = hf_api_key if HUGGINGFACE_EMBEDDING_MODE == "api" else None
-            reranker_api_key = embedding_api_key if request.enableReranker else None
+            embedding_api_key = None
+            enable_reranker = PIPELINE_CONFIG.get("reranking", "none") != "none"
+            reranker_api_key = None
             
             try:
                 query_vector = None
-                if request.enableSemanticCache and domain != "chitchat":
+                if ENABLE_SEMANTIC_CACHE and domain != "chitchat":
                     rewritten_query = queries[0] if queries else last_message
                     embedding = _get_embedding(embedding_api_key)
                     if embedding:
                         try:
                             query_vector = await asyncio.to_thread(embedding.embed_query, rewritten_query)
                             from app.services.semantic_cache import check_cache
-                            cached_response = await asyncio.to_thread(check_cache, query_vector, request.cacheThreshold)
+                            cached_response = await asyncio.to_thread(check_cache, query_vector, SEMANTIC_CACHE_THRESHOLD)
                             if cached_response:
                                 logger.info("Stream: Phản hồi được lấy từ Semantic Cache.")
                                 frontend_context = cached_response.get("context_used", [])
@@ -459,13 +468,13 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
 
                 retrieved_docs, context_text = await pipeline.aretrieve(
                     query=last_message,
-                    k=request.candidateK,
+                    k=RETRIEVER_CANDIDATE_K,
                     category=request.category,
-                    rerank_top_k=request.topK,
+                    rerank_top_k=RETRIEVER_K,
                     domain=domain,
                     queries=queries,
-                    enable_reranker=request.enableReranker,
-                    context_token_budget=request.contextTokenBudget,
+                    enable_reranker=enable_reranker,
+                    context_token_budget=CONTEXT_TOKEN_BUDGET,
                     embedding_api_key=embedding_api_key,
                     reranker_api_key=reranker_api_key,
                 )
@@ -488,12 +497,12 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
 
             yield _sse({"type": "context", "data": frontend_context})
 
+            model_name = request.model or GOOGLE_FALLBACK_MODEL
             llm = get_llm(
-                model_name=request.model, 
-                temperature=request.temperature, 
-                max_tokens=request.maxTokens,
-                timeout=request.llmTimeout,
-                runtime_config=request.inference_config,
+                model_name=model_name, 
+                temperature=LLM_TEMPERATURE, 
+                max_tokens=LLM_MAX_NEW_TOKENS,
+                timeout=LLM_TIMEOUT,
                 role="answer",
             )
             rag_chain = CHAT_PROMPT | llm | get_output_parser()
@@ -521,7 +530,7 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
                             yield _sse({"type": "token", "text": cleaned})
 
             frontend_context = _filter_cited_context(
-                accumulated_text, frontend_context, request.maxCitations
+                accumulated_text, frontend_context, MAX_CITATIONS
             )
             validation = validate_generated_citations(accumulated_text, frontend_context)
             if validation.invalid_citation_ids or validation.fallback_used:
@@ -532,7 +541,7 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
                 )
             accumulated_text = validation.text
             frontend_context = _filter_cited_context(
-                accumulated_text, frontend_context, request.maxCitations
+                accumulated_text, frontend_context, MAX_CITATIONS
             )
             yield _sse({"type": "context", "data": frontend_context})
             if query_vector and domain != "chitchat" and "Hiện tại hệ thống chưa thể gọi mô hình" not in accumulated_text:
@@ -561,12 +570,11 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
             )
 
             # Summarize memory asynchronously
-            if CHAT_STORAGE_MODE == "postgres" and request.enableMemory and session_id != "unknown":
+            if CHAT_STORAGE_MODE == "postgres" and session_id != "unknown":
                 asyncio.create_task(summarize_session(
                     session_id,
                     last_message,
                     accumulated_text,
-                    runtime_config=request.inference_config,
                 ))
 
             yield _sse({"type": "done"})
@@ -578,7 +586,7 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
             outcome = "error"
             logger.error("Loi streaming chat: %s", str(e))
             traceback.print_exc()
-            yield _sse({"type": "error", "message": _llm_error_detail(request.model, e)})
+            yield _sse({"type": "error", "message": _llm_error_detail(model_name, e)})
         finally:
             timing.emit_once(outcome)
             reset_current_timing(timing_token)

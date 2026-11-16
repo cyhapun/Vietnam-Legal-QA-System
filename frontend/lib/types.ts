@@ -67,29 +67,12 @@ export type InferenceRoleSettings = Record<InferenceRoleId, InferenceRoleSetting
 // --- API ---
 export interface ChatApiRequest {
   messages: { role: string; content: string }[];
-  model: string;
-  category: string;
-  temperature?: number;
-  maxTokens?: number;
-  topK?: number;
-  candidateK?: number;
-  cacheThreshold?: number;
-  maxSubqueries?: number;
-  historyMessages?: number;
-  contextTokenBudget?: number;
-  maxCitations?: number;
-  llmTimeout?: number;
+  model?: string;
+  sessionId?: string;
+  sessionTitle?: string;
+  messageId?: string;
+  category?: string;
   streaming?: boolean;
-  useHistoryForRewriter?: boolean;
-  enableQueryRewriter?: boolean;
-  enableReranker?: boolean;
-  enableSemanticCache?: boolean;
-  enableMemory?: boolean;
-  inferenceConfig?: {
-    credentials?: Partial<Record<InferenceProviderId, { apiKey?: string }>>;
-    roles?: Partial<Record<InferenceRoleId, InferenceRoleSetting>>;
-    useServerFallbacks?: boolean;
-  };
 }
 
 export interface ChatApiResponse {
