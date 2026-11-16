@@ -7,7 +7,6 @@ const chatMessage = readFileSync(resolve(root, 'components/chat/ChatMessage.tsx'
 const processingTrace = readFileSync(resolve(root, 'components/chat/ChatProcessingTrace.tsx'), 'utf8');
 const legalSources = readFileSync(resolve(root, 'components/chat/LegalSources.tsx'), 'utf8');
 const emptyState = readFileSync(resolve(root, 'components/chat/ChatEmptyState.tsx'), 'utf8');
-const advancedSettings = readFileSync(resolve(root, 'components/chat/AdvancedSettings.tsx'), 'utf8');
 const providerSelector = readFileSync(resolve(root, 'components/chat/ProviderSelector.tsx'), 'utf8');
 const proxyRoute = readFileSync(resolve(root, 'app/api/chat/route.ts'), 'utf8');
 
@@ -85,8 +84,12 @@ if (chatInterface.includes('Tùy chọn') || chatInterface.includes('isComposerS
   throw new Error('Composer must show inference controls directly, without a Tùy chọn gate');
 }
 
-if (!advancedSettings.includes('Tham số') || !providerSelector.includes('selectedProvider?.name')) {
-  throw new Error('Composer must expose parameter and provider/model summary directly');
+if (!providerSelector.includes('Gemini 3.1 Flash-Lite')) {
+  throw new Error('Composer must expose fixed Google AI Studio Gemini 3.1 Flash-Lite badge');
+}
+
+if (chatInterface.includes('AdvancedSettings') || chatInterface.includes('InferenceSetupModal')) {
+  throw new Error('Composer must not include advanced tuning or setup modal components');
 }
 
 if (!emptyState.includes('Tra cứu pháp luật dễ dàng hơn')) {

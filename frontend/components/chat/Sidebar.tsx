@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, MessageSquare, Trash2, Scale, PanelLeftClose, Search, Moon, Sun, LibraryBig, Settings } from 'lucide-react';
+import { Plus, MessageSquare, Trash2, Scale, PanelLeftClose, Search, Moon, Sun, LibraryBig } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { isToday, isYesterday, differenceInDays, isThisMonth } from 'date-fns';
@@ -92,13 +92,6 @@ export function Sidebar({
         >
           <LibraryBig className="w-4 h-4" />
           <span className="text-[13px] font-semibold">Kho Tài Liệu</span>
-        </Link>
-        <Link
-          href="/admin"
-          className="w-full flex items-center justify-center gap-2 rounded-xl py-2.5 px-3 transition-all duration-200 border border-gray-200 dark:border-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/5 active:scale-98 mt-2"
-        >
-          <Settings className="w-4 h-4" />
-          <span className="text-[13px] font-semibold">Quản trị</span>
         </Link>
       </div>
 
