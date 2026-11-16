@@ -34,6 +34,7 @@ logger = logging.getLogger(__name__)
 
 GOOGLE_CHAT_MODELS = frozenset({
     "gemini-3.1-flash-lite",
+    "gemini-3.5-flash-lite",
 })
 
 
@@ -241,7 +242,7 @@ def _legacy_get_llm(
 
 # --- CẤU TRÚC SYSTEM PROMPT ---
 def get_llm(
-    model_name: str,
+    model_name: str = GOOGLE_FALLBACK_MODEL,
     temperature: float | None = None,
     max_tokens: int | None = None,
     timeout: float | None = None,

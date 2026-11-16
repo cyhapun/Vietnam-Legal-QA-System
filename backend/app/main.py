@@ -32,7 +32,6 @@ from app.config import (
 )
 from app.api.chat import router as chat_router
 from app.api.documents import router as documents_router
-from app.api.admin import router as admin_router
 from app.api.feedback import router as feedback_router
 from app.services.pipeline import init_pipeline, preload_local_models
 from app.services.knowledge_base import load_knowledge_base
@@ -178,7 +177,6 @@ def create_app() -> FastAPI:
     # --- Đăng ký Routers ---
     application.include_router(chat_router)
     application.include_router(documents_router, prefix="/api/documents", tags=["Documents"])
-    application.include_router(admin_router, prefix="/api/admin", tags=["Admin"])
     application.include_router(feedback_router, prefix="/api/feedback", tags=["Feedback"])
 
     @application.get("/health")

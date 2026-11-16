@@ -61,38 +61,28 @@ def test_runtime_inference_config_rejects_arbitrary_base_url():
         })
 
 
-def test_chat_request_rejects_embedding_override():
-    with pytest.raises(ValidationError):
-        ChatRequest.model_validate({
-            "messages": [{"role": "user", "content": "test"}],
-            "model": "gemini-2.5-flash-lite",
-            "inferenceConfig": {
-                "roles": {
-                    "answer": {"provider": "google", "model": "gemini-3.1-flash-lite"}
-                },
-                "embedding": {"provider": "google", "model": "anything"},
-            },
-        })
-
-
-def test_chat_request_defaults_candidate_k_to_reduced_workload():
+def test_chat_request_ignores_runtime_pipeline_overrides():
     request = ChatRequest.model_validate({
         "messages": [{"role": "user", "content": "test"}],
-        "model": "gemini-3.1-flash-lite",
+        "candidateK": 20,
+        "inferenceConfig": {
+            "roles": {
+                "answer": {"provider": "google", "model": "gemini-3.1-flash-lite"}
+            }
+        },
     })
+    assert request.model == "gemini-3.1-flash-lite"
+    assert not hasattr(request, "candidateK")
+    assert not hasattr(request, "inferenceConfig")
 
-    assert request.candidateK == 10
-    assert request.topK == 5
 
-
-def test_chat_request_rejects_candidate_k_below_top_k():
-    with pytest.raises(ValidationError):
-        ChatRequest.model_validate({
-            "messages": [{"role": "user", "content": "test"}],
-            "model": "gemini-3.1-flash-lite",
-            "candidateK": 10,
-            "topK": 12,
-        })
+def test_chat_request_defaults():
+    request = ChatRequest.model_validate({
+        "messages": [{"role": "user", "content": "test"}],
+    })
+    assert request.model == "gemini-3.1-flash-lite"
+    assert request.category == "all"
+    assert request.sessionId == "unknown"
 
 
 def test_runtime_google_key_overrides_environment_key(monkeypatch):

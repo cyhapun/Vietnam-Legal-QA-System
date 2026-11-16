@@ -97,38 +97,15 @@ class RuntimeInferenceConfig(BaseModel):
 
 class ChatRequest(BaseModel):
     """Dữ liệu gửi lên từ Frontend khi user đặt câu hỏi."""
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra="ignore")
 
     messages: List[Message]
-    model: str
+    model: Optional[str] = "gemini-3.1-flash-lite"
     sessionId: Optional[str] = "unknown"
     sessionTitle: Optional[str] = "Cuộc trò chuyện mới"
     messageId: Optional[str] = None
     category: str = "all"  # Lĩnh vực pháp luật để lọc tài liệu
-    temperature: Optional[float] = None
-    maxTokens: Optional[int] = None
-    topK: Optional[int] = Field(default=5, ge=1, le=20)
-    candidateK: int = Field(default=10, ge=10, le=100)
-    cacheThreshold: float = Field(default=0.95, ge=0.8, le=0.99)
-    maxSubqueries: int = Field(default=3, ge=1, le=5)
-    historyMessages: int = Field(default=4, ge=0, le=10)
-    contextTokenBudget: int = Field(default=6000, ge=1000, le=16000)
-    maxCitations: int = Field(default=5, ge=1, le=10)
-    llmTimeout: int = Field(default=300, ge=30, le=300)
     streaming: bool = True
-    useHistoryForRewriter: bool = True
-    enableQueryRewriter: bool = True
-    enableReranker: bool = True
-    enableSemanticCache: bool = True
-    enableMemory: bool = True
-    inference_config: Optional[RuntimeInferenceConfig] = Field(default=None, alias="inferenceConfig")
-
-    @model_validator(mode="after")
-    def validate_candidate_window(self):
-        final_top_k = self.topK or 5
-        if self.candidateK < final_top_k:
-            raise ValueError("candidateK must be greater than or equal to topK")
-        return self
 
 
 class ChatResponse(BaseModel):
