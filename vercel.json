@@ -9,7 +9,7 @@
     "LOCAL_MODELS_PRELOAD_ENABLED": "false",
     "LOCAL_MODELS_WARMUP_ENABLED": "false"
   },
-  "experimentalServices": {
+  "services": {
     "frontend": {
       "entrypoint": "frontend",
       "routePrefix": "/",
@@ -17,7 +17,8 @@
     },
     "backend": {
       "entrypoint": "backend",
-      "routePrefix": "/_/backend"
+      "routePrefix": "/_/backend",
+      "framework": "fastapi"
     }
   }
 }
