@@ -20,7 +20,8 @@ from app.config import (
     FAISS_INDEX_PATH, JSON_DATA_PATH, TRACKING_FILE, EMBEDDING_MODEL,
     EMBEDDING_BATCH_SIZE, EMBEDDING_MAX_RETRIES,
     EMBEDDING_SLEEP_BETWEEN_BATCHES, EMBEDDING_RETRY_BASE_WAIT,
-    EMBEDDING_PROVIDER, ENABLE_FAISS_FALLBACK, PIPELINE_CONFIG,
+    EMBEDDING_PROVIDER, ENABLE_FAISS_FALLBACK, JINA_RERANKER_FAIL_OPEN,
+    JINA_RERANKER_MODEL, PIPELINE_CONFIG,
     RETRIEVER_CANDIDATE_K, RETRIEVER_K, STORAGE_BACKEND, RUNTIME_PROFILE,
 )
 from app.services.knowledge_base import load_knowledge_base
@@ -37,6 +38,7 @@ from app.services.reranking import (
     NoReranker,
     CrossEncoderReranker,
     HuggingFaceEmbeddingSimilarityReranker,
+    JinaReranker,
     FallbackReranker,
 )
 from app.services.context_builder import NestedContextBuilder
@@ -386,17 +388,17 @@ def _get_embedding(api_key: str = None) -> Optional[BaseEmbedding]:
     """Lazy init embedding model, cached by api_key."""
     global _embedding_cache
     
+    from app.config import EMBEDDING_PROVIDER
     credential_key = (
         hashlib.sha256(api_key.encode("utf-8")).hexdigest()[:16]
         if api_key
         else "default"
     )
-    cache_key = f"{RUNTIME_PROFILE}:{credential_key}"
+    cache_key = f"{RUNTIME_PROFILE}:{EMBEDDING_PROVIDER}:{credential_key}"
     if cache_key in _embedding_cache:
         return _embedding_cache[cache_key]
         
     try:
-        from app.config import EMBEDDING_PROVIDER
         if EMBEDDING_PROVIDER == "gemini":
             from app.services.embedding.gemini import GeminiEmbedding
             gemini_emb = GeminiEmbedding()
@@ -568,14 +570,21 @@ def _create_reranker():
     """Tạo reranker dựa trên config, tích hợp Fallback."""
     strategy = PIPELINE_CONFIG.get("reranking", "none")
     max_candidates = PIPELINE_CONFIG.get("reranker_max_candidates", 20)
-    if RUNTIME_PROFILE == "serverless" and strategy == "cross_encoder":
+    if RUNTIME_PROFILE == "cloud" and strategy == "cross_encoder":
         logger.warning(
-            "Serverless runtime does not support local cross_encoder; "
-            "using embedding_similarity reranking instead."
+            "Cloud runtime does not support local cross_encoder; "
+            "using jina reranking instead."
         )
-        strategy = "embedding_similarity"
+        strategy = "jina"
     if strategy == "none":
         return NoReranker()
+    elif strategy == "jina":
+        model = PIPELINE_CONFIG.get("reranker_model") or JINA_RERANKER_MODEL
+        return JinaReranker(
+            model=model,
+            max_candidates=max_candidates,
+            fail_open=PIPELINE_CONFIG.get("reranker_fail_open", JINA_RERANKER_FAIL_OPEN),
+        )
     elif strategy in {"embedding_similarity", "remote_embedding_similarity"}:
         return HuggingFaceEmbeddingSimilarityReranker(
             model=EMBEDDING_MODEL,
@@ -596,7 +605,7 @@ def _create_reranker():
     else:
         raise ValueError(
             f"Unknown reranking strategy: {strategy} "
-            "(supported: none, cross_encoder, embedding_similarity)"
+            "(supported: none, cross_encoder, jina, embedding_similarity)"
         )
 
 

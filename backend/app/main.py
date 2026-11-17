@@ -22,6 +22,7 @@ from app.config import (
     EMBEDDING_PROVIDER,
     GOOGLE_API_KEYS,
     HUGGINGFACE_API_KEY,
+    JINA_API_KEY,
     LOCAL_MODELS_PRELOAD_ENABLED,
     LOCAL_MODELS_WARMUP_ENABLED,
     PIPELINE_CONFIG,
@@ -70,45 +71,55 @@ def _resolve_runtime_path(path_value: str) -> Path:
 
 def _check_artifacts() -> dict:
     validate_runtime_configuration()
-    if EMBEDDING_PROVIDER == "gemini":
-        return {
-            "embedding": {
-                "status": "ok" if GOOGLE_API_KEYS else "configured",
-                "configured": bool(EMBEDDING_MODEL),
-                "mode": "api",
-                "provider": "gemini",
-                "weights": False,
-            },
-            "reranker": {
-                "status": "ok",
-                "enabled": PIPELINE_CONFIG.get("reranking") not in {"none", ""},
-                "mode": "similarity" if PIPELINE_CONFIG.get("reranking") == "embedding_similarity" else "cross_encoder",
-                "weights": False,
-            },
-        }
+    reranker_strategy = PIPELINE_CONFIG.get("reranking", "none")
+    reranker_model = PIPELINE_CONFIG.get("reranker_model", "")
 
-    if RUNTIME_PROFILE == "serverless":
+    if RUNTIME_PROFILE == "cloud" or EMBEDDING_PROVIDER == "gemini":
+        embedding_provider = EMBEDDING_PROVIDER
+        embedding_has_key = bool(GOOGLE_API_KEYS) if embedding_provider == "gemini" else bool(HUGGINGFACE_API_KEY)
+        if reranker_strategy == "jina":
+            reranker_info = {
+                "status": "ok" if JINA_API_KEY else "error",
+                "enabled": True,
+                "provider": "jina",
+                "mode": "api",
+                "model": reranker_model,
+                "weights": False,
+            }
+        elif reranker_strategy in {"none", ""}:
+            reranker_info = {
+                "status": "ok",
+                "enabled": False,
+                "provider": "none",
+                "mode": "none",
+                "weights": False,
+            }
+        else:
+            reranker_info = {
+                "status": "ok",
+                "enabled": True,
+                "provider": "embedding_similarity",
+                "mode": "api",
+                "model": EMBEDDING_MODEL,
+                "weights": False,
+            }
+
         return {
             "embedding": {
-                "status": "ok" if HUGGINGFACE_API_KEY else "configured",
+                "status": "ok" if embedding_has_key else "configured",
                 "configured": bool(EMBEDDING_MODEL),
+                "provider": embedding_provider,
                 "mode": "api",
+                "model": EMBEDDING_MODEL,
                 "weights": False,
             },
-            "reranker": {
-                "status": "ok",
-                "enabled": PIPELINE_CONFIG.get("reranking") not in {"none", ""},
-                "mode": "remote",
-                "weights": False,
-            },
+            "reranker": reranker_info,
         }
 
     embedding_path = _resolve_runtime_path(EMBEDDING_MODEL)
     embedding_ok = embedding_path.exists() and (embedding_path / "model.safetensors").exists()
 
-    reranker_strategy = PIPELINE_CONFIG.get("reranking", "none")
     reranker_required = reranker_strategy == "cross_encoder"
-    reranker_model = PIPELINE_CONFIG.get("reranker_model", "")
     reranker_path = _resolve_runtime_path(reranker_model) if reranker_model else Path("")
     reranker_ok = (
         not reranker_required
@@ -119,13 +130,18 @@ def _check_artifacts() -> dict:
         "embedding": {
             "status": "ok" if embedding_ok else "error",
             "configured": bool(EMBEDDING_MODEL),
+            "provider": EMBEDDING_PROVIDER,
             "mode": "local",
+            "model": EMBEDDING_MODEL,
             "weights": embedding_ok,
         },
         "reranker": {
             "status": "ok" if reranker_ok else "error",
-            "enabled": reranker_required,
-            "weights": reranker_ok,
+            "enabled": reranker_strategy not in {"none", ""},
+            "provider": reranker_strategy,
+            "mode": "api" if reranker_strategy == "jina" else "local",
+            "model": reranker_model,
+            "weights": reranker_ok if reranker_required else False,
         },
     }
 

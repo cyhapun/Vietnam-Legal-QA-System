@@ -24,13 +24,14 @@ TRACKING_FILE = str(_backend_dir / "embedded_files.json")
 # --- API KEYS ---
 HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY", "").strip()
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "").strip()
+JINA_API_KEY = os.getenv("JINA_API_KEY", "").strip()
 
-# Runtime profile
+# Runtime profile ('local' hoặc 'cloud'; 'serverless' được chuẩn hóa thành 'cloud')
 _runtime_profile_env = os.getenv("RUNTIME_PROFILE", "").strip().lower()
-RUNTIME_PROFILE = _runtime_profile_env or (
-    "serverless" if os.getenv("VERCEL") or os.getenv("VERCEL_ENV") else "local"
-)
-SUPPORTED_RUNTIME_PROFILES = frozenset({"local", "serverless"})
+if not _runtime_profile_env:
+    _runtime_profile_env = "cloud" if (os.getenv("VERCEL") or os.getenv("VERCEL_ENV")) else "local"
+RUNTIME_PROFILE = "cloud" if _runtime_profile_env == "serverless" else _runtime_profile_env
+SUPPORTED_RUNTIME_PROFILES = frozenset({"local", "cloud"})
 
 # Chat storage mode
 CHAT_STORAGE_MODE = os.getenv("CHAT_STORAGE_MODE", "postgres").strip().lower()
@@ -42,7 +43,8 @@ STORAGE_BACKEND = os.getenv("STORAGE_BACKEND", "qdrant_postgres").strip().lower(
 POSTGRES_DSN = os.getenv("POSTGRES_DSN", "postgresql://postgres:postgres@localhost:15432/vietlaw")
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY", "")
-QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION", "vietlaw_clauses")
+_default_qdrant_collection = "vietlaw_clauses_gemini" if RUNTIME_PROFILE == "cloud" else "vietlaw_clauses"
+QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION", "").strip() or _default_qdrant_collection
 DISABLE_AUTO_INGEST = os.getenv("DISABLE_AUTO_INGEST", "true").strip().lower() == "true"
 ENABLE_FAISS_FALLBACK = False
 PIPELINE_TIMING_ENABLED = os.getenv("PIPELINE_TIMING_ENABLED", "false").strip().lower() == "true"
@@ -52,14 +54,15 @@ DEFAULT_LOCAL_EMBEDDING_MODEL = "../models/embedding/vietlaw-bge-m3-finetuned/be
 DEFAULT_LOCAL_RERANKER_MODEL = "../models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/selected"
 DEFAULT_REMOTE_EMBEDDING_MODEL = "BAAI/bge-m3"
 DEFAULT_GEMINI_EMBEDDING_MODEL = "models/gemini-embedding-001"
+DEFAULT_JINA_RERANKER_MODEL = "jina-reranker-v2-base-multilingual"
 
-EMBEDDING_PROVIDER = os.getenv("EMBEDDING_PROVIDER", "huggingface").strip().lower()
+_default_embedding_provider = "gemini" if RUNTIME_PROFILE == "cloud" else "huggingface"
+EMBEDDING_PROVIDER = (os.getenv("EMBEDDING_PROVIDER", "").strip().lower() or _default_embedding_provider)
 
-_default_embedding_mode = "api" if RUNTIME_PROFILE == "serverless" or EMBEDDING_PROVIDER == "gemini" else "local"
-HUGGINGFACE_EMBEDDING_MODE = os.getenv(
-    "HUGGINGFACE_EMBEDDING_MODE",
-    _default_embedding_mode,
-).strip().lower()
+_default_embedding_mode = "api" if RUNTIME_PROFILE == "cloud" or EMBEDDING_PROVIDER == "gemini" else "local"
+HUGGINGFACE_EMBEDDING_MODE = (
+    os.getenv("HUGGINGFACE_EMBEDDING_MODE", "").strip().lower() or _default_embedding_mode
+)
 
 if EMBEDDING_PROVIDER == "gemini":
     _default_embedding_model = DEFAULT_GEMINI_EMBEDDING_MODEL
@@ -68,7 +71,11 @@ elif HUGGINGFACE_EMBEDDING_MODE == "api":
 else:
     _default_embedding_model = DEFAULT_LOCAL_EMBEDDING_MODEL
 
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", _default_embedding_model)
+EMBEDDING_MODEL = (
+    os.getenv("EMBEDDING_MODEL", "").strip()
+    or (os.getenv("HUGGINGFACE_EMBEDDING_MODEL", "").strip() if EMBEDDING_PROVIDER == "huggingface" else "")
+    or _default_embedding_model
+)
 EMBEDDING_DEVICE = os.getenv("EMBEDDING_DEVICE", "cpu").strip()
 EMBEDDING_DIMENSION = int(os.getenv("EMBEDDING_DIMENSION", "1024"))
 EMBEDDING_NORMALIZE = True
@@ -112,36 +119,48 @@ GOOGLE_OPENAI_BASE_URL = os.getenv(
     "https://generativelanguage.googleapis.com/v1beta/openai/",
 ).strip()
 
+# --- JINA CLOUD RERANKER ---
+JINA_RERANKER_MODEL = os.getenv("JINA_RERANKER_MODEL", DEFAULT_JINA_RERANKER_MODEL).strip() or DEFAULT_JINA_RERANKER_MODEL
+JINA_RERANKER_URL = os.getenv("JINA_RERANKER_URL", "https://api.jina.ai/v1/rerank").strip()
+JINA_RERANKER_TIMEOUT = float(os.getenv("JINA_RERANKER_TIMEOUT", "30"))
+JINA_RERANKER_FAIL_OPEN = os.getenv("JINA_RERANKER_FAIL_OPEN", "true").strip().lower() == "true"
+
 # --- CORS ---
 CORS_ORIGINS = ["*"]
 
 # --- PIPELINE CONFIG ---
+_default_reranking_strategy = "jina" if RUNTIME_PROFILE == "cloud" else "cross_encoder"
+_reranking_strategy = os.getenv("PIPELINE_RERANKING", "").strip().lower() or _default_reranking_strategy
+_default_reranker_model = JINA_RERANKER_MODEL if _reranking_strategy == "jina" else DEFAULT_LOCAL_RERANKER_MODEL
+
 PIPELINE_CONFIG = {
     "chunking": "clause",
     "search": os.getenv("PIPELINE_SEARCH", "hybrid").strip().lower(),
-    "reranking": os.getenv(
-        "PIPELINE_RERANKING",
-        "embedding_similarity" if RUNTIME_PROFILE == "serverless" else "cross_encoder",
-    ).strip().lower(),
+    "reranking": _reranking_strategy,
     "context_builder": "nested",
     "hybrid_vector_weight": 0.5,
     "hybrid_bm25_weight": 0.5,
-    "reranker_model": os.getenv("RERANKER_MODEL", DEFAULT_LOCAL_RERANKER_MODEL),
+    "reranker_model": os.getenv("RERANKER_MODEL", "").strip() or _default_reranker_model,
     "reranker_max_candidates": 10,
     "reranker_device": "cpu",
     "reranker_batch_size": 8,
     "reranker_max_length": 512,
-    "reranker_fail_open": False,
+    "reranker_fail_open": JINA_RERANKER_FAIL_OPEN if _reranking_strategy == "jina" else False,
     "rewriter": os.getenv("PIPELINE_REWRITER", "llm").strip().lower(),
 }
 
 # --- SEMANTIC CACHE ---
 ENABLE_SEMANTIC_CACHE = os.getenv("ENABLE_SEMANTIC_CACHE", "true").strip().lower() == "true"
 SEMANTIC_CACHE_THRESHOLD = float(os.getenv("SEMANTIC_CACHE_THRESHOLD", "0.95"))
-SEMANTIC_CACHE_COLLECTION = os.getenv("SEMANTIC_CACHE_COLLECTION", "semantic_cache")
+_default_semantic_cache_collection = "semantic_cache_gemini" if RUNTIME_PROFILE == "cloud" else "semantic_cache"
+SEMANTIC_CACHE_COLLECTION = os.getenv("SEMANTIC_CACHE_COLLECTION", "").strip() or _default_semantic_cache_collection
 
 # --- INFERENCE STRATEGY (Remote-only via Google AI Studio) ---
 INFERENCE_STRATEGY = "remote_first"
+
+SUPPORTED_RERANKING_STRATEGIES = frozenset(
+    {"none", "cross_encoder", "jina", "embedding_similarity", "remote_embedding_similarity"}
+)
 
 
 def validate_runtime_configuration() -> None:
@@ -162,17 +181,25 @@ def validate_runtime_configuration() -> None:
         )
     if RUNTIME_PROFILE not in SUPPORTED_RUNTIME_PROFILES:
         raise ValueError(
-            f"RUNTIME_PROFILE must be one of {sorted(SUPPORTED_RUNTIME_PROFILES)}; "
+            f"RUNTIME_PROFILE must be one of {sorted(SUPPORTED_RUNTIME_PROFILES)} (or 'serverless' alias); "
             f"got {RUNTIME_PROFILE!r}."
         )
+
+    reranking_strategy = PIPELINE_CONFIG["reranking"]
+    if reranking_strategy not in SUPPORTED_RERANKING_STRATEGIES:
+        raise ValueError(
+            f"PIPELINE_RERANKING must be one of {sorted(SUPPORTED_RERANKING_STRATEGIES)}; "
+            f"got {reranking_strategy!r}."
+        )
+
     if EMBEDDING_PROVIDER == "gemini":
         if not GOOGLE_API_KEYS:
             raise ValueError("GOOGLE_API_KEYS is required when EMBEDDING_PROVIDER=gemini.")
     else:
         if HUGGINGFACE_EMBEDDING_MODE not in {"api", "local"}:
             raise ValueError("HUGGINGFACE_EMBEDDING_MODE must be either 'api' or 'local'.")
-        if RUNTIME_PROFILE == "serverless" and HUGGINGFACE_EMBEDDING_MODE != "api":
-            raise ValueError("RUNTIME_PROFILE=serverless requires HUGGINGFACE_EMBEDDING_MODE=api.")
+        if RUNTIME_PROFILE == "cloud" and HUGGINGFACE_EMBEDDING_MODE != "api":
+            raise ValueError("RUNTIME_PROFILE=cloud requires HUGGINGFACE_EMBEDDING_MODE=api.")
         if RUNTIME_PROFILE == "local" and HUGGINGFACE_EMBEDDING_MODE != "local":
             raise ValueError("RUNTIME_PROFILE=local requires HUGGINGFACE_EMBEDDING_MODE=local.")
         if RUNTIME_PROFILE == "local" and (
@@ -182,20 +209,28 @@ def validate_runtime_configuration() -> None:
             raise ValueError(
                 "Local embedding mode requires HUGGINGFACE_EMBEDDING_MODEL to be a filesystem path."
             )
-        if RUNTIME_PROFILE == "serverless" and (
+        if RUNTIME_PROFILE == "cloud" and (
             Path(EMBEDDING_MODEL).is_absolute()
             or EMBEDDING_MODEL.startswith((".", "~"))
         ):
             raise ValueError(
-                "Serverless embedding mode requires HUGGINGFACE_EMBEDDING_MODEL to be a Hub model id."
+                "Cloud embedding mode requires HUGGINGFACE_EMBEDDING_MODEL to be a Hub model id."
             )
-        if RUNTIME_PROFILE == "local" and PIPELINE_CONFIG["reranking"] in {
-            "embedding_similarity",
-            "remote_embedding_similarity",
-        }:
-            raise ValueError(
-                "Local runtime must use cross_encoder or none for reranking."
-            )
+
+    if reranking_strategy == "jina" and not JINA_API_KEY:
+        raise ValueError("JINA_API_KEY is required when PIPELINE_RERANKING=jina.")
+    if RUNTIME_PROFILE == "cloud" and reranking_strategy == "cross_encoder":
+        raise ValueError(
+            "RUNTIME_PROFILE=cloud does not support local cross_encoder reranking; "
+            "use jina, embedding_similarity, or none."
+        )
+    if RUNTIME_PROFILE == "local" and reranking_strategy in {
+        "embedding_similarity",
+        "remote_embedding_similarity",
+    }:
+        raise ValueError(
+            "Local runtime must use cross_encoder, jina, or none for reranking."
+        )
 
 
 def runtime_profile_summary() -> dict:
@@ -208,6 +243,9 @@ def runtime_profile_summary() -> dict:
         "embeddingMode": "api" if EMBEDDING_PROVIDER == "gemini" else HUGGINGFACE_EMBEDDING_MODE,
         "embeddingModel": EMBEDDING_MODEL,
         "reranking": PIPELINE_CONFIG["reranking"],
+        "rerankerModel": PIPELINE_CONFIG["reranker_model"],
+        "qdrantCollection": QDRANT_COLLECTION,
+        "semanticCacheCollection": SEMANTIC_CACHE_COLLECTION,
         "localModelsPreload": LOCAL_MODELS_PRELOAD_ENABLED and EMBEDDING_PROVIDER != "gemini",
     }
 

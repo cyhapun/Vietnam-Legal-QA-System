@@ -171,7 +171,7 @@ class GeminiEmbedding:
             )
 
         if collector is not None:
-            collector.mark_query_embedding((time.perf_counter_ns() - start_time) / 1_000_000)
+            collector.add_duration("query_embedding", (time.perf_counter_ns() - start_time) / 1_000_000)
 
         return values
 
