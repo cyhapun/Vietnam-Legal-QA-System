@@ -108,4 +108,29 @@ for (const forbidden of [
   }
 }
 
+// Verification: Icon-only toolbar and true regeneration
+if (!chatMessage.includes('RotateCcw') || !chatMessage.includes('title="Tạo lại câu trả lời"')) {
+  throw new Error('ChatMessage toolbar must have a Regenerate button with tooltip "Tạo lại câu trả lời"');
+}
+
+if (!chatMessage.includes('title="Câu trả lời hữu ích"') || !chatMessage.includes('title="Báo cáo câu trả lời chưa chuẩn"')) {
+  throw new Error('ChatMessage toolbar must have Thumbs Up/Down buttons with Vietnamese tooltips');
+}
+
+if (!chatMessage.includes('Pencil') || !chatMessage.includes('title="Chỉnh sửa câu hỏi"')) {
+  throw new Error('User message toolbar must have an edit prompt button with Pencil icon');
+}
+
+if (chatMessage.includes('<span>Giải thích lại</span>') || chatMessage.includes('<span>Sao chép</span>')) {
+  throw new Error('Redundant text labels (Sao chép, Giải thích lại) must be removed for a clean icon-only toolbar');
+}
+
+if (!chatInterface.includes('handleRegenerate') || !chatInterface.includes('handleEditPrompt')) {
+  throw new Error('ChatInterface must implement handleRegenerate and handleEditPrompt handlers');
+}
+
+if (!chatInterface.includes('onRegenerate={handleRegenerate}') || !chatInterface.includes('onEditPrompt={handleEditPrompt}')) {
+  throw new Error('ChatInterface must pass onRegenerate and onEditPrompt callbacks to ChatMessage');
+}
+
 console.log('Chat UX verification passed.');
