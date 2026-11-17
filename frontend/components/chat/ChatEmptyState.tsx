@@ -1,6 +1,6 @@
 'use client';
 
-import { Scale } from 'lucide-react';
+import Image from 'next/image';
 
 interface ChatEmptyStateProps {
   onSelectSuggestion: (prompt: string) => void;
@@ -15,8 +15,16 @@ const SUGGESTIONS = [
 export function ChatEmptyState({ onSelectSuggestion }: ChatEmptyStateProps) {
   return (
     <div className="mx-auto flex min-h-full w-full max-w-3xl flex-col justify-center px-4 py-10 text-center">
-      <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-700 text-white shadow-lg shadow-blue-700/15">
-        <Scale className="h-8 w-8" />
+      <div className="relative mx-auto mb-5 flex h-24 w-24 items-center justify-center">
+        <Image
+          src="/logo.png"
+          alt="VietLaw AI Mascot"
+          width={96}
+          height={96}
+          className="w-full h-full object-contain drop-shadow-md"
+          priority
+          unoptimized
+        />
       </div>
       <h1 className="text-2xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-3xl">
         Tra cứu pháp luật dễ dàng hơn
