@@ -31,6 +31,10 @@ for (const obsolete of ['Tra cứu hoàn tất', 'Xem quá trình', 'Ẩn quá t
   }
 }
 
+if (!chatMessage.includes('!message.content?.trim()')) {
+  throw new Error('ChatMessage must only render processing trace when there is no streaming content yet (!message.content?.trim())');
+}
+
 if (chatInterface.includes('isLoading && !streamingText')) {
   throw new Error('Large loading skeleton should not be used for active chat processing');
 }
