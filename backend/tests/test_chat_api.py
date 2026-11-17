@@ -1,23 +1,27 @@
-from types import SimpleNamespace
-
 import asyncio
+import json
+from types import SimpleNamespace
 
 import pytest
 from fastapi import HTTPException
 from starlette.requests import Request
 
-from app.api.chat import chat_endpoint
+from app.api.chat import chat_endpoint, chat_stream_endpoint
 import app.main as main_module
 from app.models import ChatRequest
 
 
 class DummyRewriter:
-    def rewrite(self, query, history_str):
-        return "all", [query]
+    def __init__(self, title="Tiêu đề cuộc trò chuyện"):
+        self.title = title
+
+    def rewrite(self, query, history_str=None):
+        return "legal", [query], self.title
+
 
 class DummyPipeline:
-    def __init__(self):
-        self.rewriter = DummyRewriter()
+    def __init__(self, title="Tiêu đề cuộc trò chuyện"):
+        self.rewriter = DummyRewriter(title=title)
 
     async def aretrieve(self, query, category=None, **kwargs):
         return [SimpleNamespace(page_content="Nội dung mẫu", metadata={"id": "1"})], "Tài liệu tham khảo"
@@ -41,6 +45,9 @@ class _FakePrompt:
 
     async def ainvoke(self, payload):
         return self.text
+
+    async def astream(self, payload):
+        yield self.text
 
 
 def test_chat_returns_http_error_when_llm_is_unavailable(monkeypatch):
@@ -74,14 +81,15 @@ def test_chat_returns_http_error_when_llm_is_unavailable(monkeypatch):
     assert "dịch vụ suy luận" in exc_info.value.detail.lower()
 
 
-def _run_chat_with_answer(monkeypatch, answer_text):
+def _run_chat_with_answer(monkeypatch, answer_text, title="Tiêu đề test"):
     persisted = {}
 
-    async def fake_persist(request, session_id, user_content, ai_content, ai_context):
+    async def fake_persist(request, session_id, user_content, ai_content, ai_context, session_title=None):
         persisted["text"] = ai_content
         persisted["context"] = ai_context
+        persisted["session_title"] = session_title
 
-    monkeypatch.setattr("app.api.chat.get_pipeline", lambda: DummyPipeline())
+    monkeypatch.setattr("app.api.chat.get_pipeline", lambda: DummyPipeline(title=title))
     monkeypatch.setattr("app.api.chat.get_llm", lambda **kwargs: object())
     monkeypatch.setattr("app.api.chat.CHAT_PROMPT", _FakePrompt(answer_text))
     monkeypatch.setattr("app.api.chat.get_output_parser", lambda: object())
@@ -111,6 +119,7 @@ def test_chat_response_and_persistence_keep_valid_citation(monkeypatch):
     assert '<cite id="1">Điều 1</cite>' in response["text"]
     assert response["text"] == persisted["text"]
     assert [item["metadata"]["id"] for item in response["contextUsed"]] == ["1"]
+    assert response["sessionTitle"] == "Tiêu đề test"
 
 
 def test_chat_response_and_persistence_sanitize_invalid_citation(monkeypatch):
@@ -133,3 +142,43 @@ def test_chat_response_and_persistence_keep_valid_from_mixed_citations(monkeypat
     assert '<cite id="1">Điều 1</cite>' in response["text"]
     assert "FAKE_2024_D999" not in response["text"]
     assert response["text"] == persisted["text"]
+
+
+def test_chat_stream_emits_title_event(monkeypatch):
+    async def fake_persist(*args, **kwargs):
+        pass
+
+    monkeypatch.setattr("app.api.chat.get_pipeline", lambda: DummyPipeline(title="Tiêu đề qua Stream"))
+    monkeypatch.setattr("app.api.chat.get_llm", lambda **kwargs: object())
+    monkeypatch.setattr("app.api.chat.CHAT_PROMPT", _FakePrompt('Trả lời stream'))
+    monkeypatch.setattr("app.api.chat.get_output_parser", lambda: object())
+    monkeypatch.setattr("app.api.chat._persist_completed_turn", fake_persist)
+    monkeypatch.setattr("app.services.pipeline._get_embedding", lambda *args, **kwargs: None)
+    monkeypatch.setattr("app.services.chat_orchestrator.ENABLE_SEMANTIC_CACHE", False)
+
+    request = ChatRequest.model_validate({
+        "messages": [{"role": "user", "content": "Câu hỏi stream"}],
+        "model": "default",
+        "category": "all",
+        "enableMemory": False,
+        "enableSemanticCache": False,
+    })
+    http_request = Request({"type": "http", "method": "POST", "path": "/chat/stream", "headers": []})
+
+    async def collect_stream():
+        response = await chat_stream_endpoint(request, http_request)
+        events = []
+        async for chunk in response.body_iterator:
+            for line in chunk.split("\n"):
+                if line.startswith("data: "):
+                    events.append(json.loads(line[6:].strip()))
+        return events
+
+    events = asyncio.run(collect_stream())
+    event_types = [e.get("type") for e in events]
+    assert "title" in event_types
+    title_event = next(e for e in events if e.get("type") == "title")
+    assert title_event["title"] == "Tiêu đề qua Stream"
+    assert "context" in event_types
+    assert "token" in event_types
+    assert "done" in event_types
