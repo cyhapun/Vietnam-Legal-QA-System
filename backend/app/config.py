@@ -51,19 +51,24 @@ PIPELINE_TIMING_ENABLED = os.getenv("PIPELINE_TIMING_ENABLED", "false").strip().
 DEFAULT_LOCAL_EMBEDDING_MODEL = "../models/embedding/vietlaw-bge-m3-finetuned/best"
 DEFAULT_LOCAL_RERANKER_MODEL = "../models/reranking/vietlaw-bge-reranker-v2-m3-finetuned/selected"
 DEFAULT_REMOTE_EMBEDDING_MODEL = "BAAI/bge-m3"
+DEFAULT_GEMINI_EMBEDDING_MODEL = "models/gemini-embedding-001"
 
-_default_embedding_mode = "api" if RUNTIME_PROFILE == "serverless" else "local"
+EMBEDDING_PROVIDER = os.getenv("EMBEDDING_PROVIDER", "huggingface").strip().lower()
+
+_default_embedding_mode = "api" if RUNTIME_PROFILE == "serverless" or EMBEDDING_PROVIDER == "gemini" else "local"
 HUGGINGFACE_EMBEDDING_MODE = os.getenv(
     "HUGGINGFACE_EMBEDDING_MODE",
     _default_embedding_mode,
 ).strip().lower()
-_default_embedding_model = (
-    DEFAULT_REMOTE_EMBEDDING_MODEL
-    if HUGGINGFACE_EMBEDDING_MODE == "api"
-    else DEFAULT_LOCAL_EMBEDDING_MODEL
-)
-EMBEDDING_MODEL = os.getenv("HUGGINGFACE_EMBEDDING_MODEL", _default_embedding_model)
-EMBEDDING_PROVIDER = os.getenv("EMBEDDING_PROVIDER", "huggingface").strip().lower()
+
+if EMBEDDING_PROVIDER == "gemini":
+    _default_embedding_model = DEFAULT_GEMINI_EMBEDDING_MODEL
+elif HUGGINGFACE_EMBEDDING_MODE == "api":
+    _default_embedding_model = DEFAULT_REMOTE_EMBEDDING_MODEL
+else:
+    _default_embedding_model = DEFAULT_LOCAL_EMBEDDING_MODEL
+
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", _default_embedding_model)
 EMBEDDING_DEVICE = os.getenv("EMBEDDING_DEVICE", "cpu").strip()
 EMBEDDING_DIMENSION = int(os.getenv("EMBEDDING_DIMENSION", "1024"))
 EMBEDDING_NORMALIZE = True
@@ -160,33 +165,37 @@ def validate_runtime_configuration() -> None:
             f"RUNTIME_PROFILE must be one of {sorted(SUPPORTED_RUNTIME_PROFILES)}; "
             f"got {RUNTIME_PROFILE!r}."
         )
-    if HUGGINGFACE_EMBEDDING_MODE not in {"api", "local"}:
-        raise ValueError("HUGGINGFACE_EMBEDDING_MODE must be either 'api' or 'local'.")
-    if RUNTIME_PROFILE == "serverless" and HUGGINGFACE_EMBEDDING_MODE != "api":
-        raise ValueError("RUNTIME_PROFILE=serverless requires HUGGINGFACE_EMBEDDING_MODE=api.")
-    if RUNTIME_PROFILE == "local" and HUGGINGFACE_EMBEDDING_MODE != "local":
-        raise ValueError("RUNTIME_PROFILE=local requires HUGGINGFACE_EMBEDDING_MODE=local.")
-    if RUNTIME_PROFILE == "local" and (
-        not Path(EMBEDDING_MODEL).is_absolute()
-        and not EMBEDDING_MODEL.startswith((".", "~"))
-    ):
-        raise ValueError(
-            "Local embedding mode requires HUGGINGFACE_EMBEDDING_MODEL to be a filesystem path."
-        )
-    if RUNTIME_PROFILE == "serverless" and (
-        Path(EMBEDDING_MODEL).is_absolute()
-        or EMBEDDING_MODEL.startswith((".", "~"))
-    ):
-        raise ValueError(
-            "Serverless embedding mode requires HUGGINGFACE_EMBEDDING_MODEL to be a Hub model id."
-        )
-    if RUNTIME_PROFILE == "local" and PIPELINE_CONFIG["reranking"] in {
-        "embedding_similarity",
-        "remote_embedding_similarity",
-    }:
-        raise ValueError(
-            "Local runtime must use cross_encoder or none for reranking."
-        )
+    if EMBEDDING_PROVIDER == "gemini":
+        if not GOOGLE_API_KEYS:
+            raise ValueError("GOOGLE_API_KEYS is required when EMBEDDING_PROVIDER=gemini.")
+    else:
+        if HUGGINGFACE_EMBEDDING_MODE not in {"api", "local"}:
+            raise ValueError("HUGGINGFACE_EMBEDDING_MODE must be either 'api' or 'local'.")
+        if RUNTIME_PROFILE == "serverless" and HUGGINGFACE_EMBEDDING_MODE != "api":
+            raise ValueError("RUNTIME_PROFILE=serverless requires HUGGINGFACE_EMBEDDING_MODE=api.")
+        if RUNTIME_PROFILE == "local" and HUGGINGFACE_EMBEDDING_MODE != "local":
+            raise ValueError("RUNTIME_PROFILE=local requires HUGGINGFACE_EMBEDDING_MODE=local.")
+        if RUNTIME_PROFILE == "local" and (
+            not Path(EMBEDDING_MODEL).is_absolute()
+            and not EMBEDDING_MODEL.startswith((".", "~"))
+        ):
+            raise ValueError(
+                "Local embedding mode requires HUGGINGFACE_EMBEDDING_MODEL to be a filesystem path."
+            )
+        if RUNTIME_PROFILE == "serverless" and (
+            Path(EMBEDDING_MODEL).is_absolute()
+            or EMBEDDING_MODEL.startswith((".", "~"))
+        ):
+            raise ValueError(
+                "Serverless embedding mode requires HUGGINGFACE_EMBEDDING_MODEL to be a Hub model id."
+            )
+        if RUNTIME_PROFILE == "local" and PIPELINE_CONFIG["reranking"] in {
+            "embedding_similarity",
+            "remote_embedding_similarity",
+        }:
+            raise ValueError(
+                "Local runtime must use cross_encoder or none for reranking."
+            )
 
 
 def runtime_profile_summary() -> dict:
@@ -195,10 +204,11 @@ def runtime_profile_summary() -> dict:
         "profile": RUNTIME_PROFILE,
         "chatStorageMode": CHAT_STORAGE_MODE,
         "frontendChatStorageMode": FRONTEND_CHAT_STORAGE_MODE or None,
-        "embeddingMode": HUGGINGFACE_EMBEDDING_MODE,
+        "embeddingProvider": EMBEDDING_PROVIDER,
+        "embeddingMode": "api" if EMBEDDING_PROVIDER == "gemini" else HUGGINGFACE_EMBEDDING_MODE,
         "embeddingModel": EMBEDDING_MODEL,
         "reranking": PIPELINE_CONFIG["reranking"],
-        "localModelsPreload": LOCAL_MODELS_PRELOAD_ENABLED,
+        "localModelsPreload": LOCAL_MODELS_PRELOAD_ENABLED and EMBEDDING_PROVIDER != "gemini",
     }
 
 

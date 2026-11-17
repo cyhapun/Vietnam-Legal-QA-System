@@ -40,6 +40,13 @@ class HuggingFaceEmbeddingSimilarityReranker:
         return f"embedding_similarity({self._model})"
 
     def _get_embedding(self, api_key: Optional[str] = None):
+        from app.config import EMBEDDING_PROVIDER
+        if EMBEDDING_PROVIDER == "gemini":
+            if "gemini" not in self._embedding_cache:
+                from app.services.embedding.gemini import GeminiEmbedding
+                self._embedding_cache["gemini"] = GeminiEmbedding()
+            return self._embedding_cache["gemini"]
+
         resolved_api_key = api_key or self._api_key
         cache_key = (
             hashlib.sha256(resolved_api_key.encode("utf-8")).hexdigest()[:16]

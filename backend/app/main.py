@@ -19,6 +19,8 @@ from app.config import (
     CORS_ORIGINS,
     EMBEDDING_DIMENSION,
     EMBEDDING_MODEL,
+    EMBEDDING_PROVIDER,
+    GOOGLE_API_KEYS,
     HUGGINGFACE_API_KEY,
     LOCAL_MODELS_PRELOAD_ENABLED,
     LOCAL_MODELS_WARMUP_ENABLED,
@@ -68,6 +70,23 @@ def _resolve_runtime_path(path_value: str) -> Path:
 
 def _check_artifacts() -> dict:
     validate_runtime_configuration()
+    if EMBEDDING_PROVIDER == "gemini":
+        return {
+            "embedding": {
+                "status": "ok" if GOOGLE_API_KEYS else "configured",
+                "configured": bool(EMBEDDING_MODEL),
+                "mode": "api",
+                "provider": "gemini",
+                "weights": False,
+            },
+            "reranker": {
+                "status": "ok",
+                "enabled": PIPELINE_CONFIG.get("reranking") not in {"none", ""},
+                "mode": "similarity" if PIPELINE_CONFIG.get("reranking") == "embedding_similarity" else "cross_encoder",
+                "weights": False,
+            },
+        }
+
     if RUNTIME_PROFILE == "serverless":
         return {
             "embedding": {

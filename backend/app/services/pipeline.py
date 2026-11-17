@@ -396,6 +396,13 @@ def _get_embedding(api_key: str = None) -> Optional[BaseEmbedding]:
         return _embedding_cache[cache_key]
         
     try:
+        from app.config import EMBEDDING_PROVIDER
+        if EMBEDDING_PROVIDER == "gemini":
+            from app.services.embedding.gemini import GeminiEmbedding
+            gemini_emb = GeminiEmbedding()
+            _embedding_cache[cache_key] = gemini_emb
+            return gemini_emb
+
         from app.config import INFERENCE_STRATEGY
         hf_emb = HuggingFaceEndpointEmbedding(api_key=api_key)
         
