@@ -42,7 +42,6 @@ export function ChatMessage({
   const [reason, setReason] = useState('Sai luật');
   const [comment, setComment] = useState('');
   const [selectedCitation, setSelectedCitation] = useState<DocumentChunk | null>(null);
-  const [isProcessCollapsed, setIsProcessCollapsed] = useState(true);
 
   React.useEffect(() => {
     setFeedback(message.feedback === 1 ? 'up' : message.feedback === -1 ? 'down' : null);
@@ -156,12 +155,8 @@ export function ChatMessage({
               </div>
             )}
 
-            {!isUser && message.processingStage && (
-              <ChatProcessingTrace
-                stage={message.processingStage}
-                collapsed={isProcessCollapsed}
-                onToggleCollapsed={() => setIsProcessCollapsed(current => !current)}
-              />
+            {!isUser && message.processingStage && message.processingStage !== 'completed' && (
+              <ChatProcessingTrace stage={message.processingStage} />
             )}
           </div>
 
