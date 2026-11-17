@@ -21,10 +21,8 @@ class FakeChatOpenAI:
 
 def _patch_chat_factory(monkeypatch):
     monkeypatch.setattr(llm_module, "ChatOpenAI", FakeChatOpenAI)
-    monkeypatch.setattr(llm_module, "HUGGINGFACE_API_KEY", "env-hf-token")
     monkeypatch.setattr(llm_module, "GOOGLE_API_KEY", "env-google-token")
-    monkeypatch.setattr(llm_module, "ENABLE_GOOGLE_FALLBACK", False)
-    monkeypatch.setattr(llm_module, "INFERENCE_STRATEGY", "remote_first")
+    monkeypatch.setattr(llm_module, "GOOGLE_API_KEYS", "env-google-token")
 
 
 def _runtime_config(provider="google", model="gemini-3.1-flash-lite", key="runtime-google-token", role="answer"):
@@ -90,7 +88,7 @@ def test_runtime_google_key_overrides_environment_key(monkeypatch):
     config = _runtime_config()
 
     llm = llm_module.get_llm(
-        "deepseek-ai/DeepSeek-R1-Distill-Llama-8B",
+        "gemini-3.1-flash-lite",
         runtime_config=config,
         role="answer",
     )
@@ -105,11 +103,10 @@ def test_runtime_role_routing(monkeypatch):
     config = RuntimeInferenceConfig.model_validate({
         "credentials": {
             "google": {"apiKey": "runtime-google-token"},
-            "huggingface": {"apiKey": "runtime-hf-token"},
         },
         "roles": {
             "answer": {"provider": "google", "model": "gemini-3.1-flash-lite"},
-            "rewriter": {"provider": "huggingface", "model": "Qwen/Qwen2.5-7B-Instruct"},
+            "rewriter": {"provider": "google", "model": "gemini-2.5-flash"},
             "summarizer": {"provider": "google", "model": "gemini-3.1-flash-lite"},
         },
         "useServerFallbacks": False,
@@ -121,14 +118,17 @@ def test_runtime_role_routing(monkeypatch):
 
     assert answer.model == "gemini-3.1-flash-lite"
     assert answer.api_key == "runtime-google-token"
-    assert rewriter.model == "Qwen/Qwen2.5-7B-Instruct"
-    assert rewriter.api_key == "runtime-hf-token"
+    assert rewriter.model == "gemini-2.5-flash"
+    assert rewriter.api_key == "runtime-google-token"
     assert summarizer.model == "gemini-3.1-flash-lite"
 
 
 def test_missing_runtime_key_without_server_fallback_raises(monkeypatch):
     _patch_chat_factory(monkeypatch)
     monkeypatch.setattr(llm_module, "GOOGLE_API_KEY", "")
+    monkeypatch.setattr(llm_module, "GOOGLE_API_KEYS", "")
+    monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
+    monkeypatch.delenv("GOOGLE_API_KEYS", raising=False)
     config = RuntimeInferenceConfig.model_validate({
         "roles": {
             "answer": {"provider": "google", "model": "gemini-3.1-flash-lite"}
@@ -137,7 +137,7 @@ def test_missing_runtime_key_without_server_fallback_raises(monkeypatch):
     })
 
     with pytest.raises(RuntimeError):
-        llm_module.get_llm("deepseek-ai/DeepSeek-R1-Distill-Llama-8B", runtime_config=config)
+        llm_module.get_llm("gemini-3.1-flash-lite", runtime_config=config)
 
 
 def test_redacts_runtime_api_keys():
