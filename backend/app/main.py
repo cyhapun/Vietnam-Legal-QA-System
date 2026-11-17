@@ -197,6 +197,24 @@ def _check_qdrant() -> dict:
     }
 
 
+class _StripBackendPrefixMiddleware:
+    """Strip '/_/backend' mount prefix if forwarded raw by Vercel Services rewrites."""
+
+    def __init__(self, app, prefix: str = "/_/backend"):
+        self.app = app
+        self.prefix = prefix.rstrip("/")
+
+    async def __call__(self, scope, receive, send):
+        if scope.get("type") in ("http", "websocket"):
+            path = scope.get("path", "")
+            if path == self.prefix or path.startswith(self.prefix + "/"):
+                stripped = path[len(self.prefix):] or "/"
+                scope = dict(scope)
+                scope["path"] = stripped
+                scope["raw_path"] = stripped.encode("utf-8")
+        await self.app(scope, receive, send)
+
+
 def create_app() -> FastAPI:
     """Application factory — tạo và cấu hình FastAPI app."""
     application = FastAPI(title="VietLaw RAG Backend")
@@ -212,6 +230,8 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    # Outermost middleware: normalize '/_/backend/*' -> '/*' when routed via Vercel rewrites
+    application.add_middleware(_StripBackendPrefixMiddleware, prefix="/_/backend")
 
     # --- Đăng ký Routers ---
     application.include_router(chat_router)
