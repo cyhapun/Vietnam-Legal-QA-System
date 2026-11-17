@@ -17,7 +17,12 @@ from app.config import (
     EMBEDDING_SLEEP_BETWEEN_BATCHES, EMBEDDING_RETRY_BASE_WAIT,
 )
 from app.services.embedding.hf_endpoint import HuggingFaceEndpointEmbedding
-from app.services.knowledge_base import determine_category
+from app.services.knowledge_base import (
+    determine_category,
+    load_knowledge_base,
+    KNOWLEDGE_BASE,
+    LAW_METADATA,
+)
 from app.utils.logging import setup_logger
 
 logger = setup_logger("vietlaw.vectorstore")
@@ -25,8 +30,6 @@ logger = setup_logger("vietlaw.vectorstore")
 # --- BIẾN TOÀN CỤC ---
 vectorstore: Optional[FAISS] = None
 embeddings = None
-KNOWLEDGE_BASE: Dict[str, Any] = {}
-LAW_METADATA: Dict[str, Any] = {}
 
 
 def _get_embeddings():
@@ -37,38 +40,8 @@ def _get_embeddings():
 
 
 def load_knowledge_base_to_ram() -> None:
-    """Nạp toàn bộ dữ liệu JSON vào RAM để Chatbot truy xuất siêu tốc mà không cần gọi API."""
-    global KNOWLEDGE_BASE, LAW_METADATA
-    json_files = glob.glob(os.path.join(JSON_DATA_PATH, "*.json"))
-
-    logger.info("Đang nạp %d file JSON vào bộ nhớ...", len(json_files))
-
-    for file_path in json_files:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            law_info = data.get("law_info", {})
-            clauses = data.get("clauses", [])
-
-            law_id = law_info.get("law_id")
-            law_name = law_info.get("law_name", "")
-
-            # Lưu trữ thông tin chung của văn bản luật
-            LAW_METADATA[law_id] = {
-                "law_name": law_name,
-                "summary": law_info.get("executive_summary", ""),
-                "category": determine_category(law_name)
-            }
-
-            # Lưu trữ chi tiết từng điều khoản
-            for clause in clauses:
-                KNOWLEDGE_BASE[clause["id"]] = {
-                    "law_id": law_id,
-                    "position": clause.get("position", {}),
-                    "content": clause.get("content", ""),
-                    "cross_references": clause.get("cross_references", [])
-                }
-
-    logger.info("Nạp dữ liệu vào RAM hoàn tất!")
+    """Nạp toàn bộ dữ liệu JSON vào RAM (chuyển giao sang knowledge_base module)."""
+    load_knowledge_base()
 
 
 def get_processed_files() -> List[str]:
