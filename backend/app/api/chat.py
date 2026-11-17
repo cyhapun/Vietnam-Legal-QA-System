@@ -1,34 +1,26 @@
 """
-API Router cho endpoint /chat và /chat/stream.
-Tách từ main.py gốc — chỉ chứa logic xử lý request/response.
+API Router cho endpoint /chat, /chat/stream và quản lý sessions.
+Tái cấu trúc: Sử dụng app.services.chat_orchestrator để chia sẻ toàn bộ logic chuẩn bị và hoàn tất turn.
 """
-import re
+from __future__ import annotations
+
 import json
+import re
 import time
 import traceback
 import asyncio
 from typing import AsyncGenerator
-from datetime import datetime, timedelta
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 
 from app.config import (
     CHAT_STORAGE_MODE,
-    CONTEXT_TOKEN_BUDGET,
-    ENABLE_SEMANTIC_CACHE,
     GOOGLE_FALLBACK_MODEL,
-    HISTORY_MESSAGES,
     LLM_MAX_NEW_TOKENS,
     LLM_TEMPERATURE,
     LLM_TIMEOUT,
-    MAX_CITATIONS,
-    MAX_SUBQUERIES,
-    PIPELINE_CONFIG,
     PIPELINE_TIMING_ENABLED,
-    RETRIEVER_CANDIDATE_K,
-    RETRIEVER_K,
-    SEMANTIC_CACHE_THRESHOLD,
 )
 from app.models import ChatRequest
 from app.services.pipeline import get_pipeline
@@ -43,7 +35,16 @@ from app.services.pipeline_timing import (
     sanitize_request_id,
     set_current_timing,
 )
-from app.services.answer_validation import validate_generated_citations
+from app.services.chat_orchestrator import (
+    prepare_turn_context,
+    retrieve_turn_context,
+    finalize_turn,
+    persist_completed_turn,
+    get_recent_messages,
+    filter_cited_context,
+    rewrite_query,
+    persist_turn,
+)
 from app.utils.logging import setup_logger
 
 logger = setup_logger("vietlaw.api.chat")
@@ -52,15 +53,22 @@ router = APIRouter()
 
 _CJK_PATTERN = re.compile(r'[\u4e00-\u9fff\uac00-\ud7af\u3040-\u30ff]')
 
+# Backward compatibility aliases
+_recent_messages = get_recent_messages
+_filter_cited_context = filter_cited_context
+_rewrite_query = rewrite_query
+_persist_turn = persist_turn
+_persist_completed_turn = persist_completed_turn
+
 
 def _clean_chunk(text: str) -> str:
-    """Loai bo ky tu CJK va khoang trang thua."""
+    """Loại bỏ ký tự CJK và khoảng trắng thừa."""
     text = _CJK_PATTERN.sub('', text)
     return re.sub(r' +', ' ', text)
 
 
 def _sse(data: dict) -> str:
-    """Dinh dang mot dong Server-Sent Event."""
+    """Định dạng một dòng Server-Sent Event."""
     return f"data: {json.dumps(data, ensure_ascii=False)}\n\n"
 
 
@@ -68,7 +76,7 @@ def _embedding_error_status(exc: EmbeddingServiceError) -> int:
     return 401 if isinstance(exc, EmbeddingAuthError) else 503
 
 
-def _llm_error_detail(model_name: str, exc: Exception) -> str:
+def _llm_error_detail(model_name: str | None, exc: Exception) -> str:
     """Return a user-safe LLM error message without exposing credentials."""
     text = str(exc)
     lowered = text.lower()
@@ -82,68 +90,6 @@ def _llm_error_detail(model_name: str, exc: Exception) -> str:
     return "Tất cả các dịch vụ suy luận (LLM) đều không khả dụng. Vui lòng thử lại sau."
 
 
-def _recent_messages(request: ChatRequest):
-    """Return the configured messages immediately before the latest user message."""
-    limit = HISTORY_MESSAGES
-    return request.messages[-(limit + 1):-1] if limit > 0 else []
-
-
-def _filter_cited_context(output_text: str, context: list, max_citations: int = MAX_CITATIONS) -> list:
-    """Return cited contexts in citation order, capped for the client payload."""
-    cited_ids = list(dict.fromkeys(re.findall(r'<cite\s+id=["\']([^"\']+)["\']>', output_text)))
-    if not cited_ids:
-        return context[:max_citations]
-    cited_ids = cited_ids[:max_citations]
-    by_id = {item.get("metadata", {}).get("id"): item for item in context}
-    valid_citations = [by_id[citation_id] for citation_id in cited_ids if citation_id in by_id]
-    if not valid_citations:
-        return context[:max_citations]
-    return valid_citations
-
-
-def _rewrite_query(rewriter, query: str, history: str):
-    try:
-        return rewriter.rewrite(query, history)
-    except TypeError:
-        return rewriter.rewrite(query)
-
-
-async def _persist_turn(session_id: str, session_title: str, user_msg_id: str, user_content: str, ai_msg_id: str, ai_content: str, ai_context: list, user_time: datetime, ai_time: datetime):
-    """Helper to persist chat turns sequentially to avoid foreign key violations."""
-    import asyncio
-    from app.services.storage import ensure_session_exists, save_chat_message
-    try:
-        await asyncio.to_thread(ensure_session_exists, session_id, session_title)
-        await asyncio.to_thread(save_chat_message, session_id, user_msg_id, "user", user_content, [], user_time)
-        await asyncio.to_thread(save_chat_message, session_id, ai_msg_id, "assistant", ai_content, ai_context, ai_time)
-    except Exception as e:
-        logger.error("Failed to persist chat turn sequentially for session %s: %s", session_id, e)
-
-
-async def _persist_completed_turn(request: ChatRequest, session_id: str, user_content: str, ai_content: str, ai_context: list):
-    """Persist a finished turn before the client treats it as complete."""
-    if CHAT_STORAGE_MODE != "postgres" or session_id == "unknown":
-        return
-
-    import uuid as _uuid
-
-    user_msg_id = request.messageId or str(_uuid.uuid4())
-    ai_msg_id = str(_uuid.uuid4())
-    user_time = datetime.utcnow()
-    ai_time = user_time + timedelta(milliseconds=10)
-    await _persist_turn(
-        session_id=session_id,
-        session_title=request.sessionTitle or "Cuoc tro chuyen moi",
-        user_msg_id=user_msg_id,
-        user_content=user_content,
-        ai_msg_id=ai_msg_id,
-        ai_content=ai_content,
-        ai_context=ai_context,
-        user_time=user_time,
-        ai_time=ai_time,
-    )
-
-
 def _new_timing(http_request: Request, endpoint: str, streaming: bool) -> PipelineTimingCollector:
     return PipelineTimingCollector(
         request_id=sanitize_request_id(http_request.headers.get("x-request-id")),
@@ -155,123 +101,40 @@ def _new_timing(http_request: Request, endpoint: str, streaming: bool) -> Pipeli
 
 @router.post("/chat")
 async def chat_endpoint(request: ChatRequest, http_request: Request):
-    """Endpoint non-streaming: nhan cau hoi -> truy xuat -> goi LLM -> tra JSON."""
+    """Endpoint non-streaming: nhận câu hỏi -> truy xuất -> gọi LLM -> trả JSON."""
     timing = _new_timing(http_request, "/chat", streaming=False)
     timing_token = set_current_timing(timing if PIPELINE_TIMING_ENABLED else None)
     outcome = "success"
     try:
-        last_message = request.messages[-1].content
-        session_id = request.sessionId
-
-        from app.services.storage import get_session_summary
-        from app.services.memory_manager import summarize_session
-
-        session_data = (
-            get_session_summary(session_id)
-            if CHAT_STORAGE_MODE == "postgres" and session_id != "unknown"
-            else None
-        )
-        summary = session_data.get("summary", "") if session_data else ""
-
-        history_lines = []
-        if summary:
-            history_lines.append(f"=== BỐI CẢNH TRƯỚC ĐÓ ===\n{summary}\n\n=== HỘI THOẠI GẦN NHẤT ===")
-            
-        for msg in _recent_messages(request):
-            role_name = "USER" if msg.role == "user" else "AI"
-            history_lines.append(f"{role_name}: {msg.content}")
-            
-        chat_history_str = "\n".join(history_lines) if history_lines else "(Khong co lich su tro chuyen)"
-
         pipeline = get_pipeline()
-        
-        from app.services.pipeline import _get_embedding
-        
-        # Lịch sử ngắn gọn cho rewriter (sliding window: 2 turns = 4 messages)
-        recent_history_lines = []
-        for msg in _recent_messages(request):
-            role_name = "USER" if msg.role == "user" else "AI"
-            recent_history_lines.append(f"{role_name}: {msg.content}")
-        recent_history_str = "\n".join(recent_history_lines)
-        
-        # Cấu hình query rewriter từ server config
-        enable_query_rewriter = PIPELINE_CONFIG.get("rewriter", "none") != "none"
-        if enable_query_rewriter:
-            domain, queries = await asyncio.to_thread(
-                _rewrite_query,
-                pipeline.rewriter,
-                last_message,
-                recent_history_str,
-            )
-        else:
-            domain, queries = "legal", [last_message]
-        if domain != "chitchat":
-            queries = (queries or [last_message])[:MAX_SUBQUERIES]
-        logger.info("Rewriter enabled=%s, domain=%s, queries=%s", enable_query_rewriter, domain, queries)
-        
-        embedding_api_key = None
-        enable_reranker = PIPELINE_CONFIG.get("reranking", "none") != "none"
-        reranker_api_key = None
-        
-        try:
-            query_vector = None
-            if ENABLE_SEMANTIC_CACHE and domain != "chitchat":
-                rewritten_query = queries[0] if queries else last_message
-                embedding = _get_embedding(embedding_api_key)
-                if embedding:
-                    try:
-                        # Sinh embedding cho câu hỏi đã được viết lại
-                        query_vector = await asyncio.to_thread(embedding.embed_query, rewritten_query)
-                        
-                        # Kiểm tra cache
-                        from app.services.semantic_cache import check_cache
-                        cached_response = await asyncio.to_thread(check_cache, query_vector, SEMANTIC_CACHE_THRESHOLD)
-                        if cached_response:
-                            logger.info("Phản hồi được lấy từ Semantic Cache.")
-                            cached_text = cached_response.get("response_text", "")
-                            cached_context = cached_response.get("context_used", [])
-                            await _persist_completed_turn(
-                                request,
-                                session_id,
-                                last_message,
-                                cached_text,
-                                cached_context,
-                            )
-                            return {
-                                "text": cached_text,
-                                "contextUsed": cached_context
-                            }
-                    except EmbeddingServiceError as e:
-                        logger.warning("Cache embedding failed: %s", e)
-                        raise
-                    except Exception as e:
-                        logger.warning("Cache check failed: %s", e)
-                        if "401" in str(e) or "Unauthorized" in str(e) or "Invalid token" in str(e):
-                            raise ValueError("API Key HuggingFace không hợp lệ hoặc đã hết hạn.")
+        turn = await prepare_turn_context(request, pipeline)
 
-            retrieved_docs, context_text = await pipeline.aretrieve(
-                query=last_message,
-                k=RETRIEVER_CANDIDATE_K,
-                category=request.category,
-                rerank_top_k=RETRIEVER_K,
-                domain=domain,
-                queries=queries,
-                enable_reranker=enable_reranker,
-                context_token_budget=CONTEXT_TOKEN_BUDGET,
-                embedding_api_key=embedding_api_key,
-                reranker_api_key=reranker_api_key,
+        # Semantic cache hit -> trả về ngay lập tức
+        if turn.cached_response:
+            logger.info("Phản hồi được lấy từ Semantic Cache.")
+            cached_text = turn.cached_response.get("response_text", "")
+            cached_context = turn.cached_response.get("context_used", [])
+            await _persist_completed_turn(
+                request,
+                turn.session_id,
+                turn.last_message,
+                cached_text,
+                cached_context,
             )
-        except EmbeddingServiceError as e:
-            raise HTTPException(status_code=_embedding_error_status(e), detail=str(e))
-        except ValueError as e:
-            raise HTTPException(status_code=400, detail=str(e))
-        except Exception as e:
-            if "401" in str(e) or "Unauthorized" in str(e) or "Invalid token" in str(e):
-                raise HTTPException(status_code=401, detail="API Key HuggingFace không hợp lệ hoặc đã hết hạn.")
-            raise
+            return {
+                "text": cached_text,
+                "contextUsed": cached_context,
+            }
 
-        with timing.stage("context_building"):
-            frontend_context = pipeline.format_for_frontend(retrieved_docs)
+        retrieved_docs, context_text, frontend_context = await retrieve_turn_context(
+            pipeline=pipeline,
+            last_message=turn.last_message,
+            domain=turn.domain,
+            queries=turn.queries,
+            category=request.category,
+            enable_reranker=turn.enable_reranker,
+            timing=timing,
+        )
 
         logger.info("Đã chuẩn bị %d ký tự context (từ %d tài liệu) cho LLM", len(context_text), len(retrieved_docs))
         logger.debug("CONTEXT TEXT:\n%s", context_text)
@@ -279,8 +142,8 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
         model_name = request.model or GOOGLE_FALLBACK_MODEL
         try:
             llm = get_llm(
-                model_name=model_name, 
-                temperature=LLM_TEMPERATURE, 
+                model_name=model_name,
+                temperature=LLM_TEMPERATURE,
                 max_tokens=LLM_MAX_NEW_TOKENS,
                 timeout=LLM_TIMEOUT,
                 role="answer",
@@ -290,8 +153,8 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
             with timing.stage("llm_generation"):
                 output_text = await rag_chain.ainvoke({
                     "context": context_text,
-                    "chat_history_str": chat_history_str,
-                    "question": last_message
+                    "chat_history_str": turn.chat_history_str,
+                    "question": turn.last_message,
                 })
         except Exception as llm_exc:
             logger.error("All LLM providers failed: %s", llm_exc)
@@ -299,64 +162,37 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
             raise HTTPException(status_code=503, detail=_llm_error_detail(model_name, llm_exc))
 
         logger.info("LLM response generated")
+        cleaned_text = _clean_chunk(output_text)
 
-        output_text = _clean_chunk(output_text)
-        validation = validate_generated_citations(output_text, frontend_context)
-        if validation.invalid_citation_ids or validation.fallback_used:
-            logger.warning(
-                "Answer citation validation adjusted output: invalid=%s fallback=%s",
-                list(validation.invalid_citation_ids),
-                validation.fallback_used,
-            )
-        output_text = validation.text
-
-        frontend_context = _filter_cited_context(
-            output_text, frontend_context, MAX_CITATIONS
+        final_text, final_context = await finalize_turn(
+            request=request,
+            session_id=turn.session_id,
+            last_message=turn.last_message,
+            raw_text=cleaned_text,
+            frontend_context=frontend_context,
+            query_vector=turn.query_vector,
+            domain=turn.domain,
+            retrieved_docs=retrieved_docs,
+            persist_turn_fn=_persist_completed_turn,
         )
-
-        if query_vector and domain != "chitchat" and "Hiện tại hệ thống chưa thể gọi mô hình" not in output_text:
-            try:
-                from app.services.semantic_cache import update_cache
-                await asyncio.to_thread(
-                    update_cache,
-                    query_vector=query_vector,
-                    original_query=last_message,
-                    response_text=output_text,
-                    context_used=frontend_context,
-                    retrieved_doc_ids=[doc.metadata.get("id") for doc in retrieved_docs if doc.metadata.get("id")]
-                )
-            except Exception as e:
-                logger.warning("Failed to update cache: %s", e)
-
-
-        # Persist before returning so a refresh sees the complete turn in PostgreSQL.
-        await _persist_completed_turn(
-            request,
-            session_id,
-            last_message,
-            output_text,
-            frontend_context,
-        )
-
-        # Summarize memory asynchronously
-        if CHAT_STORAGE_MODE == "postgres" and session_id != "unknown":
-            asyncio.create_task(summarize_session(
-                session_id,
-                last_message,
-                output_text,
-            ))
 
         return {
-            "text": output_text,
-            "contextUsed": frontend_context
+            "text": final_text,
+            "contextUsed": final_context,
         }
 
+    except EmbeddingServiceError as e:
+        outcome = "error"
+        raise HTTPException(status_code=_embedding_error_status(e), detail=str(e))
+    except ValueError as e:
+        outcome = "error"
+        raise HTTPException(status_code=400, detail=str(e))
     except HTTPException:
         outcome = "error"
         raise
     except Exception as e:
         outcome = "error"
-        logger.error("Loi xu ly chat: %s", str(e))
+        logger.error("Lỗi xử lý chat: %s", str(e))
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
     finally:
@@ -366,141 +202,54 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
 
 @router.post("/chat/stream")
 async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
-    """Endpoint streaming: tra token theo tung chunk qua Server-Sent Events."""
+    """Endpoint streaming: trả token theo từng chunk qua Server-Sent Events."""
     timing = _new_timing(http_request, "/chat/stream", streaming=True)
 
     async def event_generator() -> AsyncGenerator[str, None]:
         timing_token = set_current_timing(timing if PIPELINE_TIMING_ENABLED else None)
         outcome = "success"
         try:
-            last_message = request.messages[-1].content
-            session_id = request.sessionId
-            
-            from app.services.storage import get_session_summary
-            from app.services.memory_manager import summarize_session
-
-            session_data = (
-                get_session_summary(session_id)
-                if CHAT_STORAGE_MODE == "postgres" and session_id != "unknown"
-                else None
-            )
-            summary = session_data.get("summary", "") if session_data else ""
-
-            history_lines = []
-            if summary:
-                history_lines.append(f"=== BỐI CẢNH TRƯỚC ĐÓ ===\n{summary}\n\n=== HỘI THOẠI GẦN NHẤT ===")
-                
-            for msg in _recent_messages(request):
-                role_name = "USER" if msg.role == "user" else "AI"
-                history_lines.append(f"{role_name}: {msg.content}")
-                
-            chat_history_str = (
-                "\n".join(history_lines) if history_lines
-                else "(Khong co lich su tro chuyen)"
-            )
-
             pipeline = get_pipeline()
-            
-            from app.services.pipeline import _get_embedding
-            
-            recent_history_lines = []
-            for msg in _recent_messages(request):
-                role_name = "USER" if msg.role == "user" else "AI"
-                recent_history_lines.append(f"{role_name}: {msg.content}")
-            recent_history_str = "\n".join(recent_history_lines)
-            
-            enable_query_rewriter = PIPELINE_CONFIG.get("rewriter", "none") != "none"
-            if enable_query_rewriter:
-                domain, queries = await asyncio.to_thread(
-                    _rewrite_query,
-                    pipeline.rewriter,
-                    last_message,
-                    recent_history_str,
-                )
-            else:
-                domain, queries = "legal", [last_message]
-            if domain != "chitchat":
-                queries = (queries or [last_message])[:MAX_SUBQUERIES]
-            logger.info("Stream rewriter enabled=%s, domain=%s, queries=%s", enable_query_rewriter, domain, queries)
-            
-            embedding_api_key = None
-            enable_reranker = PIPELINE_CONFIG.get("reranking", "none") != "none"
-            reranker_api_key = None
-            
-            try:
-                query_vector = None
-                if ENABLE_SEMANTIC_CACHE and domain != "chitchat":
-                    rewritten_query = queries[0] if queries else last_message
-                    embedding = _get_embedding(embedding_api_key)
-                    if embedding:
-                        try:
-                            query_vector = await asyncio.to_thread(embedding.embed_query, rewritten_query)
-                            from app.services.semantic_cache import check_cache
-                            cached_response = await asyncio.to_thread(check_cache, query_vector, SEMANTIC_CACHE_THRESHOLD)
-                            if cached_response:
-                                logger.info("Stream: Phản hồi được lấy từ Semantic Cache.")
-                                frontend_context = cached_response.get("context_used", [])
-                                yield _sse({"type": "context", "data": frontend_context})
-                                
-                                cached_text = cached_response.get("response_text", "")
-                                words = cached_text.split(" ")
-                                for i, word in enumerate(words):
-                                    yield _sse({"type": "token", "text": word + (" " if i < len(words) - 1 else "")})
-                                    await asyncio.sleep(0.01)
-                                    
-                                await _persist_completed_turn(
-                                    request,
-                                    session_id,
-                                    last_message,
-                                    cached_text,
-                                    frontend_context,
-                                )
-                                yield _sse({"type": "done"})
-                                
-                                return
-                        except EmbeddingServiceError as e:
-                            logger.warning("Stream cache embedding failed: %s", e)
-                            raise
-                        except Exception as e:
-                            logger.warning("Stream Cache check failed: %s", e)
-                            if "401" in str(e) or "Unauthorized" in str(e) or "Invalid token" in str(e):
-                                raise ValueError("API Key HuggingFace không hợp lệ hoặc đã hết hạn.")
+            turn = await prepare_turn_context(request, pipeline)
 
-                retrieved_docs, context_text = await pipeline.aretrieve(
-                    query=last_message,
-                    k=RETRIEVER_CANDIDATE_K,
-                    category=request.category,
-                    rerank_top_k=RETRIEVER_K,
-                    domain=domain,
-                    queries=queries,
-                    enable_reranker=enable_reranker,
-                    context_token_budget=CONTEXT_TOKEN_BUDGET,
-                    embedding_api_key=embedding_api_key,
-                    reranker_api_key=reranker_api_key,
+            # Semantic cache hit -> stream từng từ nhanh chóng
+            if turn.cached_response:
+                logger.info("Stream: Phản hồi được lấy từ Semantic Cache.")
+                cached_context = turn.cached_response.get("context_used", [])
+                yield _sse({"type": "context", "data": cached_context})
+
+                cached_text = turn.cached_response.get("response_text", "")
+                words = cached_text.split(" ")
+                for i, word in enumerate(words):
+                    yield _sse({"type": "token", "text": word + (" " if i < len(words) - 1 else "")})
+                    await asyncio.sleep(0.01)
+
+                await _persist_completed_turn(
+                    request,
+                    turn.session_id,
+                    turn.last_message,
+                    cached_text,
+                    cached_context,
                 )
-            except EmbeddingServiceError as e:
-                outcome = "error"
-                yield _sse({"type": "error", "message": str(e)})
+                yield _sse({"type": "done"})
                 return
-            except ValueError as e:
-                outcome = "error"
-                yield _sse({"type": "error", "message": str(e)})
-                return
-            except Exception as e:
-                if "401" in str(e) or "Unauthorized" in str(e) or "Invalid token" in str(e):
-                    outcome = "error"
-                    yield _sse({"type": "error", "message": "API Key HuggingFace không hợp lệ hoặc đã hết hạn."})
-                    return
-                raise
-            with timing.stage("context_building"):
-                frontend_context = pipeline.format_for_frontend(retrieved_docs)
+
+            retrieved_docs, context_text, frontend_context = await retrieve_turn_context(
+                pipeline=pipeline,
+                last_message=turn.last_message,
+                domain=turn.domain,
+                queries=turn.queries,
+                category=request.category,
+                enable_reranker=turn.enable_reranker,
+                timing=timing,
+            )
 
             yield _sse({"type": "context", "data": frontend_context})
 
             model_name = request.model or GOOGLE_FALLBACK_MODEL
             llm = get_llm(
-                model_name=model_name, 
-                temperature=LLM_TEMPERATURE, 
+                model_name=model_name,
+                temperature=LLM_TEMPERATURE,
                 max_tokens=LLM_MAX_NEW_TOKENS,
                 timeout=LLM_TIMEOUT,
                 role="answer",
@@ -513,8 +262,8 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
             with timing.stage("llm_generation"):
                 async for chunk in rag_chain.astream({
                     "context": context_text,
-                    "chat_history_str": chat_history_str,
-                    "question": last_message,
+                    "chat_history_str": turn.chat_history_str,
+                    "question": turn.last_message,
                 }):
                     if chunk:
                         cleaned = _clean_chunk(chunk)
@@ -529,64 +278,36 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
                             accumulated_text += cleaned
                             yield _sse({"type": "token", "text": cleaned})
 
-            frontend_context = _filter_cited_context(
-                accumulated_text, frontend_context, MAX_CITATIONS
-            )
-            validation = validate_generated_citations(accumulated_text, frontend_context)
-            if validation.invalid_citation_ids or validation.fallback_used:
-                logger.warning(
-                    "Stream answer citation validation adjusted output: invalid=%s fallback=%s",
-                    list(validation.invalid_citation_ids),
-                    validation.fallback_used,
-                )
-            accumulated_text = validation.text
-            frontend_context = _filter_cited_context(
-                accumulated_text, frontend_context, MAX_CITATIONS
-            )
-            yield _sse({"type": "context", "data": frontend_context})
-            if query_vector and domain != "chitchat" and "Hiện tại hệ thống chưa thể gọi mô hình" not in accumulated_text:
-                try:
-                    from app.services.semantic_cache import update_cache
-                    await asyncio.to_thread(
-                        update_cache,
-                        query_vector=query_vector,
-                        original_query=last_message,
-                        response_text=accumulated_text,
-                        context_used=frontend_context,
-                        retrieved_doc_ids=[doc.metadata.get("id") for doc in retrieved_docs if doc.metadata.get("id")]
-                    )
-                except Exception as e:
-                    logger.warning("Stream Failed to update cache: %s", e)
-
-
-
-            # Persist before signalling done so refresh sees the complete turn.
-            await _persist_completed_turn(
-                request,
-                session_id,
-                last_message,
-                accumulated_text,
-                frontend_context,
+            final_text, final_context = await finalize_turn(
+                request=request,
+                session_id=turn.session_id,
+                last_message=turn.last_message,
+                raw_text=accumulated_text,
+                frontend_context=frontend_context,
+                query_vector=turn.query_vector,
+                domain=turn.domain,
+                retrieved_docs=retrieved_docs,
+                persist_turn_fn=_persist_completed_turn,
             )
 
-            # Summarize memory asynchronously
-            if CHAT_STORAGE_MODE == "postgres" and session_id != "unknown":
-                asyncio.create_task(summarize_session(
-                    session_id,
-                    last_message,
-                    accumulated_text,
-                ))
-
+            yield _sse({"type": "context", "data": final_context})
             yield _sse({"type": "done"})
 
         except asyncio.CancelledError:
             outcome = "cancelled"
             raise
+        except EmbeddingServiceError as e:
+            outcome = "error"
+            yield _sse({"type": "error", "message": str(e)})
+        except ValueError as e:
+            outcome = "error"
+            yield _sse({"type": "error", "message": str(e)})
         except Exception as e:
             outcome = "error"
-            logger.error("Loi streaming chat: %s", str(e))
+            logger.error("Lỗi streaming chat: %s", str(e))
             traceback.print_exc()
-            yield _sse({"type": "error", "message": _llm_error_detail(model_name, e)})
+            current_model = model_name if 'model_name' in locals() else None
+            yield _sse({"type": "error", "message": _llm_error_detail(current_model, e)})
         finally:
             timing.emit_once(outcome)
             reset_current_timing(timing_token)
@@ -603,38 +324,33 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
 
 @router.get("/chat/sessions")
 async def get_sessions():
+    """Trả về danh sách tất cả sessions từ PostgreSQL."""
     if CHAT_STORAGE_MODE == "browser":
         return {"storageMode": "browser", "sessions": []}
-    """Trả về danh sách tất cả sessions từ PostgreSQL."""
     from app.services.storage import list_sessions
     return list_sessions()
 
 
 @router.get("/chat/session/{session_id}/messages")
 async def get_session_messages(session_id: str):
+    """Trả về tất cả tin nhắn của một session từ PostgreSQL."""
     if CHAT_STORAGE_MODE == "browser":
         return {"storageMode": "browser", "messages": []}
-    """Trả về tất cả tin nhắn của một session từ PostgreSQL."""
     from app.services.storage import get_session_messages
     return get_session_messages(session_id)
 
 
 @router.delete("/chat/session/{session_id}")
 async def delete_session(session_id: str):
+    """Xóa lịch sử trò chuyện của một session cụ thể khỏi hệ thống."""
     if not session_id or session_id == "unknown":
         raise HTTPException(status_code=400, detail="Invalid session_id")
     if CHAT_STORAGE_MODE == "browser":
         return {"status": "skipped", "storageMode": "browser"}
-    """Xóa lịch sử trò chuyện của một session cụ thể khỏi hệ thống."""
-    if not session_id or session_id == "unknown":
-        raise HTTPException(status_code=400, detail="Invalid session_id")
-    
+
     try:
-        import asyncio
         from app.services.storage import delete_session_summary
-        
         await asyncio.to_thread(delete_session_summary, session_id)
-        
         return {"status": "success", "message": f"Session {session_id} deleted."}
     except Exception as e:
         logger.error(f"Error deleting session {session_id}: {e}")
