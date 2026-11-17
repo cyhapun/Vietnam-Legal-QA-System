@@ -22,13 +22,12 @@ function getThinkingText(stage: ChatProcessingStage): string {
   if (stage === 'analyzing') return 'Đang phân tích câu hỏi...';
   if (stage === 'searching') return 'Đang tra cứu căn cứ pháp lý...';
   if (stage === 'selecting') return 'Đang chọn lọc thông tin phù hợp...';
-  if (stage === 'generating') return 'Đang tổng hợp câu trả lời...';
   return 'Đang suy nghĩ...';
 }
 
 export function ChatProcessingTrace({ stage }: ChatProcessingTraceProps) {
-  // Hoàn toàn không hiển thị khi đã hoàn thành hoặc idle
-  if (stage === 'idle' || stage === 'completed') return null;
+  // Hoàn toàn không hiển thị khi đã hoàn thành, idle hoặc khi đang generating (stream câu trả lời)
+  if (stage === 'idle' || stage === 'completed' || stage === 'generating') return null;
 
   if (stage === 'cancelled') {
     return (
