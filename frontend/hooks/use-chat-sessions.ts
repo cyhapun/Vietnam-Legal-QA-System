@@ -245,6 +245,18 @@ export function useChatSessions() {
     });
   }, []);
 
+  // --- Xóa một message khỏi session (Regenerate in-place) ---
+  const removeMessage = useCallback((sessionId: string, messageId: string) => {
+    setMessagesBySession(prev => {
+      const sessionMessages = prev[sessionId];
+      if (!sessionMessages) return prev;
+      return {
+        ...prev,
+        [sessionId]: sessionMessages.filter(m => m.id !== messageId),
+      };
+    });
+  }, []);
+
   // --- Cập nhật title session ---
   const updateSessionTitle = useCallback((title: string) => {
     if (!currentSessionId) return;
@@ -405,6 +417,7 @@ export function useChatSessions() {
     handleDeleteSession,
     addMessage,
     updateMessage,
+    removeMessage,
     updateSessionTitle,
     isSessionLoading,
     isSessionsListLoading,

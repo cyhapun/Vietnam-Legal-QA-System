@@ -29,6 +29,7 @@ export function ChatInterface() {
     handleDeleteSession,
     addMessage,
     updateMessage,
+    removeMessage,
     updateSessionTitle,
     isSessionLoading,
     isSessionsListLoading,
@@ -186,27 +187,14 @@ export function ChatInterface() {
     }
   };
 
-  const handleSubmit = async (e?: React.FormEvent, overrideText?: string) => {
-    if (e) e.preventDefault();
-
-    // Neu dang loading: Enter/Click = huy
-    if (isLoading) {
-      handleAbort();
-      return;
-    }
-
-    const userText = (overrideText ?? input).trim();
-    if (!userText || !currentSessionId) return;
-
-    setInput('');
-    if (textareaRef.current) textareaRef.current.style.height = '52px';
-
-    const userMessage: Message = { id: Date.now().toString(), role: 'user', content: userText };
-    addMessage(userMessage);
-
-    if (currentMessages.length === 0) {
-      updateSessionTitle(userText.length > 40 ? userText.substring(0, 40) + '...' : userText);
-    }
+  const executeStream = async ({
+    apiMessages,
+    userMessageId,
+  }: {
+    apiMessages: Array<{ role: string; content: string }>;
+    userMessageId: string;
+  }) => {
+    if (!currentSessionId) return;
 
     setIsLoading(true);
     setStreamingText('');
@@ -223,8 +211,8 @@ export function ChatInterface() {
     let streamErrorMessage = '';
 
     try {
-      const apiMessages = [...currentMessages, userMessage].map(m => ({ role: m.role, content: m.content }));
       setProcessingStage('searching');
+      const sessionTitle = sessions.find(s => s.id === currentSessionId)?.title || 'Cuộc trò chuyện mới';
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -232,8 +220,8 @@ export function ChatInterface() {
           messages: apiMessages,
           model,
           sessionId: currentSessionId || 'unknown',
-          sessionTitle: currentMessages.length === 0 ? (userText.length > 40 ? userText.substring(0, 40) + '...' : userText) : (sessions.find(s => s.id === currentSessionId)?.title || 'Cuộc trò chuyện mới'),
-          messageId: userMessage.id,
+          sessionTitle,
+          messageId: userMessageId,
           category: lawCategory,
           streaming: true,
         }),
@@ -377,6 +365,76 @@ export function ChatInterface() {
       setStreamingContext([]);
       setProcessingStage('idle');
       abortControllerRef.current = null;
+    }
+  };
+
+  const handleSubmit = async (e?: React.FormEvent, overrideText?: string) => {
+    if (e) e.preventDefault();
+
+    // Neu dang loading: Enter/Click = huy
+    if (isLoading) {
+      handleAbort();
+      return;
+    }
+
+    const userText = (overrideText ?? input).trim();
+    if (!userText || !currentSessionId) return;
+
+    setInput('');
+    if (textareaRef.current) textareaRef.current.style.height = '52px';
+
+    const userMessage: Message = { id: Date.now().toString(), role: 'user', content: userText };
+    addMessage(userMessage);
+
+    if (currentMessages.length === 0) {
+      updateSessionTitle(userText.length > 40 ? userText.substring(0, 40) + '...' : userText);
+    }
+
+    const apiMessages = [...currentMessages, userMessage].map(m => ({ role: m.role, content: m.content }));
+    await executeStream({
+      apiMessages,
+      userMessageId: userMessage.id,
+    });
+  };
+
+  const handleRegenerate = async (messageId: string) => {
+    if (isLoading || !currentSessionId) return;
+
+    const aiIndex = currentMessages.findIndex(m => m.id === messageId);
+    if (aiIndex === -1) return;
+
+    // Find preceding user message
+    let userMsg: Message | undefined;
+    let userIndex = -1;
+    for (let i = aiIndex - 1; i >= 0; i--) {
+      if (currentMessages[i].role === 'user') {
+        userMsg = currentMessages[i];
+        userIndex = i;
+        break;
+      }
+    }
+
+    if (!userMsg) return;
+
+    // Remove the old AI response in-place
+    removeMessage(currentSessionId, messageId);
+
+    // Messages up to the relevant user prompt
+    const contextMessages = currentMessages.slice(0, userIndex + 1);
+    const apiMessages = contextMessages.map(m => ({ role: m.role, content: m.content }));
+
+    await executeStream({
+      apiMessages,
+      userMessageId: userMsg.id,
+    });
+  };
+
+  const handleEditPrompt = (promptText: string) => {
+    setInput(promptText);
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 160)}px`;
     }
   };
 
@@ -559,6 +617,8 @@ export function ChatInterface() {
                         key={msg.id}
                         message={msg}
                         onRefine={(prompt) => handleSubmit(undefined, prompt)}
+                        onRegenerate={handleRegenerate}
+                        onEditPrompt={handleEditPrompt}
                         onRetry={previousUser ? () => handleSubmit(undefined, previousUser.content) : undefined}
                         onFeedbackSubmit={handleFeedbackSubmit}
                       />
@@ -571,6 +631,8 @@ export function ChatInterface() {
                       message={streamingMessage}
                       isStreaming={true}
                       onRefine={(prompt) => handleSubmit(undefined, prompt)}
+                      onRegenerate={handleRegenerate}
+                      onEditPrompt={handleEditPrompt}
                     />
                   )}
                 </>
