@@ -14,7 +14,6 @@ for (const label of [
   'Đang phân tích câu hỏi',
   'Đang tra cứu căn cứ pháp lý',
   'Đang chọn lọc thông tin phù hợp',
-  'Đang tổng hợp câu trả lời',
 ]) {
   if (!processingTrace.includes(label)) {
     throw new Error(`Missing processing label: ${label}`);
@@ -25,14 +24,18 @@ if (!processingTrace.includes('animate-thinking-shimmer')) {
   throw new Error('Processing trace must use animate-thinking-shimmer class for thinking text effect');
 }
 
-for (const obsolete of ['Tra cứu hoàn tất', 'Xem quá trình', 'Ẩn quá trình', '<ol', 'ChevronDown']) {
+for (const obsolete of ['Tra cứu hoàn tất', 'Xem quá trình', 'Ẩn quá trình', '<ol', 'ChevronDown', 'Đang tổng hợp']) {
   if (processingTrace.includes(obsolete)) {
-    throw new Error(`Obsolete boxed/table elements should be removed from processing trace: ${obsolete}`);
+    throw new Error(`Obsolete boxed/table elements or generating trace should be removed from processing trace: ${obsolete}`);
   }
 }
 
-if (!chatMessage.includes('!message.content?.trim()')) {
-  throw new Error('ChatMessage must only render processing trace when there is no streaming content yet (!message.content?.trim())');
+if (!processingTrace.includes("stage === 'generating'")) {
+  throw new Error('Processing trace must return null when stage is generating');
+}
+
+if (!chatMessage.includes('!message.content?.trim()') || !chatMessage.includes("'generating'")) {
+  throw new Error('ChatMessage must only render processing trace when there is no streaming content yet and stage is not generating');
 }
 
 if (chatInterface.includes('isLoading && !streamingText')) {
