@@ -39,20 +39,16 @@ Hệ thống SHALL hiển thị modal xác nhận xóa cuộc hội thoại chí
 - **WHEN** người dùng nhấn "Xác nhận xóa"
 - **THEN** phiên chat được xóa khỏi cơ sở dữ liệu và modal được đóng lại.
 
-### Requirement: Minimalist thinking and processing trace in Gemini/ChatGPT style
-Hệ thống SHALL hiển thị tiến trình xử lý dưới dạng trạng thái tinh gọn, hiện đại tương tự Gemini và ChatGPT, thay thế cho khung hộp lớn thô kệch hiện tại.
+### Requirement: Shimmering thinking text and complete trace removal
+Hệ thống SHALL hiển thị tiến trình xử lý dưới dạng dòng text thinking thuần túy với hiệu ứng gradient chuyển động (shimmering wave) trong lúc chờ câu trả lời, và SHALL tự động xóa bỏ hoàn toàn tiến trình sau khi hoàn tất đoạn chat.
 
 #### Scenario: AI is processing the question
 - **WHEN** hệ thống đang thực hiện các bước xử lý câu hỏi (`analyzing`, `searching`, `selecting`, hoặc `generating`)
-- **THEN** giao diện hiển thị dòng trạng thái inline gọn gàng kèm biểu tượng chuyển động hoặc icon tinh tế và nhãn trạng thái tương ứng, không hiển thị khung nền màu đậm choáng chỗ.
+- **THEN** giao diện hiển thị dòng text thuần túy thanh thoát kèm icon `Sparkles` nhỏ với hiệu ứng gradient ánh sáng lướt qua (`animate-thinking-shimmer`), không hiển thị khung viền hay cấu trúc bảng.
 
 #### Scenario: AI completes the response
 - **WHEN** quá trình sinh câu trả lời hoàn tất (`completed`)
-- **THEN** thanh tiến trình tự động thu gọn thành một nút/pill tinh tế ("Đã tra cứu căn cứ pháp lý") kèm biểu tượng mở rộng, không làm xao nhãng nội dung trả lời chính.
-
-#### Scenario: User expands completed processing trace
-- **WHEN** người dùng bấm vào thanh tiến trình đã thu gọn
-- **THEN** giao diện hiển thị danh sách các bước đã hoàn tất theo định dạng timeline tối giản, rõ ràng và trang nhã.
+- **THEN** component tiến trình trả về `null` và biến mất hoàn toàn khỏi DOM, không hiển thị pill button hay bảng danh sách quá trình nào.
 
 ### Requirement: Responsive full-width chat layout on sidebar toggle
 Hệ thống SHALL thu gọn hoàn toàn chiều rộng của Sidebar về 0 (`w-0`) khi người dùng đóng Sidebar, đảm bảo khung chat chính mở rộng phủ kín 100% chiều ngang màn hình mà không để lại khoảng trống thừa.
