@@ -1,13 +1,12 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Send, PanelLeft, LibraryBig, Check, ChevronDown, Square, ArrowDown, X } from 'lucide-react';
+import { Send, PanelLeft, LibraryBig, Check, ChevronDown, Square, ArrowDown } from 'lucide-react';
 import { ProviderSelector } from './ProviderSelector';
 import { ChatMessage } from './ChatMessage';
 import { Sidebar } from './Sidebar';
 import { ChatEmptyState } from './ChatEmptyState';
 import type { ChatProcessingStage } from './ChatProcessingTrace';
-import { LegalSourceList } from './LegalSources';
 import { CHAT_CONTENT_WIDTH_CLASS, CHAT_ROW_WIDTH_CLASS } from './layout';
 import { useChatSessions } from '@/hooks/use-chat-sessions';
 import { useClickOutside } from '@/hooks/use-click-outside';
@@ -59,8 +58,6 @@ export function ChatInterface() {
   // States for mini-map
   const [activeMessageId, setActiveMessageId] = useState<string | null>(null);
   const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
-
-  const [drawerContext, setDrawerContext] = useState<DocumentChunk[] | null>(null);
 
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
@@ -123,28 +120,6 @@ export function ChatInterface() {
       }
     }
   };
-
-  // Auto-sync Drawer Context when activeMessageId changes (if Drawer is open)
-  useEffect(() => {
-    if (activeMessageId) {
-      const userIndex = currentMessages.findIndex(m => m.id === activeMessageId);
-      if (userIndex !== -1 && userIndex + 1 < currentMessages.length) {
-        const nextMsg = currentMessages[userIndex + 1];
-        if (nextMsg.role === 'assistant') {
-          setDrawerContext(prev => {
-            if (prev !== null) {
-              if (nextMsg.contextUsed && nextMsg.contextUsed.length > 0) {
-                return prev !== nextMsg.contextUsed ? nextMsg.contextUsed : prev;
-              } else {
-                return []; // Open but empty context
-              }
-            }
-            return prev;
-          });
-        }
-      }
-    }
-  }, [activeMessageId, currentMessages]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -461,8 +436,10 @@ export function ChatInterface() {
         />
       )}
 
-      <div className={`fixed inset-y-0 left-0 z-40 h-full w-72 overflow-hidden transition-transform duration-300 ease-in-out md:relative md:z-20 md:w-auto md:flex-shrink-0 md:transition-all ${
-        isSidebarOpen ? 'translate-x-0 md:w-64 md:opacity-100' : '-translate-x-full md:w-0 md:translate-x-0 md:opacity-0'
+      <div className={`fixed inset-y-0 left-0 z-40 h-full overflow-hidden transition-all duration-300 ease-in-out md:relative md:z-20 md:flex-shrink-0 ${
+        isSidebarOpen
+          ? 'w-72 md:w-64 translate-x-0 opacity-100 pointer-events-auto'
+          : 'w-0 -translate-x-full md:translate-x-0 opacity-0 pointer-events-none'
       }`}>
         <div className="h-full w-72 md:w-64">
           <Sidebar
@@ -484,18 +461,22 @@ export function ChatInterface() {
         <div className="flex items-center justify-between bg-white/80 dark:bg-[#171717]/80 backdrop-blur-md z-10 absolute top-0 left-0 right-0 px-4 py-3 border-b border-gray-200/60 dark:border-white/10 transition-colors">
           <div className="flex items-center gap-3">
             {!isSidebarOpen && (
-              <button onClick={() => setIsSidebarOpen(true)} className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-colors" title="Mở sidebar">
+              <button
+                onClick={() => setIsSidebarOpen(true)}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg text-gray-500 dark:text-gray-400 transition-colors"
+                title="Mở sidebar"
+              >
                 <PanelLeft className="w-5 h-5" />
               </button>
             )}
-            <span className="text-sm font-bold text-gray-800 tracking-tight md:hidden">VietLaw AI</span>
+            <span className="text-sm font-bold text-gray-800 dark:text-white tracking-tight md:hidden">VietLaw AI</span>
           </div>
           <div className="text-[10.5px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest px-3 py-1 rounded-full md:block hidden bg-blue-50 dark:bg-blue-500/10">
             Hệ thống tra cứu pháp luật thông minh
           </div>
           {CHAT_STORAGE_MODE === 'browser' && (
             <div className="text-[10px] font-medium text-slate-500 dark:text-slate-400 px-2 py-1 rounded-full bg-slate-100 dark:bg-white/10">
-              Lá»‹ch sá»­ chá»‰ lÆ°u trÃªn thiáº¿t bá»‹ nÃ y
+              Lịch sử chỉ lưu trên thiết bị này
             </div>
           )}
         </div>
@@ -574,9 +555,7 @@ export function ChatInterface() {
                         message={msg}
                         onRefine={(prompt) => handleSubmit(undefined, prompt)}
                         onRetry={previousUser ? () => handleSubmit(undefined, previousUser.content) : undefined}
-                        onOpenContext={setDrawerContext}
                         onFeedbackSubmit={handleFeedbackSubmit}
-                        isSourcesPanelOpen={drawerContext === msg.contextUsed}
                       />
                     );
                   })}
@@ -587,8 +566,6 @@ export function ChatInterface() {
                       message={streamingMessage}
                       isStreaming={true}
                       onRefine={(prompt) => handleSubmit(undefined, prompt)}
-                      onOpenContext={setDrawerContext}
-                      isSourcesPanelOpen={drawerContext === streamingMessage.contextUsed}
                     />
                   )}
                 </>
@@ -697,43 +674,6 @@ export function ChatInterface() {
             </div>
           </div>
         </div>
-      </div>
-
-
-
-      {/* Context Drawer */}
-      <div
-        className={`absolute md:relative top-0 right-0 h-full bg-white dark:bg-[#171717] shadow-[0_0_40px_rgba(0,0,0,0.1)] dark:shadow-none transition-all duration-300 z-50 border-l border-gray-200/60 dark:border-white/10 flex-shrink-0 overflow-hidden
-          ${drawerContext ? 'translate-x-0 md:w-[400px] w-full' : 'translate-x-full md:translate-x-0 md:w-0 w-full'}`}
-        id="legal-sources-panel"
-      >
-        {drawerContext && (
-          <div className="flex flex-col h-full">
-            <div className="h-14 flex items-center justify-between px-4 border-b border-gray-100 dark:border-white/10 bg-gray-50/50 dark:bg-[#171717]/50 flex-shrink-0 transition-colors">
-              <span className="text-[11px] font-bold uppercase tracking-widest text-blue-700 dark:text-blue-400">
-                Căn cứ pháp lý
-              </span>
-              <button
-                onClick={() => setDrawerContext(null)}
-                className="p-1.5 rounded-lg text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-white/8 transition-colors"
-                title="Đóng"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
-              <div className="space-y-3">
-                {drawerContext.length === 0 ? (
-                  <p className="text-gray-500 dark:text-gray-400 text-[13px] text-center mt-10 italic">
-                    Không có văn bản pháp lý trích dẫn cho đoạn chat này.
-                  </p>
-                ) : (
-                  <LegalSourceList sources={drawerContext} />
-                )}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
