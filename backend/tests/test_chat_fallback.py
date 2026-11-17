@@ -56,6 +56,7 @@ def test_chat_returns_http_error_when_llm_is_unavailable(monkeypatch):
     monkeypatch.setattr("app.api.chat.get_pipeline", lambda: DummyPipeline())
     monkeypatch.setattr("app.api.chat.get_llm", lambda **kwargs: (_ for _ in ()).throw(RuntimeError("LLM unavailable")))
     monkeypatch.setattr("app.services.pipeline._get_embedding", lambda *args, **kwargs: None)
+    monkeypatch.setattr("app.services.chat_orchestrator.ENABLE_SEMANTIC_CACHE", False)
 
     request = ChatRequest.model_validate({
         "messages": [{"role": "user", "content": "Câu hỏi mẫu"}],
@@ -86,6 +87,7 @@ def _run_chat_with_answer(monkeypatch, answer_text):
     monkeypatch.setattr("app.api.chat.get_output_parser", lambda: object())
     monkeypatch.setattr("app.api.chat._persist_completed_turn", fake_persist)
     monkeypatch.setattr("app.services.pipeline._get_embedding", lambda *args, **kwargs: None)
+    monkeypatch.setattr("app.services.chat_orchestrator.ENABLE_SEMANTIC_CACHE", False)
 
     request = ChatRequest.model_validate({
         "messages": [{"role": "user", "content": "Câu hỏi mẫu"}],

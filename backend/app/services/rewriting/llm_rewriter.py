@@ -17,11 +17,8 @@ class LLMRewriter(BaseRewriter):
     and translates slang/informal terms into formal legal terminology.
     """
     def __init__(self):
-        provider = PIPELINE_CONFIG.get("rewriter_model_provider", "ollama")
-        model_name = PIPELINE_CONFIG.get("rewriter_model_name", "qwen2.5:1.5b")
-        
-        self.llm = self._init_llm(provider, model_name)
-        
+        from app.services.llm import get_llm
+        self.llm = get_llm(role=REWRITER_ROLE)
         self.parser = JsonOutputParser(pydantic_object=RewriteResult)
         
         self.prompt = ChatPromptTemplate.from_messages([
@@ -44,19 +41,16 @@ Do not output any other text or markdown block outside the JSON."""),
         
         self.chain = self.prompt | self.llm | self.parser
 
-    def _init_llm(self, provider: str, model_name: str):
+    def _init_llm(self, provider: str = None, model_name: str = None):
         from app.services.llm import get_llm
-        # get_llm now automatically supports Hybrid Fallback (Local <-> Remote)
-        return get_llm(model_name)
+        return get_llm(role=REWRITER_ROLE)
 
     def rewrite(self, query: str, history: str = None, runtime_config=None) -> Tuple[str, List[str]]:
         try:
             chain = self.chain
             if runtime_config is not None:
                 from app.services.llm import get_llm
-                model_name = PIPELINE_CONFIG.get("rewriter_model_name", "qwen2.5:1.5b")
                 chain = self.prompt | get_llm(
-                    model_name=model_name,
                     runtime_config=runtime_config,
                     role=REWRITER_ROLE,
                 ) | self.parser
