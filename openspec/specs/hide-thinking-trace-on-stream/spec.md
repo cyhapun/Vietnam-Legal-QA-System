@@ -16,3 +16,13 @@ Giao diện tin nhắn SHALL chỉ hiển thị chỉ báo tiến trình suy ngh
 #### Scenario: Pre-response waiting phase
 - **WHEN** hệ thống đang phân tích hoặc tra cứu dữ liệu pháp lý và chưa có token câu trả lời nào (`!message.content?.trim()`)
 - **THEN** dòng tiến trình thinking trace hiển thị bình thường với hiệu ứng shimmering gradient.
+
+---
+
+### Requirement: Complete Dismissal of Trace during Answer Generation
+Giao diện tin nhắn SHALL trả về `null` cho component `ChatProcessingTrace` khi stage là `'generating'` và SHALL loại bỏ hoàn toàn nhãn *"Đang tổng hợp câu trả lời..."*.
+
+#### Scenario: Stage transitions to generating
+- **WHEN** hệ thống nhận được token câu trả lời và chuyển trạng thái sang `generating`
+- **THEN** component `ChatProcessingTrace` trả về `null` ngay lập tức.
+- **AND THEN** không xuất hiện dòng chữ *"Đang tổng hợp câu trả lời..."* trên giao diện.
