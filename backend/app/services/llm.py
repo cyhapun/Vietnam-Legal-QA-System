@@ -335,7 +335,7 @@ def get_llm(
         _append_unique_llm(entries, "google", GOOGLE_FALLBACK_MODEL, google_fallback_llm)
 
     if not entries:
-        raise RuntimeError("KhÃ´ng cÃ³ LLM provider nÃ o kháº£ dá»¥ng. HÃ£y kiá»ƒm tra cáº¥u hÃ¬nh provider vÃ  API key.")
+        raise RuntimeError("Không có LLM provider nào khả dụng. Hãy kiểm tra cấu hình provider và API key.")
 
     _primary_key, primary_llm = entries[0]
     fallbacks = [llm for _, llm in entries[1:]]

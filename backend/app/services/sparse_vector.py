@@ -46,21 +46,12 @@ class SparseVectorGenerator:
         for token in tokens:
             tf_counts[token] = tf_counts.get(token, 0) + 1
 
-        indices = []
-        values = []
-
+        sparse_map: Dict[int, float] = {}
         for token, count in tf_counts.items():
             index = self._hash_token(token)
-            
-            # Xử lý trường hợp hiếm: collision (2 từ hash ra cùng 1 index)
-            if index in indices:
-                idx_pos = indices.index(index)
-                values[idx_pos] += float(count)
-            else:
-                indices.append(index)
-                values.append(float(count))
+            sparse_map[index] = sparse_map.get(index, 0.0) + float(count)
 
         return {
-            "indices": indices,
-            "values": values
+            "indices": list(sparse_map.keys()),
+            "values": list(sparse_map.values()),
         }

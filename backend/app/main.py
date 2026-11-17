@@ -6,6 +6,7 @@ File này chỉ chịu trách nhiệm:
   3. Đăng ký routers
   4. Khởi tạo RAG Pipeline khi startup
 """
+from contextlib import asynccontextmanager
 import asyncio
 from pathlib import Path
 from urllib.parse import urlparse
@@ -164,6 +165,9 @@ def _check_qdrant() -> dict:
 def create_app() -> FastAPI:
     """Application factory — tạo và cấu hình FastAPI app."""
     application = FastAPI(title="VietLaw RAG Backend")
+    application.state.local_models_ready = not LOCAL_MODELS_PRELOAD_ENABLED
+    application.state.local_models_error = None
+    application.state.runtime_config_error = None
 
     # --- CORS Middleware ---
     application.add_middleware(
@@ -293,9 +297,8 @@ def create_app() -> FastAPI:
                     "durations_ms": {key: round(value, 3) for key, value in timings.items()},
                 }, ensure_ascii=False, sort_keys=True))
 
-    # --- Startup Event ---
-    @application.on_event("startup")
-    async def startup_event():
+    @asynccontextmanager
+    async def lifespan(app: FastAPI):
         """Load document metadata before serving requests, then initialize heavy services."""
         application.state.local_models_ready = not LOCAL_MODELS_PRELOAD_ENABLED
         application.state.local_models_error = None
@@ -307,7 +310,9 @@ def create_app() -> FastAPI:
         await asyncio.to_thread(load_knowledge_base)
         asyncio.create_task(asyncio.to_thread(_initialize_runtime_components_sync))
         logger.info("Document metadata loaded; remaining initialization scheduled in background")
+        yield
 
+    application.router.lifespan_context = lifespan
     return application
 
 
