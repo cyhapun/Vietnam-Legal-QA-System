@@ -155,7 +155,7 @@ export function ChatMessage({
               </div>
             )}
 
-            {!isUser && message.processingStage && message.processingStage !== 'completed' && (
+            {!isUser && !message.content?.trim() && message.processingStage && message.processingStage !== 'completed' && (
               <ChatProcessingTrace stage={message.processingStage} />
             )}
           </div>
