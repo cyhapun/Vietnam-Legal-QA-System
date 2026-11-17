@@ -15,12 +15,19 @@ for (const label of [
   'Đang tra cứu căn cứ pháp lý',
   'Đang chọn lọc thông tin phù hợp',
   'Đang tổng hợp câu trả lời',
-  'Tra cứu hoàn tất',
-  'Xem quá trình',
-  'Ẩn quá trình',
 ]) {
   if (!processingTrace.includes(label)) {
     throw new Error(`Missing processing label: ${label}`);
+  }
+}
+
+if (!processingTrace.includes('animate-thinking-shimmer')) {
+  throw new Error('Processing trace must use animate-thinking-shimmer class for thinking text effect');
+}
+
+for (const obsolete of ['Tra cứu hoàn tất', 'Xem quá trình', 'Ẩn quá trình', '<ol', 'ChevronDown']) {
+  if (processingTrace.includes(obsolete)) {
+    throw new Error(`Obsolete boxed/table elements should be removed from processing trace: ${obsolete}`);
   }
 }
 
@@ -64,8 +71,8 @@ if (!sidebar.includes('createPortal') || !sidebar.includes('document.body')) {
   throw new Error('Delete confirmation modal must be rendered via portal to document.body');
 }
 
-if (!processingTrace.includes('collapsed = true') || !processingTrace.includes('aria-controls={detailsId}')) {
-  throw new Error('Processing trace must support collapsed-by-default expanded details');
+if (!processingTrace.includes("stage === 'completed'") || !processingTrace.includes('return null')) {
+  throw new Error('Processing trace must return null when completed to remove the trace from the DOM');
 }
 
 if (processingTrace.includes('onCancel') || processingTrace.includes('Dừng trả lời')) {
