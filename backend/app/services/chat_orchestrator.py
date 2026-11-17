@@ -50,6 +50,7 @@ class PreparedTurnContext:
     domain: str
     queries: List[str]
     enable_reranker: bool
+    session_title: Optional[str] = None
     query_vector: Optional[List[float]] = None
     cached_response: Optional[Dict[str, Any]] = None
 
@@ -73,11 +74,20 @@ def filter_cited_context(output_text: str, context: list, max_citations: int = M
     return valid_citations
 
 
-def rewrite_query(rewriter, query: str, history: str) -> Tuple[str, List[str]]:
+def rewrite_query(rewriter, query: str, history: str) -> Tuple[str, List[str], Optional[str]]:
     try:
-        return rewriter.rewrite(query, history)
+        res = rewriter.rewrite(query, history)
     except TypeError:
-        return rewriter.rewrite(query)
+        res = rewriter.rewrite(query)
+
+    if hasattr(res, "domain") and hasattr(res, "queries"):
+        return res.domain, res.queries, getattr(res, "title", None)
+    if isinstance(res, tuple):
+        if len(res) >= 3:
+            return res[0], res[1], res[2]
+        if len(res) == 2:
+            return res[0], res[1], None
+    return "legal", [query], None
 
 
 async def persist_turn(
@@ -106,6 +116,7 @@ async def persist_completed_turn(
     user_content: str,
     ai_content: str,
     ai_context: list,
+    session_title: Optional[str] = None,
 ):
     """Persist a finished turn before client treats it as complete."""
     if CHAT_STORAGE_MODE != "postgres" or session_id == "unknown":
@@ -117,9 +128,10 @@ async def persist_completed_turn(
     ai_msg_id = str(_uuid.uuid4())
     user_time = datetime.utcnow()
     ai_time = user_time + timedelta(milliseconds=10)
+    title_to_use = session_title or request.sessionTitle or "Cuoc tro chuyen moi"
     await persist_turn(
         session_id=session_id,
-        session_title=request.sessionTitle or "Cuoc tro chuyen moi",
+        session_title=title_to_use,
         user_msg_id=user_msg_id,
         user_content=user_content,
         ai_msg_id=ai_msg_id,
@@ -128,6 +140,9 @@ async def persist_completed_turn(
         user_time=user_time,
         ai_time=ai_time,
     )
+    if session_title and session_title != request.sessionTitle:
+        from app.services.storage import update_session_title
+        await asyncio.to_thread(update_session_title, session_id, session_title)
 
 
 async def prepare_turn_context(
@@ -164,8 +179,9 @@ async def prepare_turn_context(
 
     # Query Rewriting
     enable_query_rewriter = PIPELINE_CONFIG.get("rewriter", "none") != "none"
+    generated_title = None
     if enable_query_rewriter:
-        domain, queries = await asyncio.to_thread(
+        domain, queries, generated_title = await asyncio.to_thread(
             rewrite_query,
             pipeline.rewriter,
             last_message,
@@ -177,7 +193,13 @@ async def prepare_turn_context(
     if domain != "chitchat":
         queries = (queries or [last_message])[:MAX_SUBQUERIES]
 
-    logger.info("Rewriter enabled=%s, domain=%s, queries=%s", enable_query_rewriter, domain, queries)
+    logger.info("Rewriter enabled=%s, domain=%s, queries=%s, title=%s", enable_query_rewriter, domain, queries, generated_title)
+
+    session_title = generated_title or request.sessionTitle
+    if not session_title and session_data:
+        session_title = session_data.get("title")
+    if not session_title:
+        session_title = "Cuộc trò chuyện mới"
 
     enable_reranker = PIPELINE_CONFIG.get("reranking", "none") != "none"
 
@@ -206,6 +228,7 @@ async def prepare_turn_context(
         domain=domain,
         queries=queries,
         enable_reranker=enable_reranker,
+        session_title=session_title,
         query_vector=query_vector,
         cached_response=cached_response,
     )
@@ -248,6 +271,7 @@ async def finalize_turn(
     domain: str,
     retrieved_docs: List[Document],
     persist_turn_fn: Optional[Callable] = None,
+    session_title: Optional[str] = None,
 ) -> Tuple[str, List[Dict[str, Any]]]:
     """Validate trích dẫn, lọc context, cập nhật cache, persist turn và kích hoạt memory summarization."""
     validation = validate_generated_citations(raw_text, frontend_context)
@@ -277,13 +301,23 @@ async def finalize_turn(
 
     # Lưu trữ turn vào Postgres
     persist_handler = persist_turn_fn or persist_completed_turn
-    await persist_handler(
-        request,
-        session_id,
-        last_message,
-        output_text,
-        final_context,
-    )
+    try:
+        await persist_handler(
+            request,
+            session_id,
+            last_message,
+            output_text,
+            final_context,
+            session_title=session_title,
+        )
+    except TypeError:
+        await persist_handler(
+            request,
+            session_id,
+            last_message,
+            output_text,
+            final_context,
+        )
 
     # Tóm tắt bộ nhớ bất đồng bộ
     if CHAT_STORAGE_MODE == "postgres" and session_id != "unknown":

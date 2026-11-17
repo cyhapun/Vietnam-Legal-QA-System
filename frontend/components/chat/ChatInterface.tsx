@@ -247,6 +247,9 @@ export function ChatInterface() {
       const contentType = response.headers.get('content-type') || '';
       if (contentType.includes('application/json')) {
         const data = await response.json();
+        if (data.sessionTitle) {
+          updateSessionTitle(data.sessionTitle);
+        }
         accumulated = data.text || '';
         contextUsed = (data.contextUsed || []).slice(0, 5);
         setProcessingStage('completed');
@@ -278,7 +281,9 @@ export function ChatInterface() {
           try {
             const event = JSON.parse(raw);
 
-            if (event.type === 'context') {
+            if (event.type === 'title' && event.title) {
+              updateSessionTitle(event.title);
+            } else if (event.type === 'context') {
               fullContext = event.data || [];
               contextUsed = fullContext;
               setStreamingContext(fullContext);

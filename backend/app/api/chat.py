@@ -120,10 +120,12 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
                 turn.last_message,
                 cached_text,
                 cached_context,
+                session_title=turn.session_title,
             )
             return {
                 "text": cached_text,
                 "contextUsed": cached_context,
+                "sessionTitle": turn.session_title,
             }
 
         retrieved_docs, context_text, frontend_context = await retrieve_turn_context(
@@ -174,11 +176,13 @@ async def chat_endpoint(request: ChatRequest, http_request: Request):
             domain=turn.domain,
             retrieved_docs=retrieved_docs,
             persist_turn_fn=_persist_completed_turn,
+            session_title=turn.session_title,
         )
 
         return {
             "text": final_text,
             "contextUsed": final_context,
+            "sessionTitle": turn.session_title,
         }
 
     except EmbeddingServiceError as e:
@@ -212,6 +216,9 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
             pipeline = get_pipeline()
             turn = await prepare_turn_context(request, pipeline)
 
+            if turn.session_title:
+                yield _sse({"type": "title", "title": turn.session_title})
+
             # Semantic cache hit -> stream từng từ nhanh chóng
             if turn.cached_response:
                 logger.info("Stream: Phản hồi được lấy từ Semantic Cache.")
@@ -230,6 +237,7 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
                     turn.last_message,
                     cached_text,
                     cached_context,
+                    session_title=turn.session_title,
                 )
                 yield _sse({"type": "done"})
                 return
@@ -288,6 +296,7 @@ async def chat_stream_endpoint(request: ChatRequest, http_request: Request):
                 domain=turn.domain,
                 retrieved_docs=retrieved_docs,
                 persist_turn_fn=_persist_completed_turn,
+                session_title=turn.session_title,
             )
 
             yield _sse({"type": "context", "data": final_context})

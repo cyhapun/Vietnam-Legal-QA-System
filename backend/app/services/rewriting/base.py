@@ -1,10 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 from pydantic import BaseModel, Field
 
 class RewriteResult(BaseModel):
     domain: str = Field(description="Domain of the query, either 'legal' or 'chitchat'")
     queries: List[str] = Field(description="List of search queries. Empty if domain is chitchat.")
+    title: Optional[str] = Field(default=None, description="Concise Vietnamese title for the chat session (3-6 words) if first turn. None otherwise.")
 
 class BaseRewriter(ABC):
     """
