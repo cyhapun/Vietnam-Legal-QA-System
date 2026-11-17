@@ -5,8 +5,6 @@ from typing import Any, Mapping
 
 
 GOOGLE_PROVIDER = "google"
-HUGGINGFACE_PROVIDER = "huggingface"
-OLLAMA_PROVIDER = "ollama"
 
 ANSWER_ROLE = "answer"
 REWRITER_ROLE = "rewriter"
@@ -27,22 +25,9 @@ class ProviderDefinition:
 
 GOOGLE_CHAT_MODELS = frozenset({
     "gemini-3.1-flash-lite",
+    "gemini-2.5-flash-lite",
+    "gemini-2.5-flash",
     "gemini-3.5-flash-lite",
-})
-
-HUGGINGFACE_CHAT_MODELS = frozenset({
-    "Qwen/Qwen2.5-7B-Instruct",
-    "meta-llama/Llama-3.1-8B-Instruct",
-    "deepseek-ai/DeepSeek-R1-Distill-Llama-8B",
-    "google/gemma-4-31B-it:novita",
-})
-
-OLLAMA_CHAT_MODELS = frozenset({
-    "qwen2.5:7b-instruct",
-    "qwen2.5:1.5b",
-    "llama3.1:8b",
-    "deepseek-r1:8b",
-    "gemma2:9b",
 })
 
 PROVIDER_REGISTRY: dict[str, ProviderDefinition] = {
@@ -52,21 +37,6 @@ PROVIDER_REGISTRY: dict[str, ProviderDefinition] = {
         base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
         models=GOOGLE_CHAT_MODELS,
         requires_api_key=True,
-    ),
-    HUGGINGFACE_PROVIDER: ProviderDefinition(
-        id=HUGGINGFACE_PROVIDER,
-        label="HuggingFace Router",
-        base_url="https://router.huggingface.co/v1",
-        models=HUGGINGFACE_CHAT_MODELS,
-        requires_api_key=True,
-    ),
-    OLLAMA_PROVIDER: ProviderDefinition(
-        id=OLLAMA_PROVIDER,
-        label="Ollama",
-        base_url="",
-        models=OLLAMA_CHAT_MODELS,
-        requires_api_key=False,
-        deployment_supported=False,
     ),
 }
 
@@ -91,9 +61,7 @@ def infer_provider_for_model(model_name: str) -> str:
     for provider_id, definition in PROVIDER_REGISTRY.items():
         if model in definition.models:
             return provider_id
-    if model.startswith("gemini-"):
-        return GOOGLE_PROVIDER
-    return HUGGINGFACE_PROVIDER
+    return GOOGLE_PROVIDER
 
 
 def redact_secret(value: str | None) -> str:

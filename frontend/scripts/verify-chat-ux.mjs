@@ -14,14 +14,28 @@ for (const label of [
   'Đang phân tích câu hỏi',
   'Đang tra cứu căn cứ pháp lý',
   'Đang chọn lọc thông tin phù hợp',
-  'Đang tổng hợp câu trả lời',
-  'Tra cứu hoàn tất',
-  'Xem quá trình',
-  'Ẩn quá trình',
 ]) {
   if (!processingTrace.includes(label)) {
     throw new Error(`Missing processing label: ${label}`);
   }
+}
+
+if (!processingTrace.includes('animate-thinking-shimmer')) {
+  throw new Error('Processing trace must use animate-thinking-shimmer class for thinking text effect');
+}
+
+for (const obsolete of ['Tra cứu hoàn tất', 'Xem quá trình', 'Ẩn quá trình', '<ol', 'ChevronDown', 'Đang tổng hợp']) {
+  if (processingTrace.includes(obsolete)) {
+    throw new Error(`Obsolete boxed/table elements or generating trace should be removed from processing trace: ${obsolete}`);
+  }
+}
+
+if (!processingTrace.includes("stage === 'generating'")) {
+  throw new Error('Processing trace must return null when stage is generating');
+}
+
+if (!chatMessage.includes('!message.content?.trim()') || !chatMessage.includes("'generating'")) {
+  throw new Error('ChatMessage must only render processing trace when there is no streaming content yet and stage is not generating');
 }
 
 if (chatInterface.includes('isLoading && !streamingText')) {
@@ -59,13 +73,21 @@ if (!sidebar.includes('/logo.png') || !chatMessage.includes('/logo.png') || !emp
   throw new Error('Brand logo mascot must be used in sidebar, chat messages, and empty state');
 }
 
+// Verification: Sidebar navigation items (Document Library removed)
+if (sidebar.includes('Kho Tài Liệu') || sidebar.includes('/docs') || sidebar.includes('LibraryBig')) {
+  throw new Error('Sidebar must not include Kho Tài Liệu or /docs link');
+}
+if (!sidebar.includes('Đoạn chat mới')) {
+  throw new Error('Sidebar must include Đoạn chat mới button');
+}
+
 // Verification: Delete confirmation modal rendered via portal to document.body
 if (!sidebar.includes('createPortal') || !sidebar.includes('document.body')) {
   throw new Error('Delete confirmation modal must be rendered via portal to document.body');
 }
 
-if (!processingTrace.includes('collapsed = true') || !processingTrace.includes('aria-controls={detailsId}')) {
-  throw new Error('Processing trace must support collapsed-by-default expanded details');
+if (!processingTrace.includes("stage === 'completed'") || !processingTrace.includes('return null')) {
+  throw new Error('Processing trace must return null when completed to remove the trace from the DOM');
 }
 
 if (processingTrace.includes('onCancel') || processingTrace.includes('Dừng trả lời')) {
@@ -106,6 +128,31 @@ for (const forbidden of [
   if (haystack.includes(forbidden)) {
     throw new Error(`User-facing chat UI contains forbidden technical text: ${forbidden}`);
   }
+}
+
+// Verification: Icon-only toolbar and true regeneration
+if (!chatMessage.includes('RotateCcw') || !chatMessage.includes('title="Tạo lại câu trả lời"')) {
+  throw new Error('ChatMessage toolbar must have a Regenerate button with tooltip "Tạo lại câu trả lời"');
+}
+
+if (!chatMessage.includes('title="Câu trả lời hữu ích"') || !chatMessage.includes('title="Báo cáo câu trả lời chưa chuẩn"')) {
+  throw new Error('ChatMessage toolbar must have Thumbs Up/Down buttons with Vietnamese tooltips');
+}
+
+if (!chatMessage.includes('Pencil') || !chatMessage.includes('title="Chỉnh sửa câu hỏi"')) {
+  throw new Error('User message toolbar must have an edit prompt button with Pencil icon');
+}
+
+if (chatMessage.includes('<span>Giải thích lại</span>') || chatMessage.includes('<span>Sao chép</span>')) {
+  throw new Error('Redundant text labels (Sao chép, Giải thích lại) must be removed for a clean icon-only toolbar');
+}
+
+if (!chatInterface.includes('handleRegenerate') || !chatInterface.includes('handleEditPrompt')) {
+  throw new Error('ChatInterface must implement handleRegenerate and handleEditPrompt handlers');
+}
+
+if (!chatInterface.includes('onRegenerate={handleRegenerate}') || !chatInterface.includes('onEditPrompt={handleEditPrompt}')) {
+  throw new Error('ChatInterface must pass onRegenerate and onEditPrompt callbacks to ChatMessage');
 }
 
 console.log('Chat UX verification passed.');

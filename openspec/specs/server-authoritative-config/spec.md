@@ -18,7 +18,7 @@ Hệ thống SHALL gỡ bỏ hoàn toàn giao diện trang `/admin`, các thành
 
 #### Scenario: Sidebar navigation items
 - **WHEN** người dùng mở giao diện chat
-- **THEN** thanh điều hướng bên trái chỉ hiển thị tùy chọn "Đoạn chat mới" và "Kho Tài Liệu", không hiển thị mục "Quản trị".
+- **THEN** thanh điều hướng bên trái chỉ hiển thị tùy chọn "Đoạn chat mới", không hiển thị mục "Quản trị" hay "Kho Tài Liệu".
 
 ### Requirement: Server-authoritative pipeline controls
 Hệ thống SHALL thực thi toàn bộ logic của pipeline RAG (retrieval candidate limit, Cross-Encoder reranker, Semantic Cache, Context token budget) theo cấu hình của máy chủ và SHALL NOT cho phép client ghi đè các tham số này thông qua chat request.

@@ -275,6 +275,17 @@ def initialize_storage() -> Dict[str, Any]:
             }
         )
 
+    # Đảm bảo có payload index cho các trường dùng để lọc (category, law_id)
+    for field in ("category", "law_id"):
+        try:
+            qdrant_client.create_payload_index(
+                collection_name=QDRANT_COLLECTION,
+                field_name=field,
+                field_schema=qdrant_models.PayloadSchemaType.KEYWORD,
+            )
+        except Exception:
+            pass
+
     from app.config import ENABLE_SEMANTIC_CACHE
     if ENABLE_SEMANTIC_CACHE:
         cache_collection = SEMANTIC_CACHE_COLLECTION
@@ -377,7 +388,10 @@ def ingest_json_documents() -> int:
         logger.warning("Could not check existing clauses: %s; proceeding with ingestion", exc)
 
     try:
-        if EMBEDDING_PROVIDER == "ollama":
+        if EMBEDDING_PROVIDER == "gemini":
+            from app.services.embedding.gemini import GeminiEmbedding
+            embedding_backend = GeminiEmbedding()
+        elif EMBEDDING_PROVIDER == "ollama":
             from app.services.embedding.ollama import OllamaEmbedding
             embedding_backend = OllamaEmbedding()
         else:

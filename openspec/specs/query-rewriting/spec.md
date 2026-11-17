@@ -22,3 +22,8 @@ The system SHALL intercept user queries and use the configured rewriter role LLM
 - **WHEN** the rewriting LLM fails to return valid JSON
 - **THEN** the system SHALL default to the "legal" domain and use the original user query for retrieval
 
+#### Scenario: Generating concise session title on first turn
+- **WHEN** a user starts a new conversation and sends their first query with no previous history
+- **THEN** the rewriter SHALL generate a concise Vietnamese title (3-6 words) summarizing the core legal topic in the JSON output
+- **AND THEN** the system transmits the title to the client to update the session display.
+

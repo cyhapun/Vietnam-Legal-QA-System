@@ -15,14 +15,13 @@ import inspect
 from typing import List, Dict, Any, Optional, Tuple
 
 from langchain_core.documents import Document
-from langchain_community.vectorstores import FAISS
-from langchain_community.vectorstores.utils import DistanceStrategy
 
 from app.config import (
     FAISS_INDEX_PATH, JSON_DATA_PATH, TRACKING_FILE, EMBEDDING_MODEL,
     EMBEDDING_BATCH_SIZE, EMBEDDING_MAX_RETRIES,
     EMBEDDING_SLEEP_BETWEEN_BATCHES, EMBEDDING_RETRY_BASE_WAIT,
-    EMBEDDING_PROVIDER, ENABLE_FAISS_FALLBACK, PIPELINE_CONFIG,
+    EMBEDDING_PROVIDER, ENABLE_FAISS_FALLBACK, JINA_RERANKER_FAIL_OPEN,
+    JINA_RERANKER_MODEL, PIPELINE_CONFIG,
     RETRIEVER_CANDIDATE_K, RETRIEVER_K, STORAGE_BACKEND, RUNTIME_PROFILE,
 )
 from app.services.knowledge_base import load_knowledge_base
@@ -39,6 +38,7 @@ from app.services.reranking import (
     NoReranker,
     CrossEncoderReranker,
     HuggingFaceEmbeddingSimilarityReranker,
+    JinaReranker,
     FallbackReranker,
 )
 from app.services.context_builder import NestedContextBuilder
@@ -90,9 +90,9 @@ class RAGPipeline:
         logger.info(
             "RAGPipeline initialized: rewriter=%s, search=%s, reranker=%s, context=%s",
             rewriter.__class__.__name__,
-            searcher.strategy_name,
-            reranker.strategy_name,
-            context_builder.strategy_name,
+            getattr(searcher, "strategy_name", searcher.__class__.__name__),
+            getattr(reranker, "strategy_name", reranker.__class__.__name__),
+            getattr(context_builder, "strategy_name", context_builder.__class__.__name__),
         )
 
     def retrieve(
@@ -124,7 +124,11 @@ class RAGPipeline:
 
         # Step 0: Rewrite & Route
         if domain is None or queries is None:
-            domain, queries = self.rewriter.rewrite(query)
+            rewrite_res = self.rewriter.rewrite(query)
+            if hasattr(rewrite_res, "domain") and hasattr(rewrite_res, "queries"):
+                domain, queries = rewrite_res.domain, rewrite_res.queries
+            else:
+                domain, queries = rewrite_res[0], rewrite_res[1]
             logger.debug("Rewriter domain: %s, queries: %s", domain, queries)
         
         if domain == "chitchat":
@@ -223,7 +227,11 @@ class RAGPipeline:
         # Step 0: Async Rewrite & Route
         import asyncio
         if domain is None or queries is None:
-            domain, queries = await asyncio.to_thread(self.rewriter.rewrite, query)
+            rewrite_res = await asyncio.to_thread(self.rewriter.rewrite, query)
+            if hasattr(rewrite_res, "domain") and hasattr(rewrite_res, "queries"):
+                domain, queries = rewrite_res.domain, rewrite_res.queries
+            else:
+                domain, queries = rewrite_res[0], rewrite_res[1]
             logger.debug("Rewriter domain: %s, queries: %s", domain, queries)
         
         if domain == "chitchat":
@@ -324,54 +332,41 @@ class RAGPipeline:
         docs: List[Document],
         token_budget: Optional[int],
     ) -> Tuple[List[Document], str]:
-        """Keep complete legal chunks while approximating four characters per token."""
+        """Prune context by dropping lowest-ranked chunks at the tail when exceeding token budget."""
         if not docs or token_budget is None:
             return docs, self.context_builder.build(docs)
 
-        full_context = self.context_builder.build(docs)
-        full_tokens = max(1, (len(full_context) + 3) // 4)
-        if full_tokens <= token_budget:
-            logger.info(
-                "Context budget %d tokens kept %d/%d documents (estimated=%d)",
-                token_budget,
-                len(docs),
-                len(docs),
-                full_tokens,
-            )
-            return docs, full_context
-
-        compact_builder = getattr(self.context_builder, "build_compact", None)
-        if callable(compact_builder):
-            compact_context = compact_builder(docs)
-            compact_tokens = max(1, (len(compact_context) + 3) // 4)
-            if compact_tokens <= token_budget:
+        selected = list(docs)
+        while len(selected) > 1:
+            context = self.context_builder.build(selected)
+            estimated_tokens = max(1, (len(context) + 3) // 4)
+            if estimated_tokens <= token_budget:
                 logger.info(
-                    "Context budget %d tokens kept %d/%d documents using compact context (estimated=%d)",
+                    "Context budget %d tokens kept %d/%d documents (estimated=%d)",
                     token_budget,
+                    len(selected),
                     len(docs),
-                    len(docs),
-                    compact_tokens,
+                    estimated_tokens,
                 )
-                return docs, compact_context
+                return selected, context
 
-        selected: List[Document] = []
-        context = ""
-        for doc in docs:
-            candidate_docs = [*selected, doc]
-            candidate_context = self.context_builder.build(candidate_docs)
-            estimated_tokens = max(1, (len(candidate_context) + 3) // 4)
-            if estimated_tokens <= token_budget or not selected:
-                selected = candidate_docs
-                context = candidate_context
-            else:
-                break
+            dropped = selected.pop()
+            dropped_id = dropped.metadata.get("id", "unknown") if hasattr(dropped, "metadata") else "unknown"
+            logger.info(
+                "Context budget exceeded (%d > %d), dropping lowest-ranked chunk: %s",
+                estimated_tokens,
+                token_budget,
+                dropped_id,
+            )
 
+        context = self.context_builder.build(selected)
+        estimated_tokens = max(1, (len(context) + 3) // 4)
         logger.info(
             "Context budget %d tokens kept %d/%d documents (estimated=%d)",
             token_budget,
             len(selected),
             len(docs),
-            max(1, (len(context) + 3) // 4) if context else 0,
+            estimated_tokens,
         )
         return selected, context
     def format_for_frontend(self, docs: List[Document]) -> List[Dict[str, Any]]:
@@ -386,23 +381,30 @@ class RAGPipeline:
 # Module-level state
 _embedding_cache: Dict[str, BaseEmbedding] = {}
 _pipeline: Optional[RAGPipeline] = None
-_faiss_vectorstore: Optional[FAISS] = None
+_faiss_vectorstore: Optional[Any] = None
 
 
 def _get_embedding(api_key: str = None) -> Optional[BaseEmbedding]:
     """Lazy init embedding model, cached by api_key."""
     global _embedding_cache
     
+    from app.config import EMBEDDING_PROVIDER
     credential_key = (
         hashlib.sha256(api_key.encode("utf-8")).hexdigest()[:16]
         if api_key
         else "default"
     )
-    cache_key = f"{RUNTIME_PROFILE}:{credential_key}"
+    cache_key = f"{RUNTIME_PROFILE}:{EMBEDDING_PROVIDER}:{credential_key}"
     if cache_key in _embedding_cache:
         return _embedding_cache[cache_key]
         
     try:
+        if EMBEDDING_PROVIDER == "gemini":
+            from app.services.embedding.gemini import GeminiEmbedding
+            gemini_emb = GeminiEmbedding()
+            _embedding_cache[cache_key] = gemini_emb
+            return gemini_emb
+
         from app.config import INFERENCE_STRATEGY
         hf_emb = HuggingFaceEndpointEmbedding(api_key=api_key)
         
@@ -462,6 +464,9 @@ def _embed_single_file(file_path: str, chunker, embedding) -> None:
 
         for attempt in range(EMBEDDING_MAX_RETRIES):
             try:
+                from langchain_community.vectorstores import FAISS
+                from langchain_community.vectorstores.utils import DistanceStrategy
+
                 if _faiss_vectorstore is None:
                     _faiss_vectorstore = FAISS.from_documents(
                         batch, lc_embeddings,
@@ -501,6 +506,8 @@ def _init_faiss_index(embedding) -> None:
     if os.path.exists(FAISS_INDEX_PATH):
         logger.info("Đang tải FAISS Index từ ổ cứng...")
         try:
+            from langchain_community.vectorstores import FAISS
+
             _faiss_vectorstore = FAISS.load_local(
                 FAISS_INDEX_PATH,
                 lc_embeddings,
@@ -563,14 +570,21 @@ def _create_reranker():
     """Tạo reranker dựa trên config, tích hợp Fallback."""
     strategy = PIPELINE_CONFIG.get("reranking", "none")
     max_candidates = PIPELINE_CONFIG.get("reranker_max_candidates", 20)
-    if RUNTIME_PROFILE == "serverless" and strategy == "cross_encoder":
+    if RUNTIME_PROFILE == "cloud" and strategy == "cross_encoder":
         logger.warning(
-            "Serverless runtime does not support local cross_encoder; "
-            "using embedding_similarity reranking instead."
+            "Cloud runtime does not support local cross_encoder; "
+            "using jina reranking instead."
         )
-        strategy = "embedding_similarity"
+        strategy = "jina"
     if strategy == "none":
         return NoReranker()
+    elif strategy == "jina":
+        model = PIPELINE_CONFIG.get("reranker_model") or JINA_RERANKER_MODEL
+        return JinaReranker(
+            model=model,
+            max_candidates=max_candidates,
+            fail_open=PIPELINE_CONFIG.get("reranker_fail_open", JINA_RERANKER_FAIL_OPEN),
+        )
     elif strategy in {"embedding_similarity", "remote_embedding_similarity"}:
         return HuggingFaceEmbeddingSimilarityReranker(
             model=EMBEDDING_MODEL,
@@ -591,7 +605,7 @@ def _create_reranker():
     else:
         raise ValueError(
             f"Unknown reranking strategy: {strategy} "
-            "(supported: none, cross_encoder, embedding_similarity)"
+            "(supported: none, cross_encoder, jina, embedding_similarity)"
         )
 
 

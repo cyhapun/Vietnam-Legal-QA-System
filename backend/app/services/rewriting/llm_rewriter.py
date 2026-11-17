@@ -1,5 +1,5 @@
 import json
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.exceptions import OutputParserException
@@ -17,11 +17,8 @@ class LLMRewriter(BaseRewriter):
     and translates slang/informal terms into formal legal terminology.
     """
     def __init__(self):
-        provider = PIPELINE_CONFIG.get("rewriter_model_provider", "ollama")
-        model_name = PIPELINE_CONFIG.get("rewriter_model_name", "qwen2.5:1.5b")
-        
-        self.llm = self._init_llm(provider, model_name)
-        
+        from app.services.llm import get_llm
+        self.llm = get_llm(role=REWRITER_ROLE)
         self.parser = JsonOutputParser(pydantic_object=RewriteResult)
         
         self.prompt = ChatPromptTemplate.from_messages([
@@ -31,11 +28,13 @@ Your task is to analyze user queries and format them for a legal vector search e
 2. Read the Conversation History (if provided) to understand the context. Then rewrite the Current User Query into a standalone, formal Vietnamese legal query. Resolve any pronouns or implicit references using the history.
 3. Translate informal terms/slang into formal legal terminology.
 4. Provide the formal standalone translation, and optionally 1-2 decomposed sub-queries if the question is complex.
+5. If the Conversation History is empty or this is the first turn, generate a concise Vietnamese title (3-6 words) summarizing the core topic (e.g. "Điều kiện chuyển nhượng đất", "Thủ tục cấp sổ đỏ", "Xử phạt nồng độ cồn"). If NOT the first turn or history exists, title MUST be null.
 
 You MUST respond strictly in the following JSON format:
 {{
   "domain": "legal" or "chitchat",
-  "queries": ["formal standalone translation", "sub-query (optional)"]
+  "queries": ["formal standalone translation", "sub-query (optional)"],
+  "title": "Concise Vietnamese title" or null
 }}
 
 Do not output any other text or markdown block outside the JSON."""),
@@ -44,19 +43,16 @@ Do not output any other text or markdown block outside the JSON."""),
         
         self.chain = self.prompt | self.llm | self.parser
 
-    def _init_llm(self, provider: str, model_name: str):
+    def _init_llm(self, provider: str = None, model_name: str = None):
         from app.services.llm import get_llm
-        # get_llm now automatically supports Hybrid Fallback (Local <-> Remote)
-        return get_llm(model_name)
+        return get_llm(role=REWRITER_ROLE)
 
-    def rewrite(self, query: str, history: str = None, runtime_config=None) -> Tuple[str, List[str]]:
+    def rewrite(self, query: str, history: str = None, runtime_config=None) -> Tuple[str, List[str], Optional[str]]:
         try:
             chain = self.chain
             if runtime_config is not None:
                 from app.services.llm import get_llm
-                model_name = PIPELINE_CONFIG.get("rewriter_model_name", "qwen2.5:1.5b")
                 chain = self.prompt | get_llm(
-                    model_name=model_name,
                     runtime_config=runtime_config,
                     role=REWRITER_ROLE,
                 ) | self.parser
@@ -67,16 +63,22 @@ Do not output any other text or markdown block outside the JSON."""),
             })
             domain = result.get("domain", "legal").lower()
             queries = result.get("queries", [])
+            raw_title = result.get("title")
+            title = None
+            if raw_title and isinstance(raw_title, str):
+                cleaned = raw_title.strip().strip('"').strip("'")
+                if cleaned and cleaned.lower() not in ("null", "none"):
+                    title = cleaned
             
             if not queries and domain == "legal":
                 queries = [query]
                 
-            return domain, queries
+            return domain, queries, title
             
         except OutputParserException as e:
             logger.error(f"Failed to parse JSON from LLM: {e}")
             # Robust fallback on parsing failure
-            return "legal", [query]
+            return "legal", [query], None
         except Exception as e:
             logger.error(f"Rewriting failed with error: {e}")
-            return "legal", [query]
+            return "legal", [query], None

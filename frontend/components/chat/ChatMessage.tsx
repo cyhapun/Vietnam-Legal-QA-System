@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
-import { User, Scale, BookOpen, Copy, Check, ThumbsUp, ThumbsDown, RotateCcw, Undo2 } from 'lucide-react';
+import { User, Scale, BookOpen, Copy, Check, ThumbsUp, ThumbsDown, RotateCcw, Undo2, Pencil } from 'lucide-react';
 import type { Message, DocumentChunk } from '@/lib/types';
 import { ChatProcessingTrace } from './ChatProcessingTrace';
 import { CHAT_CONTENT_WIDTH_CLASS, CHAT_ROW_WIDTH_CLASS } from './layout';
@@ -14,13 +14,25 @@ interface ChatMessageProps {
   message: Message;
   isStreaming?: boolean;
   onRefine?: (prompt: string) => void;
+  onRegenerate?: (messageId: string) => void;
+  onEditPrompt?: (prompt: string) => void;
   onOpenContext?: (context: DocumentChunk[]) => void;
   onFeedbackSubmit?: (messageId: string, type: 1 | -1, reason?: string, comment?: string) => void;
   onRetry?: () => void;
   isSourcesPanelOpen?: boolean;
 }
 
-export function ChatMessage({ message, isStreaming = false, onRefine, onOpenContext, onFeedbackSubmit, onRetry, isSourcesPanelOpen = false }: ChatMessageProps) {
+export function ChatMessage({
+  message,
+  isStreaming = false,
+  onRefine,
+  onRegenerate,
+  onEditPrompt,
+  onOpenContext,
+  onFeedbackSubmit,
+  onRetry,
+  isSourcesPanelOpen = false,
+}: ChatMessageProps) {
   const isUser = message.role === 'user';
   const [copied, setCopied] = useState(false);
   const [feedback, setFeedback] = useState<'up' | 'down' | null>(
@@ -30,7 +42,6 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
   const [reason, setReason] = useState('Sai luật');
   const [comment, setComment] = useState('');
   const [selectedCitation, setSelectedCitation] = useState<DocumentChunk | null>(null);
-  const [isProcessCollapsed, setIsProcessCollapsed] = useState(true);
 
   React.useEffect(() => {
     setFeedback(message.feedback === 1 ? 'up' : message.feedback === -1 ? 'down' : null);
@@ -144,35 +155,31 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
               </div>
             )}
 
-            {!isUser && message.processingStage && (
-              <ChatProcessingTrace
-                stage={message.processingStage}
-                collapsed={isProcessCollapsed}
-                onToggleCollapsed={() => setIsProcessCollapsed(current => !current)}
-              />
+            {!isUser && !message.content?.trim() && message.processingStage && !['completed', 'generating', 'idle'].includes(message.processingStage) && (
+              <ChatProcessingTrace stage={message.processingStage} />
             )}
           </div>
 
           {/* --- USER ONLY UI --- */}
           {isUser && (
-            <div className="flex items-center justify-end gap-1.5 mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-full max-w-[88%] pr-1">
+            <div className="flex items-center justify-end gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-full max-w-[88%] pr-1">
               <span className="text-[10px] text-gray-400 dark:text-gray-500 font-medium mr-1 tracking-wide">
                 {!isNaN(Number(message.id)) ? new Date(Number(message.id)).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : ''}
               </span>
               <button
                 onClick={handleCopy}
-                title={copied ? 'Đã sao chép!' : 'Sao chép'}
-                className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
+                title={copied ? 'Đã sao chép!' : 'Sao chép câu hỏi'}
+                className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
               >
                 {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
               </button>
-              {onRefine && (
+              {(onEditPrompt || onRefine) && (
                 <button
-                  onClick={() => onRefine(message.content)}
-                  title="Gửi lại"
-                  className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
+                  onClick={() => onEditPrompt ? onEditPrompt(message.content) : onRefine?.(message.content)}
+                  title="Chỉnh sửa câu hỏi"
+                  className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
                 >
-                  <Undo2 className="w-3.5 h-3.5" />
+                  <Pencil className="w-3.5 h-3.5" />
                 </button>
               )}
             </div>
@@ -182,30 +189,28 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
           {!isUser && (
             <>
               {/* Quick action row */}
-              <div className="mt-2 flex flex-wrap items-center gap-1">
-                <span className="text-[10px] text-gray-400 dark:text-gray-500 font-medium mr-2 tracking-wide">
+              <div className="mt-2 flex flex-wrap items-center gap-0.5 opacity-80 hover:opacity-100 transition-opacity">
+                <span className="text-[10px] text-gray-400 dark:text-gray-500 font-medium mr-1.5 tracking-wide">
                   {!isNaN(Number(message.id)) ? new Date(Number(message.id)).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : ''}
                 </span>
                 <button
                   onClick={handleCopy}
                   title={copied ? 'Đã sao chép!' : 'Sao chép câu trả lời'}
-                  className="quick-action-btn flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-medium text-gray-500 dark:text-gray-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+                  className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
                 >
                   {copied
                     ? <Check className="w-3.5 h-3.5 text-emerald-500" />
                     : <Copy className="w-3.5 h-3.5" />
                   }
-                  <span>{copied ? 'Đã chép' : 'Sao chép'}</span>
                 </button>
 
-                {onRefine && (
+                {(onRegenerate || onRefine) && !isStreaming && (
                   <button
-                    onClick={() => onRefine('Giải thích đơn giản hơn với ví dụ thực tế')}
-                    title="Yêu cầu giải thích đơn giản hơn"
-                    className="quick-action-btn flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-medium text-gray-500 dark:text-gray-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+                    onClick={() => onRegenerate ? onRegenerate(message.id) : onRefine?.('Giải thích đơn giản hơn với ví dụ thực tế')}
+                    title="Tạo lại câu trả lời"
+                    className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
-                    <span>Giải thích lại</span>
                   </button>
                 )}
 
@@ -213,27 +218,26 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
                   <button
                     onClick={onRetry}
                     title="Thử lại câu hỏi trước"
-                    className="quick-action-btn flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-medium text-gray-500 dark:text-gray-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+                    className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
                   >
                     <Undo2 className="w-3.5 h-3.5" />
-                    <span>Thử lại</span>
                   </button>
                 )}
 
-                <div className="w-px h-3.5 bg-gray-200 mx-1" />
+                <div className="w-px h-3.5 bg-gray-200 dark:bg-white/10 mx-1" />
 
                 <button
                   onClick={() => handleFeedbackClick('up')}
                   title="Câu trả lời hữu ích"
-                  className={`quick-action-btn p-1.5 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 ${feedback === 'up' ? 'text-emerald-500' : 'text-gray-400'}`}
+                  className={`p-1.5 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 hover:bg-gray-100 dark:hover:bg-white/10 ${feedback === 'up' ? 'text-emerald-500' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'}`}
                 >
                   <ThumbsUp className="w-3.5 h-3.5" />
                 </button>
                 <div className="relative">
                   <button
                     onClick={() => handleFeedbackClick('down')}
-                    title="Câu trả lời chưa tốt"
-                    className={`quick-action-btn p-1.5 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 ${feedback === 'down' ? 'text-red-400' : 'text-gray-400'}`}
+                    title="Báo cáo câu trả lời chưa chuẩn"
+                    className={`p-1.5 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 hover:bg-gray-100 dark:hover:bg-white/10 ${feedback === 'down' ? 'text-red-400' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'}`}
                   >
                     <ThumbsDown className="w-3.5 h-3.5" />
                   </button>

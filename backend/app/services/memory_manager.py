@@ -17,9 +17,8 @@ RULES:
 1. Ignore casual greetings or polite filler words.
 2. RETAIN ALL legal entities (Law names, Decrees, Articles, Clauses).
 3. RETAIN the user's core intent or factual background.
-4. Keep the summary under 100 words. Format as a concise paragraph or short bullet points.
-
-[OLD SUMMARY]:
+4. Keep the summary under 100 words. Format as a concise paragraph or short bullet points."""),
+    ("human", """[OLD SUMMARY]:
 {old_summary}
 
 [NEW INTERACTION]:
@@ -54,9 +53,8 @@ async def summarize_session(session_id: str, new_user_msg: str, new_ai_msg: str,
         
         new_interaction = f"User: {new_user_msg}\nAI: {new_ai_msg}"
         
-        # Use a lightweight model for summarization
+        # Use Google AI Studio for summarization
         llm = get_llm(
-            model_name="qwen2.5:1.5b",
             temperature=0.1,
             runtime_config=runtime_config,
             role=SUMMARIZER_ROLE,
