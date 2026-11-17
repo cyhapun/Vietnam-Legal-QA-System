@@ -73,6 +73,14 @@ if (!sidebar.includes('/logo.png') || !chatMessage.includes('/logo.png') || !emp
   throw new Error('Brand logo mascot must be used in sidebar, chat messages, and empty state');
 }
 
+// Verification: Sidebar navigation items (Document Library removed)
+if (sidebar.includes('Kho Tài Liệu') || sidebar.includes('/docs') || sidebar.includes('LibraryBig')) {
+  throw new Error('Sidebar must not include Kho Tài Liệu or /docs link');
+}
+if (!sidebar.includes('Đoạn chat mới')) {
+  throw new Error('Sidebar must include Đoạn chat mới button');
+}
+
 // Verification: Delete confirmation modal rendered via portal to document.body
 if (!sidebar.includes('createPortal') || !sidebar.includes('document.body')) {
   throw new Error('Delete confirmation modal must be rendered via portal to document.body');
