@@ -31,14 +31,7 @@
       "destination": {
         "service": "backend",
         "path": "/:path*"
-      },
-      "transforms": [
-        {
-          "type": "request.path",
-          "op": "set",
-          "args": "/:path*"
-        }
-      ]
+      }
     },
     {
       "source": "/(.*)",

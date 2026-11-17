@@ -291,3 +291,16 @@ def test_check_artifacts_in_cloud_mode(monkeypatch):
     assert artifacts["reranker"]["provider"] == "jina"
     assert artifacts["reranker"]["mode"] == "api"
     assert artifacts["reranker"]["weights"] is False
+
+
+def test_backend_strips_vercel_mount_prefix():
+    from fastapi.testclient import TestClient
+
+    app = main_module.create_app()
+    app.router.on_startup.clear()
+    client = TestClient(app)
+
+    assert client.get("/health").status_code == 200
+    assert client.get("/_/backend/health").status_code == 200
+    assert client.get("/_/backend/health").json() == {"status": "ok"}
+
