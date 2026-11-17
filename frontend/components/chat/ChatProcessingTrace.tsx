@@ -1,7 +1,7 @@
 'use client';
 
 import { useId } from 'react';
-import { Check, ChevronDown, Circle, Loader2, XCircle } from 'lucide-react';
+import { Check, ChevronDown, Circle, Loader2, Sparkles, XCircle } from 'lucide-react';
 
 export type ChatProcessingStage =
   | 'idle'
@@ -39,19 +39,19 @@ const ORDER: Record<ChatProcessingStage, number> = {
 
 function getSummary(stage: ChatProcessingStage): string {
   if (stage === 'analyzing') return 'Đang phân tích câu hỏi';
-  if (stage === 'searching') return 'Đang tra cứu pháp luật';
-  if (stage === 'selecting') return 'Đang kiểm tra thông tin phù hợp';
+  if (stage === 'searching') return 'Đang tra cứu căn cứ pháp lý';
+  if (stage === 'selecting') return 'Đang chọn lọc thông tin phù hợp';
   if (stage === 'generating') return 'Đang tổng hợp câu trả lời';
   if (stage === 'completed') return 'Tra cứu hoàn tất';
   if (stage === 'cancelled') return 'Đã dừng yêu cầu';
   if (stage === 'error') return 'Không thể hoàn tất yêu cầu';
-  return 'Đang tra cứu pháp luật';
+  return 'Đang xử lý';
 }
 
 function StatusIcon({ stage }: { stage: ChatProcessingStage }) {
-  if (stage === 'completed') return <Check className="h-4 w-4 text-emerald-600" />;
-  if (stage === 'cancelled' || stage === 'error') return <XCircle className="h-4 w-4 text-slate-500" />;
-  return <Loader2 className="h-4 w-4 animate-spin text-blue-600 motion-reduce:animate-none" aria-hidden="true" />;
+  if (stage === 'completed') return <Sparkles className="h-3.5 w-3.5 text-blue-500 dark:text-blue-400" />;
+  if (stage === 'cancelled' || stage === 'error') return <XCircle className="h-3.5 w-3.5 text-rose-500" />;
+  return <Loader2 className="h-3.5 w-3.5 animate-spin text-blue-500 motion-reduce:animate-none" aria-hidden="true" />;
 }
 
 export function ChatProcessingTrace({
@@ -69,24 +69,23 @@ export function ChatProcessingTrace({
   const detailsId = `${componentId}-processing-trace`;
   const toggleLabel = collapsed ? 'Xem quá trình' : 'Ẩn quá trình';
 
+  // --- COLLAPSED VIEW (Gemini / ChatGPT subtle inline pill) ---
   if (collapsed) {
     return (
-      <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2 text-sm text-slate-600 shadow-sm dark:border-white/10 dark:bg-white/5 dark:text-slate-300" aria-live="polite">
-        <div className="flex items-center justify-between gap-3">
-          <span className="inline-flex min-w-0 items-center gap-2 font-medium">
-            <StatusIcon stage={stage} />
-            <span className="truncate">{getSummary(stage)}</span>
-          </span>
+      <div className="mt-2 mb-1 inline-flex items-center gap-1.5" aria-live="polite">
+        <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-slate-100/70 py-1 px-3 text-xs font-medium text-slate-600 shadow-sm backdrop-blur-sm transition-all hover:bg-slate-200/60 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10">
+          <StatusIcon stage={stage} />
+          <span className="tracking-tight">{getSummary(stage)}</span>
           {onToggleCollapsed && (
             <button
               type="button"
               onClick={onToggleCollapsed}
-              className="inline-flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-blue-700 transition hover:bg-blue-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 dark:text-blue-300 dark:hover:bg-blue-500/20"
+              className="inline-flex shrink-0 items-center gap-0.5 rounded px-1.5 py-0.5 text-[11px] font-semibold text-blue-600 hover:text-blue-700 focus:outline-none focus-visible:ring-1 focus-visible:ring-blue-400 dark:text-blue-400 dark:hover:text-blue-300"
               aria-expanded="false"
               aria-controls={detailsId}
             >
-              {toggleLabel}
-              <ChevronDown className="h-3.5 w-3.5" />
+              <span>{toggleLabel}</span>
+              <ChevronDown className="h-3 w-3" />
             </button>
           )}
         </div>
@@ -94,55 +93,68 @@ export function ChatProcessingTrace({
     );
   }
 
+  // --- EXPANDED VIEW (Sleek minimalist reasoning timeline) ---
   return (
     <section
-      className="mt-3 rounded-2xl border border-blue-100 bg-blue-50/60 p-4 shadow-sm dark:border-blue-500/20 dark:bg-blue-500/10"
+      className="mt-2.5 mb-1.5 rounded-2xl border border-slate-200/80 bg-slate-50/80 p-3.5 shadow-sm transition-all dark:border-white/10 dark:bg-white/[0.03] backdrop-blur-sm"
       aria-live="polite"
       aria-label="Tiến trình xử lý"
       id={detailsId}
     >
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h3 className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-slate-100">
-            <StatusIcon stage={stage} />
+      <div className="flex items-center justify-between gap-3 border-b border-slate-200/60 pb-2.5 dark:border-white/5">
+        <div className="flex items-center gap-2">
+          <StatusIcon stage={stage} />
+          <h3 className="text-xs font-semibold text-slate-800 dark:text-slate-200">
             {getSummary(stage)}
           </h3>
-          <p className="mt-1 text-xs leading-5 text-slate-500 dark:text-slate-400">
-            Quá trình này chỉ mô tả các bước xử lý tổng quan.
-          </p>
         </div>
 
         {onToggleCollapsed && (
           <button
             type="button"
             onClick={onToggleCollapsed}
-            className="shrink-0 rounded-lg px-2 py-1 text-xs font-semibold text-blue-700 transition hover:bg-blue-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 dark:text-blue-300 dark:hover:bg-blue-500/20"
+            className="inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-xs font-medium text-slate-500 transition hover:bg-slate-200/60 hover:text-slate-700 focus:outline-none focus-visible:ring-1 focus-visible:ring-blue-400 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-slate-200"
             aria-expanded="true"
             aria-controls={detailsId}
           >
-            {toggleLabel}
+            <span>{toggleLabel}</span>
+            <ChevronDown className="h-3 w-3 rotate-180 transition-transform" />
           </button>
         )}
       </div>
 
-      <ol className="mt-3 space-y-2">
+      <ol className="mt-2.5 space-y-2 pl-1">
         {STEPS.map((step, index) => {
           const complete = isDone || activeIndex > index;
           const active = !isTerminal && activeIndex === index;
           return (
-            <li key={step.key} className="flex items-center gap-2 text-sm">
+            <li key={step.key} className="flex items-center gap-2.5 text-xs">
               <span
-                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
+                className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full transition-colors ${
                   complete
-                    ? 'border-emerald-500 bg-emerald-500 text-white'
+                    ? 'bg-emerald-500/15 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400'
                     : active
-                      ? 'border-blue-500 bg-white text-blue-600 dark:bg-slate-950'
-                      : 'border-slate-300 bg-white text-slate-400 dark:border-slate-700 dark:bg-slate-950'
+                      ? 'bg-blue-500/15 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400 ring-2 ring-blue-500/30'
+                      : 'bg-slate-200/70 text-slate-400 dark:bg-slate-800 dark:text-slate-500'
                 }`}
               >
-                {complete ? <Check className="h-3 w-3" /> : active ? <Loader2 className="h-3 w-3 animate-spin motion-reduce:animate-none" /> : <Circle className="h-2 w-2 fill-current" />}
+                {complete ? (
+                  <Check className="h-2.5 w-2.5 stroke-[2.5]" />
+                ) : active ? (
+                  <Loader2 className="h-2.5 w-2.5 animate-spin" />
+                ) : (
+                  <Circle className="h-1.5 w-1.5 fill-current" />
+                )}
               </span>
-              <span className={`${complete ? 'text-slate-700 dark:text-slate-200' : active ? 'font-semibold text-blue-800 dark:text-blue-200' : 'text-slate-500 dark:text-slate-400'}`}>
+              <span
+                className={`transition-colors ${
+                  complete
+                    ? 'text-slate-600 dark:text-slate-300'
+                    : active
+                      ? 'font-semibold text-blue-700 dark:text-blue-300'
+                      : 'text-slate-400 dark:text-slate-500'
+                }`}
+              >
                 {complete ? step.doneLabel : active ? step.activeLabel : step.label}
               </span>
             </li>

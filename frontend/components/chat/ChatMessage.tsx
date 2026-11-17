@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import { User, Scale, BookOpen, Copy, Check, ThumbsUp, ThumbsDown, RotateCcw, Undo2 } from 'lucide-react';
 import type { Message, DocumentChunk } from '@/lib/types';
 import { ChatProcessingTrace } from './ChatProcessingTrace';
-import { dedupeLegalSources, LegalSourcesTrigger } from './LegalSources';
 import { CHAT_CONTENT_WIDTH_CLASS, CHAT_ROW_WIDTH_CLASS } from './layout';
 
 export type { Message, DocumentChunk } from '@/lib/types';
@@ -84,11 +84,15 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
               <User className="w-4 h-4 text-gray-500 dark:text-gray-400" />
             </div>
           ) : (
-            <div
-              className="w-8 h-8 rounded-xl flex items-center justify-center shadow-md shadow-blue-500/20"
-              style={{ background: 'linear-gradient(135deg, #2563EB, #1D4ED8)' }}
-            >
-              <Scale className="w-4 h-4 text-white" />
+            <div className="relative w-8 h-8 flex-shrink-0 flex items-center justify-center">
+              <Image
+                src="/logo.png"
+                alt="VietLaw AI Assistant"
+                width={32}
+                height={32}
+                className="w-full h-full object-contain drop-shadow-sm"
+                unoptimized
+              />
             </div>
           )}
         </div>
@@ -271,15 +275,6 @@ export function ChatMessage({ message, isStreaming = false, onRefine, onOpenCont
                     </div>
                   )}
                 </div>
-              </div>
-
-              <div className={CHAT_CONTENT_WIDTH_CLASS}>
-                <LegalSourcesTrigger
-                  sources={message.contextUsed}
-                  onOpenAll={onOpenContext}
-                  controlsId="legal-sources-panel"
-                  expanded={isSourcesPanelOpen && dedupeLegalSources(message.contextUsed || []).length > 0}
-                />
               </div>
             </>
           )}

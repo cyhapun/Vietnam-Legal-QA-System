@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import Image from 'next/image';
 import { Plus, MessageSquare, Trash2, Scale, PanelLeftClose, Search, Moon, Sun, LibraryBig } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
@@ -28,7 +30,12 @@ export function Sidebar({
 }: SidebarProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [sessionToDelete, setSessionToDelete] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
   const { theme, setTheme, systemTheme } = useTheme();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   
   const currentTheme = theme === 'system' ? systemTheme : theme;
 
@@ -57,11 +64,16 @@ export function Sidebar({
       {/* Header with glassmorphism */}
       <div className="h-14 flex items-center justify-between px-4 mt-1 flex-shrink-0">
         <div className="flex items-center gap-2.5">
-          <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20"
-            style={{ background: 'linear-gradient(135deg, #2563EB, #1D4ED8)' }}
-          >
-            <Scale className="w-4 h-4 text-white" />
+          <div className="relative w-8 h-8 flex-shrink-0 flex items-center justify-center">
+            <Image
+              src="/logo.png"
+              alt="VietLaw AI Logo"
+              width={32}
+              height={32}
+              className="w-full h-full object-contain drop-shadow-sm"
+              priority
+              unoptimized
+            />
           </div>
           <div>
             <span className="text-sm font-bold text-gray-800 dark:text-white tracking-tight">VietLaw AI</span>
@@ -192,11 +204,14 @@ export function Sidebar({
         </button>
       </div>
 
-      {/* Delete Confirmation Modal */}
-      {sessionToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setSessionToDelete(null)}>
+      {/* Delete Confirmation Modal rendered to body via Portal */}
+      {mounted && sessionToDelete && createPortal(
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 dark:bg-black/70 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={() => setSessionToDelete(null)}
+        >
           <div 
-            className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-2xl p-6 w-[90%] max-w-sm transform transition-all animate-in zoom-in-95 duration-200"
+            className="bg-white dark:bg-[#171717] border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl p-6 w-[90%] max-w-sm transform transition-all animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center gap-3 mb-4 text-red-500">
@@ -228,7 +243,8 @@ export function Sidebar({
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

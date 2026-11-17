@@ -5,9 +5,9 @@ const root = process.cwd();
 const chatInterface = readFileSync(resolve(root, 'components/chat/ChatInterface.tsx'), 'utf8');
 const chatMessage = readFileSync(resolve(root, 'components/chat/ChatMessage.tsx'), 'utf8');
 const processingTrace = readFileSync(resolve(root, 'components/chat/ChatProcessingTrace.tsx'), 'utf8');
-const legalSources = readFileSync(resolve(root, 'components/chat/LegalSources.tsx'), 'utf8');
 const emptyState = readFileSync(resolve(root, 'components/chat/ChatEmptyState.tsx'), 'utf8');
 const providerSelector = readFileSync(resolve(root, 'components/chat/ProviderSelector.tsx'), 'utf8');
+const sidebar = readFileSync(resolve(root, 'components/chat/Sidebar.tsx'), 'utf8');
 const proxyRoute = readFileSync(resolve(root, 'app/api/chat/route.ts'), 'utf8');
 
 for (const label of [
@@ -40,32 +40,28 @@ if (!chatInterface.includes('abortControllerRef.current.abort()') || !proxyRoute
   throw new Error('Cancel must abort the client stream and proxy fetch');
 }
 
-if (!chatMessage.includes('LegalSourcesTrigger') || !legalSources.includes('{deduped.length}')) {
-  throw new Error('Assistant messages must render compact legal source trigger with dynamic deduplicated count');
+// Verification: LegalSourcesTrigger and side panel are removed
+if (chatMessage.includes('LegalSourcesTrigger')) {
+  throw new Error('Legal sources trigger should be removed from assistant message footer');
 }
 
-if (!legalSources.includes('rounded-full') || !legalSources.includes('min-w-6') || !legalSources.includes('h-6')) {
-  throw new Error('Legal source count must render as a centered rounded badge');
+if (chatInterface.includes('id="legal-sources-panel"')) {
+  throw new Error('Side drawer for legal sources should be removed');
 }
 
-if (!legalSources.includes('aria-label={`Mở ${deduped.length} căn cứ pháp lý`}')) {
-  throw new Error('Legal source trigger must expose an accessible count label');
+// Verification: Inline citation modal is preserved
+if (!chatMessage.includes('selectedCitation') || !chatMessage.includes('setSelectedCitation')) {
+  throw new Error('Assistant message must preserve inline citation modal interaction');
 }
 
-if (!legalSources.includes('dedupeLegalSources') || !legalSources.includes('LegalSourceList')) {
-  throw new Error('Legal sources must share deduplication and render full cards in the side panel');
+// Verification: Brand logo mascot is integrated
+if (!sidebar.includes('/logo.png') || !chatMessage.includes('/logo.png') || !emptyState.includes('/logo.png')) {
+  throw new Error('Brand logo mascot must be used in sidebar, chat messages, and empty state');
 }
 
-if (!chatInterface.includes('id="legal-sources-panel"') || !chatInterface.includes('LegalSourceList sources={drawerContext}')) {
-  throw new Error('Legal sources trigger must open the existing side panel');
-}
-
-if (legalSources.includes('contextUsed.length') || legalSources.includes('retrieval score') || legalSources.includes('reranker score')) {
-  throw new Error('Legal sources UI must not expose counts or scores');
-}
-
-if (legalSources.includes('md:grid-cols-2') || legalSources.includes('Mở bảng bên')) {
-  throw new Error('Legal source cards should not render as an inline grid or separate open-panel button');
+// Verification: Delete confirmation modal rendered via portal to document.body
+if (!sidebar.includes('createPortal') || !sidebar.includes('document.body')) {
+  throw new Error('Delete confirmation modal must be rendered via portal to document.body');
 }
 
 if (!processingTrace.includes('collapsed = true') || !processingTrace.includes('aria-controls={detailsId}')) {
@@ -106,7 +102,7 @@ for (const forbidden of [
   'retrieval score',
   'reranker score',
 ]) {
-  const haystack = [processingTrace, legalSources, emptyState, chatMessage].join('\n');
+  const haystack = [processingTrace, emptyState, chatMessage].join('\n');
   if (haystack.includes(forbidden)) {
     throw new Error(`User-facing chat UI contains forbidden technical text: ${forbidden}`);
   }
