@@ -1,13 +1,21 @@
 import { NextResponse } from 'next/server';
 import { FeedbackPayload } from '@/lib/types';
 
-const BACKEND_URL = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+function getBackendUrl(reqUrl: string): string {
+  let base = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+  if (base.startsWith('/')) {
+    const { origin } = new URL(reqUrl);
+    base = `${origin}${base}`;
+  }
+  return base.replace(/\/+$/, '');
+}
 
 export async function POST(req: Request) {
   try {
     const payload: FeedbackPayload = await req.json();
+    const backendBase = getBackendUrl(req.url);
 
-    const response = await fetch(`${BACKEND_URL}/api/feedback`, {
+    const response = await fetch(`${backendBase}/api/feedback`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

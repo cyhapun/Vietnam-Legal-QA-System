@@ -1,4 +1,5 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "env": {
     "RUNTIME_PROFILE": "cloud",
     "CHAT_STORAGE_MODE": "browser",
@@ -8,14 +9,42 @@
   },
   "services": {
     "frontend": {
-      "entrypoint": "frontend",
-      "routePrefix": "/",
-      "framework": "nextjs"
+      "root": "frontend",
+      "framework": "nextjs",
+      "bindings": [
+        {
+          "type": "service",
+          "service": "backend",
+          "format": "url",
+          "env": "BACKEND_URL"
+        }
+      ]
     },
     "backend": {
-      "entrypoint": "backend",
-      "routePrefix": "/_/backend",
+      "root": "backend",
       "framework": "fastapi"
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/_/backend/:path*",
+      "destination": {
+        "service": "backend",
+        "path": "/:path*"
+      },
+      "transforms": [
+        {
+          "type": "request.path",
+          "op": "set",
+          "args": "/:path*"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "destination": {
+        "service": "frontend"
+      }
+    }
+  ]
 }
