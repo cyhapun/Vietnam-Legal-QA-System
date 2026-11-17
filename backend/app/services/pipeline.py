@@ -67,6 +67,26 @@ class RAGPipeline:
         self.reranker = reranker
         self.context_builder = context_builder
 
+        # Pre-resolve introspection once to eliminate inspect.signature reflection on each request
+        self._searcher_has_search = hasattr(self.searcher, "search")
+        self._searcher_takes_api_key = (
+            "api_key" in inspect.signature(self.searcher.search).parameters
+            if self._searcher_has_search
+            else False
+        )
+        self._searcher_has_asearch = hasattr(self.searcher, "asearch")
+        self._searcher_asearch_takes_api_key = (
+            "api_key" in inspect.signature(self.searcher.asearch).parameters
+            if self._searcher_has_asearch
+            else False
+        )
+        self._reranker_has_rerank = hasattr(self.reranker, "rerank")
+        self._reranker_takes_api_key = (
+            "api_key" in inspect.signature(self.reranker.rerank).parameters
+            if self._reranker_has_rerank
+            else False
+        )
+
         logger.info(
             "RAGPipeline initialized: rewriter=%s, search=%s, reranker=%s, context=%s",
             rewriter.__class__.__name__,
@@ -116,8 +136,7 @@ class RAGPipeline:
 
         # Step 1: Search
         # Truyền api_key xuống searcher nếu nó hỗ trợ
-        import inspect
-        if "api_key" in inspect.signature(self.searcher.search).parameters:
+        if self._searcher_takes_api_key:
             docs = self.searcher.search(
                 queries,
                 k=k,
@@ -150,8 +169,7 @@ class RAGPipeline:
 
         # Step 2: Rerank or keep search order.
         if enable_reranker:
-            rerank_parameters = inspect.signature(self.reranker.rerank).parameters
-            if "api_key" in rerank_parameters:
+            if self._reranker_takes_api_key:
                 docs = self.reranker.rerank(
                     query,
                     docs,
@@ -216,9 +234,8 @@ class RAGPipeline:
             queries = [query]
 
         # Step 1: Async Search
-        import inspect
-        if hasattr(self.searcher, "asearch"):
-            if "api_key" in inspect.signature(self.searcher.asearch).parameters:
+        if self._searcher_has_asearch:
+            if self._searcher_asearch_takes_api_key:
                 docs = await self.searcher.asearch(
                     queries,
                     k=k,
@@ -228,7 +245,7 @@ class RAGPipeline:
             else:
                 docs = await self.searcher.asearch(queries, k=k, category=category)
         else:
-            if "api_key" in inspect.signature(self.searcher.search).parameters:
+            if self._searcher_takes_api_key:
                 docs = await asyncio.to_thread(
                     self.searcher.search,
                     queries,
@@ -267,8 +284,7 @@ class RAGPipeline:
 
         # Step 2: Rerank or keep search order.
         if enable_reranker:
-            rerank_parameters = inspect.signature(self.reranker.rerank).parameters
-            if "api_key" in rerank_parameters:
+            if self._reranker_takes_api_key:
                 docs = self.reranker.rerank(
                     query,
                     docs,
