@@ -15,8 +15,6 @@ import inspect
 from typing import List, Dict, Any, Optional, Tuple
 
 from langchain_core.documents import Document
-from langchain_community.vectorstores import FAISS
-from langchain_community.vectorstores.utils import DistanceStrategy
 
 from app.config import (
     FAISS_INDEX_PATH, JSON_DATA_PATH, TRACKING_FILE, EMBEDDING_MODEL,
@@ -90,9 +88,9 @@ class RAGPipeline:
         logger.info(
             "RAGPipeline initialized: rewriter=%s, search=%s, reranker=%s, context=%s",
             rewriter.__class__.__name__,
-            searcher.strategy_name,
-            reranker.strategy_name,
-            context_builder.strategy_name,
+            getattr(searcher, "strategy_name", searcher.__class__.__name__),
+            getattr(reranker, "strategy_name", reranker.__class__.__name__),
+            getattr(context_builder, "strategy_name", context_builder.__class__.__name__),
         )
 
     def retrieve(
@@ -124,7 +122,11 @@ class RAGPipeline:
 
         # Step 0: Rewrite & Route
         if domain is None or queries is None:
-            domain, queries = self.rewriter.rewrite(query)
+            rewrite_res = self.rewriter.rewrite(query)
+            if hasattr(rewrite_res, "domain") and hasattr(rewrite_res, "queries"):
+                domain, queries = rewrite_res.domain, rewrite_res.queries
+            else:
+                domain, queries = rewrite_res[0], rewrite_res[1]
             logger.debug("Rewriter domain: %s, queries: %s", domain, queries)
         
         if domain == "chitchat":
@@ -223,7 +225,11 @@ class RAGPipeline:
         # Step 0: Async Rewrite & Route
         import asyncio
         if domain is None or queries is None:
-            domain, queries = await asyncio.to_thread(self.rewriter.rewrite, query)
+            rewrite_res = await asyncio.to_thread(self.rewriter.rewrite, query)
+            if hasattr(rewrite_res, "domain") and hasattr(rewrite_res, "queries"):
+                domain, queries = rewrite_res.domain, rewrite_res.queries
+            else:
+                domain, queries = rewrite_res[0], rewrite_res[1]
             logger.debug("Rewriter domain: %s, queries: %s", domain, queries)
         
         if domain == "chitchat":
@@ -324,54 +330,41 @@ class RAGPipeline:
         docs: List[Document],
         token_budget: Optional[int],
     ) -> Tuple[List[Document], str]:
-        """Keep complete legal chunks while approximating four characters per token."""
+        """Prune context by dropping lowest-ranked chunks at the tail when exceeding token budget."""
         if not docs or token_budget is None:
             return docs, self.context_builder.build(docs)
 
-        full_context = self.context_builder.build(docs)
-        full_tokens = max(1, (len(full_context) + 3) // 4)
-        if full_tokens <= token_budget:
-            logger.info(
-                "Context budget %d tokens kept %d/%d documents (estimated=%d)",
-                token_budget,
-                len(docs),
-                len(docs),
-                full_tokens,
-            )
-            return docs, full_context
-
-        compact_builder = getattr(self.context_builder, "build_compact", None)
-        if callable(compact_builder):
-            compact_context = compact_builder(docs)
-            compact_tokens = max(1, (len(compact_context) + 3) // 4)
-            if compact_tokens <= token_budget:
+        selected = list(docs)
+        while len(selected) > 1:
+            context = self.context_builder.build(selected)
+            estimated_tokens = max(1, (len(context) + 3) // 4)
+            if estimated_tokens <= token_budget:
                 logger.info(
-                    "Context budget %d tokens kept %d/%d documents using compact context (estimated=%d)",
+                    "Context budget %d tokens kept %d/%d documents (estimated=%d)",
                     token_budget,
+                    len(selected),
                     len(docs),
-                    len(docs),
-                    compact_tokens,
+                    estimated_tokens,
                 )
-                return docs, compact_context
+                return selected, context
 
-        selected: List[Document] = []
-        context = ""
-        for doc in docs:
-            candidate_docs = [*selected, doc]
-            candidate_context = self.context_builder.build(candidate_docs)
-            estimated_tokens = max(1, (len(candidate_context) + 3) // 4)
-            if estimated_tokens <= token_budget or not selected:
-                selected = candidate_docs
-                context = candidate_context
-            else:
-                break
+            dropped = selected.pop()
+            dropped_id = dropped.metadata.get("id", "unknown") if hasattr(dropped, "metadata") else "unknown"
+            logger.info(
+                "Context budget exceeded (%d > %d), dropping lowest-ranked chunk: %s",
+                estimated_tokens,
+                token_budget,
+                dropped_id,
+            )
 
+        context = self.context_builder.build(selected)
+        estimated_tokens = max(1, (len(context) + 3) // 4)
         logger.info(
             "Context budget %d tokens kept %d/%d documents (estimated=%d)",
             token_budget,
             len(selected),
             len(docs),
-            max(1, (len(context) + 3) // 4) if context else 0,
+            estimated_tokens,
         )
         return selected, context
     def format_for_frontend(self, docs: List[Document]) -> List[Dict[str, Any]]:
@@ -386,7 +379,7 @@ class RAGPipeline:
 # Module-level state
 _embedding_cache: Dict[str, BaseEmbedding] = {}
 _pipeline: Optional[RAGPipeline] = None
-_faiss_vectorstore: Optional[FAISS] = None
+_faiss_vectorstore: Optional[Any] = None
 
 
 def _get_embedding(api_key: str = None) -> Optional[BaseEmbedding]:
@@ -462,6 +455,9 @@ def _embed_single_file(file_path: str, chunker, embedding) -> None:
 
         for attempt in range(EMBEDDING_MAX_RETRIES):
             try:
+                from langchain_community.vectorstores import FAISS
+                from langchain_community.vectorstores.utils import DistanceStrategy
+
                 if _faiss_vectorstore is None:
                     _faiss_vectorstore = FAISS.from_documents(
                         batch, lc_embeddings,
@@ -501,6 +497,8 @@ def _init_faiss_index(embedding) -> None:
     if os.path.exists(FAISS_INDEX_PATH):
         logger.info("Đang tải FAISS Index từ ổ cứng...")
         try:
+            from langchain_community.vectorstores import FAISS
+
             _faiss_vectorstore = FAISS.load_local(
                 FAISS_INDEX_PATH,
                 lc_embeddings,
