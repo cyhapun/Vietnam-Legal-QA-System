@@ -51,19 +51,19 @@ Hệ thống SHALL hiển thị tiến trình xử lý dưới dạng dòng text
 - **THEN** component tiến trình trả về `null` và biến mất hoàn toàn khỏi DOM, không hiển thị pill button hay bảng danh sách quá trình nào.
 
 ### Requirement: Responsive full-width chat layout on sidebar toggle
-Hệ thống SHALL thu gọn hoàn toàn chiều rộng của Sidebar về 0 (`w-0`) khi người dùng đóng Sidebar, đảm bảo khung chat chính mở rộng phủ kín 100% chiều ngang màn hình mà không để lại khoảng trống thừa.
+Hệ thống SHALL thu gọn hoàn toàn chiều rộng của Sidebar về 0 (`w-0`) khi người dùng đóng Sidebar trên desktop (`≥ 1024px`, `lg:`), đảm bảo khung chat chính mở rộng phủ kín 100% chiều ngang màn hình mà không để lại khoảng trống thừa; đồng thời trên mobile và tablet (`< 1024px`) Sidebar hoạt động dạng overlay drawer mặc định đóng.
 
 #### Scenario: User collapses sidebar on desktop
-- **WHEN** người dùng bấm nút đóng Sidebar trên giao diện desktop
+- **WHEN** người dùng bấm nút đóng Sidebar trên giao diện desktop (`≥ 1024px`)
 - **THEN** Sidebar chuyển trạng thái sang `w-0` và ẩn hoàn toàn, đồng thời khung chat `flex-1` mở rộng chiếm trọn 100% viewport.
 - **AND THEN** nút mở Sidebar (`PanelLeft`) xuất hiện ở góc trên bên trái của header.
 
 #### Scenario: User reopens sidebar
 - **WHEN** người dùng nhấn nút mở Sidebar ở góc trên bên trái
-- **THEN** Sidebar mở rộng trở lại kích thước tiêu chuẩn (`md:w-64`) với hiệu ứng chuyển cảnh mượt mà.
+- **THEN** Sidebar mở rộng trở lại kích thước tiêu chuẩn (`lg:w-64` trên desktop hoặc overlay drawer `w-[82vw] max-w-[300px]` trên `< 1024px`) với hiệu ứng chuyển cảnh mượt mà.
 
 ### Requirement: Inline citation links preservation and removal of redundant bottom trigger & side drawer
-Hệ thống SHALL loại bỏ nút trigger `[📖 Căn cứ pháp lý 5 >]` ở chân mỗi tin nhắn và thanh Side Drawer trượt bên phải, đồng thời SHALL bảo lưu toàn bộ các liên kết trích dẫn `<cite>` trực tiếp trong văn bản câu trả lời kèm modal tra cứu chi tiết điều luật.
+Hệ thống SHALL loại bỏ nút trigger `[📖 Căn cứ pháp lý 5 >]` ở chân mỗi tin nhắn và thanh Side Drawer trượt bên phải, đồng thời SHALL bảo lưu toàn bộ các liên kết trích dẫn `<cite>` trực tiếp trong văn bản câu trả lời kèm modal tra cứu chi tiết điều luật được render qua `createPortal` tới `document.body`.
 
 #### Scenario: Viewing assistant message
 - **WHEN** câu trả lời của trợ lý AI được hiển thị
@@ -71,7 +71,7 @@ Hệ thống SHALL loại bỏ nút trigger `[📖 Căn cứ pháp lý 5 >]` ở
 
 #### Scenario: Clicking an inline citation link
 - **WHEN** người dùng nhấp vào tên một điều luật được trích dẫn trong văn bản câu trả lời (ví dụ: `Luật Đất đai 2024, Điều 27, Khoản 3`)
-- **THEN** modal chi tiết điều luật (`CitationModal`) hiển thị nội dung trích lục tương ứng ở chính giữa màn hình.
+- **THEN** modal chi tiết điều luật (`CitationModal`) được render qua `createPortal` tới `document.body`, hiển thị dạng bottom sheet trên mobile (`< sm`) và modal căn giữa trên tablet/desktop (`sm+`).
 
 ### Requirement: UX test suite alignment
 Hệ thống SHALL đồng bộ hóa script kiểm thử UX `frontend/scripts/verify-chat-ux.mjs` để kiểm chứng đúng thiết kế giao diện mới và đảm bảo tất cả bài kiểm thử đều vượt qua.
