@@ -1,39 +1,32 @@
-# 🎯 Fine-Tuning Legal Retrieval Models
+# Fine-Tuning Legal Retrieval Models
 
-Thư mục này chứa toàn bộ pipeline (data generation, notebooks, scripts) phục vụ cho việc huấn luyện tinh chỉnh (fine-tuning) các mô hình Retrieval cho ngôn ngữ pháp lý Việt Nam.
+This directory contains notebooks and scripts for fine-tuning domain-specific Vietnamese legal retrieval models (Bi-Encoder embeddings and Cross-Encoder rerankers).
 
-## 📂 Cấu trúc thư mục
+## Directory Structure
 
-```
+```text
 fine-tuning/
-│
-├── data/                       # Chứa dữ liệu huấn luyện
-│   ├── synthetic/              # Dữ liệu QA pairs được sinh từ LLM
-│   └── training/               # Dữ liệu đã format chuẩn (JSONL, CSV) cho training
-│
-├── embedding/                  # Tinh chỉnh Bi-Encoder (Embedding Model - BAAI/bge-m3)
+├── data/
+│   ├── synthetic/                    # LLM-generated query–clause QA pairs
+│   └── training/                     # Formatted JSONL/CSV training splits
+├── embedding/                        # Bi-Encoder fine-tuning (BAAI/bge-m3)
 │   ├── notebooks/
-│   │   ├── 01_data_generation.ipynb       # Dùng LLM (Gemma/Qwen) sinh câu hỏi từ Điều luật
-│   │   ├── 02_finetune_bge_m3.ipynb       # Script fine-tune Sentence-Transformers (MNRL loss)
-│   │   └── 03_evaluation.ipynb            # Đánh giá so sánh model gốc vs model đã finetune
-│   └── scripts/                           # Các script chạy training trên server
-│
-├── reranking/                  # Tinh chỉnh Cross-Encoder (Reranker)
+│   │   ├── 01_data_generation.ipynb  # Generate synthetic legal queries per clause
+│   │   ├── 02_finetune_bge_m3.ipynb  # Sentence-Transformers fine-tuning (MNRL loss)
+│   │   └── 03_evaluation.ipynb       # Base vs. fine-tuned embedding comparison
+│   └── scripts/                      # Server training scripts
+├── reranking/                        # Cross-Encoder fine-tuning (BAAI/bge-reranker-v2-m3)
 │   ├── notebooks/
-│   │   ├── 01_data_preparation.ipynb      # Lấy top-k từ FAISS tạo cặp (query, doc) hard-negatives
-│   │   ├── 02_finetune_cross_encoder.ipynb # Fine-tune mô hình classification
-│   │   └── 03_evaluation.ipynb            # Đánh giá điểm NDCG, MRR
-│   └── scripts/                           # Các script chạy training trên server
-│
-└── README.md                   # Hướng dẫn quy trình fine-tuning
+│   │   ├── 01_data_preparation.ipynb # Mine hard-negative (query, doc) pairs from vector search
+│   │   ├── 02_finetune_cross_encoder.ipynb
+│   │   └── 03_evaluation.ipynb       # NDCG / MRR evaluation
+│   └── scripts/                      # Server training scripts
+└── README.md
 ```
 
-## 🚀 Quy trình cơ bản
+## Workflow Summary
 
-### 1. Fine-tune Embedding (Bi-Encoder)
-- **Mục tiêu**: Kéo vector của Câu hỏi (Query) và Điều luật tương ứng (Positive Document) lại gần nhau. Đẩy các điều luật không liên quan (Negative) ra xa.
-- **Phương pháp**: Sử dụng Multiple Negatives Ranking Loss (MNRL). Cần tạo dataset có dạng `(query, positive_doc)`.
+1. **Bi-Encoder Fine-Tuning (`embedding/`)**: Trains `BAAI/bge-m3` with Multiple Negatives Ranking Loss (MNRL) on `(query, positive_clause)` pairs to pull legal queries closer to exact statutory clauses while pushing non-relevant articles apart.
+2. **Cross-Encoder Fine-Tuning (`reranking/`)**: Trains `BAAI/bge-reranker-v2-m3` with binary classification loss on `(query, clause, label)` pairs including hard negatives mined from dense retrieval, outputting calibrated relevance scores for top-K reranking.
 
-### 2. Fine-tune Reranker (Cross-Encoder)
-- **Mục tiêu**: Mô hình nhận vào cùng lúc `[Query, Document]` và dự đoán điểm Relevance (0 -> 1).
-- **Phương pháp**: Phân loại nhị phân (Binary Classification Loss). Cần dataset có dạng `(query, doc, label)` bao gồm cả Hard Negatives lấy từ vector search.
+For deploying trained artifacts locally in the backend, see [`../docs/local_model_integration.md`](../docs/local_model_integration.md).
