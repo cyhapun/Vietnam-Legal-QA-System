@@ -1,7 +1,4 @@
-/**
- * Hook quản lý toàn bộ logic chat sessions.
- * Tách từ ChatInterface.tsx để component chỉ lo render UI.
- */
+/** Hook managing chat sessions, lazy history loading, and browser/postgres storage sync. */
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';

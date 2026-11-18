@@ -1,14 +1,10 @@
-"""
-Reranking Module — Strategies cho việc xếp hạng lại kết quả search.
-
-Protocol:
-    BaseReranker: Interface chung cho tất cả reranking strategies.
+"""Reranking strategies for post-retrieval passage scoring.
 
 Implementations:
-    - NoReranker: Pass-through (không rerank, giữ nguyên thứ tự)
-    - CrossEncoderReranker: Dùng cross-encoder model cục bộ để rerank
-    - JinaReranker: Dùng Jina AI Cross-Encoder REST API (/v1/rerank) cho mode cloud
-    - HuggingFaceEmbeddingSimilarityReranker: Cosine similarity qua embedding API
+    - CrossEncoderReranker: Local fine-tuned BGE cross-encoder (local default)
+    - JinaReranker: Jina AI /v1/rerank multilingual cross-encoder (cloud default)
+    - HuggingFaceEmbeddingSimilarityReranker: Optional cosine similarity fallback
+    - NoReranker: Pass-through strategy
 """
 from app.services.reranking.base import BaseReranker
 from app.services.reranking.no_reranker import NoReranker

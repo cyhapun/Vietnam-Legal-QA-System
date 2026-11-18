@@ -350,7 +350,7 @@ export function ChatInterface() {
         }
       }
 
-      // Flush vao messages
+      // Persist final assistant turn
       const finalText = aborted
         ? `${accumulated}${accumulated ? '\n\n' : ''}Đã dừng yêu cầu.`
         : streamErrorMessage
@@ -417,7 +417,7 @@ export function ChatInterface() {
   const handleSubmit = async (e?: React.FormEvent, overrideText?: string) => {
     if (e) e.preventDefault();
 
-    // Neu dang loading: Enter/Click = huy
+    // Cancel active stream on Enter/Click while loading
     if (isLoading) {
       handleAbort();
       return;
@@ -507,7 +507,7 @@ export function ChatInterface() {
     </div>
   );
 
-  // Tin nhan dang stream (hien thi realtime)
+  // Active streaming assistant placeholder
   const streamingMessage: Message | null = isLoading
     ? {
         id: 'streaming',
