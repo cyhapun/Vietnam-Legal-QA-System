@@ -43,7 +43,19 @@ export function ChatInterface() {
   const categoryRef = useRef<HTMLDivElement>(null);
   const selectedLawCategory =
     LAW_CATEGORIES.find(category => category.id === lawCategory) ?? LAW_CATEGORIES[0];
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const DESKTOP_BREAKPOINT = 1024;
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Sync default sidebar visibility with desktop breakpoint (closed on mobile/tablet, open on desktop)
+  useEffect(() => {
+    const mql = window.matchMedia(`(min-width: ${DESKTOP_BREAKPOINT}px)`);
+    setIsSidebarOpen(mql.matches);
+    const handleViewportChange = (event: MediaQueryListEvent) => {
+      setIsSidebarOpen(event.matches);
+    };
+    mql.addEventListener('change', handleViewportChange);
+    return () => mql.removeEventListener('change', handleViewportChange);
+  }, []);
 
   // Streaming state
   const [streamingText, setStreamingText] = useState('');
@@ -60,18 +72,43 @@ export function ChatInterface() {
   const [activeMessageId, setActiveMessageId] = useState<string | null>(null);
   const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
 
-  const [touchStart, setTouchStart] = useState(0);
-  const [touchEnd, setTouchEnd] = useState(0);
+  // Ref-based edge-locked swipe tracking (prevents conflicts with vertical scroll & text selection)
+  const touchOriginRef = useRef<{ x: number; y: number } | null>(null);
+  const touchCurrentRef = useRef<{ x: number; y: number } | null>(null);
 
-  const handleTouchStart = (e: React.TouchEvent) => setTouchStart(e.targetTouches[0].clientX);
-  const handleTouchMove = (e: React.TouchEvent) => setTouchEnd(e.targetTouches[0].clientX);
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (window.innerWidth >= DESKTOP_BREAKPOINT || e.targetTouches.length !== 1) {
+      touchOriginRef.current = null;
+      return;
+    }
+    const touch = e.targetTouches[0];
+    touchOriginRef.current = { x: touch.clientX, y: touch.clientY };
+    touchCurrentRef.current = null;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!touchOriginRef.current || e.targetTouches.length !== 1) return;
+    const touch = e.targetTouches[0];
+    touchCurrentRef.current = { x: touch.clientX, y: touch.clientY };
+  };
+
   const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-    const distance = touchStart - touchEnd;
-    if (distance > 50 && isSidebarOpen) setIsSidebarOpen(false); // Swipe left
-    if (distance < -50 && !isSidebarOpen) setIsSidebarOpen(true); // Swipe right
-    setTouchStart(0);
-    setTouchEnd(0);
+    const start = touchOriginRef.current;
+    const end = touchCurrentRef.current;
+    touchOriginRef.current = null;
+    touchCurrentRef.current = null;
+    if (!start || !end) return;
+
+    const deltaX = end.x - start.x;
+    const deltaY = end.y - start.y;
+    const isPredominantlyHorizontal = Math.abs(deltaX) > Math.abs(deltaY) * 1.8;
+    if (!isPredominantlyHorizontal) return;
+
+    if (!isSidebarOpen && start.x <= 36 && deltaX > 64) {
+      setIsSidebarOpen(true);
+    } else if (isSidebarOpen && deltaX < -64) {
+      setIsSidebarOpen(false);
+    }
   };
 
   const userMessages = currentMessages.filter(m => m.role === 'user');
@@ -471,13 +508,13 @@ export function ChatInterface() {
 
   if (!isMounted) {
     return (
-      <div className="h-screen flex items-center justify-center" style={{ background: '#F8FAFC' }}>
+      <div className="h-dvh flex items-center justify-center bg-slate-50 dark:bg-[#171717] transition-colors">
         <div className="flex flex-col items-center gap-4">
           <div className="relative">
-            <div className="w-12 h-12 border-4 border-blue-100 rounded-full" />
+            <div className="w-12 h-12 border-4 border-blue-100 dark:border-blue-950 rounded-full" />
             <div className="w-12 h-12 border-4 border-blue-600 rounded-full border-t-transparent animate-spin absolute top-0 left-0" />
           </div>
-          <span className="text-gray-400 font-medium text-sm animate-pulse">Khởi tạo hệ thống...</span>
+          <span className="text-gray-400 dark:text-gray-500 font-medium text-sm animate-pulse">Khởi tạo hệ thống...</span>
         </div>
       </div>
     );
@@ -485,7 +522,7 @@ export function ChatInterface() {
 
   return (
     <div
-      className="flex h-screen overflow-hidden font-sans relative selection:bg-blue-100 dark:selection:bg-blue-500/30 transition-colors bg-slate-50 dark:bg-[#171717]"
+      className="flex h-dvh w-full overflow-hidden font-sans relative selection:bg-blue-100 dark:selection:bg-blue-500/30 transition-colors bg-slate-50 dark:bg-[#171717]"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -494,24 +531,27 @@ export function ChatInterface() {
         <button
           type="button"
           aria-label="Đóng danh sách hội thoại"
-          className="fixed inset-0 z-30 bg-slate-950/30 backdrop-blur-[1px] md:hidden"
+          className="fixed inset-0 z-30 bg-slate-950/40 backdrop-blur-[2px] lg:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
-      <div className={`fixed inset-y-0 left-0 z-40 h-full overflow-hidden transition-all duration-300 ease-in-out md:relative md:z-20 md:flex-shrink-0 ${
+      <div className={`fixed inset-y-0 left-0 z-40 h-full overflow-hidden transition-all duration-300 ease-in-out lg:relative lg:z-20 lg:flex-shrink-0 ${
         isSidebarOpen
-          ? 'w-72 md:w-64 translate-x-0 opacity-100 pointer-events-auto'
-          : 'w-0 -translate-x-full md:translate-x-0 opacity-0 pointer-events-none'
+          ? 'w-[82vw] max-w-[300px] lg:w-64 lg:max-w-none translate-x-0 opacity-100 pointer-events-auto shadow-2xl lg:shadow-none'
+          : 'w-0 -translate-x-full lg:translate-x-0 opacity-0 pointer-events-none'
       }`}>
-        <div className="h-full w-72 md:w-64">
+        <div className="h-full w-[82vw] max-w-[300px] lg:w-64 lg:max-w-none">
           <Sidebar
             sessions={sessions}
             currentSessionId={currentSessionId}
-            onNewChat={handleNewChat}
+            onNewChat={() => {
+              handleNewChat();
+              if (window.innerWidth < DESKTOP_BREAKPOINT) setIsSidebarOpen(false);
+            }}
             onSelectSession={(id) => {
               handleSelectSession(id);
-              if (window.innerWidth < 768) setIsSidebarOpen(false);
+              if (window.innerWidth < DESKTOP_BREAKPOINT) setIsSidebarOpen(false);
             }}
             onDeleteSession={handleDeleteSession}
             onCloseSidebar={() => setIsSidebarOpen(false)}
@@ -521,36 +561,41 @@ export function ChatInterface() {
       </div>
 
       <div className="flex-1 flex flex-col min-w-0 relative h-full">
-        <div className="flex items-center justify-between bg-white/80 dark:bg-[#171717]/80 backdrop-blur-md z-10 absolute top-0 left-0 right-0 px-4 py-3 border-b border-gray-200/60 dark:border-white/10 transition-colors">
-          <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between gap-2 bg-white/85 dark:bg-[#171717]/85 backdrop-blur-md z-10 absolute top-0 left-0 right-0 px-3 sm:px-4 pt-[max(0.625rem,env(safe-area-inset-top))] pb-2.5 border-b border-gray-200/60 dark:border-white/10 transition-colors">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             {!isSidebarOpen && (
               <button
                 onClick={() => setIsSidebarOpen(true)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg text-gray-500 dark:text-gray-400 transition-colors"
+                className="p-2 min-h-[40px] min-w-[40px] flex items-center justify-center hover:bg-gray-100 dark:hover:bg-white/10 rounded-xl text-gray-600 dark:text-gray-300 transition-colors shrink-0"
                 title="Mở sidebar"
+                aria-label="Mở danh sách hội thoại"
               >
                 <PanelLeft className="w-5 h-5" />
               </button>
             )}
-            <span className="text-sm font-bold text-gray-800 dark:text-white tracking-tight md:hidden">VietLaw AI</span>
+            <span className="text-sm font-bold text-gray-800 dark:text-white tracking-tight truncate lg:hidden">VietLaw AI</span>
           </div>
-          <div className="text-[10.5px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest px-3 py-1 rounded-full md:block hidden bg-blue-50 dark:bg-blue-500/10">
+          <div className="text-[10.5px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest px-3 py-1 rounded-full hidden lg:block bg-blue-50 dark:bg-blue-500/10 whitespace-nowrap">
             Hệ thống tra cứu pháp luật thông minh
           </div>
           {CHAT_STORAGE_MODE === 'browser' && (
-            <div className="text-[10px] font-medium text-slate-500 dark:text-slate-400 px-2 py-1 rounded-full bg-slate-100 dark:bg-white/10">
-              Lịch sử chỉ lưu trên thiết bị này
+            <div
+              className="text-[10px] font-medium text-slate-500 dark:text-slate-400 px-2.5 py-1 rounded-full bg-slate-100 dark:bg-white/10 whitespace-nowrap shrink-0"
+              title="Lịch sử chỉ lưu trên thiết bị này"
+            >
+              <span className="sm:hidden">Lưu cục bộ</span>
+              <span className="hidden sm:inline">Lịch sử chỉ lưu trên thiết bị này</span>
             </div>
           )}
         </div>
 
         {/* History Mini-map Stack */}
         {userMessages.length > 0 && (
-          <div className="absolute right-2 top-1/2 -translate-y-1/2 z-30 group hidden md:flex items-center">
+          <div className="absolute right-2 top-1/2 -translate-y-1/2 z-30 group hidden xl:flex items-center">
             {/* The Tooltip / Popup */}
             <div className="absolute right-full pr-4 py-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 pointer-events-none group-hover:pointer-events-auto z-50">
-              <div className="bg-white border border-gray-200/60 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] rounded-2xl w-72 max-h-[60vh] overflow-hidden flex flex-col relative">
-                <div className="overflow-y-auto custom-scrollbar p-2 relative z-10 bg-white">
+              <div className="bg-white dark:bg-[#1f1f1f] border border-gray-200/60 dark:border-white/10 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.18)] rounded-2xl w-72 max-h-[60dvh] overflow-hidden flex flex-col relative">
+                <div className="overflow-y-auto custom-scrollbar p-2 relative z-10 bg-white dark:bg-[#1f1f1f]">
                   {userMessages.map(msg => (
                     <button
                       key={msg.id}
@@ -562,8 +607,8 @@ export function ChatInterface() {
                       }}
                       className={`w-full text-left px-3 py-2.5 text-[13px] font-medium rounded-xl truncate transition-colors mb-0.5 last:mb-0 ${
                         activeMessageId === msg.id
-                          ? 'text-blue-700 bg-blue-50/80'
-                          : 'text-gray-700 hover:text-blue-700 hover:bg-blue-50/50'
+                          ? 'text-blue-700 dark:text-blue-300 bg-blue-50/80 dark:bg-blue-500/15'
+                          : 'text-gray-700 dark:text-gray-300 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50/50 dark:hover:bg-white/5'
                       }`}
                       title={msg.content}
                     >
@@ -576,7 +621,7 @@ export function ChatInterface() {
 
             {/* The Stack Lines */}
             <div className="flex flex-col items-center justify-center gap-1.5 py-4 w-8 cursor-pointer">
-              {userMessages.map((msg, i) => {
+              {userMessages.map((msg) => {
                 const isActive = msg.id === activeMessageId;
                 const isHovered = msg.id === hoveredMessageId;
                 const isHighlight = isActive || isHovered;
@@ -585,8 +630,8 @@ export function ChatInterface() {
                     key={msg.id}
                     className={`h-[2px] rounded-full transition-all duration-300 ${
                       isHighlight
-                        ? 'bg-blue-600 w-6'
-                        : 'bg-gray-300 w-4 group-hover:bg-blue-300 group-hover:w-5'
+                        ? 'bg-blue-600 dark:bg-blue-400 w-6'
+                        : 'bg-gray-300 dark:bg-gray-600 w-4 group-hover:bg-blue-300 dark:group-hover:bg-blue-500 group-hover:w-5'
                     }`}
                   />
                 );
@@ -596,7 +641,7 @@ export function ChatInterface() {
         )}
 
         <div
-          className="flex-1 overflow-y-auto pt-16 pb-40 custom-scrollbar"
+          className="flex-1 overflow-y-auto pt-16 pb-44 sm:pb-40 custom-scrollbar"
           ref={scrollContainerRef}
           onScroll={handleScroll}
         >
@@ -642,56 +687,57 @@ export function ChatInterface() {
           )}
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 pt-10 pb-4 px-4 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent dark:from-[#171717] dark:via-[#171717]">
-          <div className={`${CHAT_ROW_WIDTH_CLASS} flex gap-4`}>
-            <div className="h-8 w-8 shrink-0" aria-hidden="true" />
-            <div className={`${CHAT_CONTENT_WIDTH_CLASS} relative`}>
+        <div className="absolute bottom-0 left-0 right-0 pt-8 sm:pt-10 pb-[max(0.75rem,env(safe-area-inset-bottom))] px-3 sm:px-4 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent dark:from-[#171717] dark:via-[#171717]">
+          <div className={`${CHAT_ROW_WIDTH_CLASS} flex lg:gap-4`}>
+            <div className="hidden lg:block h-8 w-8 shrink-0" aria-hidden="true" />
+            <div className={`${CHAT_CONTENT_WIDTH_CLASS} relative min-w-0`}>
             {/* Scroll to bottom button */}
             {!isAtBottom && currentMessages.length > 0 && (
-              <div className="absolute -top-14 left-1/2 -translate-x-1/2 z-20 fade-in slide-in-from-bottom-2 duration-200">
+              <div className="absolute -top-13 sm:-top-14 left-1/2 -translate-x-1/2 z-20 fade-in slide-in-from-bottom-2 duration-200">
                 <button
                   onClick={scrollToBottom}
-                  className="w-10 h-10 bg-white dark:bg-[#171717] rounded-full flex items-center justify-center shadow-[0_2px_10px_rgba(0,0,0,0.1)] dark:shadow-none border border-gray-100 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-all hover:shadow-[0_4px_14px_rgba(0,0,0,0.12)] active:scale-95"
+                  className="w-10 h-10 bg-white dark:bg-[#1f1f1f] rounded-full flex items-center justify-center shadow-[0_2px_10px_rgba(0,0,0,0.12)] border border-gray-100 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-all hover:shadow-[0_4px_14px_rgba(0,0,0,0.15)] active:scale-95"
                   title="Cuộn xuống"
+                  aria-label="Cuộn xuống cuối cuộc trò chuyện"
                 >
                   <ArrowDown className="w-5 h-5" />
                 </button>
               </div>
             )}
 
-            <div className="relative rounded-3xl bg-white dark:bg-[#171717] border border-gray-200/80 dark:border-white/10 shadow-xl shadow-blue-100/30 dark:shadow-none input-glow transition-all duration-300">
-              <div className="flex items-center gap-2 px-3 pt-3 pb-1">
-                <div className="relative flex items-center" ref={categoryRef}>
+            <div className="relative rounded-2xl sm:rounded-3xl bg-white dark:bg-[#1e1e1e] border border-gray-200/80 dark:border-white/10 shadow-xl shadow-blue-100/30 dark:shadow-none input-glow transition-all duration-300">
+              <div className="flex items-center gap-2 px-2.5 sm:px-3 pt-2.5 sm:pt-3 pb-1 min-w-0">
+                <div className="relative flex items-center min-w-0 flex-1 sm:flex-initial" ref={categoryRef}>
                   <button
                     type="button"
                     onClick={() => setIsCategoryOpen(!isCategoryOpen)}
-                    className="flex max-w-[230px] items-center rounded-xl border border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-[#171717] px-3 py-1.5 transition-colors hover:bg-gray-100 dark:hover:bg-white/5 active:bg-gray-200 dark:active:bg-white/8 md:max-w-[320px]"
+                    className="flex w-full sm:w-auto max-w-full sm:max-w-[260px] md:max-w-[320px] items-center rounded-xl border border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2.5 sm:px-3 py-1.5 transition-colors hover:bg-gray-100 dark:hover:bg-white/10 active:bg-gray-200 dark:active:bg-white/15"
                     aria-haspopup="listbox"
                     aria-expanded={isCategoryOpen}
                   >
-                    <LibraryBig className="w-3.5 h-3.5 text-blue-600 mr-2" />
-                    <span className="truncate text-[12px] font-bold text-gray-700 dark:text-gray-300">{selectedLawCategory.label}</span>
-                    <ChevronDown className={`w-3 h-3 text-gray-400 dark:text-gray-500 ml-1.5 transition-transform duration-200 ${isCategoryOpen ? 'rotate-180' : ''}`} />
+                    <LibraryBig className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 mr-1.5 sm:mr-2 shrink-0" />
+                    <span className="truncate text-[11.5px] sm:text-[12px] font-bold text-gray-700 dark:text-gray-300">{selectedLawCategory.label}</span>
+                    <ChevronDown className={`w-3 h-3 text-gray-400 dark:text-gray-500 ml-1.5 shrink-0 transition-transform duration-200 ${isCategoryOpen ? 'rotate-180' : ''}`} />
                   </button>
                   {isCategoryOpen && (
-                    <div className="absolute bottom-full left-0 z-50 mb-2 w-[320px] max-w-[calc(100vw-2rem)] animate-in rounded-2xl border border-gray-100 dark:border-white/10 bg-white dark:bg-[#171717] py-1 shadow-xl shadow-gray-200/50 dark:shadow-none fade-in slide-in-from-bottom-2 duration-200" role="listbox">
-                      <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 border-b border-gray-50 dark:border-white/10 mb-1">Tra cứu theo lĩnh vực</div>
+                    <div className="absolute bottom-full left-0 z-50 mb-2 w-[min(320px,calc(100vw-2rem))] max-h-[55dvh] overflow-y-auto custom-scrollbar animate-in rounded-2xl border border-gray-100 dark:border-white/10 bg-white dark:bg-[#1f1f1f] py-1 shadow-xl shadow-gray-200/50 dark:shadow-black/40 fade-in slide-in-from-bottom-2 duration-200" role="listbox">
+                      <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 border-b border-gray-50 dark:border-white/10 mb-1 sticky top-0 bg-white dark:bg-[#1f1f1f]">Tra cứu theo lĩnh vực</div>
                       {LAW_CATEGORIES.map(category => (
                         <button
                           key={category.id}
                           onClick={() => { setLawCategory(category.id); setIsCategoryOpen(false); }}
-                          className={`flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left text-[12px] font-bold transition-colors ${lawCategory === category.id ? 'text-blue-700 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-500/10' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5'}`}
+                          className={`flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left text-[12.5px] sm:text-[12px] font-bold transition-colors ${lawCategory === category.id ? 'text-blue-700 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-500/10' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5'}`}
                           role="option"
                           aria-selected={lawCategory === category.id}
                         >
                           <span className="truncate">{category.label}</span>
-                          {lawCategory === category.id && <Check className="h-4 w-4 flex-shrink-0 text-blue-600" />}
+                          {lawCategory === category.id && <Check className="h-4 w-4 flex-shrink-0 text-blue-600 dark:text-blue-400" />}
                         </button>
                       ))}
                     </div>
                   )}
                 </div>
-                <div className="ml-auto flex min-w-0 flex-wrap items-center justify-end gap-2">
+                <div className="ml-auto flex shrink-0 items-center justify-end gap-2">
                   <ProviderSelector model={model} />
                 </div>
               </div>
@@ -707,9 +753,9 @@ export function ChatInterface() {
                   }
                 }}
                 placeholder={isLoading ? 'Đang xử lý yêu cầu...' : 'Hỏi về điều luật, quyền, nghĩa vụ hoặc thủ tục pháp lý...'}
-                className="w-full resize-none bg-transparent pl-5 pr-14 py-3 focus:outline-none text-gray-700 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 leading-relaxed rounded-b-3xl text-[15px] custom-scrollbar"
+                className="w-full resize-none bg-transparent pl-3.5 sm:pl-5 pr-14 py-2.5 sm:py-3 focus:outline-none text-gray-700 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 leading-relaxed rounded-b-2xl sm:rounded-b-3xl text-base sm:text-[15px] custom-scrollbar"
                 rows={1}
-                style={{ minHeight: '52px', maxHeight: '160px' }}
+                style={{ minHeight: '48px', maxHeight: '160px' }}
               />
 
               {/* Nut Send / Stop */}
@@ -718,7 +764,7 @@ export function ChatInterface() {
                   onClick={handleAbort}
                   title="Dừng tạo câu trả lời (Enter)"
                   aria-label="Dừng trả lời"
-                  className="absolute right-3 bottom-3 p-2.5 text-white rounded-2xl transition-all shadow-md active:scale-95 flex items-center justify-center animate-pulse"
+                  className="absolute right-2.5 sm:right-3 bottom-2.5 sm:bottom-3 p-2.5 min-h-[40px] min-w-[40px] text-white rounded-xl sm:rounded-2xl transition-all shadow-md active:scale-95 flex items-center justify-center animate-pulse"
                   style={{ background: 'linear-gradient(135deg, #EF4444, #DC2626)' }}
                 >
                   <Square className="w-4 h-4 fill-white" />
@@ -728,14 +774,14 @@ export function ChatInterface() {
                   onClick={() => handleSubmit()}
                   disabled={!input.trim()}
                   aria-label="Gửi câu hỏi"
-                  className={`absolute right-3 bottom-3 p-2.5 text-white rounded-2xl disabled:opacity-40 transition-all shadow-md active:scale-95 flex items-center justify-center ${input.trim() ? 'send-btn-ready' : ''}`}
+                  className={`absolute right-2.5 sm:right-3 bottom-2.5 sm:bottom-3 p-2.5 min-h-[40px] min-w-[40px] text-white rounded-xl sm:rounded-2xl disabled:opacity-40 transition-all shadow-md active:scale-95 flex items-center justify-center ${input.trim() ? 'send-btn-ready' : ''}`}
                   style={{ background: 'linear-gradient(135deg, #2563EB, #1D4ED8)' }}
                 >
                   <Send className="w-4 h-4 translate-x-px translate-y-px" />
                 </button>
               )}
             </div>
-            <p className="text-center mt-2.5 text-[10px] text-gray-400 font-medium">
+            <p className="text-center mt-2 text-[10px] text-gray-400 dark:text-gray-500 font-medium px-2">
               AI có thể cung cấp thông tin không chính xác. Hãy luôn kiểm tra lại dữ liệu quan trọng.
             </p>
             </div>
