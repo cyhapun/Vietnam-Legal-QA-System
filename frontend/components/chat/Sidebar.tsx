@@ -35,6 +35,15 @@ export function Sidebar({
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!sessionToDelete) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSessionToDelete(null);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [sessionToDelete]);
   
   const currentTheme = theme === 'system' ? systemTheme : theme;
 
@@ -58,7 +67,7 @@ export function Sidebar({
   const groupOrder = ['Hôm nay', 'Hôm qua', '7 ngày trước', 'Tháng này', 'Cũ hơn'];
 
   return (
-    <div className="h-screen w-full flex flex-col font-sans border-r border-gray-200 dark:border-gray-800 transition-colors bg-slate-50 dark:bg-[#171717]">
+    <div className="h-full w-full flex flex-col font-sans border-r border-gray-200 dark:border-gray-800 transition-colors bg-slate-50 dark:bg-[#171717] pt-[env(safe-area-inset-top)]">
 
       {/* Header with glassmorphism */}
       <div className="h-14 flex items-center justify-between px-4 mt-1 flex-shrink-0">
@@ -81,8 +90,9 @@ export function Sidebar({
         </div>
         <button
           onClick={onCloseSidebar}
-          className="p-1.5 rounded-lg text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-white/8 transition-all"
+          className="p-2 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-white/10 transition-all"
           title="Đóng sidebar"
+          aria-label="Đóng sidebar"
         >
           <PanelLeftClose className="w-4 h-4" />
         </button>
@@ -92,7 +102,7 @@ export function Sidebar({
       <div className="px-3 py-2 flex-shrink-0">
         <button
           onClick={onNewChat}
-          className="w-full flex items-center justify-center gap-2 rounded-xl py-2.5 px-3 transition-all duration-200 border border-blue-500/25 bg-blue-50/60 dark:bg-[rgba(37,99,235,0.07)] text-blue-600 dark:text-blue-300 hover:text-blue-700 dark:hover:text-blue-100 hover:border-blue-400 dark:hover:border-blue-400/50 hover:bg-blue-100 dark:hover:bg-blue-500/10 active:scale-98"
+          className="w-full flex items-center justify-center gap-2 rounded-xl py-2.5 px-3 min-h-[42px] transition-all duration-200 border border-blue-500/25 bg-blue-50/60 dark:bg-[rgba(37,99,235,0.07)] text-blue-600 dark:text-blue-300 hover:text-blue-700 dark:hover:text-blue-100 hover:border-blue-400 dark:hover:border-blue-400/50 hover:bg-blue-100 dark:hover:bg-blue-500/10 active:scale-98"
         >
           <Plus className="w-4 h-4" />
           <span className="text-[13px] font-semibold">Đoạn chat mới</span>
@@ -108,7 +118,7 @@ export function Sidebar({
             placeholder="Tìm kiếm đoạn chat..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl py-2 pl-9 pr-3 text-[12.5px] text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-blue-400 dark:focus:border-blue-500/50 focus:bg-white dark:focus:bg-white/10 transition-all"
+            className="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl py-2 pl-9 pr-3 text-base sm:text-[13px] text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-blue-400 dark:focus:border-blue-500/50 focus:bg-white dark:focus:bg-white/10 transition-all"
           />
         </div>
       </div>
@@ -158,8 +168,8 @@ export function Sidebar({
                           isActive ? 'text-blue-500 dark:text-blue-400' : 'text-gray-400 dark:text-gray-600 group-hover:text-gray-600 dark:group-hover:text-gray-400'
                         }`}
                       />
-                      <div className="flex-1 truncate pr-6">
-                        <span className={`text-[12.5px] font-medium block truncate ${isActive ? 'text-blue-700 dark:text-white' : ''}`}>
+                      <div className="flex-1 min-w-0 truncate pr-9">
+                        <span className={`text-[13px] sm:text-[12.5px] font-medium block truncate ${isActive ? 'text-blue-700 dark:text-white' : ''}`}>
                           {session.title}
                         </span>
                       </div>
@@ -168,10 +178,11 @@ export function Sidebar({
                           e.stopPropagation(); 
                           setSessionToDelete(session.id);
                         }}
-                        className="absolute right-2 p-1.5 rounded-lg text-gray-600 hover:text-red-400 hover:bg-red-400/10 transition-all opacity-0 group-hover:opacity-100"
+                        className="absolute right-1.5 p-2 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg text-gray-400 dark:text-gray-500 hover:text-red-500 hover:bg-red-500/10 transition-all opacity-100 lg:opacity-0 lg:group-hover:opacity-100 lg:focus-visible:opacity-100"
                         title="Xóa đoạn chat"
+                        aria-label={`Xóa đoạn chat ${session.title}`}
                       >
-                        <Trash2 className="w-3 h-3" />
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   );
@@ -183,14 +194,15 @@ export function Sidebar({
       </div>
 
       {/* Footer */}
-      <div className="px-4 py-3 border-t border-gray-200 dark:border-white/5 flex-shrink-0 flex items-center justify-between">
+      <div className="px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] border-t border-gray-200 dark:border-white/5 flex-shrink-0 flex items-center justify-between">
         <p className="text-[10px] text-gray-400 dark:text-gray-600 leading-relaxed">
           Phiên bản thử nghiệm · Dữ liệu luật VN
         </p>
         <button
           onClick={() => setTheme(currentTheme === 'dark' ? 'light' : 'dark')}
-          className="p-1.5 rounded-lg text-gray-500 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/10 transition-all"
+          className="p-2 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/10 transition-all"
           title="Chuyển chế độ giao diện"
+          aria-label="Chuyển chế độ giao diện"
         >
           {currentTheme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
         </button>
@@ -199,11 +211,11 @@ export function Sidebar({
       {/* Delete Confirmation Modal rendered to body via Portal */}
       {mounted && sessionToDelete && createPortal(
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 dark:bg-black/70 backdrop-blur-sm animate-in fade-in duration-200"
+          className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/50 dark:bg-black/70 backdrop-blur-sm animate-in fade-in duration-200"
           onClick={() => setSessionToDelete(null)}
         >
           <div 
-            className="bg-white dark:bg-[#171717] border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl p-6 w-[90%] max-w-sm transform transition-all animate-in zoom-in-95 duration-200"
+            className="bg-white dark:bg-[#171717] border-t sm:border border-gray-200 dark:border-white/10 rounded-t-2xl sm:rounded-2xl shadow-2xl p-5 sm:p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:pb-6 w-full sm:w-[90%] sm:max-w-sm transform transition-all animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center gap-3 mb-4 text-red-500">

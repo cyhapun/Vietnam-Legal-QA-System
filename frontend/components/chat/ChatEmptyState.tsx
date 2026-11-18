@@ -14,8 +14,8 @@ const SUGGESTIONS = [
 
 export function ChatEmptyState({ onSelectSuggestion }: ChatEmptyStateProps) {
   return (
-    <div className="mx-auto flex min-h-full w-full max-w-3xl flex-col justify-center px-4 py-10 text-center">
-      <div className="relative mx-auto mb-5 flex h-24 w-24 items-center justify-center">
+    <div className="mx-auto flex min-h-full w-full max-w-3xl flex-col justify-center px-3 sm:px-6 py-6 sm:py-10 text-center">
+      <div className="relative mx-auto mb-3.5 sm:mb-5 flex h-16 w-16 sm:h-24 sm:w-24 items-center justify-center">
         <Image
           src="/logo.png"
           alt="VietLaw AI Mascot"
@@ -26,20 +26,20 @@ export function ChatEmptyState({ onSelectSuggestion }: ChatEmptyStateProps) {
           unoptimized
         />
       </div>
-      <h1 className="text-2xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-3xl">
+      <h1 className="text-xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-3xl">
         Tra cứu pháp luật dễ dàng hơn
       </h1>
-      <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base">
+      <p className="mx-auto mt-2 sm:mt-3 max-w-xl text-xs sm:text-base leading-5 sm:leading-6 text-slate-500 dark:text-slate-400">
         Đặt câu hỏi về quyền, nghĩa vụ, thủ tục hoặc quy định pháp luật để nhận câu trả lời kèm căn cứ tham khảo.
       </p>
 
-      <div className="mt-8 grid gap-2.5 sm:grid-cols-3">
+      <div className="mt-5 sm:mt-8 grid grid-cols-1 gap-2 sm:gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
         {SUGGESTIONS.map(prompt => (
           <button
             key={prompt}
             type="button"
             onClick={() => onSelectSuggestion(prompt)}
-            className="rounded-2xl border border-slate-200 bg-white p-4 text-left text-sm font-semibold leading-6 text-slate-700 shadow-sm transition hover:border-blue-200 hover:bg-blue-50/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-blue-500/10"
+            className="rounded-2xl border border-slate-200 bg-white p-3.5 sm:p-4 text-left text-[13px] sm:text-sm font-semibold leading-5 sm:leading-6 text-slate-700 shadow-sm transition hover:border-blue-200 hover:bg-blue-50/60 active:scale-[0.99] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-blue-500/10"
           >
             {prompt}
           </button>
