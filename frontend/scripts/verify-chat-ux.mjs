@@ -9,6 +9,7 @@ const emptyState = readFileSync(resolve(root, 'components/chat/ChatEmptyState.ts
 const providerSelector = readFileSync(resolve(root, 'components/chat/ProviderSelector.tsx'), 'utf8');
 const sidebar = readFileSync(resolve(root, 'components/chat/Sidebar.tsx'), 'utf8');
 const proxyRoute = readFileSync(resolve(root, 'app/api/chat/route.ts'), 'utf8');
+const rootLayout = readFileSync(resolve(root, 'app/layout.tsx'), 'utf8');
 
 for (const label of [
   'Đang phân tích câu hỏi',
@@ -153,6 +154,17 @@ if (!chatInterface.includes('handleRegenerate') || !chatInterface.includes('hand
 
 if (!chatInterface.includes('onRegenerate={handleRegenerate}') || !chatInterface.includes('onEditPrompt={handleEditPrompt}')) {
   throw new Error('ChatInterface must pass onRegenerate and onEditPrompt callbacks to ChatMessage');
+}
+
+// Verification: Responsive mobile & tablet UX foundations
+if (!rootLayout.includes("viewportFit: 'cover'")) {
+  throw new Error('RootLayout must export viewport metadata with viewportFit: cover');
+}
+if (!chatInterface.includes('h-dvh')) {
+  throw new Error('ChatInterface must use dynamic viewport height (h-dvh) for mobile browsers');
+}
+if (!chatMessage.includes('createPortal') || !chatMessage.includes('document.body')) {
+  throw new Error('ChatMessage must render CitationModal and feedback sheet via createPortal to document.body');
 }
 
 console.log('Chat UX verification passed.');
