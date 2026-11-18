@@ -1,0 +1,328 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 920" width="1600" height="920">
+  <defs>
+    <style>
+      .font { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+      .title { font-size: 26px; font-weight: 800; fill: #0F172A; letter-spacing: -0.4px; }
+      .subtitle { font-size: 13.5px; font-weight: 500; fill: #475569; }
+      .panel-title { font-size: 13px; font-weight: 800; letter-spacing: 0.8px; fill: #1E293B; }
+      .card-title { font-size: 13.5px; font-weight: 700; fill: #0F172A; }
+      .card-title-white { font-size: 13.5px; font-weight: 700; fill: #FFFFFF; }
+      .card-sub { font-size: 11.5px; font-weight: 500; fill: #475569; }
+      .card-sub-white { font-size: 11.5px; font-weight: 500; fill: #E2E8F0; }
+      .pill-text { font-size: 11px; font-weight: 700; }
+      .edge-label { font-size: 11px; font-weight: 700; fill: #334155; }
+      .step-badge { font-size: 10px; font-weight: 800; fill: #FFFFFF; }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 10.5px; font-weight: 600; }
+    </style>
+
+    <!-- Subtle background dot pattern -->
+    <pattern id="dot-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#CBD5E1" opacity="0.55" />
+    </pattern>
+
+    <!-- Soft shadows -->
+    <filter id="shadow-sm" x="-6%" y="-6%" width="112%" height="118%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#0F172A" flood-opacity="0.06" />
+    </filter>
+    <filter id="shadow-md" x="-6%" y="-6%" width="112%" height="118%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0F172A" flood-opacity="0.09" />
+    </filter>
+
+    <!-- Gradients -->
+    <linearGradient id="grad-navy" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#1E3A5F" />
+    </linearGradient>
+    <linearGradient id="grad-blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#1D4ED8" />
+    </linearGradient>
+    <linearGradient id="grad-emerald" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#059669" />
+      <stop offset="100%" stop-color="#047857" />
+    </linearGradient>
+    <linearGradient id="grad-violet" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7C3AED" />
+      <stop offset="100%" stop-color="#5B21B6" />
+    </linearGradient>
+    <linearGradient id="grad-teal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0D9488" />
+      <stop offset="100%" stop-color="#0F766E" />
+    </linearGradient>
+
+    <!-- Arrowheads -->
+    <marker id="arrow-slate" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 0 1.2 L 8.5 5 L 0 8.8 z" fill="#475569" />
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 0 1.2 L 8.5 5 L 0 8.8 z" fill="#2563EB" />
+    </marker>
+    <marker id="arrow-emerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 0 1.2 L 8.5 5 L 0 8.8 z" fill="#059669" />
+    </marker>
+  </defs>
+
+  <!-- Canvas Background -->
+  <rect width="1600" height="920" fill="#F8FAFC" />
+  <rect width="1600" height="920" fill="url(#dot-grid)" />
+
+  <!-- Top Header -->
+  <g class="font">
+    <rect x="28" y="20" width="8" height="52" rx="4" fill="url(#grad-blue)" />
+    <text x="50" y="47" class="title">VietLaw AI — Dual-Mode Legal RAG Architecture</text>
+    <text x="50" y="69" class="subtitle">Hybrid Dense/Sparse Retrieval · Unified Local &amp; Cloud Runtime Profiles · Citation-Verified Legal QA</text>
+
+    <!-- Runtime Mode Legend -->
+    <rect x="1070" y="28" width="242" height="36" rx="18" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="1.5" />
+    <circle cx="1092" cy="46" r="5" fill="#2563EB" />
+    <text x="1105" y="50" class="pill-text" fill="#1D4ED8">LOCAL: BGE-M3 + Cross-Encoder</text>
+
+    <rect x="1326" y="28" width="246" height="36" rx="18" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1.5" />
+    <circle cx="1348" cy="46" r="5" fill="#059669" />
+    <text x="1361" y="50" class="pill-text" fill="#047857">CLOUD: Gemini Embed + Jina v2</text>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- LEFT PANEL: 1. OFFLINE INGESTION & CLOUD CLONE                        -->
+  <!-- ===================================================================== -->
+  <g class="font">
+    <rect x="28" y="96" width="496" height="796" rx="20" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" filter="url(#shadow-md)" />
+    <rect x="28" y="96" width="496" height="44" rx="20" fill="#F1F5F9" />
+    <rect x="28" y="120" width="496" height="20" fill="#F1F5F9" />
+    <line x1="28" y1="140" x2="524" y2="140" stroke="#E2E8F0" stroke-width="1" />
+    <text x="50" y="123" class="panel-title">1. OFFLINE INGESTION &amp; CLOUD CLONE</text>
+
+    <!-- Box 1: Legal Corpus -->
+    <rect x="56" y="164" width="440" height="82" rx="14" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5" filter="url(#shadow-sm)" />
+    <rect x="72" y="182" width="44" height="44" rx="10" fill="#DBEAFE" />
+    <text x="94" y="210" text-anchor="middle" font-size="20" font-weight="800" fill="#1D4ED8">{}</text>
+    <text x="130" y="195" class="card-title">Vietnamese Legal Corpus (JSON)</text>
+    <text x="130" y="214" class="card-sub">8 Legal Codes · 5,758 Clauses · 843 Cross-References</text>
+    <text x="130" y="232" class="mono" fill="#64748B">backend/data/processed/*.json</text>
+
+    <!-- Arrow 1 -> 2 -->
+    <line x1="276" y1="246" x2="276" y2="276" stroke="#475569" stroke-width="2" marker-end="url(#arrow-slate)" />
+
+    <!-- Box 2: Chunking & Sparse -->
+    <rect x="56" y="280" width="440" height="76" rx="14" fill="url(#grad-navy)" filter="url(#shadow-sm)" />
+    <text x="276" y="309" text-anchor="middle" class="card-title-white">ClauseChunker &amp; Vietnamese BM25 Tokenizer</text>
+    <text x="276" y="329" text-anchor="middle" class="card-sub-white">Article/Clause splitting · Law metadata · Sparse IDF vector (text-sparse)</text>
+    <text x="276" y="346" text-anchor="middle" class="mono" fill="#93C5FD">chunking/clause_chunker.py · sparse_vector.py</text>
+
+    <!-- Branch arrows to Local & Cloud Embedding -->
+    <path d="M 180 356 L 180 392" stroke="#2563EB" stroke-width="2" fill="none" marker-end="url(#arrow-blue)" />
+    <path d="M 372 356 L 372 392" stroke="#059669" stroke-width="2" fill="none" marker-end="url(#arrow-emerald)" />
+
+    <!-- Box 3A: Local Dense Embedding -->
+    <rect x="56" y="396" width="212" height="104" rx="14" fill="#EFF6FF" stroke="#93C5FD" stroke-width="1.5" filter="url(#shadow-sm)" />
+    <rect x="70" y="408" width="60" height="20" rx="10" fill="#2563EB" />
+    <text x="100" y="422" text-anchor="middle" class="step-badge">LOCAL</text>
+    <text x="70" y="448" class="card-title" fill="#1E3A8A">Fine-Tuned BGE-M3</text>
+    <text x="70" y="466" class="card-sub">1024-dim dense vectors</text>
+    <text x="70" y="485" class="mono" fill="#2563EB">ingest_to_storage.py</text>
+
+    <!-- Box 3B: Cloud Clone Embedding -->
+    <rect x="284" y="396" width="212" height="104" rx="14" fill="#ECFDF5" stroke="#6EE7B7" stroke-width="1.5" filter="url(#shadow-sm)" />
+    <rect x="298" y="408" width="96" height="20" rx="10" fill="#059669" />
+    <text x="346" y="422" text-anchor="middle" class="step-badge">CLOUD CLONE</text>
+    <text x="298" y="448" class="card-title" fill="#064E3B">Gemini Embedding</text>
+    <text x="298" y="466" class="card-sub">gemini-embedding-001 (1024d)</text>
+    <text x="298" y="485" class="mono" fill="#059669">reindex_gemini_cloud.py</text>
+
+    <!-- Converging arrows to Storage Layer -->
+    <path d="M 162 500 L 162 544" stroke="#2563EB" stroke-width="2" fill="none" marker-end="url(#arrow-blue)" />
+    <path d="M 390 500 L 390 544" stroke="#059669" stroke-width="2" fill="none" marker-end="url(#arrow-emerald)" />
+
+    <!-- Storage Container -->
+    <rect x="56" y="548" width="440" height="222" rx="16" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="5 4" />
+    <text x="76" y="572" class="pill-text" fill="#475569">PERSISTENT CLOUD / LOCAL STORAGE</text>
+
+    <!-- PostgreSQL Card -->
+    <rect x="72" y="586" width="194" height="166" rx="12" fill="#FFFFFF" stroke="#BAE6FD" stroke-width="1.5" filter="url(#shadow-sm)" />
+    <rect x="72" y="586" width="194" height="34" rx="12" fill="#0284C7" />
+    <rect x="72" y="606" width="194" height="14" fill="#0284C7" />
+    <text x="169" y="608" text-anchor="middle" class="card-title-white">PostgreSQL / Supabase</text>
+    <text x="86" y="642" class="card-sub">• Law &amp; clause metadata</text>
+    <text x="86" y="662" class="card-sub">• Full Vietnamese legal text</text>
+    <text x="86" y="682" class="card-sub">• Chat sessions &amp; messages</text>
+    <text x="86" y="702" class="card-sub">• Memory summaries</text>
+    <text x="86" y="722" class="card-sub">• User feedback logs</text>
+
+    <!-- Qdrant Card -->
+    <rect x="282" y="586" width="198" height="166" rx="12" fill="#FFFFFF" stroke="#FDE68A" stroke-width="1.5" filter="url(#shadow-sm)" />
+    <rect x="282" y="586" width="198" height="34" rx="12" fill="#D97706" />
+    <rect x="282" y="606" width="198" height="14" fill="#D97706" />
+    <text x="381" y="608" text-anchor="middle" class="card-title-white">Qdrant Vector DB</text>
+    <text x="296" y="640" class="mono" fill="#1D4ED8">vietlaw_clauses</text>
+    <text x="296" y="655" class="card-sub">Local BGE-M3 + Sparse</text>
+    <text x="296" y="680" class="mono" fill="#047857">vietlaw_clauses_gemini</text>
+    <text x="296" y="695" class="card-sub">Cloud Gemini + Sparse</text>
+    <text x="296" y="720" class="card-sub">Keyword indexes:</text>
+    <text x="296" y="736" class="mono" fill="#B45309">law_id · category</text>
+
+    <!-- Arrow Storage -> Cache Invalidation -->
+    <line x1="276" y1="770" x2="276" y2="800" stroke="#475569" stroke-width="2" marker-end="url(#arrow-slate)" />
+
+    <!-- Cache Invalidation Footer -->
+    <rect x="56" y="804" width="440" height="64" rx="14" fill="#FEF3C7" stroke="#FCD34D" stroke-width="1.5" />
+    <text x="276" y="831" text-anchor="middle" class="card-title" fill="#92400E">Granular Semantic Cache Invalidation</text>
+    <text x="276" y="851" text-anchor="middle" class="card-sub" fill="#78350F">Clears semantic_cache / semantic_cache_gemini on corpus update</text>
+  </g>
+
+  <!-- ===================================================================== -->
+  <!-- RIGHT PANEL: 2. ONLINE RAG QA PIPELINE                                -->
+  <!-- ===================================================================== -->
+  <g class="font">
+    <rect x="548" y="96" width="1024" height="796" rx="20" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" filter="url(#shadow-md)" />
+    <rect x="548" y="96" width="1024" height="44" rx="20" fill="#F1F5F9" />
+    <rect x="548" y="120" width="1024" height="20" fill="#F1F5F9" />
+    <line x1="548" y1="140" x2="1572" y2="140" stroke="#E2E8F0" stroke-width="1" />
+    <text x="572" y="123" class="panel-title">2. ONLINE RAG QA PIPELINE (SSE STREAMING &amp; JSON)</text>
+    <text x="1548" y="123" text-anchor="end" class="mono" fill="#64748B">RUNTIME_PROFILE = local | cloud</text>
+
+    <!-- ROW 1: User Query -> FastAPI Backend Gateway -->
+    <rect x="576" y="160" width="248" height="62" rx="14" fill="#F8FAFC" stroke="#94A3B8" stroke-width="1.5" filter="url(#shadow-sm)" />
+    <text x="700" y="186" text-anchor="middle" class="card-title">Incoming Legal Query</text>
+    <text x="700" y="206" text-anchor="middle" class="mono" fill="#475569">messages · sessionId · category</text>
+
+    <!-- Arrow Query -> Backend -->
+    <line x1="824" y1="191" x2="906" y2="191" stroke="#2563EB" stroke-width="2" marker-end="url(#arrow-blue)" />
+    <text x="865" y="182" text-anchor="middle" class="mono" fill="#2563EB">POST</text>
+    <text x="865" y="209" text-anchor="middle" class="mono" fill="#64748B">/chat/stream</text>
+
+    <rect x="912" y="160" width="632" height="62" rx="14" fill="url(#grad-teal)" filter="url(#shadow-sm)" />
+    <text x="1228" y="186" text-anchor="middle" class="card-title-white">FastAPI Gateway &amp; Chat Orchestrator</text>
+    <text x="1228" y="206" text-anchor="middle" class="card-sub-white">app/api/chat.py · chat_orchestrator.py · /chat/stream · /chat · /readiness</text>
+
+    <!-- Arrow BE -> Step 1 -->
+    <path d="M 1228 222 L 1228 250" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrow-slate)" />
+
+    <!-- ROW 2: Step 1 Query Understanding & Memory -->
+    <rect x="576" y="254" width="968" height="72" rx="14" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5" />
+    <rect x="590" y="266" width="24" height="24" rx="12" fill="#0F172A" />
+    <text x="602" y="282" text-anchor="middle" class="step-badge">1</text>
+
+    <!-- 1A: Query Rewriter -->
+    <rect x="624" y="264" width="450" height="52" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" />
+    <text x="640" y="285" class="card-title">LLM Query Rewriter &amp; Classifier</text>
+    <text x="640" y="303" class="card-sub">Legal normalization · Domain routing (legal / chitchat) · Smart title</text>
+
+    <!-- 1B: Conversation Memory -->
+    <rect x="1090" y="264" width="438" height="52" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" />
+    <text x="1106" y="285" class="card-title">Hybrid Conversation Memory</text>
+    <text x="1106" y="303" class="card-sub">Running session summary + last 4 verbatim messages</text>
+
+    <!-- Arrow Step 1 -> Step 2 -->
+    <line x1="850" y1="326" x2="850" y2="352" stroke="#475569" stroke-width="2" marker-end="url(#arrow-slate)" />
+
+    <!-- ROW 3: Step 2 Semantic Cache -->
+    <rect x="576" y="356" width="548" height="58" rx="14" fill="#EFF6FF" stroke="#93C5FD" stroke-width="1.5" filter="url(#shadow-sm)" />
+    <rect x="590" y="373" width="24" height="24" rx="12" fill="#2563EB" />
+    <text x="602" y="389" text-anchor="middle" class="step-badge">2</text>
+    <text x="626" y="381" class="card-title" fill="#1E3A8A">Semantic Cache Lookup (Cosine ≥ 0.95)</text>
+    <text x="626" y="400" class="card-sub">Profile-isolated: semantic_cache (local) / semantic_cache_gemini (cloud)</text>
+
+    <!-- Cache HIT branch -->
+    <line x1="1124" y1="385" x2="1226" y2="385" stroke="#059669" stroke-width="2" marker-end="url(#arrow-emerald)" />
+    <rect x="1148" y="366" width="48" height="18" rx="9" fill="#ECFDF5" />
+    <text x="1172" y="379" text-anchor="middle" class="pill-text" fill="#059669">HIT</text>
+
+    <rect x="1232" y="360" width="312" height="50" rx="12" fill="url(#grad-emerald)" filter="url(#shadow-sm)" />
+    <text x="1388" y="382" text-anchor="middle" class="card-title-white">Instant Cached Response</text>
+    <text x="1388" y="399" text-anchor="middle" class="card-sub-white">Skip retrieval &amp; LLM · Stream directly</text>
+
+    <!-- Cache MISS arrow -->
+    <line x1="850" y1="414" x2="850" y2="444" stroke="#475569" stroke-width="2" marker-end="url(#arrow-slate)" />
+    <rect x="860" y="419" width="52" height="18" rx="9" fill="#F1F5F9" />
+    <text x="886" y="432" text-anchor="middle" class="pill-text" fill="#475569">MISS</text>
+
+    <!-- ROW 4: RAG CORE BOX -->
+    <rect x="576" y="448" width="968" height="292" rx="16" fill="#F8FAFC" stroke="#94A3B8" stroke-width="1.5" />
+    <text x="596" y="472" class="pill-text" fill="#334155">RAG RETRIEVAL &amp; CONTEXT ENGINE (pipeline.py)</text>
+
+    <!-- Step 3: Dual-Mode Hybrid Retrieval -->
+    <rect x="594" y="486" width="932" height="86" rx="12" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" filter="url(#shadow-sm)" />
+    <rect x="608" y="498" width="24" height="24" rx="12" fill="#0F172A" />
+    <text x="620" y="514" text-anchor="middle" class="step-badge">3</text>
+    <text x="642" y="515" class="card-title">Dual-Mode Query Embedding &amp; Hybrid Search (candidateK = 20)</text>
+
+    <!-- 3A Local vs Cloud Embed -->
+    <rect x="642" y="527" width="214" height="34" rx="8" fill="#EFF6FF" stroke="#93C5FD" stroke-width="1" />
+    <text x="749" y="548" text-anchor="middle" class="pill-text" fill="#1D4ED8">Local: BGE-M3 → vietlaw_clauses</text>
+
+    <rect x="866" y="527" width="254" height="34" rx="8" fill="#ECFDF5" stroke="#6EE7B7" stroke-width="1" />
+    <text x="993" y="548" text-anchor="middle" class="pill-text" fill="#047857">Cloud: Gemini → vietlaw_clauses_gemini</text>
+
+    <line x1="1126" y1="544" x2="1160" y2="544" stroke="#475569" stroke-width="2" marker-end="url(#arrow-slate)" />
+
+    <rect x="1166" y="502" width="346" height="58" rx="10" fill="#FFFBEB" stroke="#FCD34D" stroke-width="1.2" />
+    <text x="1339" y="526" text-anchor="middle" class="card-title" fill="#92400E">Qdrant Hybrid Prefetch + RRF</text>
+    <text x="1339" y="546" text-anchor="middle" class="card-sub" fill="#78350F">Metadata Filter (law_id) · Dense + Sparse · Dedup</text>
+
+    <!-- Arrow Step 3 -> Step 4 -->
+    <line x1="1060" y1="572" x2="1060" y2="594" stroke="#475569" stroke-width="2" marker-end="url(#arrow-slate)" />
+
+    <!-- Step 4: Dual-Mode Cross-Encoder Reranking -->
+    <rect x="594" y="598" width="932" height="62" rx="12" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2" filter="url(#shadow-sm)" />
+    <rect x="608" y="617" width="24" height="24" rx="12" fill="#0F172A" />
+    <text x="620" y="633" text-anchor="middle" class="step-badge">4</text>
+    <text x="642" y="625" class="card-title">Cross-Encoder Reranking</text>
+    <text x="642" y="644" class="card-sub">Top-10 candidates → Top-5 final clauses</text>
+
+    <rect x="898" y="610" width="286" height="38" rx="8" fill="#EFF6FF" stroke="#93C5FD" stroke-width="1" />
+    <text x="1041" y="633" text-anchor="middle" class="pill-text" fill="#1D4ED8">Local: vietlaw-bge-reranker-v2-m3 (CPU)</text>
+
+    <rect x="1198" y="610" width="314" height="38" rx="8" fill="#ECFDF5" stroke="#6EE7B7" stroke-width="1" />
+    <text x="1355" y="633" text-anchor="middle" class="pill-text" fill="#047857">Cloud: Jina Reranker v2 Multilingual (fail_open)</text>
+
+    <!-- Arrow Step 4 -> Step 5 -->
+    <line x1="1060" y1="660" x2="1060" y2="678" stroke="#475569" stroke-width="2" marker-end="url(#arrow-slate)" />
+
+    <!-- Step 5: Nested Context Builder -->
+    <rect x="594" y="682" width="932" height="46" rx="12" fill="url(#grad-navy)" filter="url(#shadow-sm)" />
+    <rect x="608" y="693" width="24" height="24" rx="12" fill="#2563EB" />
+    <text x="620" y="709" text-anchor="middle" class="step-badge">5</text>
+    <text x="644" y="710" class="card-title-white">2-Level Nested Context Builder</text>
+    <text x="894" y="710" class="card-sub-white">Top-5 Clauses + Cross-Referenced Articles (Level 1 full, Level 2 summary) · 6,000-token budget</text>
+
+    <!-- Arrow Step 5 -> Step 6 -->
+    <line x1="744" y1="740" x2="744" y2="770" stroke="#475569" stroke-width="2" marker-end="url(#arrow-slate)" />
+
+    <!-- ROW 5: Step 6 LLM Generation -> Citation Guardrails -> Persistence -->
+    <!-- 6A: Google AI Studio LLM -->
+    <rect x="576" y="774" width="336" height="94" rx="14" fill="url(#grad-violet)" filter="url(#shadow-sm)" />
+    <rect x="590" y="788" width="24" height="24" rx="12" fill="#FFFFFF" opacity="0.22" />
+    <text x="602" y="804" text-anchor="middle" class="step-badge">6</text>
+    <text x="624" y="805" class="card-title-white">Google AI Studio LLM</text>
+    <text x="594" y="828" class="card-sub-white">Primary: gemini-3.1-flash-lite</text>
+    <text x="594" y="848" class="card-sub-white">Multi-key rotation + 2.5-flash-lite / 2.5-flash</text>
+
+    <!-- Arrow 6A -> 6B -->
+    <line x1="912" y1="821" x2="946" y2="821" stroke="#475569" stroke-width="2" marker-end="url(#arrow-slate)" />
+
+    <!-- 6B: Citation Validation -->
+    <rect x="952" y="774" width="290" height="94" rx="14" fill="url(#grad-blue)" filter="url(#shadow-sm)" />
+    <rect x="966" y="788" width="24" height="24" rx="12" fill="#FFFFFF" opacity="0.22" />
+    <text x="978" y="804" text-anchor="middle" class="step-badge">7</text>
+    <text x="1000" y="805" class="card-title-white">Citation Guardrails</text>
+    <text x="970" y="828" class="card-sub-white">Validates &lt;cite id="..."&gt; against Top-5</text>
+    <text x="970" y="848" class="card-sub-white">Strips hallucinated IDs · Streams SSE</text>
+
+    <!-- Arrow 6B -> 7 Persistence -->
+    <line x1="1242" y1="800" x2="1276" y2="800" stroke="#475569" stroke-width="2" marker-end="url(#arrow-slate)" />
+    <line x1="1242" y1="844" x2="1276" y2="844" stroke="#475569" stroke-width="2" marker-end="url(#arrow-slate)" />
+
+    <!-- 7A: Chat Storage -->
+    <rect x="1282" y="774" width="262" height="43" rx="10" fill="#F0F9FF" stroke="#7DD3FC" stroke-width="1.2" />
+    <text x="1296" y="793" class="pill-text" fill="#0369A1">Turn Persistence (Optional)</text>
+    <text x="1296" y="809" class="card-sub">PostgreSQL (postgres) · stateless (browser)</text>
+
+    <!-- 7B: Async Memory Summarizer -->
+    <rect x="1282" y="825" width="262" height="43" rx="10" fill="#F5F3FF" stroke="#C4B5FD" stroke-width="1.2" />
+    <text x="1296" y="844" class="pill-text" fill="#6D28D9">Async Memory Summarizer</text>
+    <text x="1296" y="860" class="card-sub">Background turn compression</text>
+
+    <!-- Cross-panel dashed arrow from Qdrant/Storage to Online RAG -->
+    <path d="M 480 672 L 536 672 L 536 530 L 590 530" stroke="#D97706" stroke-width="2" stroke-dasharray="5 4" fill="none" marker-end="url(#arrow-slate)" />
+  </g>
+</svg>
