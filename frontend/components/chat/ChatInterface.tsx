@@ -169,12 +169,21 @@ export function ChatInterface() {
 
   useClickOutside(categoryRef, useCallback(() => setIsCategoryOpen(false), []));
 
+  const resizeTextarea = useCallback(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    const nextHeight = Math.min(el.scrollHeight, 160);
+    el.style.height = `${nextHeight}px`;
+    el.style.overflowY = el.scrollHeight > 160 ? 'auto' : 'hidden';
+  }, []);
+
+  useEffect(() => {
+    resizeTextarea();
+  }, [input, resizeTextarea]);
+
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 160)}px`;
-    }
   };
 
   const handleAbort = () => {
@@ -418,7 +427,10 @@ export function ChatInterface() {
     if (!userText || !currentSessionId) return;
 
     setInput('');
-    if (textareaRef.current) textareaRef.current.style.height = '52px';
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.overflowY = 'hidden';
+    }
 
     const userMessage: Message = { id: Date.now().toString(), role: 'user', content: userText };
     addMessage(userMessage);
@@ -706,12 +718,12 @@ export function ChatInterface() {
             )}
 
             <div className="relative rounded-2xl sm:rounded-3xl bg-white dark:bg-[#1e1e1e] border border-gray-200/80 dark:border-white/10 shadow-xl shadow-blue-100/30 dark:shadow-none input-glow transition-all duration-300">
-              <div className="flex items-center gap-2 px-2.5 sm:px-3 pt-2.5 sm:pt-3 pb-1 min-w-0">
-                <div className="relative flex items-center min-w-0 flex-1 sm:flex-initial" ref={categoryRef}>
+              <div className="flex items-center justify-between gap-2 px-2.5 sm:px-3 pt-2.5 sm:pt-3 pb-1 min-w-0">
+                <div className="relative flex items-center min-w-0" ref={categoryRef}>
                   <button
                     type="button"
                     onClick={() => setIsCategoryOpen(!isCategoryOpen)}
-                    className="flex w-full sm:w-auto max-w-full sm:max-w-[260px] md:max-w-[320px] items-center rounded-xl border border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2.5 sm:px-3 py-1.5 transition-colors hover:bg-gray-100 dark:hover:bg-white/10 active:bg-gray-200 dark:active:bg-white/15"
+                    className="flex w-fit max-w-full sm:max-w-[260px] md:max-w-[320px] items-center rounded-xl border border-gray-200/70 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2.5 sm:px-3 py-1.5 transition-colors hover:bg-gray-100 dark:hover:bg-white/10 active:bg-gray-200 dark:active:bg-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50"
                     aria-haspopup="listbox"
                     aria-expanded={isCategoryOpen}
                   >
@@ -737,52 +749,54 @@ export function ChatInterface() {
                     </div>
                   )}
                 </div>
-                <div className="ml-auto flex shrink-0 items-center justify-end gap-2">
+                <div className="flex shrink-0 items-center justify-end gap-2">
                   <ProviderSelector model={model} />
                 </div>
               </div>
 
-              <textarea
-                ref={textareaRef}
-                value={input}
-                onChange={handleInput}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSubmit();
-                  }
-                }}
-                placeholder={isLoading ? 'Đang xử lý yêu cầu...' : 'Hỏi về điều luật, quyền, nghĩa vụ hoặc thủ tục pháp lý...'}
-                className="w-full resize-none bg-transparent pl-3.5 sm:pl-5 pr-14 py-2.5 sm:py-3 focus:outline-none text-gray-700 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 leading-relaxed rounded-b-2xl sm:rounded-b-3xl text-base sm:text-[15px] custom-scrollbar"
-                rows={1}
-                style={{ minHeight: '48px', maxHeight: '160px' }}
-              />
+              <div className="flex items-end gap-2 px-3 sm:px-4 pt-1 pb-2.5 sm:pb-3">
+                <textarea
+                  ref={textareaRef}
+                  value={input}
+                  onChange={handleInput}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSubmit();
+                    }
+                  }}
+                  placeholder={isLoading ? 'Đang xử lý yêu cầu...' : 'Hỏi về điều luật, thủ tục pháp lý...'}
+                  className="flex-1 min-w-0 resize-none bg-transparent py-2 focus:outline-none overflow-y-hidden text-gray-700 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 leading-6 text-base sm:text-[15px] custom-scrollbar"
+                  rows={1}
+                  style={{ minHeight: '40px', maxHeight: '160px' }}
+                />
 
-              {/* Nut Send / Stop */}
-              {isLoading ? (
-                <button
-                  onClick={handleAbort}
-                  title="Dừng tạo câu trả lời (Enter)"
-                  aria-label="Dừng trả lời"
-                  className="absolute right-2.5 sm:right-3 bottom-2.5 sm:bottom-3 p-2.5 min-h-[40px] min-w-[40px] text-white rounded-xl sm:rounded-2xl transition-all shadow-md active:scale-95 flex items-center justify-center animate-pulse"
-                  style={{ background: 'linear-gradient(135deg, #EF4444, #DC2626)' }}
-                >
-                  <Square className="w-4 h-4 fill-white" />
-                </button>
-              ) : (
-                <button
-                  onClick={() => handleSubmit()}
-                  disabled={!input.trim()}
-                  aria-label="Gửi câu hỏi"
-                  className={`absolute right-2.5 sm:right-3 bottom-2.5 sm:bottom-3 p-2.5 min-h-[40px] min-w-[40px] text-white rounded-xl sm:rounded-2xl disabled:opacity-40 transition-all shadow-md active:scale-95 flex items-center justify-center ${input.trim() ? 'send-btn-ready' : ''}`}
-                  style={{ background: 'linear-gradient(135deg, #2563EB, #1D4ED8)' }}
-                >
-                  <Send className="w-4 h-4 translate-x-px translate-y-px" />
-                </button>
-              )}
+                {/* Nut Send / Stop */}
+                {isLoading ? (
+                  <button
+                    onClick={handleAbort}
+                    title="Dừng tạo câu trả lời (Enter)"
+                    aria-label="Dừng trả lời"
+                    className="shrink-0 h-10 w-10 text-white rounded-xl sm:rounded-2xl transition-all shadow-md active:scale-95 flex items-center justify-center animate-pulse"
+                    style={{ background: 'linear-gradient(135deg, #EF4444, #DC2626)' }}
+                  >
+                    <Square className="w-4 h-4 fill-white" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => handleSubmit()}
+                    disabled={!input.trim()}
+                    aria-label="Gửi câu hỏi"
+                    className={`shrink-0 h-10 w-10 text-white rounded-xl sm:rounded-2xl disabled:opacity-40 transition-all shadow-md active:scale-95 flex items-center justify-center ${input.trim() ? 'send-btn-ready' : ''}`}
+                    style={{ background: 'linear-gradient(135deg, #2563EB, #1D4ED8)' }}
+                  >
+                    <Send className="w-4 h-4 translate-x-px translate-y-px" />
+                  </button>
+                )}
+              </div>
             </div>
-            <p className="text-center mt-2 text-[10px] text-gray-400 dark:text-gray-500 font-medium px-2">
-              AI có thể cung cấp thông tin không chính xác. Hãy luôn kiểm tra lại dữ liệu quan trọng.
+            <p className="text-center mt-2 text-[10px] leading-4 text-gray-400 dark:text-gray-500 font-medium px-2">
+              AI có thể có sai sót. Hãy kiểm tra lại thông tin quan trọng.
             </p>
             </div>
           </div>
