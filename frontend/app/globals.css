@@ -15,6 +15,7 @@ html, body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior-y: none;
   @apply transition-colors duration-300;
 }
 
@@ -49,21 +50,6 @@ html, body {
   background-size: 600px 100%;
   animation: shimmer 1.4s ease-in-out infinite;
   border-radius: 8px;
-}
-
-/* ============================================
-   TYPING CURSOR
-   ============================================ */
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0; }
-}
-.typing-cursor::after {
-  content: '▊';
-  font-size: 0.9em;
-  animation: blink 0.75s step-start infinite;
-  color: var(--color-primary);
-  margin-left: 2px;
 }
 
 /* ============================================
