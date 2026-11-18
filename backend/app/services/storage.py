@@ -1,9 +1,4 @@
-"""
-Storage bootstrap for Qdrant + PostgreSQL-backed legal corpus persistence.
-
-This module introduces a storage abstraction for the new backend while
-preserving backward compatibility with the existing FAISS-based flow.
-"""
+"""PostgreSQL and Qdrant persistence layer for legal corpus, chat history, and feedback."""
 from __future__ import annotations
 
 import json

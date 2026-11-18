@@ -1,7 +1,4 @@
-"""
-API Router cho endpoint /chat, /chat/stream và quản lý sessions.
-Tái cấu trúc: Sử dụng app.services.chat_orchestrator để chia sẻ toàn bộ logic chuẩn bị và hoàn tất turn.
-"""
+"""FastAPI router for /chat, /chat/stream, and session history endpoints."""
 from __future__ import annotations
 
 import json

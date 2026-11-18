@@ -83,7 +83,7 @@ class RuntimeInferenceRoles(BaseModel):
 
 
 class RuntimeInferenceConfig(BaseModel):
-    """Browser-local BYOK inference config sent with each chat request."""
+    """Legacy per-request inference override schema retained for internal/test compatibility."""
 
     model_config = ConfigDict(extra="forbid", populate_by_name=True)
 
@@ -96,7 +96,7 @@ class RuntimeInferenceConfig(BaseModel):
 
 
 class ChatRequest(BaseModel):
-    """Dữ liệu gửi lên từ Frontend khi user đặt câu hỏi."""
+    """Incoming chat payload from the frontend proxy."""
     model_config = ConfigDict(populate_by_name=True, extra="ignore")
 
     messages: List[Message]
@@ -104,11 +104,11 @@ class ChatRequest(BaseModel):
     sessionId: Optional[str] = "unknown"
     sessionTitle: Optional[str] = "Cuộc trò chuyện mới"
     messageId: Optional[str] = None
-    category: str = "all"  # Lĩnh vực pháp luật để lọc tài liệu
+    category: str = "all"  # Law code filter (or 'all')
     streaming: bool = True
 
 
 class ChatResponse(BaseModel):
-    """Dữ liệu trả về cho Frontend sau khi LLM trả lời."""
+    """Non-streaming chat response payload."""
     text: str
     contextUsed: List[Dict[str, Any]]

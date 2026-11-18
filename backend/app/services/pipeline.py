@@ -1,11 +1,4 @@
-"""
-RAG Pipeline Orchestrator — Kết nối các module thành pipeline hoàn chỉnh.
-
-Pipeline flow:
-    Query → Search → Rerank → Context Build → (LLM)
-
-Hỗ trợ config-driven assembly để dễ dàng thực hiện ablation study.
-"""
+"""RAG pipeline orchestrator composing search, reranking, and nested context assembly."""
 import os
 import json
 import glob

@@ -1,10 +1,4 @@
-"""
-Remote embedding-similarity reranker for deployment-safe reranking.
-
-This is not a cross-encoder. It reuses the deployed HuggingFace embedding stack
-to score query/document cosine similarity after retrieval, which keeps reranking
-remote-only when Ollama is unavailable.
-"""
+"""Optional bi-encoder cosine-similarity reranker using configured cloud embeddings."""
 from __future__ import annotations
 
 import hashlib

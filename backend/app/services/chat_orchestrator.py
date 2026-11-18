@@ -1,8 +1,4 @@
-"""
-RAG Turn Orchestrator: Quản lý và điều phối các bước của một lượt hội thoại RAG.
-
-Trích xuất từ app/api/chat.py để khử trùng lặp code giữa non-streaming và streaming endpoints.
-"""
+"""Shared turn orchestrator for non-streaming and SSE streaming legal RAG requests."""
 from __future__ import annotations
 
 import asyncio

@@ -1,12 +1,9 @@
-"""
-Embedding Module — Abstract interface và implementations cho text embedding.
-
-Protocol:
-    BaseEmbedding: Interface chung cho tất cả embedding strategies.
+"""Embedding adapters for local fine-tuned and cloud RAG profiles.
 
 Implementations:
-    - HuggingFaceEndpointEmbedding: Gọi HuggingFace Inference API (mặc định)
-    - OllamaEmbedding: Chạy model local qua Ollama
+    - HuggingFaceEndpointEmbedding: Local fine-tuned BGE-M3 or HF Inference API
+    - GeminiEmbedding: Google AI Studio gemini-embedding-001 (1024-dim, cloud default)
+    - OllamaEmbedding: Legacy local Ollama adapter
 """
 from typing import Optional
 from app.services.embedding.base import BaseEmbedding

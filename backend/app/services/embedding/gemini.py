@@ -1,8 +1,4 @@
-"""
-Google Gemini Embedding Adapter.
-Sử dụng REST API của Google AI Studio (models/gemini-embedding-001) với vector 1024 chiều.
-Hỗ trợ batching, phân tách taskType (RETRIEVAL_DOCUMENT vs RETRIEVAL_QUERY) và xoay vòng API Keys.
-"""
+"""Google AI Studio Gemini embedding adapter (models/gemini-embedding-001, 1024-dim)."""
 from __future__ import annotations
 
 import logging

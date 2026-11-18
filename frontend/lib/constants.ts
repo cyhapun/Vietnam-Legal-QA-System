@@ -1,7 +1,4 @@
-/**
- * Hằng số dùng chung cho toàn frontend.
- * Tách từ ChatInterface.tsx và ProviderSelector.tsx.
- */
+/** Shared frontend constants (legal code filters, fixed model metadata, storage keys). */
 import type { AIModel, InferenceProvider } from './types';
 
 export interface LawCategory {
